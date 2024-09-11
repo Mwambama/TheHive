@@ -9,13 +9,13 @@ package coms309.people;
 
 public class Person {
 
-    private String firstName;
+    protected String firstName;
 
-    private String lastName;
+    protected String lastName;
 
-    private String address;
+    protected String address;
 
-    private String telephone;
+    protected String telephone;
 
     public Person(){
         
