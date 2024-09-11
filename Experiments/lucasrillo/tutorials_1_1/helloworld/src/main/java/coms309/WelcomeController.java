@@ -22,11 +22,4 @@ class WelcomeController {
         }
         return response;
     }
-
-    @GetMapping("/{name}/details")
-    public String details(
-            @PathVariable String name
-    ) {
-        return "This page contains details about " + name;
-    }
 }
