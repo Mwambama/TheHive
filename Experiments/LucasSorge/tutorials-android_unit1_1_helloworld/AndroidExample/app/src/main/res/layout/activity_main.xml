@@ -5,8 +5,10 @@
     tools:context=".MainActivity"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/background_gradient">
 
+    <!-- Main layout for the activity -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,17 +16,35 @@
         android:gravity="center">
 
         <TextView
-            android:id="@+id/main_msg_txt"
+            android:id="@+id/tv_main_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World"
-            android:textSize="24sp" />
+            android:text="Welcome to the App"
+            android:textSize="30sp"
+            android:textColor="@color/teal_200"
+            android:paddingBottom="20dp"
+            android:textStyle="bold" />
 
+        <!-- Button to trigger counter -->
         <Button
-            android:id="@+id/change_text_btn"
+            android:id="@+id/btn_counter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Counter" />
+            android:text="Increase Counter"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/purple_500" />
+
+        <!-- Additional message TextView -->
+        <TextView
+            android:id="@+id/tv_additional_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This is an additional message!"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:paddingTop="20dp"
+            android:visibility="gone" />
 
     </LinearLayout>
 

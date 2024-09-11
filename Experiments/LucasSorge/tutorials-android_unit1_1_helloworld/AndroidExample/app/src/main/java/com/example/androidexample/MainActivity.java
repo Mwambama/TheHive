@@ -1,42 +1,52 @@
 package com.example.androidexample;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import androidx.appcompat.app.AppCompatActivity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 public class MainActivity extends AppCompatActivity {
 
-    private TextView messageText;   // define message textview variable
-    private Button changeTextButton;
-    private int clickCounter = 0;
+    private TextView tvMainMessage;    // Main message TextView
+    private TextView tvAdditionalMessage;  // Additional message TextView
+    private Button btnCounter;         // Button to increase the counter and change the text
+    private int clickCounter = 0;      // Counter to track button clicks
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);             // link to Main activity XML
+        setContentView(R.layout.activity_main); // Link to activity_main.xml
 
-        /* initialize UI elements */
-        messageText = findViewById(R.id.main_msg_txt);      // link to message textview in the Main activity XML
-        messageText.setText("Hello World");
+        // Initialize UI elements
+        tvMainMessage = findViewById(R.id.tv_main_message);      // Main message TextView
+        tvMainMessage.setText("Welcome to the App!");            // Set initial message
 
-        changeTextButton = findViewById(R.id.change_text_btn);  // link to button to change text
+        tvAdditionalMessage = findViewById(R.id.tv_additional_message);  // Additional message TextView, initially hidden
 
-        /* Set onClickListener for the changeTextButton */
-        changeTextButton.setOnClickListener(new View.OnClickListener() {
+        btnCounter = findViewById(R.id.btn_counter);             // Button to trigger counter and message change
+
+        // Set OnClickListener for the button
+        btnCounter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Increment the click counter
                 clickCounter++;
-                String newText = "Button clicked " + clickCounter + " times";
-                messageText.setText(newText);  // update the text view
-                Toast.makeText(MainActivity.this, newText, Toast.LENGTH_SHORT).show();
+
+                // Update the main message with the counter value
+                String updatedText = "Button clicked " + clickCounter + " times";
+                tvMainMessage.setText(updatedText);
+
+                // Display a toast message
+                Toast.makeText(MainActivity.this, updatedText, Toast.LENGTH_SHORT).show();
+
+                // Show the additional message after 5 clicks
+                if (clickCounter == 5) {
+                    tvAdditionalMessage.setVisibility(View.VISIBLE); // Make the additional message visible
+                    tvAdditionalMessage.setText("You clicked 5 times!");
+                    Toast.makeText(MainActivity.this, "You unlocked a new message!", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
