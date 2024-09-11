@@ -6,12 +6,15 @@ package coms309.people;
  *
  * @author Vivek Bengre
  */
-
 public class Person {
 
     private String firstName;
 
+    private String middleName;
+
     private String lastName;
+
+    private String pronouns;
 
     private String address;
 
@@ -21,9 +24,11 @@ public class Person {
         
     }
 
-    public Person(String firstName, String lastName, String address, String telephone){
+    public Person(String firstName, String middleName, String lastName, String pronouns, String address, String telephone){
         this.firstName = firstName;
+        this.middleName = middleName;
         this.lastName = lastName;
+        this.pronouns = pronouns;
         this.address = address;
         this.telephone = telephone;
     }
@@ -36,6 +41,10 @@ public class Person {
         this.firstName = firstName;
     }
 
+    public String getMiddleName(){ return this.middleName;}
+
+    public void setMiddleName(String middleName){ this.middleName = middleName; }
+
     public String getLastName() {
         return this.lastName;
     }
@@ -43,6 +52,10 @@ public class Person {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public String getPronouns(){ return this.pronouns; }
+
+    public void setPronouns(String pronouns){ this.pronouns = pronouns; }
 
     public String getAddress() {
         return this.address;
@@ -62,9 +75,9 @@ public class Person {
 
     @Override
     public String toString() {
-        return firstName + " " 
-               + lastName + " "
-               + address + " "
-               + telephone;
+        return "Name: " + firstName + " " + middleName + " " + lastName
+                + "\nPronouns: " + pronouns
+                + "\nAddress: " + address
+                + "\nTelephone: " + telephone;
     }
 }
