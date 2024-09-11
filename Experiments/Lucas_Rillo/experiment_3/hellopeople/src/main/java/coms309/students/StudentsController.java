@@ -1,5 +1,6 @@
 package coms309.students;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -7,32 +8,37 @@ import java.util.HashMap;
 @RestController
 public class StudentsController {
 
-    HashMap<String, Student> studentList = new HashMap<>();
+    private final StudentsService studentService;
+
+    @Autowired
+    public StudentsController(StudentsService studentService) {
+        this.studentService = studentService;
+    }
 
     @GetMapping("/students")
-    public HashMap<String, Student> getAllStudents() {return studentList;}
+    public HashMap<String, Student> getAllStudents() {return studentService.getAllStudents();}
 
     @PostMapping("/students")
     public String createStudent(@RequestBody Student student) {
         System.out.println(student);
-        studentList.put(student.getFirstName(), student);
+        studentService.addStudent(student);
         return "New student " + student.getFirstName() + " saved";
     }
 
     @GetMapping("/students/{firstName}")
     public Student getStudent(@PathVariable String firstName) {
-        return studentList.get(firstName);
+        return studentService.getStudent(firstName);
     }
 
     @PutMapping("/students/{firstName}")
     public Student updateStudent(@PathVariable String firstName, @RequestBody Student student) {
-        studentList.replace(firstName, student);
-        return studentList.get(firstName);
+        studentService.updateStudent(firstName, student);
+        return studentService.getStudent(firstName);
     }
 
     @DeleteMapping("/students/{firstName}")
     public HashMap<String, Student> deleteStudent(@PathVariable String firstName) {
-        studentList.remove(firstName);
-        return studentList;
+        studentService.deleteStudent(firstName);
+        return studentService.getAllStudents();
     }
 }
