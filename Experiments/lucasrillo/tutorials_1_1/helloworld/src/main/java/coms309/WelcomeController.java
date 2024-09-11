@@ -1,8 +1,6 @@
 package coms309;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 class WelcomeController {
@@ -13,7 +11,15 @@ class WelcomeController {
     }
 
     @GetMapping("/{name}")
-    public String welcome(@PathVariable String name) {
-        return "Hello and welcome to COMS 309: " + name;
+    public String welcome(
+          @PathVariable String name,
+          @RequestParam(required = false) String major
+    ) {
+        String response = "Hello and welcome to COMS 309: " + name;
+
+        if (major != null) {
+            response += ", " + major + " major";
+        }
+        return response;
     }
 }
