@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Controller used to showcase Create and Read from a LIST
@@ -87,6 +91,18 @@ public class PeopleController {
     public HashMap<String, Person> deletePerson(@PathVariable String firstName) {
         peopleList.remove(firstName);
         return peopleList;
+    }
+
+    @GetMapping("/addresses")
+    public Set<String> getAllAddresses() {
+        return peopleList.values().stream().map(Person::getAddress).collect(Collectors.toSet());
+    }
+
+    @GetMapping("/addresses/count")
+    public Map<String, Long> getAddressStats() {
+        return peopleList.values().stream().collect(
+                Collectors.groupingBy(Person::getAddress, Collectors.counting())
+        );
     }
 }
 
