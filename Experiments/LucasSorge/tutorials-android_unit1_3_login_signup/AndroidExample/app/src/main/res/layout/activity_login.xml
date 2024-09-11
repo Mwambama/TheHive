@@ -5,19 +5,24 @@
     tools:context=".MainActivity"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@drawable/background_image">
 
+    <!-- Title Text -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Login Example"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="100dp"
         android:textSize="30dp"
-        android:textColor="#fc0303">
-    </TextView>
+        android:textColor="#FFFFFF"
+        android:textStyle="bold">
+</TextView>
 
+    <!-- Username Input Section -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,49 +33,73 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="username: "
+            android:text="Username: "
             android:textSize="20dp"
-            android:textColor="#000000">
+            android:textColor="#FFFFFF"
+            android:textStyle="bold">
         </TextView>
 
         <EditText
             android:id="@+id/login_username_edt"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="50dp"
-            android:hint="Enter Username Here">
+            android:hint="Enter Username"
+            android:textColorHint="#DDDDDD"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#000000">
         </EditText>
 
     </LinearLayout>
 
+    <!-- Password Input Section -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="password: "
-            android:textSize="20dp"
-            android:textColor="#000000">
-        </TextView>
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/login_password_edt"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Password: "
+                android:textSize="20dp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold">
+            </TextView>
+
+            <EditText
+                android:id="@+id/login_password_edt"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:hint="Enter Password"
+                android:textColorHint="#DDDDDD"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#000000"
+                android:inputType="textPassword">
+            </EditText>
+        </LinearLayout>
+
+        <!-- Move the checkbox below the password field -->
+        <CheckBox
+            android:id="@+id/show_password_chk"
             android:layout_width="wrap_content"
-            android:inputType="textPassword"
-            android:layout_height="50dp"
-            android:hint="Enter Password Here">
-        </EditText>
-
+            android:layout_height="wrap_content"
+            android:text="Show Password"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="10dp" />
     </LinearLayout>
 
+    <!-- Buttons Section -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:orientation="horizontal">
 
         <Button
@@ -80,7 +109,8 @@
             android:layout_marginRight="10dp"
             android:text="Login"
             android:textSize="20sp"
-            android:textColor="#ffffff">
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#000000">
         </Button>
 
         <Button
@@ -90,10 +120,10 @@
             android:layout_marginLeft="10dp"
             android:text="Signup"
             android:textSize="20sp"
-            android:textColor="#ffffff">
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#000000">
         </Button>
 
     </LinearLayout>
-
 
 </androidx.appcompat.widget.LinearLayoutCompat>
