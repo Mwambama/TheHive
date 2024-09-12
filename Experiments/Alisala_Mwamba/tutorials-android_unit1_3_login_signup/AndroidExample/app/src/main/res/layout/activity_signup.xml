@@ -5,12 +5,13 @@
     tools:context=".MainActivity"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/voidimage">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Signup Example"
+        android:text="SIGNUP"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
         android:layout_marginBottom="80dp"
@@ -94,6 +95,84 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Birthday: "
+            android:textSize="20sp"
+            android:textColor="#000000">
+        </TextView>
+
+        <EditText
+            android:id="@+id/signup_birthday_edt"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:hint="YYYY-MM-DD">
+        </EditText>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gender: "
+            android:textSize="20sp"
+            android:textColor="#000000">
+        </TextView>
+
+        <EditText
+            android:id="@+id/signup_gender_edt"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:hint="Enter Gender">
+        </EditText>
+
+       </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contact: "
+            android:textSize="20sp"
+            android:textColor="#000000">
+        </TextView>
+
+        <EditText
+            android:id="@+id/signup_contact_edt"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:hint="Mobile Number"
+            android:inputType="textEmailAddress|phone">
+        </EditText>
+
+    </LinearLayout>
+
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginTop="100dp"
         android:orientation="horizontal">
 
@@ -103,18 +182,17 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:text="Login"
-            android:textSize="20sp"
-            android:textColor="#ffffff">
+            android:textSize="30sp"
+            android:textColor="#ff0000">
         </Button>
-
         <Button
             android:id="@+id/signup_signup_btn"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="Signup"
-            android:textSize="20sp"
-            android:textColor="#ffffff">
+            android:textSize="30sp"
+            android:textColor="#ff0000">
         </Button>
 
     </LinearLayout>

@@ -50,13 +50,22 @@ public class SignupActivity extends AppCompatActivity {
                 String password = passwordEditText.getText().toString();
                 String confirm = confirmEditText.getText().toString();
 
-                if (password.equals(confirm)){
-                    Toast.makeText(getApplicationContext(), "Signing up", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "Password don't match", Toast.LENGTH_LONG).show();
+                if (!password.equals(confirm)) {
+                    Toast.makeText(getApplicationContext(), "Passwords don't match", Toast.LENGTH_LONG).show();
+                } else if (!isPasswordValid(password)) {
+                    Toast.makeText(getApplicationContext(), "Password must be at least 7 characters long, contain an uppercase letter, and a number", Toast.LENGTH_LONG).show(); // limitation of characters etc.
+                } else {
+                    Toast.makeText(getApplicationContext(), "Signing up", Toast.LENGTH_LONG).show();   // all else if everything is good, sign up;
                 }
             }
         });
+    }
+        private boolean isPasswordValid(String password) {
+            if (password.length() < 7) {
+                return false;
+            }
+            boolean hasUppercase = !password.equals(password.toLowerCase());
+            boolean hasDigit = password.matches(".*\\d.*");
+            return hasUppercase && hasDigit;
     }
 }
