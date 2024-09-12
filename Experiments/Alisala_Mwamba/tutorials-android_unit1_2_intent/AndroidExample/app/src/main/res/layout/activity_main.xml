@@ -5,7 +5,8 @@
     tools:context=".MainActivity"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/voidimages" >
 
     <TextView
         android:id="@+id/main_msg_txt"
@@ -24,9 +25,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:layout_gravity="center"
-        android:text="To the Counter Activity"
-        android:textSize="20sp"
-        android:textColor="#ffffff">
+        android:text="Counter Activity"
+        android:textSize="30sp"
+        android:textColor="#F44336">
     </Button>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

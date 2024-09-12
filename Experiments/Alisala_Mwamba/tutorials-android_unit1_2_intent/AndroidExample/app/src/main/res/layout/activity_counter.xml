@@ -5,7 +5,8 @@
     tools:context=".MainActivity"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/voidimage">
 
     <TextView
         android:id="@+id/number"
@@ -24,6 +25,8 @@
         android:layout_height="80dp"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
+        android:background="#4CAF50"
+        android:textColor="#F44336"
         android:text="Increase">
     </Button>
 
@@ -33,7 +36,18 @@
         android:layout_height="80dp"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
+        android:background="#4CAF50"
+        android:textColor="#F44336"
         android:text="Decrease">
+    </Button>
+    <Button
+        android:id="@+id/counter_reset_btn"
+        android:layout_width="250dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:text="Reset"
+        android:textColor="#F44336">
     </Button>
 
     <Button
@@ -42,6 +56,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
+        android:textColor="#F44336"
+        android:textSize="20sp"
         android:text="Back to Main" >
 
     </Button>
