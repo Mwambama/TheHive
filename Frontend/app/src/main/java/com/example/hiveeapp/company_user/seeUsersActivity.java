@@ -1,7 +1,7 @@
 package com.example.hiveeapp.company_user;
 
 import android.os.Bundle;
-import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.TextView;
 
@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class usersActivity extends AppCompatActivity {
+public class seeUsersActivity extends AppCompatActivity {
 
     private TextView usersTextView;
 

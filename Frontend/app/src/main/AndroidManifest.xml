@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".company_user.companyActivity" />
-        <activity android:name=".company_user.usersActivity" />
+        <activity android:name=".company_user.seeUsersActivity" />
         <activity android:name=".volley.JsonArrReqActivity" />
     </application>
 

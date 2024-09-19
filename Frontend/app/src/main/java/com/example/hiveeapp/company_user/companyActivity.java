@@ -21,7 +21,7 @@ public class companyActivity extends AppCompatActivity {
         // Find the button in the layout
         loadJsonButton = findViewById(R.id.loadJsonButton);
 
-        // Set a click listener to start JsonArrReqActivity (or handle the request directly here)
+        // Set a click listener to start JsonArrReqActivity
         loadJsonButton.setOnClickListener(v -> {
             Intent intent = new Intent(companyActivity.this, JsonArrReqActivity.class);
             startActivity(intent);

@@ -6,7 +6,7 @@
     android:id="@+id/users_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".company_user.usersActivity">
+    tools:context=".company_user.seeUsersActivity">
 
     <!-- TextView to display the users -->
     <TextView

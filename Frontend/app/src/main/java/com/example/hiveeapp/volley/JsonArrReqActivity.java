@@ -69,7 +69,6 @@ public class JsonArrReqActivity extends AppCompatActivity {
         }
     }
 
-    // Assuming you have a working loadJSONFromAsset() method
     private String loadJSONFromAsset(String fileName) {
         String json = null;
         try {
