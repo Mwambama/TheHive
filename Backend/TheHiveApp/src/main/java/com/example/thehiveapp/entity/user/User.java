@@ -1,5 +1,6 @@
-package com.example.thehiveapp.user;
+package com.example.thehiveapp.entity.user;
 
+import com.example.thehiveapp.enums.user.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

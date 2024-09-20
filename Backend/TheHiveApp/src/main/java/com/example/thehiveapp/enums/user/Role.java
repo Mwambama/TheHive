@@ -1,4 +1,4 @@
-package com.example.thehiveapp.user;
+package com.example.thehiveapp.enums.user;
 
 public enum Role {
     student,

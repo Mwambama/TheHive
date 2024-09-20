@@ -1,5 +1,7 @@
-package com.example.thehiveapp.user;
+package com.example.thehiveapp.controller.user;
 
+import com.example.thehiveapp.entity.user.User;
+import com.example.thehiveapp.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
