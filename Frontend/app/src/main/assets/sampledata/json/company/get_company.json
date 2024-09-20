@@ -1,0 +1,15 @@
+{
+    "id": 1,
+    "user_id": 3,
+    "role": "company",
+    "name": "Hive",
+    "email": "admin@hive.com",
+    "phone": "(515)294-4111",
+    "address": {
+        "street": "2433 Union Drive Ames",
+        "complement": "",
+        "zip_code": 50011,
+        "city": "Ames",
+        "state": "IA"
+    }
+}
