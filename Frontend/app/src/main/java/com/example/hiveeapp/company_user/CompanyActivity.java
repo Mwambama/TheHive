@@ -5,11 +5,10 @@ import android.os.Bundle;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.hiveeapp.company_user.AddDeleteCompanyActivity;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.JsonArrReqActivity;
 
-public class companyActivity extends AppCompatActivity {
+public class CompanyActivity extends AppCompatActivity {
 
     private Button loadJsonButton;
     private Button goToCompanyMainButton;
@@ -25,13 +24,13 @@ public class companyActivity extends AppCompatActivity {
 
         // Set a click listener to start JsonArrReqActivity (loads JSON data)
         loadJsonButton.setOnClickListener(v -> {
-            Intent intent = new Intent(companyActivity.this, JsonArrReqActivity.class);
+            Intent intent = new Intent(CompanyActivity.this, JsonArrReqActivity.class);
             startActivity(intent);
         });
 
         // Set a click listener to navigate to CompanyMainActivity
         goToCompanyMainButton.setOnClickListener(v -> {
-            Intent intent = new Intent(companyActivity.this, AddDeleteCompanyActivity.class);
+            Intent intent = new Intent(CompanyActivity.this, AddDeleteCompanyActivity.class);
             startActivity(intent);
         });
     }

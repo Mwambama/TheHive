@@ -29,7 +29,9 @@ public class AddDeleteCompanyActivity extends AppCompatActivity {
     private TextView textView;
     private JSONArray employerArray;
 
-    private final String postUrl = "https://39105a8a-a3d7-41a3-b90b-9e4031e56567.mock.pstmn.io";
+    // URL for POST and DELETE requests
+    private final String postUrl = "https://39105a8a-a3d7-41a3-b90b-9e4031e56567.mock.pstmn.io/add";
+    private final String deleteUrl = "https://39105a8a-a3d7-41a3-b90b-9e4031e56567.mock.pstmn.io/delete/1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,32 +98,14 @@ public class AddDeleteCompanyActivity extends AppCompatActivity {
         }
     }
 
-    // Delete the last employer from the JSON array and update the display
-    private void deleteLastEmployer() {
-        if (employerArray.length() > 0) {
-            employerArray.remove(employerArray.length() - 1);
-            displayJSON();
-        }
-    }
-
-    // Display the current employer data in the TextView
-    private void displayJSON() {
-        textView.setText(employerArray.toString());
-    }
-
-    // Method to send the JSON data to Postman and handle the response
+    // Method to send the JSON data to Postman and handle the response for adding
     private void sendEmployerDataToServer(JSONObject employerJson) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST, postUrl, employerJson,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // Handle valid response here
-                        if (response != null && response.length() > 0) {
-                            textView.setText("Response: " + response.toString());
-                        } else {
-                            textView.setText("No response from server");
-                        }
+                        textView.setText("Add Response: " + response.toString());
                     }
                 },
                 new Response.ErrorListener() {
@@ -144,5 +128,62 @@ public class AddDeleteCompanyActivity extends AppCompatActivity {
 
         // Add the request to the queue
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+    }
+
+    // Delete the last employer from the JSON array and send a request to the server
+    private void deleteLastEmployer() {
+        if (employerArray.length() > 0) {
+            employerArray.remove(employerArray.length() - 1);
+
+            // Create a simple JSON object to send to the server
+            JSONObject deletePayload = new JSONObject();
+            try {
+                deletePayload.put("message", "Employer deleted");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // Send the delete request
+            sendDeleteRequestToServer(deletePayload);
+
+            displayJSON();
+        }
+    }
+
+    // Method to send the delete JSON data to the server and handle the response
+    private void sendDeleteRequestToServer(JSONObject deleteJson) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.DELETE, deleteUrl, deleteJson,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        textView.setText("Delete Response: " + response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error.networkResponse != null) {
+                            textView.setText("Error: " + new String(error.networkResponse.data));
+                        } else {
+                            textView.setText("Error: " + error.getMessage());
+                        }
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+
+        // Add the request to the queue
+        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+    }
+
+    // Display the current employer data in the TextView
+    private void displayJSON() {
+        textView.setText(employerArray.toString());
     }
 }

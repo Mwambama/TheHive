@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class seeUsersActivity extends AppCompatActivity {
+public class SeeUsersActivity extends AppCompatActivity {
 
     private TextView usersTextView;
 

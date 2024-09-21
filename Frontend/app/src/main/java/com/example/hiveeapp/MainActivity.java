@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.hiveeapp.company_user.companyActivity;
+import com.example.hiveeapp.company_user.CompanyActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Navigate to CompanyActivity
-                Intent intent = new Intent(MainActivity.this, companyActivity.class);
+                Intent intent = new Intent(MainActivity.this, CompanyActivity.class);
                 startActivity(intent);
             }
         });

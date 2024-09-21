@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class companyProfileRequest extends AppCompatActivity {
+public class CompanyProfileRequest extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,6 @@ public class companyProfileRequest extends AppCompatActivity {
                 String companyImage = company.getString("profile_image");
 
                 // Use this data to populate the UI
-                // e.g., companyNameTextView.setText(companyName);
                 Log.d("Company Name", companyName);
                 Log.d("Company Image", companyImage);
 

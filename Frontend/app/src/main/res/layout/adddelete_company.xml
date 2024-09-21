@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".volley.JsonArrReqActivity">
+    tools:context=".company_user.AddDeleteCompanyActivity"
+    >
 
     <!-- Fields to add a new employer -->
     <EditText
@@ -101,6 +102,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
 
+
     <!-- TextView to display JSON data -->
     <TextView
         android:id="@+id/textView"
@@ -112,4 +114,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,14 +27,15 @@
         </activity>
 
         <!-- Company Activity -->
-        <activity android:name=".company_user.companyActivity"
+        <activity android:name=".company_user.CompanyActivity"
             android:exported="true">
         </activity>
 
         <!-- Company Add/Delete Activity -->
         <activity android:name=".company_user.AddDeleteCompanyActivity"/>
 
-        <activity android:name=".company_user.seeUsersActivity" />
+
+        <activity android:name=".company_user.SeeUsersActivity" />
         <activity android:name=".volley.JsonArrReqActivity" />
 
 
