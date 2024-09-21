@@ -3,6 +3,7 @@ package com.example.hiveeapp.company_user;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hiveeapp.R;
@@ -16,13 +17,13 @@ public class CompanyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_company);
+        setContentView(R.layout.activity_company);  // Set the correct layout
 
         // Find the button in the layout
         loadJsonButton = findViewById(R.id.loadJsonButton);
         goToCompanyMainButton = findViewById(R.id.goToCompanyMainButton);
 
-        // Set a click listener to start JsonArrReqActivity (loads JSON data)
+        // Set a click listener to start JsonArrReqActivity
         loadJsonButton.setOnClickListener(v -> {
             Intent intent = new Intent(CompanyActivity.this, JsonArrReqActivity.class);
             startActivity(intent);
@@ -33,5 +34,6 @@ public class CompanyActivity extends AppCompatActivity {
             Intent intent = new Intent(CompanyActivity.this, AddDeleteCompanyActivity.class);
             startActivity(intent);
         });
+
     }
 }

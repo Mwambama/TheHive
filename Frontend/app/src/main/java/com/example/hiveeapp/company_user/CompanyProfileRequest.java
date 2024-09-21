@@ -29,6 +29,7 @@ public class CompanyProfileRequest extends AppCompatActivity {
                 String companyImage = company.getString("profile_image");
 
                 // Use this data to populate the UI
+                // e.g., companyNameTextView.setText(companyName);
                 Log.d("Company Name", companyName);
                 Log.d("Company Image", companyImage);
 
