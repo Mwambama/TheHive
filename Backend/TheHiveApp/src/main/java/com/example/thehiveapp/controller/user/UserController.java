@@ -2,6 +2,8 @@ package com.example.thehiveapp.controller.user;
 
 import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.repository.user.UserRepository;
+import com.example.thehiveapp.service.user.UserService;
+import com.example.thehiveapp.service.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,44 +21,31 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    private final UserRepository userRepository;
-
-    @Autowired
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    UserService userService;
+    public UserController() {}
 
     @GetMapping
     public List<User> getUsers() {
-        return userRepository.findAll();
+        return userService.getUsers();
     }
 
     @PostMapping
     public User createUser(@RequestBody User request) {
-        return userRepository.save(request);
+        return userService.createUser(request);
     }
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
-        return userRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("User not found with id " + id)
-        );
+        return userService.getUserById(id);
     }
 
     @PutMapping
     public User updateUser(@RequestBody User request) {
-        Long id = request.getId();
-        if (!userRepository.existsById(id)) {
-           throw new ResourceNotFoundException("User not found with id " + id);
-        }
-        return userRepository.save(request);
+        return userService.updateUser(request);
     }
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
-        User user = userRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException("User not found with id " + id)
-        );
-        userRepository.delete(user);
+        userService.deleteUser(id);
     }
 }
