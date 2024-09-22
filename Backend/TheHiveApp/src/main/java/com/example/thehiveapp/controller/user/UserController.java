@@ -2,6 +2,7 @@ package com.example.thehiveapp.controller.user;
 
 import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.service.user.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +17,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    UserService userService;
-    public UserController() {}
+
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
     public List<User> getUsers() {
