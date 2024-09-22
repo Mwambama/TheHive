@@ -31,7 +31,7 @@ public class CompanyServiceImpl implements CompanyService{
     }
 
     public Company updateCompany(Company request) {
-        Long id = request.getId();
+        Long id = request.getUserId();
         if (!companyRepository.existsById(id)) {
             throw new ResourceNotFoundException("Company not found with id " + id);
         }
