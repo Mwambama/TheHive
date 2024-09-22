@@ -4,9 +4,11 @@ import android.content.Context;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
@@ -83,14 +85,14 @@ public class InvitationApi {
 
     // Method to get invitations
     public static void getInvitations(Context context,
-                                      Response.Listener<JSONObject> responseListener,
+                                      Response.Listener<JSONArray> responseListener,
                                       Response.ErrorListener errorListener) {
 
         // Define the URL for retrieving invitations
         String getUrl = BASE_URL + "get";
 
-        // Create a JsonObjectRequest to get the invitations
-        JsonObjectRequest request = new JsonObjectRequest(
+        // Create a JsonArrayRequest to get the invitations
+        JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
                 getUrl,
                 null,
