@@ -15,7 +15,6 @@ import java.util.Map;
 
 public class InvitationApi {
 
-    // Base URL for the Postman mock server or any server you're using
     private static final String BASE_URL = "https://39105a8a-a3d7-41a3-b90b-9e4031e56567.mock.pstmn.io/invitations/";
 
     // Method to send an invitation
