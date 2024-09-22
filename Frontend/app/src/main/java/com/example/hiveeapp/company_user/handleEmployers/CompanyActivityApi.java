@@ -1,4 +1,4 @@
-package com.example.hiveeapp.company_user;
+package com.example.hiveeapp.company_user.handleEmployers;
 
 import android.os.Bundle;
 import android.view.View;
@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddDeleteCompanyActivity extends AppCompatActivity {
+public class CompanyActivityApi extends AppCompatActivity {
 
     private EditText nameField, emailField, phoneField, streetField, cityField, stateField, zipField;
     private Button addEmployerButton, deleteEmployerButton;
