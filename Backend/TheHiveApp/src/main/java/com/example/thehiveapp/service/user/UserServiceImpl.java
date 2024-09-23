@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService{
     }
 
     public User updateUser(User request) {
-        Long id = request.getId();
+        Long id = request.getUserId();
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User not found with id " + id);
         }

@@ -45,11 +45,11 @@ public class User {
     @Column(name = "phone", length = 15)
     private String phone;
 
-    public Long getId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setId(Long id) {
+    public void setUserId(Long id) {
         this.userId = id;
     }
 
