@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class InvitationApi {
 
-    private static final String BASE_URL = "https://83b448a1-640e-45cc-bf06-bbb5383d4f84.mock.pstmn.io/invitations/";
+    private static final String BASE_URL = "https://2e7fd141-9a29-4eae-ac7f-4996f5e64e96.mock.pstmn.io/invitations/";
     private static final String INVITATIONS_FILE = "invitations.json";
 
     // Helper method to read invitations from file

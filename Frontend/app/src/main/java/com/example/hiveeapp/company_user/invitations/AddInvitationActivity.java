@@ -23,7 +23,7 @@ public class AddInvitationActivity extends AppCompatActivity {
     private TextView responseTextView;
     private ListView invitationsListView;
 
-    private int companyId = 1;  // Example company ID
+    private int companyId = 1;
     private int selectedInvitationId = -1;  // To keep track of the selected invitation
 
     private ArrayList<String> invitationsList = new ArrayList<>();
