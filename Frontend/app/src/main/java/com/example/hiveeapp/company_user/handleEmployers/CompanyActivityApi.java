@@ -30,8 +30,8 @@ public class CompanyActivityApi extends AppCompatActivity {
     private JSONArray employerArray;
 
     // URL for POST and DELETE requests
-    private final String postUrl = "https://39105a8a-a3d7-41a3-b90b-9e4031e56567.mock.pstmn.io/add";
-    private final String deleteUrl = "https://39105a8a-a3d7-41a3-b90b-9e4031e56567.mock.pstmn.io/delete/1";
+    private final String postUrl = "https://83b448a1-640e-45cc-bf06-bbb5383d4f84.mock.pstmn.io/add";
+    private final String deleteUrl = "https://83b448a1-640e-45cc-bf06-bbb5383d4f84.mock.pstmn.io/delete/1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
