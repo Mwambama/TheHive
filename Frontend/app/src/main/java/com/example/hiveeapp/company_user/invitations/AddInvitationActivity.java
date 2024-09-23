@@ -1,10 +1,8 @@
 package com.example.hiveeapp.company_user.invitations;
 
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Response;
@@ -15,13 +13,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class AddInvitationActivity extends AppCompatActivity {
 
     private EditText emailField;
+    private EditText messageField;
     private Button sendInvitationButton, deleteInvitationButton, getInvitationsButton, updateInvitationButton;
     private TextView responseTextView;
+    private ListView invitationsListView;
+
     private int companyId = 1;  // Example company ID
-    private int invitationId = 1;  // Example invitation ID (this will change in real use)
+    private int selectedInvitationId = -1;  // To keep track of the selected invitation
+
+    private ArrayList<String> invitationsList = new ArrayList<>();
+    private ArrayAdapter<String> adapter;
+    private JSONArray invitationsArray;  // Store the array of invitations
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,46 +37,87 @@ public class AddInvitationActivity extends AppCompatActivity {
 
         // Initialize views
         emailField = findViewById(R.id.emailField);
+        messageField = findViewById(R.id.messageField);
         sendInvitationButton = findViewById(R.id.sendInvitationButton);
         deleteInvitationButton = findViewById(R.id.deleteInvitationButton);
         getInvitationsButton = findViewById(R.id.getInvitationsButton);
         updateInvitationButton = findViewById(R.id.updateInvitationButton);
         responseTextView = findViewById(R.id.responseTextView);
+        invitationsListView = findViewById(R.id.invitationsListView);
+
+        // Initialize the ListView adapter
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, invitationsList);
+        invitationsListView.setAdapter(adapter);
+        invitationsListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        // Set item click listener for the ListView
+        invitationsListView.setOnItemClickListener((parent, view, position, id) -> {
+            try {
+                // Get the selected invitation
+                JSONObject selectedInvitation = invitationsArray.getJSONObject(position);
+                selectedInvitationId = selectedInvitation.getInt("id");
+                String email = selectedInvitation.getString("email");
+
+                // Display selected invitation details
+                responseTextView.setText("Selected Invitation ID: " + selectedInvitationId + "\nEmail: " + email);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                responseTextView.setText("Error retrieving invitation details.");
+            }
+        });
 
         // Send Invitation
         sendInvitationButton.setOnClickListener(v -> {
-            String email = emailField.getText().toString();
+            String email = emailField.getText().toString().trim();
+            String message = messageField.getText().toString().trim();
             if (email.isEmpty()) {
                 Toast.makeText(AddInvitationActivity.this, "Please enter an email.", Toast.LENGTH_SHORT).show();
             } else {
-                sendInvitation(companyId, email);
+                sendInvitation(companyId, email, message);
             }
         });
 
         // Delete Invitation
-        deleteInvitationButton.setOnClickListener(v -> deleteInvitation(invitationId));
+        deleteInvitationButton.setOnClickListener(v -> {
+            if (selectedInvitationId == -1) {
+                Toast.makeText(AddInvitationActivity.this, "Please select an invitation to delete.", Toast.LENGTH_SHORT).show();
+            } else {
+                deleteInvitation(selectedInvitationId);
+            }
+        });
 
         // Get Invitations
         getInvitationsButton.setOnClickListener(v -> getInvitations());
 
         // Update Invitation
         updateInvitationButton.setOnClickListener(v -> {
-            String email = emailField.getText().toString();
-            if (email.isEmpty()) {
+            String newEmail = emailField.getText().toString().trim();
+            if (selectedInvitationId == -1) {
+                Toast.makeText(AddInvitationActivity.this, "Please select an invitation to update.", Toast.LENGTH_SHORT).show();
+            } else if (newEmail.isEmpty()) {
                 Toast.makeText(AddInvitationActivity.this, "Please enter a new email for update.", Toast.LENGTH_SHORT).show();
             } else {
-                updateInvitation(invitationId, email);
+                updateInvitation(selectedInvitationId, newEmail);
             }
         });
+
+        // Initially load invitations
+        getInvitations();
     }
 
     // Send Invitation using InvitationApi
-    private void sendInvitation(int companyId, String email) {
+    private void sendInvitation(int companyId, String email, String message) {
         InvitationApi.sendInvitation(
                 this,
                 companyId,
                 email,
-                response -> responseTextView.setText("Invitation sent successfully! Response: " + response.toString()),
+                message,
+                response -> {
+                    responseTextView.setText("Invitation sent successfully!");
+                    emailField.setText("");
+                    messageField.setText("");
+                    getInvitations();
+                },
                 error -> responseTextView.setText("Failed to send invitation: " + error.getMessage())
         );
     }
@@ -79,7 +127,12 @@ public class AddInvitationActivity extends AppCompatActivity {
         InvitationApi.deleteInvitation(
                 this,
                 invitationId,
-                response -> responseTextView.setText("Invitation deleted successfully! Response: " + response.toString()),
+                response -> {
+                    responseTextView.setText("Invitation deleted successfully!");
+                    // Refresh the list of invitations
+                    getInvitations();
+                    selectedInvitationId = -1;  // Reset the selected invitation
+                },
                 error -> responseTextView.setText("Failed to delete invitation: " + error.getMessage())
         );
     }
@@ -88,31 +141,27 @@ public class AddInvitationActivity extends AppCompatActivity {
     private void getInvitations() {
         InvitationApi.getInvitations(
                 this,
-                new Response.Listener<JSONArray>() {  // Expect a JSONArray
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        StringBuilder invitations = new StringBuilder();
-                        try {
-                            // Loop through the JSON array and extract invitation details
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject invitation = response.getJSONObject(i);
-                                int id = invitation.getInt("id");
-                                int companyId = invitation.getInt("company_id");
-                                String email = invitation.getString("email");
+                response -> {
+                    invitationsList.clear();
+                    invitationsArray = response;
+                    try {
+                        // Loop through the JSON array and extract invitation details
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject invitation = response.getJSONObject(i);
+                            int id = invitation.getInt("id");
+                            String email = invitation.getString("email");
 
-                                // Append invitation details to the string builder
-                                invitations.append("ID: ").append(id)
-                                        .append(", Company ID: ").append(companyId)
-                                        .append(", Email: ").append(email)
-                                        .append("\n");
-                            }
-
-                            // Display the invitations in the TextView
-                            responseTextView.setText("Invitations:\n" + invitations.toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            responseTextView.setText("Error parsing invitations");
+                            // Add invitation details to the list
+                            invitationsList.add("ID: " + id + ", Email: " + email);
                         }
+
+                        // Notify the adapter that the data has changed
+                        adapter.notifyDataSetChanged();
+
+                        responseTextView.setText("Invitations loaded successfully.");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        responseTextView.setText("Error parsing invitations.");
                     }
                 },
                 error -> responseTextView.setText("Failed to retrieve invitations: " + error.getMessage())
@@ -125,7 +174,13 @@ public class AddInvitationActivity extends AppCompatActivity {
                 this,
                 invitationId,
                 newEmail,
-                response -> responseTextView.setText("Invitation updated successfully! Response: " + response.toString()),
+                response -> {
+                    responseTextView.setText("Invitation updated successfully!");
+                    emailField.setText("");  // Clear the input field
+                    // Refresh the list of invitations
+                    getInvitations();
+                    selectedInvitationId = -1;  // Reset the selected invitation
+                },
                 error -> responseTextView.setText("Failed to update invitation: " + error.getMessage())
         );
     }
