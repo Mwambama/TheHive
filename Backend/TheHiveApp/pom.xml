@@ -31,7 +31,7 @@
 	</properties>
 
 	<dependencies>
-		<!-- Spring Web for building REST APIs -->
+		<!-- Spring Boot Web -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -52,6 +52,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Spring Boot REST -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
+
 		<!-- Spring Data JPA for ORM support -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -70,7 +76,7 @@
 			<artifactId>mysql-connector-j</artifactId>
 		</dependency>
 
-		<!-- Spring Boot Hibernate -->
+		<!-- Hibernate validators -->
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
