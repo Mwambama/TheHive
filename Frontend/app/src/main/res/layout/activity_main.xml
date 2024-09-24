@@ -18,4 +18,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="50dp" />
 
+    <!-- Button to go to LoginActivity -->
+    <Button
+        android:id="@+id/goToLoginActivityButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="Go to Login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/goToCompanyActivityButton" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
