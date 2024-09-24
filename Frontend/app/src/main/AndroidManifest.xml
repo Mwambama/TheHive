@@ -26,19 +26,22 @@
             </intent-filter>
         </activity>
 
+        <!-- Company Data Activity -->
+        <activity android:name=".volley.JsonArrReqActivity" />
+
         <!-- Company Activity -->
         <activity android:name=".company_user.CompanyActivity"
             android:exported="true">
         </activity>
 
-        <!-- Company Add/Delete Activity -->
-        <activity android:name=".company_user.AddDeleteCompanyActivity"/>
+        <!-- Company Add/Delete/Get/Update Activity -->
+        <activity android:name=".company_user.handleEmployers.CompanyActivityApi"/>
 
+        <!-- Company See Employers Activity -->
+        <activity android:name=".company_user.handleEmployers.SeeUsersActivity" />
 
-        <activity android:name=".company_user.SeeUsersActivity" />
-        <activity android:name=".volley.JsonArrReqActivity" />
-
-
+        <!-- Company Add/Delete/Get/Update Invitation Activity -->
+        <activity android:name=".company_user.invitations.AddInvitationActivity" />
 
     </application>
 </manifest>
