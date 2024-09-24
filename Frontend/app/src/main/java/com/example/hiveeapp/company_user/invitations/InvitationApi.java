@@ -1,13 +1,11 @@
 package com.example.hiveeapp.company_user.invitations;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
 
@@ -33,11 +31,11 @@ public class InvitationApi {
             fis.read(data);
             fis.close();
             String jsonString = new String(data, "UTF-8");
+            Log.d("FileRead", "Invitations loaded from " + INVITATIONS_FILE);
             return new JSONArray(jsonString);
         } catch (Exception e) {
             e.printStackTrace();
-            // If file does not exist or is empty, return an empty array
-            return new JSONArray();
+            return new JSONArray();  // Return empty array if file does not exist
         }
     }
 
@@ -48,6 +46,7 @@ public class InvitationApi {
             FileOutputStream fos = context.openFileOutput(INVITATIONS_FILE, Context.MODE_PRIVATE);
             fos.write(jsonString.getBytes("UTF-8"));
             fos.close();
+            Log.d("FileWrite", "Invitations saved to " + INVITATIONS_FILE);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,19 +69,31 @@ public class InvitationApi {
         return newId;
     }
 
-    // Method to send an invitation
+    // Method to send an invitation (Create)
     public static void sendInvitation(Context context, int companyId, String email, String message,
                                       Response.Listener<JSONObject> listener,
                                       Response.ErrorListener errorListener) {
 
-        // Create the JSON payload for the invitation
-        JSONObject invitationPayload = new JSONObject();
+        // Create new invitation object locally
+        JSONObject newInvitation = new JSONObject();
         try {
-            invitationPayload.put("company_id", companyId);
-            invitationPayload.put("email", email);
-            invitationPayload.put("message", message);  // Include message
-        } catch (JSONException e) {
+            JSONArray invitations = readInvitationsFromFile(context);
+            int newId = generateNewId(invitations);
+            newInvitation.put("id", newId);
+            newInvitation.put("company_id", companyId);
+            newInvitation.put("email", email);
+            newInvitation.put("message", message);
+
+            // Add to invitations array
+            invitations.put(newInvitation);
+
+            // Write back to file
+            writeInvitationsToFile(context, invitations);
+
+        } catch (Exception e) {
             e.printStackTrace();
+            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
+            return;
         }
 
         // Define the URL for sending the invitation
@@ -92,48 +103,12 @@ public class InvitationApi {
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 invitationUrl,
-                invitationPayload,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // On success, save the invitation locally
-                        new Thread(() -> {
-                            try {
-                                JSONArray invitations = readInvitationsFromFile(context);
-
-                                // Create new invitation object locally
-                                JSONObject newInvitation = new JSONObject();
-                                int newId = generateNewId(invitations);
-                                newInvitation.put("id", newId);
-                                newInvitation.put("company_id", companyId);
-                                newInvitation.put("email", email);
-                                newInvitation.put("message", message);
-
-                                // Add to invitations array
-                                invitations.put(newInvitation);
-
-                                // Write back to file
-                                writeInvitationsToFile(context, invitations);
-
-                                // Call the success listener on the main thread
-                                new Handler(Looper.getMainLooper()).post(() -> listener.onResponse(newInvitation));
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                // Call error listener on main thread
-                                new Handler(Looper.getMainLooper()).post(() ->
-                                        errorListener.onErrorResponse(new VolleyError(e.getMessage()))
-                                );
-                            }
-                        }).start();
-                    }
+                newInvitation,
+                response -> {
+                    listener.onResponse(response);
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Call error listener on main thread
-                        new Handler(Looper.getMainLooper()).post(() -> errorListener.onErrorResponse(error));
-                    }
+                error -> {
+                    errorListener.onErrorResponse(error);
                 }
         ) {
             @Override
@@ -148,10 +123,35 @@ public class InvitationApi {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    // Method to delete an invitation
+    // Method to delete an invitation (Delete)
     public static void deleteInvitation(Context context, int invitationId,
                                         Response.Listener<JSONObject> listener,
                                         Response.ErrorListener errorListener) {
+
+        try {
+            JSONArray invitations = readInvitationsFromFile(context);
+
+            // Find and remove invitation with the given id
+            boolean found = false;
+            for (int i = 0; i < invitations.length(); i++) {
+                JSONObject invitation = invitations.getJSONObject(i);
+                if (invitation.getInt("id") == invitationId) {
+                    invitations.remove(i);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                // Write back to file
+                writeInvitationsToFile(context, invitations);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
+            return;
+        }
 
         // Define the URL for deleting the invitation
         String deleteUrl = BASE_URL + "delete/" + invitationId;
@@ -161,49 +161,13 @@ public class InvitationApi {
                 Request.Method.DELETE,
                 deleteUrl,
                 null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // On success, delete the invitation locally
-                        new Thread(() -> {
-                            try {
-                                JSONArray invitations = readInvitationsFromFile(context);
-
-                                // Find and remove invitation with the given id
-                                boolean found = false;
-                                for (int i = 0; i < invitations.length(); i++) {
-                                    JSONObject invitation = invitations.getJSONObject(i);
-                                    if (invitation.getInt("id") == invitationId) {
-                                        invitations.remove(i);
-                                        found = true;
-                                        break;
-                                    }
-                                }
-
-                                if (found) {
-                                    // Write back to file
-                                    writeInvitationsToFile(context, invitations);
-                                }
-
-                                // Call the success listener on the main thread
-                                new Handler(Looper.getMainLooper()).post(() -> listener.onResponse(response));
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                // Call error listener on main thread
-                                new Handler(Looper.getMainLooper()).post(() ->
-                                        errorListener.onErrorResponse(new VolleyError(e.getMessage()))
-                                );
-                            }
-                        }).start();
-                    }
+                response -> {
+                    // On success, you can update any additional data if needed
+                    listener.onResponse(response);
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Call error listener on main thread
-                        new Handler(Looper.getMainLooper()).post(() -> errorListener.onErrorResponse(error));
-                    }
+                error -> {
+                    // Even if there is an error, we have already deleted the invitation locally
+                    errorListener.onErrorResponse(error);
                 }
         ) {
             @Override
@@ -218,40 +182,60 @@ public class InvitationApi {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    // Method to get invitations
+    // Method to get invitations (Read)
     public static void getInvitations(Context context,
                                       Response.Listener<JSONArray> listener,
                                       Response.ErrorListener errorListener) {
 
         // Read invitations from local file
-        new Thread(() -> {
-            try {
-                JSONArray invitations = readInvitationsFromFile(context);
+        try {
+            JSONArray invitations = readInvitationsFromFile(context);
 
-                // Call the success listener on the main thread
-                new Handler(Looper.getMainLooper()).post(() -> listener.onResponse(invitations));
+            // Call the success listener
+            listener.onResponse(invitations);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                // Call error listener on main thread
-                new Handler(Looper.getMainLooper()).post(() ->
-                        errorListener.onErrorResponse(new VolleyError(e.getMessage()))
-                );
-            }
-        }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
+        }
     }
 
-    // Method to update an invitation
-    public static void updateInvitation(Context context, int invitationId, String newEmail,
+    // Method to update an invitation (Update)
+    public static void updateInvitation(Context context, int invitationId, String newEmail, String newMessage,
                                         Response.Listener<JSONObject> listener,
                                         Response.ErrorListener errorListener) {
 
-        // Create the JSON payload for the updated invitation
-        JSONObject updatePayload = new JSONObject();
+        JSONObject updatedInvitation = null;
+
         try {
-            updatePayload.put("email", newEmail);
-        } catch (JSONException e) {
+            JSONArray invitations = readInvitationsFromFile(context);
+
+            // Find the invitation with the given id
+            boolean found = false;
+            for (int i = 0; i < invitations.length(); i++) {
+                JSONObject invitation = invitations.getJSONObject(i);
+                if (invitation.getInt("id") == invitationId) {
+                    // Update the email and message
+                    invitation.put("email", newEmail);
+                    invitation.put("message", newMessage);
+                    updatedInvitation = invitation;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                // Write back to file
+                writeInvitationsToFile(context, invitations);
+            } else {
+                errorListener.onErrorResponse(new VolleyError("Invitation not found"));
+                return;
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
+            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
+            return;
         }
 
         // Define the URL for updating the invitation
@@ -261,51 +245,14 @@ public class InvitationApi {
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.PUT,
                 updateUrl,
-                updatePayload,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // On success, update the invitation locally
-                        new Thread(() -> {
-                            try {
-                                JSONArray invitations = readInvitationsFromFile(context);
-
-                                // Find the invitation with the given id
-                                boolean found = false;
-                                for (int i = 0; i < invitations.length(); i++) {
-                                    JSONObject invitation = invitations.getJSONObject(i);
-                                    if (invitation.getInt("id") == invitationId) {
-                                        // Update the email
-                                        invitation.put("email", newEmail);
-                                        found = true;
-                                        break;
-                                    }
-                                }
-
-                                if (found) {
-                                    // Write back to file
-                                    writeInvitationsToFile(context, invitations);
-                                }
-
-                                // Call the success listener on the main thread
-                                new Handler(Looper.getMainLooper()).post(() -> listener.onResponse(response));
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                // Call error listener on main thread
-                                new Handler(Looper.getMainLooper()).post(() ->
-                                        errorListener.onErrorResponse(new VolleyError(e.getMessage()))
-                                );
-                            }
-                        }).start();
-                    }
+                updatedInvitation,
+                response -> {
+                    // On success, you can update any additional data if needed
+                    listener.onResponse(response);
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Call error listener on main thread
-                        new Handler(Looper.getMainLooper()).post(() -> errorListener.onErrorResponse(error));
-                    }
+                error -> {
+                    // Even if there is an error, we have already updated the invitation locally
+                    errorListener.onErrorResponse(error);
                 }
         ) {
             @Override

@@ -1,12 +1,9 @@
 package com.example.hiveeapp.company_user.invitations;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 
 import org.json.JSONArray;
@@ -57,9 +54,13 @@ public class AddInvitationActivity extends AppCompatActivity {
                 JSONObject selectedInvitation = invitationsArray.getJSONObject(position);
                 selectedInvitationId = selectedInvitation.getInt("id");
                 String email = selectedInvitation.getString("email");
+                String message = selectedInvitation.has("message") ? selectedInvitation.getString("message") : "No message available";
 
                 // Display selected invitation details
-                responseTextView.setText("Selected Invitation ID: " + selectedInvitationId + "\nEmail: " + email);
+                emailField.setText(email);
+                messageField.setText(message);
+                responseTextView.setText("Selected Invitation ID: " + selectedInvitationId);
+
             } catch (JSONException e) {
                 e.printStackTrace();
                 responseTextView.setText("Error retrieving invitation details.");
@@ -92,12 +93,13 @@ public class AddInvitationActivity extends AppCompatActivity {
         // Update Invitation
         updateInvitationButton.setOnClickListener(v -> {
             String newEmail = emailField.getText().toString().trim();
+            String newMessage = messageField.getText().toString().trim();
             if (selectedInvitationId == -1) {
                 Toast.makeText(AddInvitationActivity.this, "Please select an invitation to update.", Toast.LENGTH_SHORT).show();
             } else if (newEmail.isEmpty()) {
                 Toast.makeText(AddInvitationActivity.this, "Please enter a new email for update.", Toast.LENGTH_SHORT).show();
             } else {
-                updateInvitation(selectedInvitationId, newEmail);
+                updateInvitation(selectedInvitationId, newEmail, newMessage);
             }
         });
 
@@ -116,9 +118,12 @@ public class AddInvitationActivity extends AppCompatActivity {
                     responseTextView.setText("Invitation sent successfully!");
                     emailField.setText("");
                     messageField.setText("");
-                    getInvitations();
+                    getInvitations();  // Refresh invitations after sending
                 },
-                error -> responseTextView.setText("Failed to send invitation: " + error.getMessage())
+                error -> {
+                    responseTextView.setText("Failed to send invitation: " + error.getMessage());
+                    getInvitations();  // Refresh invitations even if there is an error
+                }
         );
     }
 
@@ -132,8 +137,13 @@ public class AddInvitationActivity extends AppCompatActivity {
                     // Refresh the list of invitations
                     getInvitations();
                     selectedInvitationId = -1;  // Reset the selected invitation
+                    emailField.setText("");
+                    messageField.setText("");
                 },
-                error -> responseTextView.setText("Failed to delete invitation: " + error.getMessage())
+                error -> {
+                    responseTextView.setText("Failed to delete invitation: " + error.getMessage());
+                    getInvitations();  // Refresh invitations even if there is an error
+                }
         );
     }
 
@@ -151,17 +161,20 @@ public class AddInvitationActivity extends AppCompatActivity {
                             int id = invitation.getInt("id");
                             String email = invitation.getString("email");
 
+                            // Check if "message" exists, else provide a default value
+                            String message = invitation.has("message") ? invitation.getString("message") : "No message available";
+
                             // Add invitation details to the list
-                            invitationsList.add("ID: " + id + ", Email: " + email);
+                            invitationsList.add("ID: " + id + ", Email: " + email + ", Message: " + message);
                         }
 
                         // Notify the adapter that the data has changed
                         adapter.notifyDataSetChanged();
-
                         responseTextView.setText("Invitations loaded successfully.");
+
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        responseTextView.setText("Error parsing invitations.");
+                        responseTextView.setText("Error parsing invitations: " + e.getMessage());
                     }
                 },
                 error -> responseTextView.setText("Failed to retrieve invitations: " + error.getMessage())
@@ -169,19 +182,24 @@ public class AddInvitationActivity extends AppCompatActivity {
     }
 
     // Update Invitation using InvitationApi
-    private void updateInvitation(int invitationId, String newEmail) {
+    private void updateInvitation(int invitationId, String newEmail, String newMessage) {
         InvitationApi.updateInvitation(
                 this,
                 invitationId,
                 newEmail,
+                newMessage,
                 response -> {
                     responseTextView.setText("Invitation updated successfully!");
                     emailField.setText("");  // Clear the input field
+                    messageField.setText(""); // Clear the message field
                     // Refresh the list of invitations
                     getInvitations();
                     selectedInvitationId = -1;  // Reset the selected invitation
                 },
-                error -> responseTextView.setText("Failed to update invitation: " + error.getMessage())
+                error -> {
+                    responseTextView.setText("Failed to update invitation: " + error.getMessage());
+                    getInvitations();  // Refresh invitations even if there is an error
+                }
         );
     }
 }
