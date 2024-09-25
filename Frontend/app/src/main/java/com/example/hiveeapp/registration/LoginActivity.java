@@ -3,7 +3,6 @@ package com.example.hiveeapp.registration;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
-import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,7 +17,7 @@ import com.example.hiveeapp.volley.VolleySingleton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import student_user.StudentMainActivity;
+import com.example.hiveeapp.student_user.StudentMainActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
