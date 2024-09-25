@@ -1,6 +1,7 @@
 package com.example.hiveeapp.company_user.handleEmployers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.*;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.company_user.CompanyActivity;
+import com.example.hiveeapp.company_user.invitations.AddInvitationActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONArray;
@@ -58,6 +61,36 @@ public class CompanyActivityApi extends AppCompatActivity {
         getEmployersButton = findViewById(R.id.getEmployersButton);
         textView = findViewById(R.id.textView);
         employersListView = findViewById(R.id.employersListView);
+
+        // Back Arrow Icon Logic
+        ImageButton backArrowIcon = findViewById(R.id.backArrowIcon);
+        backArrowIcon.setOnClickListener(v -> {
+            // Navigate back to the parent activity
+            Intent intent = new Intent(CompanyActivityApi.this, CompanyActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        // Icon Button Logic
+        ImageButton manageEmployersIcon = findViewById(R.id.manageEmployersIcon);
+        manageEmployersIcon.setOnClickListener(v -> {
+            Toast.makeText(CompanyActivityApi.this, "You are already on this page", Toast.LENGTH_SHORT).show();
+        });
+
+        ImageButton manageInvitationsIcon = findViewById(R.id.manageInvitationsIcon);
+        manageInvitationsIcon.setOnClickListener(v -> {
+            // Navigate to manage invitations activity
+            Intent intent = new Intent(CompanyActivityApi.this, AddInvitationActivity.class);
+            startActivity(intent);
+        });
+
+        ImageButton mainUserPageIcon = findViewById(R.id.mainUserPageIcon);
+        mainUserPageIcon.setOnClickListener(v -> {
+            // Navigate to company main activity
+            Intent intent = new Intent(CompanyActivityApi.this, CompanyActivity.class);
+            startActivity(intent);
+        });
+
 
         // Initialize JSON array to store employer data
         employerArray = new JSONArray();

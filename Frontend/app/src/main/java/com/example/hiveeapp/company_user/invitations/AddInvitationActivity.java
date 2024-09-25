@@ -1,10 +1,13 @@
 package com.example.hiveeapp.company_user.invitations;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.company_user.CompanyActivity;
+import com.example.hiveeapp.company_user.handleEmployers.CompanyActivityApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +30,8 @@ public class AddInvitationActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
     private JSONArray invitationsArray;  // Store the array of invitations
 
+    private ImageButton backArrowIcon, mainUserPageIcon, manageEmployersIcon, manageInvitationsIcon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +46,37 @@ public class AddInvitationActivity extends AppCompatActivity {
         updateInvitationButton = findViewById(R.id.updateInvitationButton);
         responseTextView = findViewById(R.id.responseTextView);
         invitationsListView = findViewById(R.id.invitationsListView);
+
+        // Bottom section icons
+        backArrowIcon = findViewById(R.id.backArrowIcon);
+        mainUserPageIcon = findViewById(R.id.mainUserPageIcon);
+        manageEmployersIcon = findViewById(R.id.manageEmployersIcon);
+        manageInvitationsIcon = findViewById(R.id.manageInvitationsIcon);
+
+        // Set up the back arrow click listener
+        backArrowIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(AddInvitationActivity.this, CompanyActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        // Set up the main user page icon click listener
+        mainUserPageIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(AddInvitationActivity.this, CompanyActivity.class);
+            startActivity(intent);
+        });
+
+        // Set up the manage employers icon click listener
+        manageEmployersIcon.setOnClickListener(v -> {
+            // Navigate to the CompanyActivityApi (Manage Employers page)
+            Intent intent = new Intent(AddInvitationActivity.this, CompanyActivityApi.class);
+            startActivity(intent);
+        });
+
+        // Set up the manage invitations icon click listener
+        manageInvitationsIcon.setOnClickListener(v -> {
+            Toast.makeText(AddInvitationActivity.this, "You are already on this page", Toast.LENGTH_SHORT).show();
+        });
 
         // Initialize the ListView adapter
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, invitationsList);

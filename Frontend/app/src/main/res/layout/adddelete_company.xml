@@ -6,18 +6,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".company_user.handleEmployers.CompanyActivityApi"
-    android:padding="16dp"
     android:background="@android:color/white">
 
-    <!-- Vertical Guideline for Left Margin -->
+    <ImageButton
+        android:id="@+id/backArrowIcon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_back_arrow"
+        android:contentDescription="Back Arrow"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:tint="#333333"
+        android:scaleType="fitCenter"
+        android:padding="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintGuide_percent="0.05"
         android:orientation="vertical" />
-
-    <!-- Vertical Guideline for Right Margin -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineRight"
         android:layout_width="wrap_content"
@@ -30,14 +42,15 @@
         android:id="@+id/nameField"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:background="@drawable/rounded_edittext"
         android:hint="Name"
         android:padding="12dp"
-        android:background="@drawable/rounded_edittext"
         android:textColor="@android:color/black"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintEnd_toEndOf="@+id/guidelineRight"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Email Field -->
     <EditText
@@ -210,5 +223,69 @@
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintEnd_toEndOf="@+id/guidelineRight"
         android:layout_marginTop="16dp" />
+
+    <!-- Bottom Section with Icon Buttons -->
+    <LinearLayout
+        android:id="@+id/bottomSection"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="#A9A9A9"
+        android:elevation="4dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+    <!-- Manage Employers Icon -->
+    <ImageButton
+        android:id="@+id/manageEmployersIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_manage_employers"
+        android:contentDescription="Manage Employers"
+        android:tint="#333333"
+        android:background="@drawable/rounded_background"
+        android:scaleType="fitCenter"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:padding="15dp"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <!-- Main User Page Icon -->
+    <ImageButton
+        android:id="@+id/mainUserPageIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_company"
+        android:contentDescription="Main User Page"
+        android:tint="#333333"
+        android:background="@drawable/rounded_background"
+        android:scaleType="fitCenter"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:padding="15dp"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <!-- Manage Invitations Icon -->
+    <ImageButton
+        android:id="@+id/manageInvitationsIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_manage_invitations"
+        android:contentDescription="Manage Invitations"
+        android:tint="#333333"
+        android:background="@drawable/rounded_background"
+        android:scaleType="fitCenter"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:padding="15dp"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
