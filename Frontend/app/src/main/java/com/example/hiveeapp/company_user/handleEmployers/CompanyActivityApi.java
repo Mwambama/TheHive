@@ -38,7 +38,7 @@ public class CompanyActivityApi extends AppCompatActivity {
     private int selectedEmployerId = -1;
 
     // URL for POST, DELETE, GET, and PUT requests
-    private final String baseUrl = "https://2e7fd141-9a29-4eae-ac7f-4996f5e64e96.mock.pstmn.io/";
+    private final String baseUrl = "";
 
     private static final String EMPLOYERS_FILE = "employers.json";
 
