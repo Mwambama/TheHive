@@ -17,13 +17,13 @@
         android:src="@drawable/ic_back_arrow"
         android:contentDescription="Back Arrow"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:tint="#333333"
         android:scaleType="fitCenter"
         android:padding="8dp"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="#333333" />
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineLeft"
         android:layout_width="wrap_content"
@@ -224,6 +224,7 @@
         app:layout_constraintEnd_toEndOf="@+id/guidelineRight"
         android:layout_marginTop="16dp" />
 
+    <!-- Navigate Section -->
     <!-- Bottom Section with Icon Buttons -->
     <LinearLayout
         android:id="@+id/bottomSection"
@@ -245,7 +246,7 @@
         android:layout_height="48dp"
         android:src="@drawable/ic_manage_employers"
         android:contentDescription="Manage Employers"
-        android:tint="#333333"
+        app:tint="#333333"
         android:background="@drawable/rounded_background"
         android:scaleType="fitCenter"
         android:layout_marginStart="24dp"
@@ -261,14 +262,14 @@
         android:layout_height="48dp"
         android:src="@drawable/ic_company"
         android:contentDescription="Main User Page"
-        android:tint="#333333"
         android:background="@drawable/rounded_background"
         android:scaleType="fitCenter"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:padding="15dp"
         android:clickable="true"
-        android:focusable="true"/>
+        android:focusable="true"
+        app:tint="#333333" />
 
     <!-- Manage Invitations Icon -->
     <ImageButton
@@ -277,14 +278,14 @@
         android:layout_height="48dp"
         android:src="@drawable/ic_manage_invitations"
         android:contentDescription="Manage Invitations"
-        android:tint="#333333"
         android:background="@drawable/rounded_background"
         android:scaleType="fitCenter"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:padding="15dp"
         android:clickable="true"
-        android:focusable="true"/>
+        android:focusable="true"
+        app:tint="#333333" />
 
     </LinearLayout>
 

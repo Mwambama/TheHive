@@ -18,13 +18,13 @@
         android:src="@drawable/ic_back_arrow"
         android:contentDescription="Back Arrow"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:tint="#333333"
         android:scaleType="fitCenter"
         android:padding="8dp"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="#333333" />
 
     <!-- Middle Section with a Text and Divider -->
     <TextView
@@ -50,6 +50,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />
 
+    <!-- Navigate Section -->
     <!-- Bottom Section with Icon Buttons -->
     <LinearLayout
         android:id="@+id/bottomSection"
@@ -76,7 +77,7 @@
             android:padding="15dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_manage_employers"
-            android:tint="#333333" />
+            app:tint="#333333" />
 
         <!-- Main User Page Icon -->
         <ImageButton
@@ -92,7 +93,7 @@
             android:padding="15dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_company"
-            android:tint="#333333" />
+            app:tint="#333333" />
 
         <!-- Manage Invitations Icon -->
         <ImageButton
@@ -108,7 +109,7 @@
             android:padding="15dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_manage_invitations"
-            android:tint="#333333" />
+            app:tint="#333333" />
 
     </LinearLayout>
 
