@@ -1,4 +1,4 @@
-package com.example.thehiveapp.config.authentication;
+package com.example.thehiveapp.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
