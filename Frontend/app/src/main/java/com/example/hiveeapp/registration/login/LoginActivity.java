@@ -1,4 +1,4 @@
-package com.example.hiveeapp.registration;
+package com.example.hiveeapp.registration.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import com.example.hiveeapp.R;
 import com.example.hiveeapp.admin_user.AdminMainActivity;
 import com.example.hiveeapp.company_user.handleEmployers.CompanyActivityApi;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
+import com.example.hiveeapp.registration.forgotPassword.ForgotPasswordActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONException;
@@ -43,8 +44,9 @@ public class LoginActivity extends AppCompatActivity {
         togglePasswordVisibility.setOnClickListener(v -> togglePasswordVisibility());
 
         forgotPasswordButton.setOnClickListener(v -> {
-            // Handle forgot password logic here
-            Toast.makeText(LoginActivity.this, "Forgot Password clicked", Toast.LENGTH_SHORT).show();
+            // Navigate to ForgotPasswordActivity
+            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
         });
     }
 
