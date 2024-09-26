@@ -8,6 +8,7 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
@@ -51,5 +52,9 @@ public class UserServiceImpl implements UserService{
             throw new ResourceNotFoundException(role + " not found with email " + email);
         }
         return user.getUserId();
+    }
+
+    public Boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }
