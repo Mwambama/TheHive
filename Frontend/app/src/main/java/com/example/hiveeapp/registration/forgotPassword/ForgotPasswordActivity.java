@@ -48,7 +48,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
 
         // Placeholder URL for sending verification key
-        String url = "";
+        String url = "https://run.mocky.io/v3/8fc2528f-16f4-4c7f-982e-3ccef695e48a";  // Mock server
 
         // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(
@@ -56,7 +56,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 url,
                 payload,
                 response -> {
-                    // Handle successful response
                     try {
                         boolean success = response.getBoolean("success");
                         String message = response.getString("message");
@@ -64,7 +63,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                             Toast.makeText(this, "Verification key sent to your email.", Toast.LENGTH_SHORT).show();
                             // Navigate to VerifyKeyActivity
                             Intent intent = new Intent(ForgotPasswordActivity.this, VerifyKeyActivity.class);
-                            intent.putExtra("email", email); // Pass the email to the next activity
+                            intent.putExtra("email", email);
                             startActivity(intent);
                         } else {
                             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -75,12 +74,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
-                    // Handle error
                     Toast.makeText(this, "Error sending verification key: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
         );
 
-        // Add the request to the Volley request queue
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 }

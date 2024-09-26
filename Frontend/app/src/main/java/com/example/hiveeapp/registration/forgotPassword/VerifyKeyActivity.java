@@ -17,7 +17,7 @@ public class VerifyKeyActivity extends AppCompatActivity {
 
     private EditText keyField;
     private Button verifyKeyButton;
-    private String email; // Holds the user's email
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,6 @@ public class VerifyKeyActivity extends AppCompatActivity {
     }
 
     private void verifyKey(String email, String key) {
-        // Create JSON payload
         JSONObject payload = new JSONObject();
         try {
             payload.put("email", email);
@@ -52,16 +51,13 @@ public class VerifyKeyActivity extends AppCompatActivity {
             return;
         }
 
-        // Placeholder URL for verifying the key
-        String url = "";
+        String url = "https://run.mocky.io/v3/2a551f5e-0003-4fa4-ba4f-f286d7aff9b6";  // Mock server
 
-        // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
                 payload,
                 response -> {
-                    // Handle successful response
                     try {
                         boolean success = response.getBoolean("success");
                         String message = response.getString("message");
@@ -81,12 +77,10 @@ public class VerifyKeyActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
-                    // Handle error
                     Toast.makeText(this, "Error verifying key: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
         );
 
-        // Add the request to the Volley request queue
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 }

@@ -47,7 +47,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
 
     private void resetPassword(String email, String newPassword) {
-        // Create JSON payload
         JSONObject payload = new JSONObject();
         try {
             payload.put("email", email);
@@ -58,16 +57,13 @@ public class ResetPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        // Placeholder URL for resetting the password
-        String url = "";
+        String url = "https://run.mocky.io/v3/f5fb1677-3aae-40ff-803d-cc9fe1a630c7";  // Mock server
 
-        // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
                 payload,
                 response -> {
-                    // Handle successful response
                     try {
                         boolean success = response.getBoolean("success");
                         String message = response.getString("message");
@@ -86,12 +82,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
-                    // Handle error
                     Toast.makeText(this, "Error resetting password: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
         );
 
-        // Add the request to the Volley request queue
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 }
