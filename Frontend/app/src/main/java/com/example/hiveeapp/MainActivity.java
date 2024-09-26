@@ -7,7 +7,7 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hiveeapp.company_user.CompanyActivity;
-import com.example.hiveeapp.registration.LoginActivity;
+import com.example.hiveeapp.registration.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
