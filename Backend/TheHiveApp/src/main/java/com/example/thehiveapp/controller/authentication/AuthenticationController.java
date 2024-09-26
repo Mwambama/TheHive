@@ -1,5 +1,6 @@
 package com.example.thehiveapp.controller.authentication;
 
+import com.example.thehiveapp.dto.authentication.LoginRequest;
 import com.example.thehiveapp.dto.authentication.SignUpRequest;
 import com.example.thehiveapp.service.authentication.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +23,10 @@ public class AuthenticationController {
     @PostMapping("/signup")
     public void createAuthentication(@RequestBody SignUpRequest request) {
         authenticationService.signUp(request);
+    }
+
+    @PostMapping("/login")
+    public void loginAuthentication(@RequestBody LoginRequest request){
+        authenticationService.login(request);
     }
 }
