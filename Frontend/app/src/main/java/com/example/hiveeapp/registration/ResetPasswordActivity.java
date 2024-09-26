@@ -58,7 +58,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         }
 
         // Placeholder URL for resetting the password
-        String url = "";
+        String url = "https://run.mocky.io/v3/80c07b6e-27f6-4181-b9e5-98e31b66f083";
 
         // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(

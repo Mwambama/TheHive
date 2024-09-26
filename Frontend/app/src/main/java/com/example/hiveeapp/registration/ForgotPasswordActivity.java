@@ -48,7 +48,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
 
         // Placeholder URL for sending verification key
-        String url = "";
+        String url = "https://jsonplaceholder.typicode.com/posts/1";
 
         // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(

@@ -53,7 +53,7 @@ public class VerifyKeyActivity extends AppCompatActivity {
         }
 
         // Placeholder URL for verifying the key
-        String url = "";
+        String url = "https://run.mocky.io/v3/a328228e-7831-49b4-8185-24ebbe845875";
 
         // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(
