@@ -18,7 +18,7 @@
         android:networkSecurityConfig="@xml/network_security_config"> <!-- Added network security config -->
 
         <!--Login Activity-->
-        <activity android:name=".registration.LoginActivity" />
+        <activity android:name=".registration.login.LoginActivity" />
 
         <!-- Main Activity -->
         <activity
@@ -48,9 +48,9 @@
         <activity android:name=".company_user.invitations.AddInvitationActivity" />
 
         <!-- forgot password Activity -->
-        <activity android:name=".registration.ForgotPasswordActivity" />
-        <activity android:name=".registration.VerifyKeyActivity" />
-        <activity android:name=".registration.ResetPasswordActivity" />
+        <activity android:name=".registration.forgotPassword.ForgotPasswordActivity" />
+        <activity android:name=".registration.forgotPassword.VerifyKeyActivity" />
+        <activity android:name=".registration.forgotPassword.ResetPasswordActivity" />
     </application>
 
 </manifest>

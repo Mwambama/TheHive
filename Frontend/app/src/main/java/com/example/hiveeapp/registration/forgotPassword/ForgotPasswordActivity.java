@@ -1,4 +1,4 @@
-package com.example.hiveeapp.registration;
+package com.example.hiveeapp.registration.forgotPassword;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -48,7 +48,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
 
         // Placeholder URL for sending verification key
-        String url = "https://jsonplaceholder.typicode.com/posts/1";
+        String url = "";
 
         // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(

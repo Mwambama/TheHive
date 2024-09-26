@@ -1,4 +1,4 @@
-package com.example.hiveeapp.registration;
+package com.example.hiveeapp.registration.forgotPassword;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,52 +8,58 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class VerifyKeyActivity extends AppCompatActivity {
+public class ResetPasswordActivity extends AppCompatActivity {
 
-    private EditText keyField;
-    private Button verifyKeyButton;
-    private String email; // Holds the user's email
+    private EditText newPasswordField, confirmPasswordField;
+    private Button resetPasswordButton;
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_verify_key);
+        setContentView(R.layout.activity_reset_password);
 
-        keyField = findViewById(R.id.keyField);
-        verifyKeyButton = findViewById(R.id.verifyKeyButton);
+        newPasswordField = findViewById(R.id.newPasswordField);
+        confirmPasswordField = findViewById(R.id.confirmNewPasswordField);
+        resetPasswordButton = findViewById(R.id.resetPasswordButton);
 
         // Retrieve the email from the previous activity
         email = getIntent().getStringExtra("email");
 
-        verifyKeyButton.setOnClickListener(v -> {
-            String key = keyField.getText().toString().trim();
-            if (key.isEmpty()) {
-                Toast.makeText(VerifyKeyActivity.this, "Please enter the key.", Toast.LENGTH_SHORT).show();
+        resetPasswordButton.setOnClickListener(v -> {
+            String newPassword = newPasswordField.getText().toString();
+            String confirmPassword = confirmPasswordField.getText().toString();
+
+            if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
+                Toast.makeText(ResetPasswordActivity.this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+            } else if (!newPassword.equals(confirmPassword)) {
+                Toast.makeText(ResetPasswordActivity.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
             } else {
-                verifyKey(email, key);
+                resetPassword(email, newPassword);
             }
         });
     }
 
-    private void verifyKey(String email, String key) {
+    private void resetPassword(String email, String newPassword) {
         // Create JSON payload
         JSONObject payload = new JSONObject();
         try {
             payload.put("email", email);
-            payload.put("verification_key", key);
+            payload.put("new_password", newPassword);
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Failed to create request.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Placeholder URL for verifying the key
-        String url = "https://run.mocky.io/v3/a328228e-7831-49b4-8185-24ebbe845875";
+        // Placeholder URL for resetting the password
+        String url = "";
 
         // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(
@@ -66,10 +72,9 @@ public class VerifyKeyActivity extends AppCompatActivity {
                         boolean success = response.getBoolean("success");
                         String message = response.getString("message");
                         if (success) {
-                            Toast.makeText(this, "Key verified successfully.", Toast.LENGTH_SHORT).show();
-                            // Navigate to ResetPasswordActivity
-                            Intent intent = new Intent(VerifyKeyActivity.this, ResetPasswordActivity.class);
-                            intent.putExtra("email", email);
+                            Toast.makeText(this, "Password reset successful!", Toast.LENGTH_SHORT).show();
+                            // Navigate to LoginActivity
+                            Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
                             startActivity(intent);
                             finish();
                         } else {
@@ -82,7 +87,7 @@ public class VerifyKeyActivity extends AppCompatActivity {
                 },
                 error -> {
                     // Handle error
-                    Toast.makeText(this, "Error verifying key: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Error resetting password: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
         );
 

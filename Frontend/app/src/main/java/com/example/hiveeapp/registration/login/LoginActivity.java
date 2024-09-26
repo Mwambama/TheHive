@@ -1,4 +1,4 @@
-package com.example.hiveeapp.registration;
+package com.example.hiveeapp.registration.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import com.example.hiveeapp.R;
 import com.example.hiveeapp.admin_user.AdminMainActivity;
 import com.example.hiveeapp.company_user.handleEmployers.CompanyActivityApi;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
+import com.example.hiveeapp.registration.forgotPassword.ForgotPasswordActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONException;
