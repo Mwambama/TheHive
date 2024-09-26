@@ -46,5 +46,10 @@
         <!-- Company Add/Delete/Get/Update Invitation Activity -->
         <activity android:name=".company_user.invitations.AddInvitationActivity" />
 
+        <!-- forgot password Activity -->
+        <activity android:name=".registration.ForgotPasswordActivity" />
+        <activity android:name=".registration.VerifyKeyActivity" />
+        <activity android:name=".registration.ResetPasswordActivity" />
+
     </application>
 </manifest>
