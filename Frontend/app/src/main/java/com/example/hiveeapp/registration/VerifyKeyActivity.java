@@ -53,7 +53,7 @@ public class VerifyKeyActivity extends AppCompatActivity {
         }
 
         // Placeholder URL for verifying the key
-        String url = "https://yourserver.com/api/verify_key";
+        String url = "";
 
         // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(

@@ -48,7 +48,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
 
         // Placeholder URL for sending verification key
-        String url = "https://yourserver.com/api/send_verification_key";
+        String url = "";
 
         // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(

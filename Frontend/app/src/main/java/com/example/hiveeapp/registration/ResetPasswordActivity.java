@@ -4,7 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.volley.VolleySingleton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
@@ -33,16 +40,57 @@ public class ResetPasswordActivity extends AppCompatActivity {
             } else if (!newPassword.equals(confirmPassword)) {
                 Toast.makeText(ResetPasswordActivity.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
             } else {
-                // TODO: Implement backend logic to reset the password
-
-                // For now, assume password reset is successful
-                Toast.makeText(ResetPasswordActivity.this, "Password reset successful!", Toast.LENGTH_SHORT).show();
-
-                // Navigate to LoginActivity
-                Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+                resetPassword(email, newPassword);
             }
         });
+    }
+
+    private void resetPassword(String email, String newPassword) {
+        // Create JSON payload
+        JSONObject payload = new JSONObject();
+        try {
+            payload.put("email", email);
+            payload.put("new_password", newPassword);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to create request.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Placeholder URL for resetting the password
+        String url = "";
+
+        // Create a new JsonObjectRequest
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                payload,
+                response -> {
+                    // Handle successful response
+                    try {
+                        boolean success = response.getBoolean("success");
+                        String message = response.getString("message");
+                        if (success) {
+                            Toast.makeText(this, "Password reset successful!", Toast.LENGTH_SHORT).show();
+                            // Navigate to LoginActivity
+                            Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Error parsing server response.", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    // Handle error
+                    Toast.makeText(this, "Error resetting password: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+        );
+
+        // Add the request to the Volley request queue
+        VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 }
