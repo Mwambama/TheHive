@@ -1,6 +1,5 @@
-package com.example.hiveeapp;
+package com.example.hiveeapp.registration.signup;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,13 +9,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.example.hiveeapp.volley.VolleySingleton;
 
-public class RegisterActivity extends AppCompatActivity {
+import com.example.hiveeapp.R;
+
+public class signupActivity extends AppCompatActivity {
 
     private ImageView imageView;
     private TextView messageText;   // define message textview variable
