@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
     <!-- Back Arrow Icon at the top left -->
     <ImageButton
@@ -23,12 +24,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Bottom Section with Icon Buttons -->
+    <!-- Bottom Navigation Section with Icon Buttons -->
     <LinearLayout
         android:id="@+id/bottomSection"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="#A9A9A9"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -49,7 +49,7 @@
             android:padding="15dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_manage_employers"
-            app:tint="#333333" />
+            app:tint="#6200EE" /> <!-- Neutral color -->
 
         <!-- Main User Page Icon -->
         <ImageButton
@@ -65,7 +65,7 @@
             android:padding="15dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_company"
-            app:tint="#333333" />
+            app:tint="#808080" />
 
         <!-- Manage Invitations Icon -->
         <ImageButton
@@ -81,7 +81,7 @@
             android:padding="15dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_manage_invitations"
-            app:tint="#333333" />
+            app:tint="#808080" />
 
     </LinearLayout>
 
