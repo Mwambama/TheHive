@@ -10,13 +10,19 @@
         android:id="@+id/backArrowIcon"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_back_arrow"
-        android:contentDescription="Back"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:tint="#000000"
+        android:clickable="true"
+        android:contentDescription="Back Arrow"
+        android:focusable="true"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_back_arrow"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:tint="#333333" />
+
 
     <!-- Title -->
     <TextView
