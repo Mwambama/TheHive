@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hiveeapp.MainActivity;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.company_user.handleEmployers.CompanyActivityApi;
-import com.example.hiveeapp.company_user.invitations.AddInvitationActivity;
+import com.example.hiveeapp.company_user.invitations.InvitationManagementActivity;
 
 public class CompanyActivity extends AppCompatActivity {
 
@@ -50,7 +50,7 @@ public class CompanyActivity extends AppCompatActivity {
 
         // Set click listener to navigate to AddInvitationActivity
         manageInvitationsIcon.setOnClickListener(v -> {
-            Intent intent = new Intent(CompanyActivity.this, AddInvitationActivity.class);
+            Intent intent = new Intent(CompanyActivity.this, InvitationManagementActivity.class);
             startActivity(intent);
         });
     }

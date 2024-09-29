@@ -3,9 +3,6 @@ package com.example.hiveeapp.company_user.handleEmployers;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,7 +10,7 @@ import com.android.volley.*;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.company_user.CompanyActivity;
-import com.example.hiveeapp.company_user.invitations.AddInvitationActivity;
+import com.example.hiveeapp.company_user.invitations.InvitationManagementActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONArray;
@@ -80,7 +77,7 @@ public class CompanyActivityApi extends AppCompatActivity {
         ImageButton manageInvitationsIcon = findViewById(R.id.manageInvitationsIcon);
         manageInvitationsIcon.setOnClickListener(v -> {
             // Navigate to manage invitations activity
-            Intent intent = new Intent(CompanyActivityApi.this, AddInvitationActivity.class);
+            Intent intent = new Intent(CompanyActivityApi.this, InvitationManagementActivity.class);
             startActivity(intent);
         });
 
