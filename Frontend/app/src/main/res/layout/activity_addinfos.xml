@@ -49,7 +49,7 @@
             android:padding="15dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_manage_employers"
-            app:tint="#6200EE" /> <!-- Neutral color -->
+            app:tint="#808080" />
 
         <!-- Main User Page Icon -->
         <ImageButton
@@ -81,7 +81,7 @@
             android:padding="15dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_manage_invitations"
-            app:tint="#808080" />
+            app:tint="#6200EE" />
 
     </LinearLayout>
 
