@@ -44,7 +44,8 @@
         <activity android:name=".company_user.handleEmployers.SeeUsersActivity" />
 
         <!-- Company Add/Delete/Get/Update Invitation Activity -->
-        <activity android:name=".company_user.invitations.AddInvitationActivity" />
+        <activity android:name=".company_user.invitations.InvitationManagementActivity" />
+        <activity android:name=".company_user.invitations.InvitationCreationActivity" />
 
         <!-- forgot password Activity -->
         <activity android:name=".registration.forgotPassword.ForgotPasswordActivity" />
