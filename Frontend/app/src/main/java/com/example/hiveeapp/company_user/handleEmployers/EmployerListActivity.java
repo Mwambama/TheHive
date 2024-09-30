@@ -111,7 +111,7 @@ public class EmployerListActivity extends AppCompatActivity {
         String zipCode = addressJson.getString("zip_code");
         String address = street + ", " + city + ", " + state + " " + zipCode;
 
-        return new Employer(id, name, email, phone, address);
+        return new Employer(id, name, email, phone, street, city, state, zipCode);
     }
 
     /**
@@ -166,7 +166,14 @@ public class EmployerListActivity extends AppCompatActivity {
                 nameTextView.setText(employer.getName());
                 emailTextView.setText(employer.getEmail());
                 phoneTextView.setText(employer.getPhone());
-                addressTextView.setText(employer.getAddress());
+
+                // Combine the address fields into a single string for display
+                String fullAddress = employer.getStreet() + ", " +
+                        employer.getCity() + ", " +
+                        employer.getState() + " " +
+                        employer.getZipCode();
+
+                addressTextView.setText(fullAddress);
 
                 updateButton.setOnClickListener(v -> showUpdateDialog(employer.getId(), employer));
                 deleteButton.setOnClickListener(v -> deleteEmployer(employer.getId()));
@@ -195,15 +202,10 @@ public class EmployerListActivity extends AppCompatActivity {
             nameField.setText(employerData.getName());
             emailField.setText(employerData.getEmail());
             phoneField.setText(employerData.getPhone());
-
-            // Split the address into its components
-            String[] addressParts = employerData.getAddress().split(", ");
-            if (addressParts.length == 4) {
-                streetField.setText(addressParts[0]);
-                cityField.setText(addressParts[1]);
-                stateField.setText(addressParts[2]);
-                zipField.setText(addressParts[3]);
-            }
+            streetField.setText(employerData.getStreet());
+            cityField.setText(employerData.getCity());
+            stateField.setText(employerData.getState());
+            zipField.setText(employerData.getZipCode());
 
             // Set the view for the dialog
             builder.setView(dialogView);
