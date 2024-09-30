@@ -1,18 +1,15 @@
 package com.example.hiveeapp.company_user.handleEmployers;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.volley.VolleySingleton;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AddEmployerActivity extends AppCompatActivity {
@@ -20,7 +17,6 @@ public class AddEmployerActivity extends AppCompatActivity {
     private EditText nameField, emailField, phoneField, streetField, cityField, stateField, zipField;
     private Button addEmployerButton;
     private ImageButton backArrowIcon;
-    private static final String SERVER_URL = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,49 +50,28 @@ public class AddEmployerActivity extends AppCompatActivity {
             if (name.isEmpty() || email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 Toast.makeText(this, "Please enter valid employer details.", Toast.LENGTH_SHORT).show();
             } else {
-                // Send data to the server
-                sendEmployerDataToServer(name, email, phone, street, city, state, zip);
+                // Use the EmployerApi method to send the data to the server
+                EmployerApi.addEmployer(this, name, email, phone, street, city, state, zip,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                // Handle success response
+                                Toast.makeText(AddEmployerActivity.this, "Employer added successfully!", Toast.LENGTH_SHORT).show();
+                                // Navigate back to EmployerListActivity and refresh the list
+                                Intent intent = new Intent(AddEmployerActivity.this, EmployerListActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); // Clear the backstack and go to EmployerListActivity
+                                startActivity(intent);
+                                finish();
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                // Handle error response
+                                Toast.makeText(AddEmployerActivity.this, "Error adding employer: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
             }
         });
-    }
-
-    // Method to send employer data to the server using Volley
-    private void sendEmployerDataToServer(String name, String email, String phone, String street, String city, String state, String zip) {
-        JSONObject employerData = new JSONObject();
-        try {
-            employerData.put("name", name);
-            employerData.put("email", email);
-            employerData.put("phone", phone);
-            employerData.put("street", street);
-            employerData.put("city", city);
-            employerData.put("state", state);
-            employerData.put("zip", zip);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to create employer JSON data", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Create a POST request to send employer data to the server
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, SERVER_URL, employerData,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // Handle success response
-                        Toast.makeText(AddEmployerActivity.this, "Employer added successfully!", Toast.LENGTH_SHORT).show();
-                        finish(); // Return to the previous activity
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle error response
-                        Toast.makeText(AddEmployerActivity.this, "Error adding employer: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-
-        // Add the request to the Volley request queue
-        VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 }
