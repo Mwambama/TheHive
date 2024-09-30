@@ -14,6 +14,9 @@ import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import org.json.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EmployerListActivity extends AppCompatActivity {
 
     private RecyclerView employerRecyclerView;
@@ -27,12 +30,16 @@ public class EmployerListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_employer_list);
 
         // Initialize views
-        employerRecyclerView = findViewById(R.id.employerRecyclerView);
-        backArrowIcon = findViewById(R.id.backArrowIcon);
-        addEmployerButton = findViewById(R.id.addEmployerButton);
+        initViews();
 
         // Set up back navigation
         backArrowIcon.setOnClickListener(v -> finish());
+
+        // Set up Add Employer button
+        addEmployerButton.setOnClickListener(v -> {
+            Intent intent = new Intent(EmployerListActivity.this, AddEmployerActivity.class);
+            startActivity(intent);
+        });
 
         // Set up RecyclerView
         employerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -41,12 +48,6 @@ public class EmployerListActivity extends AppCompatActivity {
 
         // Load employers from the server
         loadEmployers();
-
-        // Set up Add Employer button
-        addEmployerButton.setOnClickListener(v -> {
-            Intent intent = new Intent(EmployerListActivity.this, AddEmployerActivity.class);
-            startActivity(intent);
-        });
     }
 
     @Override
@@ -56,13 +57,34 @@ public class EmployerListActivity extends AppCompatActivity {
         loadEmployers();
     }
 
-    // Load employers from the server using EmployerApi
+    /**
+     * Initialize views in the activity
+     */
+    private void initViews() {
+        employerRecyclerView = findViewById(R.id.employerRecyclerView);
+        backArrowIcon = findViewById(R.id.backArrowIcon);
+        addEmployerButton = findViewById(R.id.addEmployerButton);
+    }
+
+    /**
+     * Load employers from the server using EmployerApi
+     */
     private void loadEmployers() {
         EmployerApi.getEmployers(this,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        employerAdapter.setEmployers(response);
+                        List<Employer> employerList = new ArrayList<>();
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject employerJson = response.getJSONObject(i);
+                                Employer employer = parseEmployer(employerJson);
+                                employerList.add(employer);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        employerAdapter.setEmployers(employerList);
                     }
                 },
                 new Response.ErrorListener() {
@@ -70,21 +92,41 @@ public class EmployerListActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(EmployerListActivity.this, "Error fetching employers: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                }
-        );
+                });
     }
 
-    // Adapter class for RecyclerView
+    /**
+     * Parse a JSONObject into an Employer object
+     */
+    private Employer parseEmployer(JSONObject employerJson) throws JSONException {
+        int id = employerJson.getInt("id");
+        String name = employerJson.getString("name");
+        String email = employerJson.getString("email");
+        String phone = employerJson.getString("phone");
+
+        JSONObject addressJson = employerJson.getJSONObject("address");
+        String street = addressJson.getString("street");
+        String city = addressJson.getString("city");
+        String state = addressJson.getString("state");
+        String zipCode = addressJson.getString("zip_code");
+        String address = street + ", " + city + ", " + state + " " + zipCode;
+
+        return new Employer(id, name, email, phone, address);
+    }
+
+    /**
+     * RecyclerView Adapter for Employers
+     */
     private class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.EmployerViewHolder> {
 
-        private JSONArray employers = new JSONArray();
+        private List<Employer> employers = new ArrayList<>();
         private Context context;
 
         public EmployerAdapter(Context context) {
             this.context = context;
         }
 
-        public void setEmployers(JSONArray employers) {
+        public void setEmployers(List<Employer> employers) {
             this.employers = employers;
             notifyDataSetChanged();
         }
@@ -97,17 +139,13 @@ public class EmployerListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(EmployerViewHolder holder, int position) {
-            try {
-                JSONObject employer = employers.getJSONObject(position);
-                holder.bind(employer);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            Employer employer = employers.get(position);
+            holder.bind(employer);
         }
 
         @Override
         public int getItemCount() {
-            return employers.length();
+            return employers.size();
         }
 
         class EmployerViewHolder extends RecyclerView.ViewHolder {
@@ -124,115 +162,102 @@ public class EmployerListActivity extends AppCompatActivity {
                 deleteButton = itemView.findViewById(R.id.deleteButton);
             }
 
-            public void bind(JSONObject employer) {
-                try {
-                    int employerId = employer.getInt("id");
-                    String name = employer.getString("name");
-                    String email = employer.getString("email");
-                    String phone = employer.getString("phone");
+            public void bind(Employer employer) {
+                nameTextView.setText(employer.getName());
+                emailTextView.setText(employer.getEmail());
+                phoneTextView.setText(employer.getPhone());
+                addressTextView.setText(employer.getAddress());
 
-                    JSONObject address = employer.getJSONObject("address");
-                    String street = address.getString("street");
-                    String city = address.getString("city");
-                    String state = address.getString("state");
-                    String zipCode = address.getString("zip_code");
-
-                    String fullAddress = street + ", " + city + ", " + state + " " + zipCode;
-
-                    nameTextView.setText(name);
-                    emailTextView.setText(email);
-                    phoneTextView.setText(phone);
-                    addressTextView.setText(fullAddress);
-
-                    updateButton.setOnClickListener(v -> showUpdateDialog(employerId, employer));
-                    deleteButton.setOnClickListener(v -> deleteEmployer(employerId));
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                updateButton.setOnClickListener(v -> showUpdateDialog(employer.getId(), employer));
+                deleteButton.setOnClickListener(v -> deleteEmployer(employer.getId()));
             }
         }
-    }
 
-    // Show a dialog to update an employer
-    private void showUpdateDialog(int employerId, JSONObject employerData) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Update Employer");
+        // Show a dialog to update an employer
+        private void showUpdateDialog(int employerId, Employer employerData) {
+            // Use the context from the adapter
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Update Employer");
 
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_update_employer, null);
-        EditText nameField = dialogView.findViewById(R.id.nameField);
-        EditText emailField = dialogView.findViewById(R.id.emailField);
-        EditText phoneField = dialogView.findViewById(R.id.phoneField);
-        EditText streetField = dialogView.findViewById(R.id.streetField);
-        EditText cityField = dialogView.findViewById(R.id.cityField);
-        EditText stateField = dialogView.findViewById(R.id.stateField);
-        EditText zipField = dialogView.findViewById(R.id.zipField);
+            // Inflate the dialog view
+            View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_update_employer, null);
 
-        try {
-            nameField.setText(employerData.getString("name"));
-            emailField.setText(employerData.getString("email"));
-            phoneField.setText(employerData.getString("phone"));
+            // Initialize the input fields
+            EditText nameField = dialogView.findViewById(R.id.nameField);
+            EditText emailField = dialogView.findViewById(R.id.emailField);
+            EditText phoneField = dialogView.findViewById(R.id.phoneField);
+            EditText streetField = dialogView.findViewById(R.id.streetField);
+            EditText cityField = dialogView.findViewById(R.id.cityField);
+            EditText stateField = dialogView.findViewById(R.id.stateField);
+            EditText zipField = dialogView.findViewById(R.id.zipField);
 
-            JSONObject address = employerData.getJSONObject("address");
-            streetField.setText(address.getString("street"));
-            cityField.setText(address.getString("city"));
-            stateField.setText(address.getString("state"));
-            zipField.setText(address.getString("zip_code"));
+            // Set the existing values from the Employer object
+            nameField.setText(employerData.getName());
+            emailField.setText(employerData.getEmail());
+            phoneField.setText(employerData.getPhone());
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            // Split the address into its components
+            String[] addressParts = employerData.getAddress().split(", ");
+            if (addressParts.length == 4) {
+                streetField.setText(addressParts[0]);
+                cityField.setText(addressParts[1]);
+                stateField.setText(addressParts[2]);
+                zipField.setText(addressParts[3]);
+            }
 
-        builder.setView(dialogView);
+            // Set the view for the dialog
+            builder.setView(dialogView);
 
-        builder.setPositiveButton("Update", (dialog, which) -> {
-            String name = nameField.getText().toString().trim();
-            String email = emailField.getText().toString().trim();
-            String phone = phoneField.getText().toString().trim();
-            String street = streetField.getText().toString().trim();
-            String city = cityField.getText().toString().trim();
-            String state = stateField.getText().toString().trim();
-            String zip = zipField.getText().toString().trim();
+            // Handle the positive button click (Update button)
+            builder.setPositiveButton("Update", (dialog, which) -> {
+                // Retrieve the updated values from the input fields
+                String name = nameField.getText().toString().trim();
+                String email = emailField.getText().toString().trim();
+                String phone = phoneField.getText().toString().trim();
+                String street = streetField.getText().toString().trim();
+                String city = cityField.getText().toString().trim();
+                String state = stateField.getText().toString().trim();
+                String zip = zipField.getText().toString().trim();
 
-            if (name.isEmpty() || email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                Toast.makeText(this, "Please enter valid employer details.", Toast.LENGTH_SHORT).show();
-            } else {
-                EmployerApi.updateEmployer(this, employerId, name, email, phone, street, city, state, zip,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                Toast.makeText(EmployerListActivity.this, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
+                // Validate input fields
+                if (name.isEmpty() || email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    Toast.makeText(context, "Please enter valid employer details.", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Call the API to update the employer details, passing the context
+                    EmployerApi.updateEmployer(context, employerId, name, email, phone, street, city, state, zip,
+                            response -> {
+                                Toast.makeText(context, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
+                                // Refresh the employer list after the update
                                 loadEmployers();
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(EmployerListActivity.this, "Error updating employer: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            }
-        });
+                            },
+                            error -> Toast.makeText(context, "Error updating employer: " + error.getMessage(), Toast.LENGTH_SHORT).show());
+                }
+            });
 
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
-    }
+            // Handle the negative button click (Cancel button)
+            builder.setNegativeButton("Cancel", null);
 
-    // Delete an employer from the server
-    private void deleteEmployer(int employerId) {
-        EmployerApi.deleteEmployer(this, employerId,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Toast.makeText(EmployerListActivity.this, "Employer deleted successfully!", Toast.LENGTH_SHORT).show();
-                        loadEmployers();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(EmployerListActivity.this, "Error deleting employer: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+            // Show the dialog
+            builder.show();
+        }
+
+        // Delete an employer from the server
+        private void deleteEmployer(int employerId) {
+            EmployerApi.deleteEmployer(context, employerId,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Toast.makeText(context, "Employer deleted successfully!", Toast.LENGTH_SHORT).show();
+                            loadEmployers();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, "Error deleting employer: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+
     }
 }

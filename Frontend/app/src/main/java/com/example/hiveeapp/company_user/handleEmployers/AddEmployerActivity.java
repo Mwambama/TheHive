@@ -1,15 +1,15 @@
 package com.example.hiveeapp.company_user.handleEmployers;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
-
 import org.json.JSONObject;
 
 public class AddEmployerActivity extends AppCompatActivity {
@@ -23,7 +23,24 @@ public class AddEmployerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_employer);
 
-        // Initialize fields
+        // Initialize all the views
+        initViews();
+
+        // Back navigation
+        backArrowIcon.setOnClickListener(v -> finish());
+
+        // Add employer button logic
+        addEmployerButton.setOnClickListener(v -> {
+            if (validateInput()) {
+                addEmployer();
+            }
+        });
+    }
+
+    /**
+     * Initialize all views in the activity
+     */
+    private void initViews() {
         nameField = findViewById(R.id.nameField);
         emailField = findViewById(R.id.emailField);
         phoneField = findViewById(R.id.phoneField);
@@ -33,45 +50,110 @@ public class AddEmployerActivity extends AppCompatActivity {
         zipField = findViewById(R.id.zipField);
         addEmployerButton = findViewById(R.id.addEmployerButton);
         backArrowIcon = findViewById(R.id.backArrowIcon);
+    }
 
-        // Back navigation
-        backArrowIcon.setOnClickListener(v -> finish());
+    /**
+     * Validates the input fields and provides feedback if any input is invalid
+     */
+    private boolean validateInput() {
+        boolean isValid = true;
 
-        // Add employer logic
-        addEmployerButton.setOnClickListener(v -> {
-            String name = nameField.getText().toString().trim();
-            String email = emailField.getText().toString().trim();
-            String phone = phoneField.getText().toString().trim();
-            String street = streetField.getText().toString().trim();
-            String city = cityField.getText().toString().trim();
-            String state = stateField.getText().toString().trim();
-            String zip = zipField.getText().toString().trim();
+        // Reset previous error messages
+        nameField.setError(null);
+        emailField.setError(null);
 
-            if (name.isEmpty() || email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                Toast.makeText(this, "Please enter valid employer details.", Toast.LENGTH_SHORT).show();
-            } else {
-                // Use the EmployerApi method to send the data to the server
-                EmployerApi.addEmployer(this, name, email, phone, street, city, state, zip,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                // Handle success response
-                                Toast.makeText(AddEmployerActivity.this, "Employer added successfully!", Toast.LENGTH_SHORT).show();
-                                // Navigate back to EmployerListActivity and refresh the list
-                                Intent intent = new Intent(AddEmployerActivity.this, EmployerListActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); // Clear the backstack and go to EmployerListActivity
-                                startActivity(intent);
-                                finish();
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                // Handle error response
-                                Toast.makeText(AddEmployerActivity.this, "Error adding employer: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+        String name = nameField.getText().toString().trim();
+        String email = emailField.getText().toString().trim();
+        String phone = phoneField.getText().toString().trim();
+        String street = streetField.getText().toString().trim();
+        String city = cityField.getText().toString().trim();
+        String state = stateField.getText().toString().trim();
+        String zip = zipField.getText().toString().trim();
+
+        // Validate name field
+        if (name.isEmpty()) {
+            nameField.setError("Name is required");
+            isValid = false;
+        }
+
+        // Validate email field
+        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailField.setError("Valid email is required");
+            isValid = false;
+        }
+
+        // Validate other fields if needed
+        if (phone.isEmpty()) {
+            phoneField.setError("Phone number is required");
+            isValid = false;
+        }
+
+        if (street.isEmpty()) {
+            streetField.setError("Street address is required");
+            isValid = false;
+        }
+
+        if (city.isEmpty()) {
+            cityField.setError("City is required");
+            isValid = false;
+        }
+
+        if (state.isEmpty()) {
+            stateField.setError("State is required");
+            isValid = false;
+        }
+
+        if (zip.isEmpty()) {
+            zipField.setError("Zip code is required");
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    /**
+     * Adds a new employer by calling the Employer API
+     */
+    private void addEmployer() {
+        String name = nameField.getText().toString().trim();
+        String email = emailField.getText().toString().trim();
+        String phone = phoneField.getText().toString().trim();
+        String street = streetField.getText().toString().trim();
+        String city = cityField.getText().toString().trim();
+        String state = stateField.getText().toString().trim();
+        String zip = zipField.getText().toString().trim();
+
+        // Call the EmployerApi to add the employer
+        EmployerApi.addEmployer(this, name, email, phone, street, city, state, zip,
+                response -> {
+                    // Handle the success response
+                    Toast.makeText(AddEmployerActivity.this, "Employer added successfully!", Toast.LENGTH_SHORT).show();
+                    // Finish the activity to return to EmployerListActivity
+                    finish();
+                },
+                error -> {
+                    // Handle error response
+                    String errorMessage = getErrorMessage(error);
+                    Toast.makeText(AddEmployerActivity.this, "Error adding employer: " + errorMessage, Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    /**
+     * Extracts and returns a meaningful error message from the VolleyError object
+     */
+    private String getErrorMessage(VolleyError error) {
+        String errorMsg = "An unexpected error occurred";
+        if (error.networkResponse != null && error.networkResponse.data != null) {
+            try {
+                String errorData = new String(error.networkResponse.data, "UTF-8");
+                JSONObject jsonError = new JSONObject(errorData);
+                errorMsg = jsonError.optString("message", errorMsg);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
+        } else if (error.getMessage() != null) {
+            errorMsg = error.getMessage();
+        }
+        return errorMsg;
     }
 }
