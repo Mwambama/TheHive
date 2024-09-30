@@ -51,7 +51,7 @@ public class VerifyKeyActivity extends AppCompatActivity {
             return;
         }
 
-        String url = "https://run.mocky.io/v3/2a551f5e-0003-4fa4-ba4f-f286d7aff9b6";  // Mock server
+        String url = "";
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,

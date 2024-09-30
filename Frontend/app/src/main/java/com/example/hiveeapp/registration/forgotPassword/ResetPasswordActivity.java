@@ -57,7 +57,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        String url = "https://run.mocky.io/v3/f5fb1677-3aae-40ff-803d-cc9fe1a630c7";  // Mock server
+        String url = "";
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
