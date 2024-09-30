@@ -1,4 +1,10 @@
 package com.example.hiveeapp.student_user;
 
-public class StudentMainActivity {
+import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.hiveeapp.R;
+
+public class StudentMainActivity extends AppCompatActivity {
 }
