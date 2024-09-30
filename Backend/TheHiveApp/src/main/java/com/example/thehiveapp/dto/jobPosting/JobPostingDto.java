@@ -17,7 +17,7 @@ public class JobPostingDto {
     private LocalDate jobStart;
     private LocalDate applicationStart;
     private LocalDate applicationEnd;
-    private Long companyId;
+    private Long employerId;
 
     public JobPostingDto(String title,
                          String description,
@@ -28,7 +28,7 @@ public class JobPostingDto {
                          LocalDate jobStart,
                          LocalDate applicationStart,
                          LocalDate applicationEnd,
-                         Long companyId
+                         Long employerId
     ) {
         this.title = title;
         this.description = description;
@@ -39,7 +39,7 @@ public class JobPostingDto {
         this.jobStart = jobStart;
         this.applicationStart = applicationStart;
         this.applicationEnd = applicationEnd;
-        this.companyId = companyId;
+        this.employerId = employerId;
     }
 
     public Long getJobPostingId() {
@@ -122,11 +122,11 @@ public class JobPostingDto {
         this.applicationEnd = applicationEnd;
     }
 
-    public Long getCompanyId() {
-        return companyId;
+    public Long getEmployerId() {
+        return employerId;
     }
 
-    public void setCompanyId(Long companyId) {
-        this.companyId = companyId;
+    public void setEmployerId(Long employerId) {
+        this.employerId = employerId;
     }
 }

@@ -1,12 +1,13 @@
 package com.example.thehiveapp.entity.jobPosting;
 
 
-import com.example.thehiveapp.entity.user.Company;
+import com.example.thehiveapp.entity.user.Employer;
 import com.example.thehiveapp.enums.jobPosting.JobType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,9 +27,9 @@ public class JobPosting {
     @Column(name = "job_posting_id")
     private Long jobPostingId;
 
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employer_id", nullable = false)
+    private Employer employer;
 
     @Column(name = "title")
     private String title;
@@ -66,12 +67,12 @@ public class JobPosting {
         this.jobPostingId = jobPostingId;
     }
 
-    public Company getCompany() {
-        return company;
+    public Employer getEmployer() {
+        return employer;
     }
 
-    public void setCompany(Company company) {
-        this.company = company;
+    public void setEmployer(Employer employer) {
+        this.employer = employer;
     }
 
     public String getTitle() {
