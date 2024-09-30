@@ -27,7 +27,7 @@ public class InvitationCreationActivity extends AppCompatActivity {
         initViews();
 
         // Set up back navigation
-        backArrowIcon.setOnClickListener(v -> {finish(); // Go back to the previous activity
+        backArrowIcon.setOnClickListener(v -> {finish();
         });
 
         // Send Invitation
