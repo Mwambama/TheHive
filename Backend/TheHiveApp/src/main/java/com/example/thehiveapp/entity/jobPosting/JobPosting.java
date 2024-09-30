@@ -1,7 +1,6 @@
 package com.example.thehiveapp.entity.jobPosting;
 
 
-import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.entity.user.Employer;
 import com.example.thehiveapp.enums.jobPosting.JobType;
 import jakarta.persistence.Column;

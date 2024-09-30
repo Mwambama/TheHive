@@ -19,10 +19,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/employer")
 public class EmployerController {
-    private final EmployerService employerService;
-
     @Autowired
-    public EmployerController(EmployerService employerService){ this.employerService = employerService; }
+    private EmployerService employerService;
+
+    public EmployerController(){}
 
     @GetMapping
     public List<Employer> getEmployers() { return employerService.getEmployers(); }

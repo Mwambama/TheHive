@@ -8,9 +8,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface JobPostingMapper {
 
-    @Mapping(target = "companyId", source = "company.userId")
+    @Mapping(target = "employerId", source = "employer.userId")
     JobPostingDto entityToDto(JobPosting entity);
 
-    @Mapping(target = "company.userId", source="companyId")
+    @Mapping(target = "employer.userId", source="employerId")
     JobPosting dtoToEntity(JobPostingDto dto);
 }
