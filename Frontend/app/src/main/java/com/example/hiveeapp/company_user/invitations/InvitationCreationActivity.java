@@ -3,12 +3,14 @@ package com.example.hiveeapp.company_user.invitations;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.volley.VolleySingleton;
-
+import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,10 +29,9 @@ public class InvitationCreationActivity extends AppCompatActivity {
         initViews();
 
         // Set up back navigation
-        backArrowIcon.setOnClickListener(v -> {finish();
-        });
+        backArrowIcon.setOnClickListener(v -> finish());
 
-        // Send Invitation
+        // Send Invitation button logic
         sendInvitationButton.setOnClickListener(v -> {
             String email = emailField.getText().toString().trim();
             String message = messageField.getText().toString().trim();
@@ -45,10 +46,7 @@ public class InvitationCreationActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Initialize all views in the activity
-     */
-    private void initViews(){
+    private void initViews() {
         emailField = findViewById(R.id.emailField);
         messageField = findViewById(R.id.messageField);
         sendInvitationButton = findViewById(R.id.sendInvitationButton);
@@ -65,28 +63,46 @@ public class InvitationCreationActivity extends AppCompatActivity {
         try {
             payload.put("email", email);
             payload.put("message", message);
-            payload.put("company_id", 1);
+            payload.put("company_id", 1);  // Dummy company ID, adjust if needed
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Failed to create request.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Send request using InvitationApi
+        // Send the invitation using InvitationApi
         InvitationApi.sendInvitation(
                 this,
                 1,
                 email,
                 message,
                 response -> {
+                    // Invitation sent successfully
                     Toast.makeText(this, "Invitation sent successfully!", Toast.LENGTH_SHORT).show();
-                    // Clear the fields
-                    emailField.setText("");
-                    messageField.setText("");
+                    // Go back to InvitationManagementActivity and refresh the list
+                    finish(); // This will go back to the previous activity (InvitationManagementActivity)
                 },
                 error -> {
-                    Toast.makeText(this, "Failed to send invitation: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    // Handle the error
+                    String errorMessage = getErrorMessage(error);
+                    Toast.makeText(this, "Failed to send invitation: " + errorMessage, Toast.LENGTH_SHORT).show();
                 }
         );
+    }
+
+    private String getErrorMessage(VolleyError error) {
+        String errorMsg = "An unexpected error occurred";
+        if (error.networkResponse != null && error.networkResponse.data != null) {
+            try {
+                String errorData = new String(error.networkResponse.data, "UTF-8");
+                JSONObject jsonError = new JSONObject(errorData);
+                errorMsg = jsonError.optString("message", errorMsg);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (error.getMessage() != null) {
+            errorMsg = error.getMessage();
+        }
+        return errorMsg;
     }
 }

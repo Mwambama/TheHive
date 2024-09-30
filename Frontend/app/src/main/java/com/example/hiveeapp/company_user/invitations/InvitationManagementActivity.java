@@ -36,9 +36,7 @@ public class InvitationManagementActivity extends AppCompatActivity {
         addInvitationButton = findViewById(R.id.addInvitationButton);
 
         // Set up back navigation
-        backArrowIcon.setOnClickListener(v -> {
-            finish(); // Go back to the previous activity
-        });
+        backArrowIcon.setOnClickListener(v -> finish());
 
         // Set up RecyclerView
         invitationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -53,6 +51,13 @@ public class InvitationManagementActivity extends AppCompatActivity {
             Intent intent = new Intent(InvitationManagementActivity.this, InvitationCreationActivity.class);
             startActivity(intent);  // Navigate to Add Invitation Activity
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh the invitation list when returning to this activity
+        getInvitations();
     }
 
     private void getInvitations() {
