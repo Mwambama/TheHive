@@ -67,6 +67,5 @@ public class signupActivity extends AppCompatActivity {
         boolean hasDigit = password.matches(".*\\d.*");
         return hasUppercase && hasDigit;
 
-
     }
 }

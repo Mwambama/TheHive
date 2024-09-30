@@ -23,7 +23,8 @@ import com.example.hiveeapp.student_user.StudentMainActivity;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailField, passwordField;
-    private Button loginButton, forgotPasswordButton;
+    private Button loginButton;
+    private TextView forgotPasswordButton;
     private ImageView togglePasswordVisibility;
     private boolean isPasswordVisible = false;
 

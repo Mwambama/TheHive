@@ -5,21 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="#FFFFFF">
+    android:background="#F5F5F5">
 
-    <!-- Title -->
+    <!-- Title for Verify Key -->
     <TextView
         android:id="@+id/verifyKeyTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Enter Verification Key"
-        android:textSize="24sp"
+        android:textSize="26sp"
         android:textStyle="bold"
-        android:layout_marginTop="32dp"
+        android:textColor="#333333"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Key Field -->
+    <!-- Key Input Field -->
     <EditText
         android:id="@+id/keyField"
         android:layout_width="0dp"
@@ -29,10 +32,13 @@
         android:padding="12dp"
         android:background="@drawable/rounded_edittext"
         android:textColor="#000000"
-        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        android:layout_marginTop="24dp"
         app:layout_constraintTop_toBottomOf="@id/verifyKeyTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
 
     <!-- Verify Key Button -->
     <Button
@@ -41,12 +47,14 @@
         android:layout_height="wrap_content"
         android:text="Verify Key"
         android:textColor="#FFFFFF"
+        android:textSize="18sp"
         android:background="@drawable/rounded_button"
         android:padding="12dp"
-        android:textSize="16sp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintTop_toBottomOf="@id/keyField"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
