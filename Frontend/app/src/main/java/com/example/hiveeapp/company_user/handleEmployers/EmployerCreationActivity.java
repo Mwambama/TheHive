@@ -7,12 +7,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import com.android.volley.Response;
+
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import org.json.JSONObject;
 
-public class AddEmployerActivity extends AppCompatActivity {
+public class EmployerCreationActivity extends AppCompatActivity {
 
     private EditText nameField, emailField, phoneField, streetField, cityField, stateField, zipField;
     private Button addEmployerButton;
@@ -127,14 +127,14 @@ public class AddEmployerActivity extends AppCompatActivity {
         EmployerApi.addEmployer(this, name, email, phone, street, city, state, zip,
                 response -> {
                     // Handle the success response
-                    Toast.makeText(AddEmployerActivity.this, "Employer added successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EmployerCreationActivity.this, "Employer added successfully!", Toast.LENGTH_SHORT).show();
                     // Finish the activity to return to EmployerListActivity
                     finish();
                 },
                 error -> {
                     // Handle error response
                     String errorMessage = getErrorMessage(error);
-                    Toast.makeText(AddEmployerActivity.this, "Error adding employer: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EmployerCreationActivity.this, "Error adding employer: " + errorMessage, Toast.LENGTH_SHORT).show();
                 });
     }
 

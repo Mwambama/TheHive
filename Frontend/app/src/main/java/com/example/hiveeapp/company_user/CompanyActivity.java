@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hiveeapp.MainActivity;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.company_user.handleEmployers.AddEmployerActivity;
 import com.example.hiveeapp.company_user.handleEmployers.EmployerListActivity;
 import com.example.hiveeapp.company_user.invitations.InvitationManagementActivity;
 

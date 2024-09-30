@@ -37,7 +37,7 @@ public class EmployerListActivity extends AppCompatActivity {
 
         // Set up Add Employer button
         addEmployerButton.setOnClickListener(v -> {
-            Intent intent = new Intent(EmployerListActivity.this, AddEmployerActivity.class);
+            Intent intent = new Intent(EmployerListActivity.this, EmployerCreationActivity.class);
             startActivity(intent);
         });
 

@@ -35,7 +35,7 @@
         </activity>
 
         <!-- Company Add/Delete/Get/Update Activity -->
-        <activity android:name=".company_user.handleEmployers.AddEmployerActivity"/>
+        <activity android:name=".company_user.handleEmployers.EmployerCreationActivity"/>
         <activity android:name=".company_user.handleEmployers.EmployerListActivity"/>
 
         <!-- Company Add/Delete/Get/Update Invitation Activity -->

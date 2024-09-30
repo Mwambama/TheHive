@@ -10,7 +10,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.admin_user.AdminMainActivity;
-import com.example.hiveeapp.company_user.handleEmployers.AddEmployerActivity;
+import com.example.hiveeapp.company_user.handleEmployers.EmployerCreationActivity;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.registration.forgotPassword.ForgotPasswordActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
@@ -115,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                 break;
             case 3:
                 // Navigate to Company Activity
-                intent = new Intent(LoginActivity.this, AddEmployerActivity.class);
+                intent = new Intent(LoginActivity.this, EmployerCreationActivity.class);
                 break;
             case 4:
                 // Navigate to Admin Activity

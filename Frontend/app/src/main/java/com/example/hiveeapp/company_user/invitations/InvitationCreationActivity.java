@@ -24,14 +24,10 @@ public class InvitationCreationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_invitation_creation);
 
         // Initialize views
-        emailField = findViewById(R.id.emailField);
-        messageField = findViewById(R.id.messageField);
-        sendInvitationButton = findViewById(R.id.sendInvitationButton);
-        backArrowIcon = findViewById(R.id.backArrowIcon);
+        initViews();
 
         // Set up back navigation
-        backArrowIcon.setOnClickListener(v -> {
-            finish(); // Go back to the previous activity
+        backArrowIcon.setOnClickListener(v -> {finish(); // Go back to the previous activity
         });
 
         // Send Invitation
@@ -47,6 +43,16 @@ public class InvitationCreationActivity extends AppCompatActivity {
                 sendInvitation(email, message);
             }
         });
+    }
+
+    /**
+     * Initialize all views in the activity
+     */
+    private void initViews(){
+        emailField = findViewById(R.id.emailField);
+        messageField = findViewById(R.id.messageField);
+        sendInvitationButton = findViewById(R.id.sendInvitationButton);
+        backArrowIcon = findViewById(R.id.backArrowIcon);
     }
 
     private boolean isValidEmail(String email) {
