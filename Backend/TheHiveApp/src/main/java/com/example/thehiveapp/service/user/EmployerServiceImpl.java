@@ -2,6 +2,7 @@ package com.example.thehiveapp.service.user;
 
 import com.example.thehiveapp.entity.user.Employer;
 import com.example.thehiveapp.repository.user.EmployerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,7 @@ import java.util.List;
 @Service
 public class EmployerServiceImpl implements EmployerService{
     private final EmployerRepository employerRepository;
-
+    @Autowired
     public EmployerServiceImpl(EmployerRepository employerRepository){ this.employerRepository = employerRepository; }
 
     @Override

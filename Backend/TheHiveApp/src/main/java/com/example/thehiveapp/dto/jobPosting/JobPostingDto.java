@@ -122,11 +122,11 @@ public class JobPostingDto {
         this.applicationEnd = applicationEnd;
     }
 
-    public Long getemployerId() {
+    public Long getEmployerId() {
         return employerId;
     }
 
-    public void setemployerId(Long employerId) {
+    public void setEmployerId(Long employerId) {
         this.employerId = employerId;
     }
 }
