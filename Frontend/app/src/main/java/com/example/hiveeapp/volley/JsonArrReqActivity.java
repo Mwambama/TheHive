@@ -17,12 +17,9 @@ public class JsonArrReqActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_users);
-
-        textView = findViewById(R.id.textView);
 
         // Load the JSON data from assets
-        String jsonString = loadJSONFromAsset("sampledata/json/company/get_all_companies.json");
+        String jsonString = loadJSONFromAsset("sampledata/json/company/employers.json");
 
         if (jsonString != null) {
             try {
