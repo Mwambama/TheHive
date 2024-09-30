@@ -29,19 +29,14 @@
             </intent-filter>
         </activity>
 
-        <!-- Company Data Activity -->
-        <activity android:name=".volley.JsonArrReqActivity" />
-
         <!-- Company Activity -->
         <activity android:name=".company_user.CompanyActivity"
             android:exported="true">
         </activity>
 
         <!-- Company Add/Delete/Get/Update Activity -->
-        <activity android:name=".company_user.handleEmployers.CompanyActivityApi"/>
-
-        <!-- Company See Employers Activity -->
-        <activity android:name=".company_user.handleEmployers.SeeUsersActivity" />
+        <activity android:name=".company_user.handleEmployers.AddEmployerActivity"/>
+        <activity android:name=".company_user.handleEmployers.EmployerListActivity"/>
 
         <!-- Company Add/Delete/Get/Update Invitation Activity -->
         <activity android:name=".company_user.invitations.InvitationManagementActivity" />
