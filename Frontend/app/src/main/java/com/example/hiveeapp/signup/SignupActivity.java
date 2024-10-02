@@ -39,7 +39,6 @@ public class SignupActivity extends AppCompatActivity {
                 Toast.makeText(SignupActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             // Create JSON object with signup data
             JSONObject signupData = new JSONObject();
             try {
@@ -49,9 +48,8 @@ public class SignupActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
             // URL for the Postman mock server
-            String url = "https://aefb24d3-09f2-48a1-875f-d5774cd496e3.mock.pstmn.io/signup"; // Replace with your mock server URL
+            String url = "https://8c5d8b24-4a9a-4ce2-bf22-1aa5316f76a2.mock.pstmn.io/signup/get"; // Replace with your mock server URL
 
             // Create JSON request
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -73,7 +71,6 @@ public class SignupActivity extends AppCompatActivity {
                         }
                     }
             );
-
             // Add request to the Volley request queue
             VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
         });

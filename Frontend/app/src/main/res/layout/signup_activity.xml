@@ -9,12 +9,21 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SIGNUP"
+        android:text="Hiveapp"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
         android:layout_marginBottom="80dp"
         android:textSize="30sp"
-        android:textColor="#fc0303" />
+        android:textColor="#c71585" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create a new Account"
+        android:layout_gravity="center"
+        android:layout_marginTop="115dp"
+        android:layout_marginBottom="80dp"
+        android:textSize="20sp"
+        android:textColor="#191970"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -88,14 +97,14 @@
         android:layout_marginTop="100dp"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/signup_login_btn"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="Login"
-            android:textSize="30sp"
-            android:textColor="#ff0000" />
+<!--        <Button-->
+<!--            android:id="@+id/signup_login_btn"-->
+<!--            android:layout_width="150dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginRight="10dp"-->
+<!--            android:text="Login"-->
+<!--            android:textSize="30sp"-->
+<!--            android:textColor="#ff0000" />-->
 
         <Button
             android:id="@+id/signup_signup_btn"
@@ -104,7 +113,7 @@
             android:layout_marginLeft="10dp"
             android:text="Signup"
             android:textSize="30sp"
-            android:textColor="#ff0000" />
+            android:textColor="#ffffff" />
     </LinearLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
