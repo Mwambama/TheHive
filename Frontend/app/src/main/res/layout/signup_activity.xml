@@ -15,15 +15,15 @@
         android:layout_marginBottom="80dp"
         android:textSize="30sp"
         android:textColor="#c71585" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create a new Account"
-        android:layout_gravity="center"
-        android:layout_marginTop="115dp"
-        android:layout_marginBottom="80dp"
-        android:textSize="20sp"
-        android:textColor="#191970"/>
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Create a new Account"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:layout_marginTop="115dp"-->
+<!--        android:layout_marginBottom="80dp"-->
+<!--        android:textSize="20sp"-->
+<!--        android:textColor="#191970"/>-->
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
             android:id="@+id/signup_username_edt"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:hint="Enter Username Here" />
+            android:hint="Enter Username" />
     </LinearLayout>
 
     <LinearLayout
@@ -64,9 +64,34 @@
             android:id="@+id/signup_password_edt"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:hint="Enter Password Here"
+            android:hint="Enter Password"
             android:inputType="textPassword" />
     </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password: "
+            android:textSize="20sp"
+            android:textColor="#000000" />
+
+        <EditText
+            android:id="@+id/signup_confirm_password_edt"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:hint="Comfirm Password"
+            android:inputType="textPassword" />
+    </LinearLayout>
+
+
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -86,7 +111,7 @@
             android:id="@+id/signup_email_edt"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:hint="Enter Email Here"
+            android:hint="Enter Email"
             android:inputType="textEmailAddress" />
     </LinearLayout>
 
@@ -97,21 +122,12 @@
         android:layout_marginTop="100dp"
         android:orientation="horizontal">
 
-<!--        <Button-->
-<!--            android:id="@+id/signup_login_btn"-->
-<!--            android:layout_width="150dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginRight="10dp"-->
-<!--            android:text="Login"-->
-<!--            android:textSize="30sp"-->
-<!--            android:textColor="#ff0000" />-->
-
         <Button
             android:id="@+id/signup_signup_btn"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="Signup"
+            android:text="signup"
             android:textSize="30sp"
             android:textColor="#ffffff" />
     </LinearLayout>

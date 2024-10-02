@@ -32,7 +32,7 @@ public class JsonArrReqActivity extends AppCompatActivity {
      //   textView = findViewById(R.id.textView);
         mainSignupBtn = findViewById(R.id.main_signup_btn);  // Initialize the signup button
 
-        String url = "https://8c5d8b24-4a9a-4ce2-bf22-1aa5316f76a2.mock.pstmn.io/volley/get"; // Replace with your mock server URL
+        String url = "https://8c5d8b24-4a9a-4ce2-bf22-1aa5316f76a2.mock.pstmn.io/volley/post"; // Replace with your mock server URL
 
         mainSignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
