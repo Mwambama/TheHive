@@ -36,7 +36,7 @@ public class User {
     private Role role;
 
     @OneToOne
-    @JoinColumn(name = "address_id", referencedColumnName = "address_id", nullable = false)
+    @JoinColumn(name = "address_id", referencedColumnName = "address_id")
     private Address address;
 
     @Column(name = "phone", length = 15)
