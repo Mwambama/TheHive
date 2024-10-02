@@ -2,8 +2,10 @@ package com.example.hiveeapp.registration.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
@@ -13,20 +15,19 @@ import com.example.hiveeapp.admin_user.AdminMainActivity;
 import com.example.hiveeapp.company_user.handleEmployers.EmployerCreationActivity;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.registration.forgotPassword.ForgotPasswordActivity;
+import com.example.hiveeapp.registration.signup.signupActivity;
+import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
+import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.hiveeapp.student_user.StudentMainActivity;
-
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailField, passwordField;
-    private Button loginButton;
-    private TextView forgotPasswordButton;
-    private ImageView togglePasswordVisibility;
-    private boolean isPasswordVisible = false;
+    private MaterialButton loginButton;
+    private TextView forgotPasswordButton, registerText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +39,20 @@ public class LoginActivity extends AppCompatActivity {
         passwordField = findViewById(R.id.passwordField);
         loginButton = findViewById(R.id.loginButton);
         forgotPasswordButton = findViewById(R.id.forgotPasswordButton);
-        togglePasswordVisibility = findViewById(R.id.togglePasswordVisibility);
+        registerText = findViewById(R.id.registerText);
 
+        // Login button click event
         loginButton.setOnClickListener(v -> authenticateUser());
 
-        togglePasswordVisibility.setOnClickListener(v -> togglePasswordVisibility());
-
+        // Forgot password text click event
         forgotPasswordButton.setOnClickListener(v -> {
-            // Navigate to ForgotPasswordActivity
             Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
+        });
+
+        // Register text click event
+        registerText.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, signupActivity.class);
             startActivity(intent);
         });
     }
@@ -60,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Create JSON payload
+        // Create JSON payload for authentication
         JSONObject loginPayload = new JSONObject();
         try {
             loginPayload.put("email", email);
@@ -70,15 +76,15 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Send login request to server
+        // Define the login URL
         String loginUrl = "";
 
+        // Create the login request using Volley
         JsonObjectRequest loginRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 loginUrl,
                 loginPayload,
                 response -> {
-                    // Handle successful response
                     try {
                         boolean success = response.getBoolean("success");
                         if (success) {
@@ -94,7 +100,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
-                    // Handle error
                     Toast.makeText(LoginActivity.this, "Login failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
         );
@@ -128,21 +133,5 @@ public class LoginActivity extends AppCompatActivity {
         }
         startActivity(intent);
         finish();
-    }
-
-    private void togglePasswordVisibility() {
-        if (isPasswordVisible) {
-            // Hide password
-            passwordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            togglePasswordVisibility.setImageResource(R.drawable.ic_visibility_off);
-            isPasswordVisible = false;
-        } else {
-            // Show password
-            passwordField.setInputType(InputType.TYPE_CLASS_TEXT);
-            togglePasswordVisibility.setImageResource(R.drawable.ic_visibility_on);
-            isPasswordVisible = true;
-        }
-        // Move cursor to the end of the text
-        passwordField.setSelection(passwordField.getText().length());
     }
 }
