@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Find the views from the layout
-       // imageView = findViewById(R.id.imageView);
+        //imageView = findViewById(R.id.imageView);
         //mainLoginBtn = findViewById(R.id.main_login_btn);
         mainSignupBtn = findViewById(R.id.main_signup_btn);
 

@@ -51,7 +51,7 @@ public class SignupActivity extends AppCompatActivity {
             }
 
             // URL for the Postman mock server
-            String url = "https://<mock_server_id>.mock.pstmn.io/signup"; // Replace with your mock server URL
+            String url = "https://aefb24d3-09f2-48a1-875f-d5774cd496e3.mock.pstmn.io/signup"; // Replace with your mock server URL
 
             // Create JSON request
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(

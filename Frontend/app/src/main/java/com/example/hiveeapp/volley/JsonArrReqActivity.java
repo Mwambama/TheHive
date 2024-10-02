@@ -29,10 +29,10 @@ public class JsonArrReqActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main); // Replace with actual layout
 
-        textView = findViewById(R.id.textView);
+     //   textView = findViewById(R.id.textView);
         mainSignupBtn = findViewById(R.id.main_signup_btn);  // Initialize the signup button
 
-        String url = "https://<mock_server_id>.mock.pstmn.io/signup"; // Replace with your mock server URL
+        String url = "https://aefb24d3-09f2-48a1-875f-d5774cd496e3.mock.pstmn.io/volley"; // Replace with your mock server URL
 
         mainSignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
