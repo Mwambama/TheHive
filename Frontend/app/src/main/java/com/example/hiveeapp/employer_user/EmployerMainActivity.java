@@ -32,11 +32,11 @@ import org.json.JSONObject;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.employer_Activity);
+            setContentView(R.layout.employer_activities);
 
             // Initialize EditText fields
             companyNameEditText = findViewById(R.id.company_name);
-            companyLogoUrlEditText = findViewById(R.id.company_logo_url);
+            //companyLogoUrlEditText = findViewById(R.id.company_logo_url);
             companyDescriptionEditText = findViewById(R.id.company_description);
             industryEditText = findViewById(R.id.industry);
             locationEditText = findViewById(R.id.location);
@@ -63,10 +63,9 @@ import org.json.JSONObject;
                 // Check for empty fields
                 if (companyName.isEmpty() || companyDescription.isEmpty() || industry.isEmpty() || location.isEmpty() || website.isEmpty() ||
                         recruiterName.isEmpty() || contactEmail.isEmpty() || phoneNumber.isEmpty()) {
-                    Toast.makeText(EmployerProfileActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EmployerMainActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 // Create JSON object with profile data
                 JSONObject profileData = new JSONObject();
                 try {
@@ -83,7 +82,6 @@ import org.json.JSONObject;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
                 // URL for the Postman mock server
                 String url = "https://8c5d8b24-4a9a-4ce2-bf22-1aa5316f76a2.mock.pstmn.io/employer/profile"; // Replace with your mock server URL
 
@@ -96,14 +94,14 @@ import org.json.JSONObject;
                             @Override
                             public void onResponse(JSONObject response) {
                                 // Handle successful profile save
-                                Toast.makeText(EmployerProfileActivity.this, "Profile saved successfully", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(EmployerMainActivity.this, "Profile saved successfully", Toast.LENGTH_SHORT).show();
                             }
                         },
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 // Handle error
-                                Toast.makeText(EmployerProfileActivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(EmployerMainActivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
                             }
                         }
                 );
@@ -116,4 +114,4 @@ import org.json.JSONObject;
 
 
 
-}
+

@@ -4,8 +4,9 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.hiveeapp.R;
 
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
     public class employerProfileActivity extends AppCompatActivity {
         private TextView companyNameTextView;
         private ImageView companyLogoImageView;
@@ -18,16 +19,16 @@ import com.squareup.picasso.Picasso;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.);
+            setContentView(R.layout.employer_activity);
 
             // Initialize views
             companyNameTextView = findViewById(R.id.company_name);
-            companyLogoImageView = findViewById(R.id.company_logo);
+            //companyLogoImageView = findViewById(R.id.company_logo_url);
             companyDescriptionTextView = findViewById(R.id.company_description);
             recruiterNameTextView = findViewById(R.id.recruiter_name);
             contactEmailTextView = findViewById(R.id.contact_email);
             phoneNumberTextView = findViewById(R.id.phone_number);
-            availableJobsTextView = findViewById(R.id.available_jobs);
+          //  availableJobsTextView = findViewById(R.id.available_jobs);
 
             // Fetch employer profile data (this could be from an API or database)
             fetchEmployerProfileData();
@@ -44,7 +45,7 @@ import com.squareup.picasso.Picasso;
 
             // Set data to views
             companyNameTextView.setText(companyName);
-            Picasso.get().load(companyLogoUrl).into(companyLogoImageView);
+            //Picasso.get().load(companyLogoUrl).into(companyLogoImageView);
             companyDescriptionTextView.setText(companyDescription);
             recruiterNameTextView.setText(recruiterName);
             contactEmailTextView.setText(contactEmail);
@@ -57,4 +58,4 @@ import com.squareup.picasso.Picasso;
         }
     }
 
-}
+

@@ -45,6 +45,15 @@
 
         <!-- Company Add/Delete/Get/Update Invitation Activity -->
         <activity android:name=".company_user.invitations.AddInvitationActivity" />
+            <!--           employer main activity-->
+        <activity android:name=".employer_user.EmployerMainActivity" android:exported="true"/>
+<!--        employer profile acitivity-->
+        <activity android:name=".employer_user.employerProfileActivity" android:exported="true"/>
+<!--                employer profile layout-->
+        <activity android:name=".model.employerProfile"/>
+
+
+
 
     </application>
 </manifest>
