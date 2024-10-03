@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         // Send login request to server
-        String loginUrl = "";
+        String loginUrl = "https://0426e89a-dc0e-4f75-8adb-c324dd58c2a8.mock.pstmn.io/login";  // Replace with actual URL
 
         JsonObjectRequest loginRequest = new JsonObjectRequest(
                 Request.Method.POST,
@@ -107,19 +107,15 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent;
         switch (userType) {
             case 1:
-                // Navigate to Student Activity
                 intent = new Intent(LoginActivity.this, StudentMainActivity.class);
                 break;
             case 2:
-                // Navigate to Employer Activity
                 intent = new Intent(LoginActivity.this, EmployerMainActivity.class);
                 break;
             case 3:
-                // Navigate to Company Activity
                 intent = new Intent(LoginActivity.this, EmployerCreationActivity.class);
                 break;
             case 4:
-                // Navigate to Admin Activity
                 intent = new Intent(LoginActivity.this, AdminMainActivity.class);
                 break;
             default:
@@ -132,17 +128,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
-            // Hide password
             passwordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             togglePasswordVisibility.setImageResource(R.drawable.ic_visibility_off);
             isPasswordVisible = false;
         } else {
-            // Show password
             passwordField.setInputType(InputType.TYPE_CLASS_TEXT);
             togglePasswordVisibility.setImageResource(R.drawable.ic_visibility_on);
             isPasswordVisible = true;
         }
-        // Move cursor to the end of the text
         passwordField.setSelection(passwordField.getText().length());
     }
 }
