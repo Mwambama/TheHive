@@ -9,6 +9,7 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.registration.login.LoginActivity;
@@ -45,10 +46,14 @@ public class ResetPasswordActivity extends AppCompatActivity {
         email = getIntent().getStringExtra("email");
 
         // Toggle visibility for new password field
-        toggleNewPasswordVisibility.setOnClickListener(v -> togglePasswordVisibility(newPasswordField, toggleNewPasswordVisibility, isNewPasswordVisible));
+        toggleNewPasswordVisibility.setOnClickListener(v -> {
+            isNewPasswordVisible = togglePasswordVisibility(newPasswordField, toggleNewPasswordVisibility, isNewPasswordVisible);
+        });
 
         // Toggle visibility for confirm password field
-        toggleConfirmPasswordVisibility.setOnClickListener(v -> togglePasswordVisibility(confirmPasswordField, toggleConfirmPasswordVisibility, isConfirmPasswordVisible));
+        toggleConfirmPasswordVisibility.setOnClickListener(v -> {
+            isConfirmPasswordVisible = togglePasswordVisibility(confirmPasswordField, toggleConfirmPasswordVisibility, isConfirmPasswordVisible);
+        });
 
         // Add TextWatcher to the password field to update the strength bar
         newPasswordField.addTextChangedListener(new TextWatcher() {
@@ -79,20 +84,19 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
 
     // Function to toggle password visibility
-    private void togglePasswordVisibility(EditText passwordField, ImageView toggleIcon, boolean isVisible) {
+    private boolean togglePasswordVisibility(EditText passwordField, ImageView toggleIcon, boolean isVisible) {
         if (isVisible) {
             // Hide password
             passwordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             toggleIcon.setImageResource(R.drawable.ic_visibility_off);
-            isVisible = false;
         } else {
             // Show password
             passwordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
             toggleIcon.setImageResource(R.drawable.ic_visibility_on);
-            isVisible = true;
         }
         // Move cursor to the end of the text
         passwordField.setSelection(passwordField.getText().length());
+        return !isVisible;
     }
 
     // Function to reset the password by making the HTTP request
@@ -127,16 +131,35 @@ public class ResetPasswordActivity extends AppCompatActivity {
                             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, "Error parsing server response.", Toast.LENGTH_SHORT).show();
+                        handleJSONException(e);
                     }
                 },
-                error -> {
-                    Toast.makeText(this, "Error resetting password: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
+                error -> handleVolleyError(error)
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    // Function to handle JSON parsing errors
+    private void handleJSONException(JSONException e) {
+        e.printStackTrace();
+        Toast.makeText(this, "Error parsing server response. Please try again.", Toast.LENGTH_SHORT).show();
+    }
+
+    // Function to handle different types of Volley errors
+    private void handleVolleyError(VolleyError error) {
+        if (error.networkResponse != null && error.networkResponse.statusCode == 400) {
+            Toast.makeText(this, "Invalid request. Please check your inputs.", Toast.LENGTH_SHORT).show();
+        } else if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
+            Toast.makeText(this, "Server error. Please try again later.", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof com.android.volley.TimeoutError) {
+            Toast.makeText(this, "Connection timeout. Please try again.", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof com.android.volley.NoConnectionError) {
+            Toast.makeText(this, "No internet connection. Please check your connection and try again.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "An unexpected error occurred: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        error.printStackTrace();
     }
 
     // Function to update the password strength based on the entered password
