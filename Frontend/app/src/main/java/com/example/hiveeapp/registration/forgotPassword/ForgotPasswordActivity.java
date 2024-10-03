@@ -47,8 +47,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        // Placeholder URL for sending verification key
-        String url = "https://run.mocky.io/v3/8fc2528f-16f4-4c7f-982e-3ccef695e48a";  // Mock server
+        // URL for sending verification key
+        String url = "https://0426e89a-dc0e-4f75-8adb-c324dd58c2a8.mock.pstmn.io/send-key";
 
         // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(
