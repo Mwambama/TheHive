@@ -2,10 +2,13 @@ package com.example.hiveeapp.registration.forgotPassword;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
@@ -28,8 +31,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         sendKeyButton.setOnClickListener(v -> {
             String email = emailField.getText().toString().trim();
-            if (email.isEmpty()) {
-                Toast.makeText(ForgotPasswordActivity.this, "Please enter your email.", Toast.LENGTH_SHORT).show();
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(ForgotPasswordActivity.this, "Please enter a valid email address.", Toast.LENGTH_SHORT).show();
             } else {
                 sendVerificationKey(email);
             }
@@ -74,10 +77,39 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
-                    Toast.makeText(this, "Error sending verification key: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    // Handle error
+                    handleError(error);
                 }
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    // Error handling function
+    private void handleError(VolleyError error) {
+        if (error instanceof TimeoutError) {
+            Toast.makeText(ForgotPasswordActivity.this, "The request timed out. Please try again.", Toast.LENGTH_SHORT).show();
+        } else if (error.networkResponse != null) {
+            int statusCode = error.networkResponse.statusCode;
+            switch (statusCode) {
+                case 400:
+                    Toast.makeText(ForgotPasswordActivity.this, "Invalid request. Please check your input.", Toast.LENGTH_SHORT).show();
+                    break;
+                case 401:
+                    Toast.makeText(ForgotPasswordActivity.this, "Unauthorized. Please check your credentials.", Toast.LENGTH_SHORT).show();
+                    break;
+                case 404:
+                    Toast.makeText(ForgotPasswordActivity.this, "Server not found. Please try again later.", Toast.LENGTH_SHORT).show();
+                    break;
+                case 500:
+                    Toast.makeText(ForgotPasswordActivity.this, "Internal server error. Please try again later.", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    Toast.makeText(ForgotPasswordActivity.this, "Unexpected error: " + statusCode, Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        } else {
+            Toast.makeText(ForgotPasswordActivity.this, "Request failed. Please check your network connection.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
