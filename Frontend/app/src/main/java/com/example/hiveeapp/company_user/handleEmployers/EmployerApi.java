@@ -18,8 +18,42 @@ import java.util.Map;
 
 public class EmployerApi {
 
-    private static final String BASE_URL = "";
+    private static final String BASE_URL = "https://0426e89a-dc0e-4f75-8adb-c324dd58c2a8.mock.pstmn.io/";
     private static final String EMPLOYERS_FILE = "employers.json";
+    private static final String TAG = "EmployerApi";
+
+    // Helper method to merge local and server data without duplicates
+    private static JSONArray mergeEmployerData(JSONArray localData, JSONArray serverData) {
+        JSONArray mergedArray = new JSONArray();
+
+        // Copy all local data to the merged array
+        for (int i = 0; i < localData.length(); i++) {
+            mergedArray.put(localData.optJSONObject(i));
+        }
+
+        // Add server data to merged array, avoiding duplicates by checking IDs
+        for (int i = 0; i < serverData.length(); i++) {
+            JSONObject serverEmployer = serverData.optJSONObject(i);
+            boolean isDuplicate = false;
+
+            // Check for duplicates based on the "id" field
+            for (int j = 0; j < localData.length(); j++) {
+                JSONObject localEmployer = localData.optJSONObject(j);
+                if (localEmployer != null && serverEmployer != null &&
+                        localEmployer.optInt("id") == serverEmployer.optInt("id")) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+
+            // If no duplicate, add to merged array
+            if (!isDuplicate) {
+                mergedArray.put(serverEmployer);
+            }
+        }
+
+        return mergedArray;
+    }
 
     // Helper method to read employers from file
     private static JSONArray readEmployersFromFile(Context context) {
@@ -29,7 +63,7 @@ public class EmployerApi {
             fis.read(data);
             fis.close();
             String jsonString = new String(data, "UTF-8");
-            Log.d("FileRead", "Employers loaded from " + EMPLOYERS_FILE);
+            Log.d(TAG, "Employers loaded from " + EMPLOYERS_FILE);
             return new JSONArray(jsonString);
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,9 +78,9 @@ public class EmployerApi {
             FileOutputStream fos = context.openFileOutput(EMPLOYERS_FILE, Context.MODE_PRIVATE);
             fos.write(jsonString.getBytes("UTF-8"));
             fos.close();
-            Log.d("FileWrite", "Employers saved to " + EMPLOYERS_FILE);
+            Log.d(TAG, "Employers saved to " + EMPLOYERS_FILE);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error writing employers to file: " + e.getMessage());
         }
     }
 
@@ -62,7 +96,7 @@ public class EmployerApi {
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error generating new ID: " + e.getMessage());
         }
         return newId;
     }
@@ -71,20 +105,36 @@ public class EmployerApi {
     public static void getEmployers(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
         // Read employers from local file
         JSONArray localEmployers = readEmployersFromFile(context);
+
+        // Call the listener immediately with the local data
         listener.onResponse(localEmployers);
 
-        // Optionally, you can also fetch from the server and update the local file
+        // Fetch from the server and update the local file
         String url = BASE_URL + "get_all";
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
                 null,
                 response -> {
-                    // Store the server data locally
-                    writeEmployersToFile(context, response);
-                    listener.onResponse(response);
+                    if (response != null && response.length() > 0) {
+                        // Merge server data with local data, avoiding duplicates
+                        JSONArray mergedEmployers = mergeEmployerData(localEmployers, response);
+
+                        // Store the merged data locally
+                        writeEmployersToFile(context, mergedEmployers);
+
+                        // Send the merged data to the listener
+                        listener.onResponse(mergedEmployers);
+                    } else {
+                        // Log that the server returned no data and continue with local data
+                        Log.w(TAG, "Server returned an empty response. Using local data.");
+                    }
                 },
-                errorListener
+                error -> {
+                    // Log the error but continue using local data
+                    Log.w(TAG, "Error fetching employers from server, using local data: " + error.getMessage());
+                    // Continue with local data already returned earlier
+                }
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -94,7 +144,7 @@ public class EmployerApi {
             }
         };
 
-        // Add request to queue
+        // Add the server request to the queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
@@ -127,7 +177,7 @@ public class EmployerApi {
             writeEmployersToFile(context, employers);
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error creating employer: " + e.getMessage());
             errorListener.onErrorResponse(new VolleyError(e.getMessage()));
             return;
         }
@@ -139,7 +189,10 @@ public class EmployerApi {
                 url,
                 employer,
                 listener,
-                errorListener
+                error -> {
+                    Log.e(TAG, "Error adding employer to server: " + error.getMessage());
+                    errorListener.onErrorResponse(error);
+                }
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -187,12 +240,13 @@ public class EmployerApi {
                 // Write updated employers back to file
                 writeEmployersToFile(context, employers);
             } else {
+                Log.e(TAG, "Error: Employer not found with ID: " + employerId);
                 errorListener.onErrorResponse(new VolleyError("Employer not found"));
                 return;
             }
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error updating employer: " + e.getMessage());
             errorListener.onErrorResponse(new VolleyError(e.getMessage()));
             return;
         }
@@ -204,7 +258,10 @@ public class EmployerApi {
                 url,
                 updatedEmployer,
                 listener,
-                errorListener
+                error -> {
+                    Log.e(TAG, "Error updating employer on server: " + error.getMessage());
+                    errorListener.onErrorResponse(error);
+                }
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -238,12 +295,13 @@ public class EmployerApi {
                 // Write updated employers back to file
                 writeEmployersToFile(context, employers);
             } else {
+                Log.e(TAG, "Error: Employer not found with ID: " + employerId);
                 errorListener.onErrorResponse(new VolleyError("Employer not found"));
                 return;
             }
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error deleting employer: " + e.getMessage());
             errorListener.onErrorResponse(new VolleyError(e.getMessage()));
             return;
         }
@@ -255,7 +313,15 @@ public class EmployerApi {
                 url,
                 null,
                 listener,
-                errorListener
+                error -> {
+                    // Check if it's a 404 error
+                    if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
+                        Log.e(TAG, "Error: Employer not found on server (404)");
+                    } else {
+                        Log.e(TAG, "Error deleting employer on server: " + error.getMessage());
+                    }
+                    errorListener.onErrorResponse(error);
+                }
         ) {
             @Override
             public Map<String, String> getHeaders() {

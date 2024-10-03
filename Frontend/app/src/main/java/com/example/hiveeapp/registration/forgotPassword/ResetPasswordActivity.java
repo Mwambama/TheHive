@@ -2,10 +2,14 @@ package com.example.hiveeapp.registration.forgotPassword;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.registration.login.LoginActivity;
@@ -18,6 +22,11 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private EditText newPasswordField, confirmPasswordField;
     private Button resetPasswordButton;
+    private ImageView toggleNewPasswordVisibility, toggleConfirmPasswordVisibility;
+    private ProgressBar passwordStrengthBar;
+    private TextView passwordStrengthLabel;
+    private boolean isNewPasswordVisible = false;
+    private boolean isConfirmPasswordVisible = false;
     private String email;
 
     @Override
@@ -28,9 +37,37 @@ public class ResetPasswordActivity extends AppCompatActivity {
         newPasswordField = findViewById(R.id.newPasswordField);
         confirmPasswordField = findViewById(R.id.confirmNewPasswordField);
         resetPasswordButton = findViewById(R.id.resetPasswordButton);
+        toggleNewPasswordVisibility = findViewById(R.id.toggleNewPasswordVisibility);
+        toggleConfirmPasswordVisibility = findViewById(R.id.toggleConfirmPasswordVisibility);
+        passwordStrengthBar = findViewById(R.id.passwordStrengthBar);
+        passwordStrengthLabel = findViewById(R.id.passwordStrengthLabel);
 
         // Retrieve the email from the previous activity
         email = getIntent().getStringExtra("email");
+
+        // Toggle visibility for new password field
+        toggleNewPasswordVisibility.setOnClickListener(v -> {
+            isNewPasswordVisible = togglePasswordVisibility(newPasswordField, toggleNewPasswordVisibility, isNewPasswordVisible);
+        });
+
+        // Toggle visibility for confirm password field
+        toggleConfirmPasswordVisibility.setOnClickListener(v -> {
+            isConfirmPasswordVisible = togglePasswordVisibility(confirmPasswordField, toggleConfirmPasswordVisibility, isConfirmPasswordVisible);
+        });
+
+        // Add TextWatcher to the password field to update the strength bar
+        newPasswordField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updatePasswordStrength(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         resetPasswordButton.setOnClickListener(v -> {
             String newPassword = newPasswordField.getText().toString();
@@ -46,6 +83,23 @@ public class ResetPasswordActivity extends AppCompatActivity {
         });
     }
 
+    // Function to toggle password visibility
+    private boolean togglePasswordVisibility(EditText passwordField, ImageView toggleIcon, boolean isVisible) {
+        if (isVisible) {
+            // Hide password
+            passwordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            toggleIcon.setImageResource(R.drawable.ic_visibility_off);
+        } else {
+            // Show password
+            passwordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            toggleIcon.setImageResource(R.drawable.ic_visibility_on);
+        }
+        // Move cursor to the end of the text
+        passwordField.setSelection(passwordField.getText().length());
+        return !isVisible;
+    }
+
+    // Function to reset the password by making the HTTP request
     private void resetPassword(String email, String newPassword) {
         JSONObject payload = new JSONObject();
         try {
@@ -57,7 +111,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        String url = "";
+        String url = "https://0426e89a-dc0e-4f75-8adb-c324dd58c2a8.mock.pstmn.io/reset-password";
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
@@ -77,15 +131,65 @@ public class ResetPasswordActivity extends AppCompatActivity {
                             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, "Error parsing server response.", Toast.LENGTH_SHORT).show();
+                        handleJSONException(e);
                     }
                 },
-                error -> {
-                    Toast.makeText(this, "Error resetting password: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
+                error -> handleVolleyError(error)
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    // Function to handle JSON parsing errors
+    private void handleJSONException(JSONException e) {
+        e.printStackTrace();
+        Toast.makeText(this, "Error parsing server response. Please try again.", Toast.LENGTH_SHORT).show();
+    }
+
+    // Function to handle different types of Volley errors
+    private void handleVolleyError(VolleyError error) {
+        if (error.networkResponse != null && error.networkResponse.statusCode == 400) {
+            Toast.makeText(this, "Invalid request. Please check your inputs.", Toast.LENGTH_SHORT).show();
+        } else if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
+            Toast.makeText(this, "Server error. Please try again later.", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof com.android.volley.TimeoutError) {
+            Toast.makeText(this, "Connection timeout. Please try again.", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof com.android.volley.NoConnectionError) {
+            Toast.makeText(this, "No internet connection. Please check your connection and try again.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "An unexpected error occurred: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        error.printStackTrace();
+    }
+
+    // Function to update the password strength based on the entered password
+    private void updatePasswordStrength(String password) {
+        int strength = calculatePasswordStrength(password);
+        passwordStrengthBar.setProgress(strength);
+
+        // Update label based on strength
+        if (strength < 30) {
+            passwordStrengthLabel.setText("Weak");
+            passwordStrengthLabel.setTextColor(getResources().getColor(R.color.weak));
+        } else if (strength < 60) {
+            passwordStrengthLabel.setText("Medium");
+            passwordStrengthLabel.setTextColor(getResources().getColor(R.color.medium));
+        } else {
+            passwordStrengthLabel.setText("Strong");
+            passwordStrengthLabel.setTextColor(getResources().getColor(R.color.strong));
+        }
+    }
+
+    // Function to calculate the password strength
+    private int calculatePasswordStrength(String password) {
+        int strength = 0;
+
+        if (password.length() >= 8) strength += 20;
+        if (password.matches(".*[A-Z].*")) strength += 20;
+        if (password.matches(".*[a-z].*")) strength += 20;
+        if (password.matches(".*\\d.*")) strength += 20;
+        if (password.matches(".*[!@#$%^&*+=?-].*")) strength += 20;
+
+        return strength;
     }
 }
