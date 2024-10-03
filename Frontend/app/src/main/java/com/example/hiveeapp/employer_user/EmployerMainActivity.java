@@ -32,7 +32,7 @@ import org.json.JSONObject;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.employer_activities);
+            setContentView(R.layout.employer_activity);
 
             // Initialize EditText fields
             companyNameEditText = findViewById(R.id.company_name);
