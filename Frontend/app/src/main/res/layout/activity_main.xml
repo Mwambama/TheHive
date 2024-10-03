@@ -8,26 +8,45 @@
     tools:context=".MainActivity">
 
     <!-- Button to go to CompanyActivity -->
-    <Button
-        android:id="@+id/goToCompanyActivityButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go to Company Activity"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="50dp" />
+<!--    <Button-->
+<!--        android:id="@+id/goToCompanyActivityButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Go to Company Activity"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        android:layout_marginTop="50dp" />-->
 
-    <!-- Button to go to LoginActivity -->
+<!--    &lt;!&ndash; Button to go to LoginActivity &ndash;&gt;-->
+<!--    <Button-->
+<!--        android:id="@+id/goToLoginActivityButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="28dp"-->
+<!--        android:text="Go to Login"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/goToCompanyActivityButton" />-->
+
+<!--              button to go to goToEmployerActivityButton-->
+<!--    <Button-->
+<!--        android:id="@+id/ggoToEmployerActivityButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Go to Company Activity"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        android:layout_marginTop="50dp" />-->
+
     <Button
-        android:id="@+id/goToLoginActivityButton"
-        android:layout_width="wrap_content"
+        android:id="@+id/goToEmployerActivityButton"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="Go to Login"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/goToCompanyActivityButton" />
+        android:text="Go to Employer Profile" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
