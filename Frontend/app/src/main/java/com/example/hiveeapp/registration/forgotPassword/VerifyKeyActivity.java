@@ -51,7 +51,7 @@ public class VerifyKeyActivity extends AppCompatActivity {
             return;
         }
 
-        String url = "";
+        String url = "https://0426e89a-dc0e-4f75-8adb-c324dd58c2a8.mock.pstmn.io/verify-key";
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
