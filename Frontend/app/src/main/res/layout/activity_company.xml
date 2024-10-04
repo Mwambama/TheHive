@@ -26,127 +26,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:tint="#333333" />
 
-    <!-- Top section for company title and logo -->
+    <!-- Middle Section with a Text and Divider -->
     <TextView
-        android:id="@+id/companyTitle"
+        android:id="@+id/middleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="{Company}"
+        android:text="Welcome to Company Page"
         android:textColor="#333333"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/backArrowIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp"
-        android:gravity="center" />
+        android:layout_marginTop="50dp" />
 
-    <ImageView
-        android:id="@+id/companyLogo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/company_logo_placeholder"
-        android:background="@drawable/rounded_background"
-        android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/companyTitle"
+    <View
+        android:id="@+id/divider"
+        android:layout_width="200dp"
+        android:layout_height="2dp"
+        android:background="#888888"
+        app:layout_constraintTop_toBottomOf="@id/middleText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:scaleType="fitCenter" />
+        android:layout_marginTop="8dp" />
 
-    <!-- Tab buttons for switching between Employers and Invitations -->
-    <LinearLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/companyLogo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
-
-        <Button
-            android:id="@+id/btnEmployers"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Employers"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#B67FA1"
-            android:layout_marginEnd="8dp" />
-
-        <Button
-            android:id="@+id/btnInvitations"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Invitations"
-            android:textColor="#B67FA1"
-            android:backgroundTint="#E5E5E5" />
-    </LinearLayout>
-
-    <!-- Company general information section styled as a card -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/companyInfoCard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:elevation="4dp"
-        app:cardCornerRadius="8dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/companyInfoTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Company General Information"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:textSize="18sp"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:id="@+id/companyName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Name:"
-                android:textColor="#333333"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/companyAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Address:"
-                android:textColor="#333333"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/companyPhone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Phone:"
-                android:textColor="#333333"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/companyId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ID:"
-                android:textColor="#333333"
-                android:textSize="16sp" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- Bottom navigation section -->
+    <!-- Navigate Section -->
+    <!-- Bottom Section with Icon Buttons -->
     <LinearLayout
         android:id="@+id/bottomSection"
         android:layout_width="0dp"
@@ -187,7 +92,7 @@
             android:focusable="true"
             android:padding="15dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_profile"
+            android:src="@drawable/ic_company"
             app:tint="#333333" />
 
         <!-- Manage Invitations Icon -->
@@ -205,6 +110,7 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_manage_invitations"
             app:tint="#333333" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
