@@ -7,6 +7,8 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hiveeapp.company_user.CompanyActivity;
+import com.example.hiveeapp.employer_user.AddJobActivity;
+import com.example.hiveeapp.employer_user.mainEmployer;
 import com.example.hiveeapp.registration.LoginActivity;
 import com.example.hiveeapp.employer_user.EmployerMainActivity; // Import the EmployerMainActivity
 
@@ -16,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     //private Button goToCompanyActivityButton;
     //private Button goToLoginActivityButton; // Declare the login button
     private Button goToEmployerActivityButton; // Declare the employer profile button
-
+   // private Button go
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         goToEmployerActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, EmployerMainActivity.class);
+                Intent intent = new Intent(MainActivity.this, mainEmployer.class);
                 startActivity(intent);
             }
         });
