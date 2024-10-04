@@ -1,17 +1,14 @@
 package com.example.hiveeapp;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.hiveeapp.company_user.CompanyActivity;
 import com.example.hiveeapp.employer_user.AddJobActivity;
 import com.example.hiveeapp.employer_user.mainEmployer;
 import com.example.hiveeapp.registration.LoginActivity;
 import com.example.hiveeapp.employer_user.EmployerMainActivity; // Import the EmployerMainActivity
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
 //                startActivity(intent);
 //            }
 //        });
-
         // Navigate to EmployerMainActivity
         goToEmployerActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,6 +52,5 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 }
