@@ -26,7 +26,7 @@ import org.json.JSONObject;
         private EditText recruiterNameEditText;
         private EditText contactEmailEditText;
         private EditText phoneNumberEditText;
-        private EditText socialMediaLinksEditText;
+        //private EditText socialMediaLinksEditText;
         private Button saveProfileButton;
 
         @Override
@@ -44,7 +44,7 @@ import org.json.JSONObject;
             recruiterNameEditText = findViewById(R.id.recruiter_name);
             contactEmailEditText = findViewById(R.id.contact_email);
             phoneNumberEditText = findViewById(R.id.phone_number);
-            socialMediaLinksEditText = findViewById(R.id.social_media_links);
+          //  socialMediaLinksEditText = findViewById(R.id.social_media_links);
             saveProfileButton = findViewById(R.id.save_profile_button);
 
             // Save button click listener
@@ -58,7 +58,7 @@ import org.json.JSONObject;
                 String recruiterName = recruiterNameEditText.getText().toString();
                 String contactEmail = contactEmailEditText.getText().toString();
                 String phoneNumber = phoneNumberEditText.getText().toString();
-                String socialMediaLinks = socialMediaLinksEditText.getText().toString();
+              //  String socialMediaLinks = socialMediaLinksEditText.getText().toString();
 
                 // Check for empty fields
                 if (companyName.isEmpty() || companyDescription.isEmpty() || industry.isEmpty() || location.isEmpty() || website.isEmpty() ||
@@ -78,7 +78,7 @@ import org.json.JSONObject;
                     profileData.put("recruiterName", recruiterName);
                     profileData.put("contactEmail", contactEmail);
                     profileData.put("phoneNumber", phoneNumber);
-                    profileData.put("socialMediaLinks", socialMediaLinks.split(","));
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

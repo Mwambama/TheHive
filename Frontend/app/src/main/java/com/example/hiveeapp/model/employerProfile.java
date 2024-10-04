@@ -10,7 +10,7 @@ public class employerProfile {
         private String recruiterName;
         private String contactEmail;
         private String phoneNumber;
-        private String[] socialMediaLinks;
+        //private String[] socialMediaLinks;
 
         // Constructor, getters, and setters
         public employerProfile(String companyName, String companyLogoUrl, String companyDescription, String industry,
@@ -25,7 +25,7 @@ public class employerProfile {
             this.recruiterName = recruiterName;
             this.contactEmail = contactEmail;
             this.phoneNumber = phoneNumber;
-            this.socialMediaLinks = socialMediaLinks;
+           // this.socialMediaLinks = socialMediaLinks;
         }
         // Getters and Setters
         // ...

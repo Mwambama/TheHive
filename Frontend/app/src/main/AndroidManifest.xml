@@ -52,6 +52,9 @@
 <!--                employer profile layout-->
         <activity android:name=".model.employerProfile"/>
 
+        <activity android:name=".employer_user.AddJobActivity"/>
+
+
 
 
 

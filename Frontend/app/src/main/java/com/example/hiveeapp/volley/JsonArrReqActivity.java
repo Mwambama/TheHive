@@ -14,74 +14,70 @@ import java.io.InputStream;
 public class JsonArrReqActivity extends AppCompatActivity {
     TextView textView;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.employer_activity);
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_job);
 
-        textView = findViewById(R.id.textView);
+            textView = findViewById(R.id.textView);
 
-        // Load the JSON data from assets
-        String jsonString = loadJSONFromAsset("sampledata/json/company/get_all_companies.json");
+            // Load the JSON data from assets
+            String jsonString = loadJSONFromAsset("job_posts.json");
 
-        if (jsonString != null) {
-            try {
-                // Parse the JSON array
-                JSONArray jsonArray = new JSONArray(jsonString);
-                StringBuilder jsonData = new StringBuilder();
+            if (jsonString != null) {
+                try {
+                    // Parse the JSON array
+                    JSONArray jsonArray = new JSONArray(jsonString);
+                    StringBuilder jsonData = new StringBuilder();
 
-                // Loop through the array and append each company's details
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject company = jsonArray.getJSONObject(i);
+                    // Loop through the array and append each job's details
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject job = jsonArray.getJSONObject(i);
 
-                    // Get basic company info
-                    String companyName = company.getString("name");
-                    String companyEmail = company.getString("email");
-                    String companyPhone = company.getString("phone");
+                        // Get job info
+                        String jobTitle = job.getString("jobTitle");
+                        String jobDescription = job.getString("jobDescription");
+                        String jobType = job.getString("jobType");
+                        String salaryRequirements = job.getString("salaryRequirements");
+                        String ageRequirement = job.getString("ageRequirement");
+                        String minimumGPA = job.getString("minimumGPA");
 
-                    // Get the nested address object
-                    JSONObject address = company.getJSONObject("address");
-                    String street = address.getString("street");
-                    String complement = address.getString("complement");
-                    String city = address.getString("city");
-                    String state = address.getString("state");
-                    int zipCode = address.getInt("zip_code");
+                        // Build the display string
+                        jsonData.append("Job Title: ").append(jobTitle)
+                                .append("\nJob Description: ").append(jobDescription)
+                                .append("\nJob Type: ").append(jobType)
+                                .append("\nSalary Requirements: ").append(salaryRequirements)
+                                .append("\nAge Requirement: ").append(ageRequirement)
+                                .append("\nMinimum GPA: ").append(minimumGPA)
+                                .append("\n\n");
+                    }
 
-                    // Build the display string
-                    jsonData.append("Company Name: ").append(companyName)
-                            .append("\nEmail: ").append(companyEmail)
-                            .append("\nPhone: ").append(companyPhone)
-                            .append("\nAddress: ").append(street)
-                            .append(", ").append(complement.isEmpty() ? "" : complement + ", ")
-                            .append(city).append(", ").append(state).append(" ").append(zipCode)
-                            .append("\n\n");
+                    // Display the data in the TextView
+                    textView.setText(jsonData.toString());
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    textView.setText("Error parsing JSON data");
                 }
-
-                // Display the data in the TextView
-                textView.setText(jsonData.toString());
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-                textView.setText("Error parsing JSON data");
+            } else {
+                textView.setText("Failed to load JSON file");
             }
-        } else {
-            textView.setText("Failed to load JSON file");
+        }
+
+        private String loadJSONFromAsset(String fileName) {
+            String json = null;
+            try {
+                InputStream is = getAssets().open(fileName);
+                int size = is.available();
+                byte[] buffer = new byte[size];
+                is.read(buffer);
+                is.close();
+                json = new String(buffer, "UTF-8");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                return null;
+            }
+            return json;
         }
     }
 
-    private String loadJSONFromAsset(String fileName) {
-        String json = null;
-        try {
-            InputStream is = getAssets().open(fileName);
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
-    }
-}

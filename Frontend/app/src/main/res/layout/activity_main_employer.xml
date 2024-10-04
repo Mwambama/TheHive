@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/employer_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Employer Name"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/job_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Job Title"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/about_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="About Description"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/add_job_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Job" />
+
+    <LinearLayout
+        android:id="@+id/posted_jobs_container"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp">
+        <!-- Posted jobs will be dynamically added here -->
+    </LinearLayout>
+</LinearLayout>

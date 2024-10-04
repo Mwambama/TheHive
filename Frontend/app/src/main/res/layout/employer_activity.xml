@@ -100,16 +100,16 @@
             style="@style/EditTextStyle" />
 
         <!-- Social Media Links -->
-        <EditText
-            android:id="@+id/social_media_links"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Social Media Links (comma-separated)"
-            android:textSize="20sp"
-            android:textColor="#000000"
-            android:inputType="textUri"
-            android:importantForAutofill="yes"
-            style="@style/EditTextStyle" />
+<!--        <EditText-->
+<!--            android:id="@+id/social_media_links"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:hint="Social Media Links (comma-separated)"-->
+<!--            android:textSize="20sp"-->
+<!--            android:textColor="#000000"-->
+<!--            android:inputType="textUri"-->
+<!--            android:importantForAutofill="yes"-->
+<!--            style="@style/EditTextStyle" />-->
 
         <!-- Submit Button -->
         <Button
