@@ -54,12 +54,6 @@
             android:layout_height="wrap_content"
             android:text="Post Job" />
 
-        <Button
-            android:id="@+id/back_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Back" />
-
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
@@ -68,6 +62,12 @@
             android:textSize="16sp"
             android:padding="16dp"
             android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back" />
 
     </LinearLayout>
 </ScrollView>

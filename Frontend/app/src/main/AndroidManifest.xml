@@ -46,13 +46,15 @@
         <!-- Company Add/Delete/Get/Update Invitation Activity -->
         <activity android:name=".company_user.invitations.AddInvitationActivity" />
             <!--           employer main activity-->
-        <activity android:name=".employer_user.EmployerMainActivity" android:exported="true"/>
+<!--        <activity android:name=".employer_user.EmployerMainActivity" android:exported="true"/>-->
 <!--        employer profile acitivity-->
-        <activity android:name=".employer_user.employerProfileActivity" android:exported="true"/>
+<!--        <activity android:name=".employer_user.employerProfileActivity" android:exported="true"/>-->
 <!--                employer profile layout-->
         <activity android:name=".model.employerProfile"/>
-
-        <activity android:name=".employer_user.AddJobActivity"/>
+<!--             page to add new jobs and information-->
+        <activity android:name=".employer_user.AddJobActivity" android:exported="true"/>
+<!--          page for the employer-->
+        <activity android:name=".employer_user.mainEmployer" android:exported="true"/>
 
 
 

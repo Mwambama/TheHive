@@ -69,7 +69,7 @@ import org.json.JSONObject;
                 }
 
                 // URL for the Postman mock server
-                String url = "https://8c5d8b24-4a9a-4ce2-bf22-1aa5316f76a2.mock.pstmn.io/employer/job"; // Replace with your mock server URL
+                String url = "https://8c5d8b24-4a9a-4ce2-bf22-1aa5316f76a2.mock.pstmn.io/employer_user/post"; // Replace with your mock server URL
 
                 // Create JSON request
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(

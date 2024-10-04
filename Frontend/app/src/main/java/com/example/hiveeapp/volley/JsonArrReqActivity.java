@@ -22,7 +22,7 @@ public class JsonArrReqActivity extends AppCompatActivity {
             textView = findViewById(R.id.textView);
 
             // Load the JSON data from assets
-            String jsonString = loadJSONFromAsset("job_posts.json");
+            String jsonString = loadJSONFromAsset("sampledata/json/jobs/job_posts.json");
 
             if (jsonString != null) {
                 try {
