@@ -1,29 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-   android:background="@drawable/signupbackground">
+    android:gravity="center"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <!-- android:src="@drawable/signupbackground" /> -->
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hiveapp"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="80dp"
-        android:textSize="30sp"
-        android:textColor="#c71585" />
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Create a new Account"-->
-<!--        android:layout_gravity="center"-->
-<!--        android:layout_marginTop="115dp"-->
-<!--        android:layout_marginBottom="80dp"-->
-<!--        android:textSize="20sp"-->
-<!--        android:textColor="#191970"/>-->
+        android:layout_marginTop="16dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -68,7 +62,6 @@
             android:inputType="textPassword" />
     </LinearLayout>
 
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,7 +72,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Password: "
+            android:text="Confirm Password: "
             android:textSize="20sp"
             android:textColor="#000000" />
 
@@ -87,11 +80,9 @@
             android:id="@+id/signup_confirm_password_edt"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:hint="Comfirm Password"
+            android:hint="Confirm Password"
             android:inputType="textPassword" />
     </LinearLayout>
-
-
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -127,9 +118,9 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="signup"
+            android:text="Signup"
             android:textSize="30sp"
             android:textColor="#ffffff" />
     </LinearLayout>
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+</LinearLayout>
