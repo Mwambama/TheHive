@@ -2,7 +2,9 @@ package com.example.hiveeapp.registration.login;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailField, passwordField;
     private MaterialButton loginButton;
     private TextView forgotPasswordButton, registerText;
+    private ProgressBar loadingProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         forgotPasswordButton = findViewById(R.id.forgotPasswordButton);
         registerText = findViewById(R.id.registerText);
+        loadingProgressBar = findViewById(R.id.loadingProgressBar);
 
         // Login button click event
         loginButton.setOnClickListener(v -> authenticateUser());
@@ -66,6 +70,10 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        // Show the loading indicator
+        loadingProgressBar.setVisibility(View.VISIBLE);
+        loginButton.setEnabled(false); // Disable the login button during network request
+
         // Create JSON payload for authentication
         JSONObject loginPayload = new JSONObject();
         try {
@@ -73,6 +81,8 @@ public class LoginActivity extends AppCompatActivity {
             loginPayload.put("password", password);
         } catch (JSONException e) {
             e.printStackTrace();
+            loadingProgressBar.setVisibility(View.GONE);
+            loginButton.setEnabled(true);
             return;
         }
 
@@ -85,6 +95,9 @@ public class LoginActivity extends AppCompatActivity {
                 loginUrl,
                 loginPayload,
                 response -> {
+                    loadingProgressBar.setVisibility(View.GONE); // Hide the loading indicator
+                    loginButton.setEnabled(true); // Re-enable login button
+
                     try {
                         boolean success = response.getBoolean("success");
                         if (success) {
@@ -100,6 +113,8 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
+                    loadingProgressBar.setVisibility(View.GONE); // Hide the loading indicator on error
+                    loginButton.setEnabled(true); // Re-enable login button
                     Snackbar.make(findViewById(android.R.id.content), getString(R.string.login_failed) + error.getMessage(), Snackbar.LENGTH_LONG).show();
                 }
         );
