@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Request;
@@ -19,8 +20,8 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private EditText newPasswordField, confirmPasswordField;
     private Button resetPasswordButton;
+    private ProgressBar passwordStrengthBar, loadingProgressBar;
     private String email;
-    private ProgressBar passwordStrengthBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         confirmPasswordField = findViewById(R.id.confirmNewPasswordField);
         resetPasswordButton = findViewById(R.id.resetPasswordButton);
         passwordStrengthBar = findViewById(R.id.passwordStrengthBar);
+        loadingProgressBar = findViewById(R.id.loadingProgressBar);  // Add loading progress bar
 
         // Retrieve the email from the previous activity
         email = getIntent().getStringExtra("email");
@@ -68,15 +70,19 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private int calculatePasswordStrength(String password) {
         int score = 0;
 
-        if (password.length() >= 8) score += 25; // Password length >= 8
-        if (password.matches(".*[a-z].*")) score += 25; // Contains lowercase letters
-        if (password.matches(".*[A-Z].*")) score += 25; // Contains uppercase letters
-        if (password.matches(".*\\d.*")) score += 25; // Contains digits
+        if (password.length() >= 8) score += 25;  // Password length >= 8
+        if (password.matches(".*[a-z].*")) score += 25;  // Contains lowercase letters
+        if (password.matches(".*[A-Z].*")) score += 25;  // Contains uppercase letters
+        if (password.matches(".*\\d.*")) score += 25;  // Contains digits
 
         return score;
     }
 
     private void resetPassword(String email, String newPassword) {
+        // Show loading indicator
+        loadingProgressBar.setVisibility(View.VISIBLE);
+        resetPasswordButton.setEnabled(false);
+
         JSONObject payload = new JSONObject();
         try {
             payload.put("email", email);
@@ -84,16 +90,18 @@ public class ResetPasswordActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
             showSnackbar("Failed to create request.");
+            hideLoading();
             return;
         }
 
-        String url = "";
+        String url = "";  // Define the URL
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
                 payload,
                 response -> {
+                    hideLoading();
                     try {
                         boolean success = response.getBoolean("success");
                         String message = response.getString("message");
@@ -113,11 +121,17 @@ public class ResetPasswordActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
+                    hideLoading();
                     showToast("Error resetting password: " + error.getMessage());
                 }
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    private void hideLoading() {
+        loadingProgressBar.setVisibility(View.GONE);
+        resetPasswordButton.setEnabled(true);
     }
 
     private void showSnackbar(String message) {
