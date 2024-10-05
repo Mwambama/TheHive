@@ -9,6 +9,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +34,7 @@ public class VerifyKeyActivity extends AppCompatActivity {
         verifyKeyButton.setOnClickListener(v -> {
             String key = keyField.getText().toString().trim();
             if (key.isEmpty()) {
-                Toast.makeText(VerifyKeyActivity.this, "Please enter the key.", Toast.LENGTH_SHORT).show();
+                showToast("Please enter the key.");
             } else {
                 verifyKey(email, key);
             }
@@ -47,7 +48,7 @@ public class VerifyKeyActivity extends AppCompatActivity {
             payload.put("verification_key", key);
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Failed to create request.", Toast.LENGTH_SHORT).show();
+            showSnackbar("Failed to create request.");
             return;
         }
 
@@ -62,7 +63,7 @@ public class VerifyKeyActivity extends AppCompatActivity {
                         boolean success = response.getBoolean("success");
                         String message = response.getString("message");
                         if (success) {
-                            Toast.makeText(this, "Key verified successfully.", Toast.LENGTH_SHORT).show();
+                            showSnackbar("Key verified successfully.");
                             // Navigate to ResetPasswordActivity with animation
                             Intent intent = new Intent(VerifyKeyActivity.this, ResetPasswordActivity.class);
                             intent.putExtra("email", email);
@@ -70,19 +71,27 @@ public class VerifyKeyActivity extends AppCompatActivity {
                             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Apply animation
                             finish();
                         } else {
-                            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                            showToast(message);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Toast.makeText(this, "Error parsing server response.", Toast.LENGTH_SHORT).show();
+                        showSnackbar("Error parsing server response.");
                     }
                 },
                 error -> {
-                    Toast.makeText(this, "Error verifying key: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    showToast("Error verifying key: " + error.getMessage());
                 }
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    private void showSnackbar(String message) {
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show();
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

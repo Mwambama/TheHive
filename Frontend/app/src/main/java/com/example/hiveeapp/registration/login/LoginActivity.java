@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
@@ -19,7 +17,7 @@ import com.example.hiveeapp.registration.signup.signupActivity;
 import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
 import com.google.android.material.button.MaterialButton;
-
+import com.google.android.material.snackbar.Snackbar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,15 +46,14 @@ public class LoginActivity extends AppCompatActivity {
         forgotPasswordButton.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
             startActivity(intent);
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left); // Add animation transition
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Apply animation
         });
 
-        // Register text click event
         registerText.setOnClickListener(v -> {
             // Navigate to the signup activity
             Intent intent = new Intent(LoginActivity.this, signupActivity.class);
             startActivity(intent);
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left); // Add animation transition
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Apply animation
         });
     }
 
@@ -65,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = passwordField.getText().toString();
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(LoginActivity.this, "Please enter email and password.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, R.string.enter_email_password, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -95,15 +92,15 @@ public class LoginActivity extends AppCompatActivity {
                             navigateToUserActivity(userType);
                         } else {
                             String message = response.getString("message");
-                            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                            Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show();  // Snackbar for error feedback
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Toast.makeText(LoginActivity.this, "Error parsing response.", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(findViewById(android.R.id.content), R.string.error_parsing_response, Snackbar.LENGTH_LONG).show();
                     }
                 },
                 error -> {
-                    Toast.makeText(LoginActivity.this, "Login failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.login_failed) + error.getMessage(), Snackbar.LENGTH_LONG).show();
                 }
         );
 
@@ -115,27 +112,23 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent;
         switch (userType) {
             case 1:
-                // Navigate to Student Activity
                 intent = new Intent(LoginActivity.this, StudentMainActivity.class);
                 break;
             case 2:
-                // Navigate to Employer Activity
                 intent = new Intent(LoginActivity.this, EmployerMainActivity.class);
                 break;
             case 3:
-                // Navigate to Company Activity
                 intent = new Intent(LoginActivity.this, EmployerCreationActivity.class);
                 break;
             case 4:
-                // Navigate to Admin Activity
                 intent = new Intent(LoginActivity.this, AdminMainActivity.class);
                 break;
             default:
-                Toast.makeText(LoginActivity.this, "User type not recognized.", Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content), R.string.user_type_not_recognized, Snackbar.LENGTH_LONG).show();
                 return;
         }
         startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left); // Add animation transition
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Apply animation
         finish();
     }
 

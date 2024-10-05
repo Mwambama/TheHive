@@ -12,7 +12,7 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:src="@drawable/illustration"
-        android:contentDescription="Illustration"
+        android:contentDescription="@string/illustration_desc"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +22,7 @@
         android:id="@+id/loginTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome Back"
+        android:text="@string/welcome_back"
         android:textSize="28sp"
         android:textStyle="bold"
         android:textColor="#000000"
@@ -36,7 +36,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Email"
+        android:hint="@string/email"
         app:startIconDrawable="@drawable/ic_mail"
         app:startIconTint="#000000"
         app:boxStrokeColor="#000000"
@@ -54,7 +54,8 @@
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:textColor="#000000"
-            android:paddingStart="48dp" />
+            android:paddingStart="48dp"
+            android:contentDescription="@string/email_field_desc"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -62,7 +63,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        android:hint="@string/password"
         app:startIconDrawable="@drawable/ic_lock"
         app:startIconTint="#000000"
         app:endIconMode="password_toggle"
@@ -82,14 +83,15 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:textColor="#000000"
-            android:paddingStart="48dp" />
+            android:paddingStart="48dp"
+            android:contentDescription="@string/password_field_desc"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/loginButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="@string/login"
         android:textAllCaps="false"
         android:textSize="18sp"
         android:textColor="#FFFFFF"
@@ -110,11 +112,12 @@
         android:id="@+id/forgotPasswordButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Forgot Password?"
+        android:text="@string/forgot_password"
         android:textSize="14sp"
         android:textColor="#000000"
         android:clickable="true"
         android:focusable="true"
+        android:contentDescription="@string/forgot_password_desc"
         app:layout_constraintTop_toBottomOf="@id/loginButton"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -124,14 +127,14 @@
         android:id="@+id/registerText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Don't have an account? Register"
+        android:text="@string/dont_have_account"
         android:textSize="14sp"
         android:textColor="#000000"
         android:clickable="true"
         android:focusable="true"
+        android:contentDescription="@string/register_account_desc"
         app:layout_constraintTop_toBottomOf="@id/forgotPasswordButton"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

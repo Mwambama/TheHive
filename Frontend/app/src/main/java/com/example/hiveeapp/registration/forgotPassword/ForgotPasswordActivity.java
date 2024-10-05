@@ -9,6 +9,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,6 +18,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     private EditText emailField;
     private Button sendKeyButton;
+    private ImageButton backArrowIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,11 +27,18 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         emailField = findViewById(R.id.forgotPasswordEmailField);
         sendKeyButton = findViewById(R.id.sendKeyButton);
+        backArrowIcon = findViewById(R.id.backArrowIcon);
+
+        // Back arrow click event
+        backArrowIcon.setOnClickListener(v -> {
+            finish();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        });
 
         sendKeyButton.setOnClickListener(v -> {
             String email = emailField.getText().toString().trim();
             if (email.isEmpty()) {
-                Toast.makeText(ForgotPasswordActivity.this, "Please enter your email.", Toast.LENGTH_SHORT).show();
+                showToast("Please enter your email.");
             } else {
                 sendVerificationKey(email);
             }
@@ -43,7 +52,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             payload.put("email", email);
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Failed to create request.", Toast.LENGTH_SHORT).show();
+            showSnackbar("Failed to create request.");
             return;
         }
 
@@ -60,26 +69,34 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                         boolean success = response.getBoolean("success");
                         String message = response.getString("message");
                         if (success) {
-                            Toast.makeText(this, "Verification key sent to your email.", Toast.LENGTH_SHORT).show();
+                            showSnackbar("Verification key sent to your email.");
                             // Navigate to VerifyKeyActivity with animation
                             Intent intent = new Intent(ForgotPasswordActivity.this, VerifyKeyActivity.class);
                             intent.putExtra("email", email);
                             startActivity(intent);
-                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Animation transition
+                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         } else {
-                            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                            showToast(message);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Toast.makeText(this, "Error parsing server response.", Toast.LENGTH_SHORT).show();
+                        showSnackbar("Error parsing server response.");
                     }
                 },
                 error -> {
-                    Toast.makeText(this, "Error sending verification key: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    showToast("Error sending verification key: " + error.getMessage());
                 }
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    private void showSnackbar(String message) {
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show();
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

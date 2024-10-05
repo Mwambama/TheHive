@@ -11,6 +11,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
+import com.google.android.material.snackbar.Snackbar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,9 +55,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
             String confirmPassword = confirmPasswordField.getText().toString();
 
             if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
-                Toast.makeText(ResetPasswordActivity.this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+                showToast("Please fill in all fields.");
             } else if (!newPassword.equals(confirmPassword)) {
-                Toast.makeText(ResetPasswordActivity.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
+                showToast("Passwords do not match.");
             } else {
                 resetPassword(email, newPassword);
             }
@@ -82,7 +83,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
             payload.put("new_password", newPassword);
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Failed to create request.", Toast.LENGTH_SHORT).show();
+            showSnackbar("Failed to create request.");
             return;
         }
 
@@ -97,26 +98,34 @@ public class ResetPasswordActivity extends AppCompatActivity {
                         boolean success = response.getBoolean("success");
                         String message = response.getString("message");
                         if (success) {
-                            Toast.makeText(this, "Password reset successful!", Toast.LENGTH_SHORT).show();
+                            showSnackbar("Password reset successful!");
                             // Navigate to LoginActivity with animation
                             Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
                             startActivity(intent);
                             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Apply animation
                             finish();
                         } else {
-                            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                            showToast(message);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Toast.makeText(this, "Error parsing server response.", Toast.LENGTH_SHORT).show();
+                        showSnackbar("Error parsing server response.");
                     }
                 },
                 error -> {
-                    Toast.makeText(this, "Error resetting password: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    showToast("Error resetting password: " + error.getMessage());
                 }
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    private void showSnackbar(String message) {
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show();
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
