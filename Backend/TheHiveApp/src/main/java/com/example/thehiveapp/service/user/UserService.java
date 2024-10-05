@@ -12,4 +12,5 @@ public interface UserService {
     User updateUser(User request);
     void deleteUser(Long id);
     Long getIdByEmail(String email, Role role);
+    Boolean existsByEmail(String email);
 }

@@ -2,11 +2,13 @@ package com.example.hiveeapp.registration.forgotPassword;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Patterns;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
@@ -40,8 +42,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         sendKeyButton.setOnClickListener(v -> {
             String email = emailField.getText().toString().trim();
-            if (email.isEmpty()) {
-                showToast("Please enter your email.");
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(ForgotPasswordActivity.this, "Please enter a valid email address.", Toast.LENGTH_SHORT).show();
             } else {
                 sendVerificationKey(email);
             }
@@ -64,8 +66,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        // Placeholder URL for sending verification key
-        String url = "https://run.mocky.io/v3/8fc2528f-16f4-4c7f-982e-3ccef695e48a";  // Mock server
+        // URL for sending verification key
+        String url = "https://0426e89a-dc0e-4f75-8adb-c324dd58c2a8.mock.pstmn.io/send-key";
 
         // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(
@@ -93,30 +95,39 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
-                    hideLoading();
-                    showToast("Error sending verification key: " + error.getMessage());
+                    // Handle error
+                    handleError(error);
                 }
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
-    private void showSnackbar(String message) {
-        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show();
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void hideLoading() {
-        loadingProgressBar.setVisibility(View.GONE);
-        sendKeyButton.setEnabled(true);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.animator.slide_in_left, R.animator.slide_out_right);  // Animation when back button is pressed
+    // Error handling function
+    private void handleError(VolleyError error) {
+        if (error instanceof TimeoutError) {
+            Toast.makeText(ForgotPasswordActivity.this, "The request timed out. Please try again.", Toast.LENGTH_SHORT).show();
+        } else if (error.networkResponse != null) {
+            int statusCode = error.networkResponse.statusCode;
+            switch (statusCode) {
+                case 400:
+                    Toast.makeText(ForgotPasswordActivity.this, "Invalid request. Please check your input.", Toast.LENGTH_SHORT).show();
+                    break;
+                case 401:
+                    Toast.makeText(ForgotPasswordActivity.this, "Unauthorized. Please check your credentials.", Toast.LENGTH_SHORT).show();
+                    break;
+                case 404:
+                    Toast.makeText(ForgotPasswordActivity.this, "Server not found. Please try again later.", Toast.LENGTH_SHORT).show();
+                    break;
+                case 500:
+                    Toast.makeText(ForgotPasswordActivity.this, "Internal server error. Please try again later.", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    Toast.makeText(ForgotPasswordActivity.this, "Unexpected error: " + statusCode, Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        } else {
+            Toast.makeText(ForgotPasswordActivity.this, "Request failed. Please check your network connection.", Toast.LENGTH_SHORT).show();
+        }
     }
 }

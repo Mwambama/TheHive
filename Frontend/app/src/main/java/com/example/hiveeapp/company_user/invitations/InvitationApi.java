@@ -20,8 +20,9 @@ import java.util.Map;
 
 public class InvitationApi {
 
-    private static final String BASE_URL = "";
+    private static final String BASE_URL = "https://0426e89a-dc0e-4f75-8adb-c324dd58c2a8.mock.pstmn.io/";
     private static final String INVITATIONS_FILE = "invitations.json";
+    private static final String TAG = "InvitationApi";
 
     // Helper method to read invitations from file
     private static JSONArray readInvitationsFromFile(Context context) {
@@ -31,10 +32,10 @@ public class InvitationApi {
             fis.read(data);
             fis.close();
             String jsonString = new String(data, "UTF-8");
-            Log.d("FileRead", "Invitations loaded from " + INVITATIONS_FILE);
+            Log.d(TAG, "Invitations loaded from " + INVITATIONS_FILE);
             return new JSONArray(jsonString);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error reading invitations from file: " + e.getMessage());
             return new JSONArray();  // Return empty array if file does not exist
         }
     }
@@ -46,9 +47,9 @@ public class InvitationApi {
             FileOutputStream fos = context.openFileOutput(INVITATIONS_FILE, Context.MODE_PRIVATE);
             fos.write(jsonString.getBytes("UTF-8"));
             fos.close();
-            Log.d("FileWrite", "Invitations saved to " + INVITATIONS_FILE);
+            Log.d(TAG, "Invitations saved to " + INVITATIONS_FILE);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error writing invitations to file: " + e.getMessage());
         }
     }
 
@@ -64,7 +65,7 @@ public class InvitationApi {
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error generating new ID: " + e.getMessage());
         }
         return newId;
     }
@@ -91,7 +92,7 @@ public class InvitationApi {
             writeInvitationsToFile(context, invitations);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error creating invitation: " + e.getMessage());
             errorListener.onErrorResponse(new VolleyError(e.getMessage()));
             return;
         }
@@ -108,6 +109,7 @@ public class InvitationApi {
                     listener.onResponse(response);
                 },
                 error -> {
+                    Log.e(TAG, "Error sending invitation to server: " + error.getMessage());
                     errorListener.onErrorResponse(error);
                 }
         ) {
@@ -145,10 +147,14 @@ public class InvitationApi {
             if (found) {
                 // Write back to file
                 writeInvitationsToFile(context, invitations);
+            } else {
+                Log.e(TAG, "Error: Invitation not found with ID: " + invitationId);
+                errorListener.onErrorResponse(new VolleyError("Invitation not found"));
+                return;
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error deleting invitation: " + e.getMessage());
             errorListener.onErrorResponse(new VolleyError(e.getMessage()));
             return;
         }
@@ -162,11 +168,14 @@ public class InvitationApi {
                 deleteUrl,
                 null,
                 response -> {
-                    // On success, you can update any additional data if needed
                     listener.onResponse(response);
                 },
                 error -> {
-                    // Even if there is an error, we have already deleted the invitation locally
+                    if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
+                        Log.e(TAG, "Error: Invitation not found on server (404)");
+                    } else {
+                        Log.e(TAG, "Error deleting invitation on server: " + error.getMessage());
+                    }
                     errorListener.onErrorResponse(error);
                 }
         ) {
@@ -187,15 +196,12 @@ public class InvitationApi {
                                       Response.Listener<JSONArray> listener,
                                       Response.ErrorListener errorListener) {
 
-        // Read invitations from local file
         try {
+            // Read invitations from local file
             JSONArray invitations = readInvitationsFromFile(context);
-
-            // Call the success listener
             listener.onResponse(invitations);
-
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error reading invitations: " + e.getMessage());
             errorListener.onErrorResponse(new VolleyError(e.getMessage()));
         }
     }
@@ -228,12 +234,13 @@ public class InvitationApi {
                 // Write back to file
                 writeInvitationsToFile(context, invitations);
             } else {
+                Log.e(TAG, "Error: Invitation not found with ID: " + invitationId);
                 errorListener.onErrorResponse(new VolleyError("Invitation not found"));
                 return;
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error updating invitation: " + e.getMessage());
             errorListener.onErrorResponse(new VolleyError(e.getMessage()));
             return;
         }
@@ -247,11 +254,10 @@ public class InvitationApi {
                 updateUrl,
                 updatedInvitation,
                 response -> {
-                    // On success, you can update any additional data if needed
                     listener.onResponse(response);
                 },
                 error -> {
-                    // Even if there is an error, we have already updated the invitation locally
+                    Log.e(TAG, "Error updating invitation on server: " + error.getMessage());
                     errorListener.onErrorResponse(error);
                 }
         ) {

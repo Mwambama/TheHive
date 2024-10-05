@@ -1,6 +1,5 @@
 package com.example.thehiveapp.controller.user;
 
-import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.service.user.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;

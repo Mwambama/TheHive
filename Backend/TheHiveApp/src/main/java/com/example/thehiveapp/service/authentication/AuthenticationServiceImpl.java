@@ -42,7 +42,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             case student -> userId = createStudent(signUpRequest);
             default -> throw new IllegalArgumentException("Invalid role: " + signUpRequest.getRole());
         }
-
         createAuthentication(signUpRequest, userId);
     }
 

@@ -14,8 +14,8 @@ public class Student extends User{
     private String university;
     @Column(name="graduationDate", nullable = false)
     private String graduationDate;
-    @Column(name="birthDate", nullable = false)
-    private Date birthDate;
+    @Column(name="GPA", nullable = false)
+    private double GPA;
     @Column(name="resumePath", nullable = false)
     private String resumePath;
 
@@ -23,8 +23,8 @@ public class Student extends User{
     public void setUniversity(String university){this.university = university;}
     public String getGraduationDate(){return this.graduationDate;}
     public void setGraduationDate(String graduationDate){this.graduationDate = graduationDate;}
-    public Date getBirthDate(){ return this.birthDate; }
-    public void setBirthDate(Date birthDate){ this.birthDate = birthDate; }
+    public double getGPA(){ return this.GPA; }
+    public void setGPA(double GPA){ this.GPA = GPA; }
     public String getResumePath(){ return this.resumePath; }
     public void setResumePath(String resumePath){ this.resumePath = resumePath; }
 

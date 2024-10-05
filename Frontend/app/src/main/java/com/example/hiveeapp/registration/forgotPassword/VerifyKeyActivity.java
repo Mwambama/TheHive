@@ -7,6 +7,7 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
@@ -54,13 +55,11 @@ public class VerifyKeyActivity extends AppCompatActivity {
             payload.put("email", email);
             payload.put("verification_key", key);
         } catch (JSONException e) {
-            e.printStackTrace();
-            showSnackbar("Failed to create request.");
-            hideLoading();
+            handleJSONException(e);
             return;
         }
 
-        String url = "";  // Define the server URL
+        String url = "https://0426e89a-dc0e-4f75-8adb-c324dd58c2a8.mock.pstmn.io/verify-key";
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
@@ -83,35 +82,34 @@ public class VerifyKeyActivity extends AppCompatActivity {
                             showToast(message);
                         }
                     } catch (JSONException e) {
-                        e.printStackTrace();
-                        showSnackbar("Error parsing server response.");
+                        handleJSONException(e);
                     }
                 },
-                error -> {
-                    hideLoading();
-                    showToast("Error verifying key: " + error.getMessage());
-                }
+                this::handleVolleyError
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
-    private void hideLoading() {
-        loadingProgressBar.setVisibility(View.GONE);
-        verifyKeyButton.setEnabled(true);
+    // Function to handle JSON parsing errors
+    private void handleJSONException(JSONException e) {
+        e.printStackTrace();
+        Toast.makeText(this, "Error parsing server response. Please try again.", Toast.LENGTH_SHORT).show();
     }
 
-    private void showSnackbar(String message) {
-        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show();
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.animator.slide_in_left, R.animator.slide_out_right);  // Apply back navigation animation
+    // Function to handle different types of Volley errors
+    private void handleVolleyError(VolleyError error) {
+        if (error.networkResponse != null && error.networkResponse.statusCode == 400) {
+            Toast.makeText(this, "Invalid request. Please check your inputs.", Toast.LENGTH_SHORT).show();
+        } else if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
+            Toast.makeText(this, "Server error. Please try again later.", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof com.android.volley.TimeoutError) {
+            Toast.makeText(this, "Connection timeout. Please try again.", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof com.android.volley.NoConnectionError) {
+            Toast.makeText(this, "No internet connection. Please check your connection and try again.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "An unexpected error occurred: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        error.printStackTrace();
     }
 }
