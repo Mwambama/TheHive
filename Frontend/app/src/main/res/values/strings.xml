@@ -14,6 +14,7 @@
     <string name="password_field_desc">Password input field</string>
     <string name="forgot_password_desc">Forgot password button</string>
     <string name="register_account_desc">Register account text</string>
+    <string name="verify_key_desc">Enter the 4-letter verification key</string>
 
     <string name="app_name">Hivee App</string>
 </resources>
