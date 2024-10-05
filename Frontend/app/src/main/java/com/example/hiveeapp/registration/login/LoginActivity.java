@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.android.volley.Request;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
@@ -16,20 +16,21 @@ import com.example.hiveeapp.admin_user.AdminMainActivity;
 import com.example.hiveeapp.company_user.handleEmployers.EmployerCreationActivity;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.registration.forgotPassword.ForgotPasswordActivity;
+import com.example.hiveeapp.registration.signup.signupActivity;
+import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
-
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.example.hiveeapp.student_user.StudentMainActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailField, passwordField;
-    private Button loginButton;
-    private TextView forgotPasswordButton;
-    private ImageView togglePasswordVisibility;
-    private boolean isPasswordVisible = false;
+    private MaterialButton loginButton;
+    private TextView forgotPasswordButton, registerText;
+    private ProgressBar loadingProgressBar;
+    private boolean isPasswordVisible = false; // Added this variable
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,16 +42,24 @@ public class LoginActivity extends AppCompatActivity {
         passwordField = findViewById(R.id.passwordField);
         loginButton = findViewById(R.id.loginButton);
         forgotPasswordButton = findViewById(R.id.forgotPasswordButton);
-        togglePasswordVisibility = findViewById(R.id.togglePasswordVisibility);
+        registerText = findViewById(R.id.registerText);
+        loadingProgressBar = findViewById(R.id.loadingProgressBar);
 
+        // Login button click event
         loginButton.setOnClickListener(v -> authenticateUser());
 
-        togglePasswordVisibility.setOnClickListener(v -> togglePasswordVisibility());
-
+        // Forgot password text click event
         forgotPasswordButton.setOnClickListener(v -> {
-            // Navigate to ForgotPasswordActivity
             Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
             startActivity(intent);
+            overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+        });
+
+        // Register text click event
+        registerText.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, signupActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
         });
     }
 
@@ -60,34 +69,39 @@ public class LoginActivity extends AppCompatActivity {
 
         // Validate email format and non-empty fields
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(LoginActivity.this, "Please enter a valid email address.", Toast.LENGTH_SHORT).show();
+            showToast("Please enter a valid email address.");
             return;
         }
         if (password.isEmpty()) {
-            Toast.makeText(LoginActivity.this, "Please enter your password.", Toast.LENGTH_SHORT).show();
+            showToast("Please enter your password.");
             return;
         }
 
-        // Create JSON payload
+        // Show the loading indicator
+        loadingProgressBar.setVisibility(View.VISIBLE);
+        loginButton.setEnabled(false); // Disable the login button during network request
+
+        // Create JSON payload for authentication
         JSONObject loginPayload = new JSONObject();
         try {
             loginPayload.put("email", email);
             loginPayload.put("password", password);
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(LoginActivity.this, "Failed to create login request.", Toast.LENGTH_SHORT).show();
+            showToast("Failed to create login request.");
             return;
         }
 
         // Send login request to server
         String loginUrl = "https://0426e89a-dc0e-4f75-8adb-c324dd58c2a8.mock.pstmn.io/login";
 
+        // Create the login request using Volley
         JsonObjectRequest loginRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 loginUrl,
                 loginPayload,
                 response -> {
-                    // Handle successful response
+                    hideLoading(); // Hide the loading indicator and enable login button
                     try {
                         boolean success = response.getBoolean("success");
                         if (success) {
@@ -95,11 +109,11 @@ public class LoginActivity extends AppCompatActivity {
                             navigateToUserActivity(userType);
                         } else {
                             String message = response.getString("message");
-                            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                            showSnackbar(message);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Toast.makeText(LoginActivity.this, "Error parsing response.", Toast.LENGTH_SHORT).show();
+                        showSnackbar(getString(R.string.error_parsing_response));
                     }
                 },
                 error -> {
@@ -108,35 +122,36 @@ public class LoginActivity extends AppCompatActivity {
                 }
         );
 
-        // Add the request to the Volley request queue
         VolleySingleton.getInstance(this).addToRequestQueue(loginRequest);
     }
 
     // Error handling function
     private void handleError(VolleyError error) {
+        hideLoading(); // Ensure loading is hidden on error
+
         if (error instanceof TimeoutError) {
-            Toast.makeText(LoginActivity.this, "The request timed out. Please try again.", Toast.LENGTH_SHORT).show();
+            showToast("The request timed out. Please try again.");
         } else if (error.networkResponse != null) {
             int statusCode = error.networkResponse.statusCode;
             switch (statusCode) {
                 case 400:
-                    Toast.makeText(LoginActivity.this, "Invalid request. Please check your input.", Toast.LENGTH_SHORT).show();
+                    showToast("Invalid request. Please check your input.");
                     break;
                 case 401:
-                    Toast.makeText(LoginActivity.this, "Unauthorized. Please check your credentials.", Toast.LENGTH_SHORT).show();
+                    showToast("Unauthorized. Please check your credentials.");
                     break;
                 case 404:
-                    Toast.makeText(LoginActivity.this, "Server not found. Please try again later.", Toast.LENGTH_SHORT).show();
+                    showToast("Server not found. Please try again later.");
                     break;
                 case 500:
-                    Toast.makeText(LoginActivity.this, "Internal server error. Please try again later.", Toast.LENGTH_SHORT).show();
+                    showToast("Internal server error. Please try again later.");
                     break;
                 default:
-                    Toast.makeText(LoginActivity.this, "Unexpected error: " + statusCode, Toast.LENGTH_SHORT).show();
+                    showToast("Unexpected error: " + statusCode);
                     break;
             }
         } else {
-            Toast.makeText(LoginActivity.this, "Login failed. Please check your network connection.", Toast.LENGTH_SHORT).show();
+            showToast("Login failed. Please check your network connection.");
         }
     }
 
@@ -156,23 +171,27 @@ public class LoginActivity extends AppCompatActivity {
                 intent = new Intent(LoginActivity.this, AdminMainActivity.class);
                 break;
             default:
-                Toast.makeText(LoginActivity.this, "User type not recognized.", Toast.LENGTH_SHORT).show();
+                showSnackbar(getString(R.string.user_type_not_recognized));
                 return;
         }
         startActivity(intent);
+        overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
         finish();
     }
 
-    private void togglePasswordVisibility() {
-        if (isPasswordVisible) {
-            passwordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            togglePasswordVisibility.setImageResource(R.drawable.ic_visibility_off);
-            isPasswordVisible = false;
-        } else {
-            passwordField.setInputType(InputType.TYPE_CLASS_TEXT);
-            togglePasswordVisibility.setImageResource(R.drawable.ic_visibility_on);
-            isPasswordVisible = true;
-        }
-        passwordField.setSelection(passwordField.getText().length());
+    // Method to show a Snackbar message
+    private void showSnackbar(String message) {
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    // Method to hide the loading spinner and re-enable the button
+    private void hideLoading() {
+        loadingProgressBar.setVisibility(View.GONE);
+        loginButton.setEnabled(true);
+    }
+
+    // Method to show a Toast message
+    private void showToast(String message) {
+        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }
