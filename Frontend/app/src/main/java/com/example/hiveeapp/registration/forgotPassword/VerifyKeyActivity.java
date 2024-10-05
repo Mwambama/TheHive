@@ -63,10 +63,11 @@ public class VerifyKeyActivity extends AppCompatActivity {
                         String message = response.getString("message");
                         if (success) {
                             Toast.makeText(this, "Key verified successfully.", Toast.LENGTH_SHORT).show();
-                            // Navigate to ResetPasswordActivity
+                            // Navigate to ResetPasswordActivity with animation
                             Intent intent = new Intent(VerifyKeyActivity.this, ResetPasswordActivity.class);
                             intent.putExtra("email", email);
                             startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Apply animation
                             finish();
                         } else {
                             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -82,5 +83,11 @@ public class VerifyKeyActivity extends AppCompatActivity {
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);  // Apply back navigation animation
     }
 }

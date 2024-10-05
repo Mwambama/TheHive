@@ -98,9 +98,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
                         String message = response.getString("message");
                         if (success) {
                             Toast.makeText(this, "Password reset successful!", Toast.LENGTH_SHORT).show();
-                            // Navigate to LoginActivity
+                            // Navigate to LoginActivity with animation
                             Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
                             startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Apply animation
                             finish();
                         } else {
                             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -116,5 +117,11 @@ public class ResetPasswordActivity extends AppCompatActivity {
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);  // Apply back navigation animation
     }
 }

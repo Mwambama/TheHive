@@ -61,10 +61,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                         String message = response.getString("message");
                         if (success) {
                             Toast.makeText(this, "Verification key sent to your email.", Toast.LENGTH_SHORT).show();
-                            // Navigate to VerifyKeyActivity
+                            // Navigate to VerifyKeyActivity with animation
                             Intent intent = new Intent(ForgotPasswordActivity.this, VerifyKeyActivity.class);
                             intent.putExtra("email", email);
                             startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Animation transition
                         } else {
                             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                         }
@@ -79,5 +80,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);  // Animation when back button is pressed
     }
 }
