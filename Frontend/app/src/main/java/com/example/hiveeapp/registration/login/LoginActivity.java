@@ -46,14 +46,14 @@ public class LoginActivity extends AppCompatActivity {
         forgotPasswordButton.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
             startActivity(intent);
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Apply animation
+            overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);  // Apply animation
         });
 
         registerText.setOnClickListener(v -> {
             // Navigate to the signup activity
             Intent intent = new Intent(LoginActivity.this, signupActivity.class);
             startActivity(intent);
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Apply animation
+            overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);  // Apply animation
         });
     }
 
@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                 return;
         }
         startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Apply animation
+        overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);  // Apply animation
         finish();
     }
 
@@ -136,6 +136,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right); // Animation when back button is pressed
+        overridePendingTransition(R.animator.slide_in_left, R.animator.slide_out_right); // Animation when back button is pressed
     }
 }

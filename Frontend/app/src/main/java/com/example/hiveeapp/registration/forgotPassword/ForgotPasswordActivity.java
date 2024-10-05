@@ -32,7 +32,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         // Back arrow click event
         backArrowIcon.setOnClickListener(v -> {
             finish();
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            overridePendingTransition(R.animator.slide_in_left, R.animator.slide_out_right);
         });
 
         sendKeyButton.setOnClickListener(v -> {
@@ -74,7 +74,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                             Intent intent = new Intent(ForgotPasswordActivity.this, VerifyKeyActivity.class);
                             intent.putExtra("email", email);
                             startActivity(intent);
-                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                            overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
                         } else {
                             showToast(message);
                         }
@@ -102,6 +102,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);  // Animation when back button is pressed
+        overridePendingTransition(R.animator.slide_in_left, R.animator.slide_out_right);  // Animation when back button is pressed
     }
 }

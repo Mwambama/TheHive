@@ -102,7 +102,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
                             // Navigate to LoginActivity with animation
                             Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
                             startActivity(intent);
-                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);  // Apply animation
+                            overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);  // Apply animation
                             finish();
                         } else {
                             showToast(message);
@@ -131,6 +131,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);  // Apply back navigation animation
+        overridePendingTransition(R.animator.slide_in_left, R.animator.slide_out_right);  // Apply back navigation animation
     }
 }
