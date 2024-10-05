@@ -3,6 +3,7 @@ package com.example.hiveeapp.registration.forgotPassword;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -43,7 +44,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         sendKeyButton.setOnClickListener(v -> {
             String email = emailField.getText().toString().trim();
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                Toast.makeText(ForgotPasswordActivity.this, "Please enter a valid email address.", Toast.LENGTH_SHORT).show();
+                showToast("Please enter a valid email address.");
             } else {
                 sendVerificationKey(email);
             }
@@ -106,28 +107,44 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     // Error handling function
     private void handleError(VolleyError error) {
         if (error instanceof TimeoutError) {
-            Toast.makeText(ForgotPasswordActivity.this, "The request timed out. Please try again.", Toast.LENGTH_SHORT).show();
+            showToast("The request timed out. Please try again.");
         } else if (error.networkResponse != null) {
             int statusCode = error.networkResponse.statusCode;
             switch (statusCode) {
                 case 400:
-                    Toast.makeText(ForgotPasswordActivity.this, "Invalid request. Please check your input.", Toast.LENGTH_SHORT).show();
+                    showToast("Invalid request. Please check your input.");
                     break;
                 case 401:
-                    Toast.makeText(ForgotPasswordActivity.this, "Unauthorized. Please check your credentials.", Toast.LENGTH_SHORT).show();
+                    showToast("Unauthorized. Please check your credentials.");
                     break;
                 case 404:
-                    Toast.makeText(ForgotPasswordActivity.this, "Server not found. Please try again later.", Toast.LENGTH_SHORT).show();
+                    showToast("Server not found. Please try again later.");
                     break;
                 case 500:
-                    Toast.makeText(ForgotPasswordActivity.this, "Internal server error. Please try again later.", Toast.LENGTH_SHORT).show();
+                    showToast("Internal server error. Please try again later.");
                     break;
                 default:
-                    Toast.makeText(ForgotPasswordActivity.this, "Unexpected error: " + statusCode, Toast.LENGTH_SHORT).show();
+                    showToast("Unexpected error: " + statusCode);
                     break;
             }
         } else {
-            Toast.makeText(ForgotPasswordActivity.this, "Request failed. Please check your network connection.", Toast.LENGTH_SHORT).show();
+            showToast("Request failed. Please check your network connection.");
         }
+    }
+
+    // Method to show a Snackbar message
+    private void showSnackbar(String message) {
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    // Method to hide the loading spinner and re-enable the button
+    private void hideLoading() {
+        loadingProgressBar.setVisibility(View.GONE);
+        sendKeyButton.setEnabled(true);
+    }
+
+    // Method to show a Toast message
+    private void showToast(String message) {
+        Toast.makeText(ForgotPasswordActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }

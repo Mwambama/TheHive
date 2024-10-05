@@ -100,16 +100,32 @@ public class VerifyKeyActivity extends AppCompatActivity {
     // Function to handle different types of Volley errors
     private void handleVolleyError(VolleyError error) {
         if (error.networkResponse != null && error.networkResponse.statusCode == 400) {
-            Toast.makeText(this, "Invalid request. Please check your inputs.", Toast.LENGTH_SHORT).show();
+            showToast("Invalid request. Please check your inputs.");
         } else if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
-            Toast.makeText(this, "Server error. Please try again later.", Toast.LENGTH_SHORT).show();
+            showToast("Server error. Please try again later.");
         } else if (error instanceof com.android.volley.TimeoutError) {
-            Toast.makeText(this, "Connection timeout. Please try again.", Toast.LENGTH_SHORT).show();
+            showToast("Connection timeout. Please try again.");
         } else if (error instanceof com.android.volley.NoConnectionError) {
-            Toast.makeText(this, "No internet connection. Please check your connection and try again.", Toast.LENGTH_SHORT).show();
+            showToast("No internet connection. Please check your connection and try again.");
         } else {
-            Toast.makeText(this, "An unexpected error occurred: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            showToast("An unexpected error occurred: " + error.getMessage());
         }
         error.printStackTrace();
+    }
+
+    // Method to show a Snackbar message
+    private void showSnackbar(String message) {
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    // Method to hide the loading spinner and re-enable the button
+    private void hideLoading() {
+        loadingProgressBar.setVisibility(View.GONE);
+        verifyKeyButton.setEnabled(true);
+    }
+
+    // Method to show a Toast message
+    private void showToast(String message) {
+        Toast.makeText(VerifyKeyActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }
