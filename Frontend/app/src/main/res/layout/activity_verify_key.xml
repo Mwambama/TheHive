@@ -24,6 +24,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="#000000" />
 
+    <!-- Step Indicator -->
+    <TextView
+        android:id="@+id/stepIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Step 2 of 3"
+        android:textSize="14sp"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/backArrowIcon"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp" />
+
     <TextView
         android:id="@+id/verifyKeyTitle"
         android:layout_width="wrap_content"
@@ -32,10 +45,10 @@
         android:textSize="28sp"
         android:textStyle="bold"
         android:textColor="#000000"
-        app:layout_constraintTop_toBottomOf="@id/backArrowIcon"
+        app:layout_constraintTop_toBottomOf="@id/stepIndicator"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/keyInputLayout"
