@@ -53,6 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
+            android:imeOptions="actionNext"
             android:textColor="#000000"
             android:paddingStart="48dp"
             android:contentDescription="@string/email_field_desc"/>
@@ -82,6 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
+            android:imeOptions="actionDone"
             android:textColor="#000000"
             android:paddingStart="48dp"
             android:contentDescription="@string/password_field_desc"/>
