@@ -2,6 +2,7 @@ package com.example.hiveeapp.registration.forgotPassword;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,6 +19,7 @@ public class VerifyKeyActivity extends AppCompatActivity {
 
     private EditText keyField;
     private Button verifyKeyButton;
+    private ProgressBar loadingProgressBar;
     private String email;
 
     @Override
@@ -27,6 +29,7 @@ public class VerifyKeyActivity extends AppCompatActivity {
 
         keyField = findViewById(R.id.keyField);
         verifyKeyButton = findViewById(R.id.verifyKeyButton);
+        loadingProgressBar = findViewById(R.id.loadingProgressBar);
 
         // Retrieve the email from the previous activity
         email = getIntent().getStringExtra("email");
@@ -42,6 +45,10 @@ public class VerifyKeyActivity extends AppCompatActivity {
     }
 
     private void verifyKey(String email, String key) {
+        // Show loading indicator
+        loadingProgressBar.setVisibility(View.VISIBLE);
+        verifyKeyButton.setEnabled(false);
+
         JSONObject payload = new JSONObject();
         try {
             payload.put("email", email);
@@ -49,16 +56,18 @@ public class VerifyKeyActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
             showSnackbar("Failed to create request.");
+            hideLoading();
             return;
         }
 
-        String url = "";
+        String url = "";  // Define the server URL
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
                 payload,
                 response -> {
+                    hideLoading();
                     try {
                         boolean success = response.getBoolean("success");
                         String message = response.getString("message");
@@ -68,7 +77,7 @@ public class VerifyKeyActivity extends AppCompatActivity {
                             Intent intent = new Intent(VerifyKeyActivity.this, ResetPasswordActivity.class);
                             intent.putExtra("email", email);
                             startActivity(intent);
-                            overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);  // Apply animation
+                            overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
                             finish();
                         } else {
                             showToast(message);
@@ -79,11 +88,17 @@ public class VerifyKeyActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
+                    hideLoading();
                     showToast("Error verifying key: " + error.getMessage());
                 }
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    private void hideLoading() {
+        loadingProgressBar.setVisibility(View.GONE);
+        verifyKeyButton.setEnabled(true);
     }
 
     private void showSnackbar(String message) {
