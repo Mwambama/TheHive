@@ -2,6 +2,7 @@ package com.example.hiveeapp.registration.forgotPassword;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +20,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private EditText emailField;
     private Button sendKeyButton;
     private ImageButton backArrowIcon;
+    private ProgressBar loadingProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         emailField = findViewById(R.id.forgotPasswordEmailField);
         sendKeyButton = findViewById(R.id.sendKeyButton);
         backArrowIcon = findViewById(R.id.backArrowIcon);
+        loadingProgressBar = findViewById(R.id.loadingProgressBar);
 
         // Back arrow click event
         backArrowIcon.setOnClickListener(v -> {
@@ -46,6 +49,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
 
     private void sendVerificationKey(String email) {
+        // Show loading indicator
+        loadingProgressBar.setVisibility(View.VISIBLE);
+        sendKeyButton.setEnabled(false);  // Disable button during the request
+
         // Create JSON payload
         JSONObject payload = new JSONObject();
         try {
@@ -53,6 +60,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
             showSnackbar("Failed to create request.");
+            hideLoading();
             return;
         }
 
@@ -65,6 +73,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 url,
                 payload,
                 response -> {
+                    hideLoading();
                     try {
                         boolean success = response.getBoolean("success");
                         String message = response.getString("message");
@@ -84,6 +93,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
+                    hideLoading();
                     showToast("Error sending verification key: " + error.getMessage());
                 }
         );
@@ -97,6 +107,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void hideLoading() {
+        loadingProgressBar.setVisibility(View.GONE);
+        sendKeyButton.setEnabled(true);
     }
 
     @Override
