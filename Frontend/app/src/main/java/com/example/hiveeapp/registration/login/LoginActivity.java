@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         forgotPasswordButton = findViewById(R.id.forgotPasswordButton);
         registerText = findViewById(R.id.registerText);
+        TextView registerText = findViewById(R.id.registerText);
 
         // Login button click event
         loginButton.setOnClickListener(v -> authenticateUser());
@@ -50,11 +51,12 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Register text click event
         registerText.setOnClickListener(v -> {
+            // Navigate to the signup activity
             Intent intent = new Intent(LoginActivity.this, signupActivity.class);
             startActivity(intent);
         });
+
     }
 
     private void authenticateUser() {
