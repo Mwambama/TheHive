@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background Gradient Layer -->
     <item>
         <shape android:shape="rectangle">
             <gradient
                 android:startColor="#2196F3"
+                android:centerColor="#673AB7"
                 android:endColor="#9C27B0"
-                android:angle="270" />
+                android:angle="45" />
+
+            <stroke
+                android:width="2dp"
+                android:color="#FFFFFF" />
+
+            <corners android:radius="16dp" />
+
+            <padding
+                android:left="8dp"
+                android:right="8dp"
+                android:top="8dp"
+                android:bottom="8dp" />
         </shape>
     </item>
 </layer-list>
