@@ -7,6 +7,7 @@
     android:background="@drawable/gradient_background"
     android:padding="24dp">
 
+    <!-- Back Arrow Icon -->
     <ImageButton
         android:id="@+id/backArrowIcon"
         android:layout_width="32dp"
@@ -15,7 +16,7 @@
         android:layout_marginTop="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
-        android:contentDescription="Back Arrow"
+        android:contentDescription="@string/back_arrow_desc"
         android:focusable="true"
         android:padding="8dp"
         android:scaleType="fitCenter"
@@ -29,7 +30,7 @@
         android:id="@+id/stepIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Step 2 of 3"
+        android:text="@string/step_2_of_3"
         android:textSize="14sp"
         android:textColor="#000000"
         app:layout_constraintTop_toBottomOf="@id/backArrowIcon"
@@ -41,7 +42,7 @@
         android:id="@+id/verifyKeyTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enter Verification Key"
+        android:text="@string/verify_key_title"
         android:textSize="28sp"
         android:textStyle="bold"
         android:textColor="#000000"
@@ -55,7 +56,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="4-letter key"
+        android:hint="@string/key_input_hint"
         app:startIconDrawable="@drawable/ic_key"
         app:startIconTint="#000000"
         app:boxStrokeColor="#000000"
@@ -83,7 +84,7 @@
         android:id="@+id/verifyKeyButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Verify Key"
+        android:text="@string/verify_key_button"
         android:textAllCaps="false"
         android:textSize="18sp"
         android:textColor="#FFFFFF"
@@ -94,5 +95,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginEnd="16dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
