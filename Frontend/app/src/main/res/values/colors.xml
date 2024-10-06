@@ -8,4 +8,5 @@
     <color name="weak">#FF0000</color>
     <color name="medium">#FFA500</color>
     <color name="strong">#008000</color>
+    <color name="gray">#808080</color>
 </resources>
