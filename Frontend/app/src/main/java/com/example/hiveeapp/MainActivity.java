@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.hiveeapp.signup.SignupActivity;
+import com.example.hiveeapp.signup.signUP.SignupActivity;
 
 public class MainActivity extends AppCompatActivity {
 

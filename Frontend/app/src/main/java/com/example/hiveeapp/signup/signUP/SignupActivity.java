@@ -1,4 +1,4 @@
-package com.example.hiveeapp.signup;
+package com.example.hiveeapp.signup.signUP;
 
 import android.text.InputType;
 import android.widget.ImageButton;
@@ -6,7 +6,7 @@ import com.example.hiveeapp.R;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.content.Intent;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Request;
 import com.android.volley.Response;
