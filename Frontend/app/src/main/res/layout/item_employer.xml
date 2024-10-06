@@ -4,16 +4,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardElevation="4dp"
-    app:cardCornerRadius="8dp">
+    android:layout_marginBottom="12dp"
+    app:cardElevation="6dp"
+    app:cardCornerRadius="12dp"
+    android:background="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
+        <!-- Employer Name -->
         <TextView
             android:id="@+id/nameTextView"
             android:layout_width="wrap_content"
@@ -21,64 +23,67 @@
             android:text="Employer Name"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#000000" />
+            android:textColor="@android:color/black"/>
 
+        <!-- Email -->
         <TextView
             android:id="@+id/emailTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Email"
             android:textSize="14sp"
-            android:textColor="#555555"
-            android:layout_marginTop="4dp" />
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="4dp"/>
 
+        <!-- Phone -->
         <TextView
             android:id="@+id/phoneTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Phone"
             android:textSize="14sp"
-            android:textColor="#555555"
-            android:layout_marginTop="2dp" />
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="4dp"/>
 
+        <!-- Address -->
         <TextView
             android:id="@+id/addressTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Address"
             android:textSize="14sp"
-            android:textColor="#555555"
-            android:layout_marginTop="2dp" />
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="4dp"/>
 
+        <!-- Buttons for update and delete -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="12dp">
 
             <ImageButton
                 android:id="@+id/updateButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_update"
-                android:contentDescription="Update Invitation"
+                android:contentDescription="Update Employer"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="fitCenter"
                 android:padding="8dp"
-                app:tint="#000000"/>
+                app:tint="?attr/colorAccent"/>
 
             <ImageButton
                 android:id="@+id/deleteButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_delete"
-                android:contentDescription="Delete Invitation"
+                android:contentDescription="Delete Employer"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="fitCenter"
                 android:padding="8dp"
-                app:tint="#000000" />
+                app:tint="@android:color/holo_red_light"/>
         </LinearLayout>
 
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>
