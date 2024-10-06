@@ -2,6 +2,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Profile Button at the top right -->
+    <Button
+        android:id="@+id/btnProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp" />
+
     <!-- Job Posting Card -->
     <LinearLayout
         android:id="@+id/jobCard"
@@ -10,7 +20,6 @@
         android:layout_centerInParent="true"
         android:orientation="vertical"
         android:padding="16dp" >
-
 
         <!-- Job Title -->
         <TextView
@@ -40,26 +49,25 @@
             android:textColor="#666" />
     </LinearLayout>
 
-    <!-- Swipe Left (Skip) -->
+    <!-- Swipe Left (Skip) Button at the bottom left -->
     <Button
         android:id="@+id/btnSkip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SKIP"
         android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:layout_alignParentStart="true"
-        android:background="@drawable/reject" /> <!-- Ensure this drawable exists -->
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/reject" />
 
-    <!-- Swipe Right (Apply) -->
+    <!-- Swipe Right (Apply) Button at the bottom right -->
     <Button
         android:id="@+id/btnApply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="APPLY"
         android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/accept" /> <!-- Ensure this drawable exists -->
-
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/accept" />
 </RelativeLayout>

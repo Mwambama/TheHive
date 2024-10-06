@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
         // Navigate to LoginActivity
         goToLoginActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
