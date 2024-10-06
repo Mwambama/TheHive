@@ -52,22 +52,22 @@
     <!-- Swipe Left (Skip) Button at the bottom left -->
     <Button
         android:id="@+id/btnSkip"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="SKIP"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_alignParentStart="true"
+        android:layout_margin="16dp"
         android:background="@drawable/reject" />
 
     <!-- Swipe Right (Apply) Button at the bottom right -->
     <Button
         android:id="@+id/btnApply"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="APPLY"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
         android:background="@drawable/accept" />
 </RelativeLayout>
