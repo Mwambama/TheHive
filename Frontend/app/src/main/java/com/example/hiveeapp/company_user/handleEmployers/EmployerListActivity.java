@@ -1,10 +1,7 @@
 package com.example.hiveeapp.company_user.handleEmployers;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,19 +10,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.hiveeapp.company_user.CompanyActivity;
+import com.example.hiveeapp.company_user.invitations.InvitationManagementActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONArray;
 
 public class EmployerListActivity extends AppCompatActivity {
 
     private RecyclerView employerRecyclerView;
     private EmployerAdapter employerAdapter;
-    private ImageButton backArrowIcon;
-    private Button addEmployerButton;
+    private MaterialButton addEmployerButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +31,6 @@ public class EmployerListActivity extends AppCompatActivity {
 
         // Initialize views
         initViews();
-
-        // Set up back navigation
-        backArrowIcon.setOnClickListener(v -> finish());
 
         // Set up Add Employer button
         addEmployerButton.setOnClickListener(v -> {
@@ -53,6 +47,23 @@ public class EmployerListActivity extends AppCompatActivity {
 
         // Load employers from the server
         loadEmployers();
+
+        // Set up Bottom Navigation View
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_invitations) {
+                startActivity(new Intent(EmployerListActivity.this, InvitationManagementActivity.class));
+                return true;
+            } else if (itemId == R.id.navigation_employers) {
+                Toast.makeText(EmployerListActivity.this, "You are already on this page", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (itemId == R.id.navigation_main_user_page) {
+                startActivity(new Intent(EmployerListActivity.this, CompanyActivity.class));
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
@@ -67,7 +78,6 @@ public class EmployerListActivity extends AppCompatActivity {
      */
     private void initViews() {
         employerRecyclerView = findViewById(R.id.employerRecyclerView);
-        backArrowIcon = findViewById(R.id.backArrowIcon);
         addEmployerButton = findViewById(R.id.addEmployerButton);
     }
 
