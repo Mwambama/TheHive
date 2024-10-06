@@ -57,8 +57,8 @@
         android:text="SKIP"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_margin="16dp"
-        android:background="@drawable/reject" />
+        android:layout_margin="16dp" />
+<!--        android:background="@drawable/reject" />-->
 
     <!-- Swipe Right (Apply) Button at the bottom right -->
     <Button
@@ -68,6 +68,6 @@
         android:text="APPLY"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:background="@drawable/accept" />
+        android:layout_margin="16dp" />
+<!--        android:background="@drawable/accept" />-->
 </RelativeLayout>
