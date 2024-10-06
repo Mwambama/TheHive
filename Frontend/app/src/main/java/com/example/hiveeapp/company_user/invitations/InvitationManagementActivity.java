@@ -39,8 +39,7 @@ public class InvitationManagementActivity extends AppCompatActivity {
         // Set up RecyclerView
         invitationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize adapter with read-only mode (isEditable = false)
-        invitationAdapter = new InvitationAdapter(this, false); // false indicates read-only mode
+        invitationAdapter = new InvitationAdapter(this, true);
         invitationsRecyclerView.setAdapter(invitationAdapter);
 
         // Load invitations automatically
@@ -49,7 +48,7 @@ public class InvitationManagementActivity extends AppCompatActivity {
         // Handle Add Invitation Button Click
         addInvitationButton.setOnClickListener(v -> {
             Intent intent = new Intent(InvitationManagementActivity.this, InvitationCreationActivity.class);
-            startActivity(intent);  // Navigate to Add Invitation Activity
+            startActivity(intent);
         });
     }
 

@@ -41,8 +41,7 @@ public class EmployerListActivity extends AppCompatActivity {
         // Set up RecyclerView
         employerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize adapter with read-only mode (isEditable = false)
-        employerAdapter = new EmployerAdapter(this, false); // false indicates read-only mode
+        employerAdapter = new EmployerAdapter(this, true);
         employerRecyclerView.setAdapter(employerAdapter);
 
         // Load employers from the server
