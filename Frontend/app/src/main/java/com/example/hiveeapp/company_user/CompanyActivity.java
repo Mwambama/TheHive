@@ -2,7 +2,6 @@ package com.example.hiveeapp.company_user;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,47 +10,47 @@ import com.example.hiveeapp.MainActivity;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.company_user.handleEmployers.EmployerListActivity;
 import com.example.hiveeapp.company_user.invitations.InvitationManagementActivity;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class CompanyActivity extends AppCompatActivity {
 
-    private ImageButton backArrowIcon;
-    private ImageButton manageEmployersIcon;
-    private ImageButton mainUserPageIcon;
-    private ImageButton manageInvitationsIcon;
+    private MaterialToolbar topAppBar;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company);
 
-        // Find the ImageButtons in the layout
-        backArrowIcon = findViewById(R.id.backArrowIcon);
-        manageEmployersIcon = findViewById(R.id.manageEmployersIcon);
-        mainUserPageIcon = findViewById(R.id.mainUserPageIcon);
-        manageInvitationsIcon = findViewById(R.id.manageInvitationsIcon);
-
-        // Set click listener for back arrow
-        backArrowIcon.setOnClickListener(v -> {
+        // Set up the top app bar
+        topAppBar = findViewById(R.id.topAppBar);
+        topAppBar.setNavigationOnClickListener(v -> {
             Intent intent = new Intent(CompanyActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         });
 
-        // Set click listener to navigate to CompanyActivityApi
-        manageEmployersIcon.setOnClickListener(v -> {
-            Intent intent = new Intent(CompanyActivity.this, EmployerListActivity.class);
-            startActivity(intent);
-        });
+        // Set up the bottom navigation view
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        // Set the selected item to main user page
+        bottomNavigationView.setSelectedItemId(R.id.navigation_main_user_page);
 
-        // Set up the main user page icon click listener
-        mainUserPageIcon.setOnClickListener(v -> {
-            Toast.makeText(CompanyActivity.this, "You are already on this page", Toast.LENGTH_SHORT).show();
-        });
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            String selectedTitle = item.getTitle().toString();
 
-        // Set click listener to navigate to AddInvitationActivity
-        manageInvitationsIcon.setOnClickListener(v -> {
-            Intent intent = new Intent(CompanyActivity.this, InvitationManagementActivity.class);
-            startActivity(intent);
+            if (selectedTitle.equals("manage_employers")) {
+                startActivity(new Intent(CompanyActivity.this, EmployerListActivity.class));
+                return true;
+            } else if (selectedTitle.equals("main_user_page")) {
+                Toast.makeText(CompanyActivity.this, "You are already on this page", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (selectedTitle.equals("manage_invitations")) {
+                startActivity(new Intent(CompanyActivity.this, InvitationManagementActivity.class));
+                return true;
+            }
+
+            return false;
         });
     }
 }
