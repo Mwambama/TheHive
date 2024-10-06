@@ -17,14 +17,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hiveapp"
-        android:layout_marginTop="16dp" />
-
-    <Button
-        android:id="@+id/main_login_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="25dp" />
+<!--       remove login in button-->
+<!--    <Button-->
+<!--        android:id="@+id/main_login_btn"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Login"-->
+<!--        android:layout_marginTop="16dp" />-->
 
     <Button
         android:id="@+id/main_signup_btn"
