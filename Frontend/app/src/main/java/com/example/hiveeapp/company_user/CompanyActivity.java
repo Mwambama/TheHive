@@ -65,21 +65,10 @@ public class CompanyActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                // Optional: Handle tab unselected (e.g., saving state or stopping tasks)
-                Toast.makeText(CompanyActivity.this, "Tab " + tab.getText() + " unselected.", Toast.LENGTH_SHORT).show();
-            }
+            public void onTabUnselected(TabLayout.Tab tab) {}
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                // Optional: Handle reselecting the current tab (e.g., refreshing or scrolling to top)
-                Toast.makeText(CompanyActivity.this, "Tab " + tab.getText() + " reselected. Refreshing content.", Toast.LENGTH_SHORT).show();
-
-                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.frameLayout);
-                if (currentFragment != null) {
-                    loadFragment(currentFragment); // Refresh the current fragment
-                }
-            }
+            public void onTabReselected(TabLayout.Tab tab) {}
         });
 
         // Load default fragment (Company Info) when the activity is opened
