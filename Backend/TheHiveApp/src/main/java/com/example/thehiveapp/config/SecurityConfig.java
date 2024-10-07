@@ -2,6 +2,7 @@ package com.example.thehiveapp.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,9 +20,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 // Specify authorization rules
                 .authorizeHttpRequests(auth -> auth
-                        // Permit access to certain endpoints
-                        .requestMatchers("/**").permitAll()
-                        // Require authentication for other endpoints
+                        .requestMatchers(HttpMethod.POST, "/account/signup").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/otp/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/account/change-password").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Use HTTP Basic authentication (can be replaced with form login or JWT)

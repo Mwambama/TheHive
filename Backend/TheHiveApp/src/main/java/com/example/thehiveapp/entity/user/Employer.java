@@ -1,6 +1,6 @@
 package com.example.thehiveapp.entity.user;
 
-import com.example.thehiveapp.entity.jobPosting.JobPosting;
+//import com.example.thehiveapp.entity.jobPosting.JobPosting;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,8 +18,8 @@ public class Employer extends User{
     private Long companyId;
     @Column(name="field", nullable = false)
     private String field;
-    @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<JobPosting> jobPostings;
+//    @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<JobPosting> jobPostings;
 
     public Long getCompanyId() { return companyId; }
 
@@ -29,8 +29,8 @@ public class Employer extends User{
 
     public void setField(String field) { this.field = field; }
 
-    public List<JobPosting> getJobPostings() { return jobPostings; }
+//    public List<JobPosting> getJobPostings() { return jobPostings; }
 
-    public void setJobPostings(List<JobPosting> jobPostings) { this.jobPostings = jobPostings; }
+//    public void setJobPostings(List<JobPosting> jobPostings) { this.jobPostings = jobPostings; }
 
 }

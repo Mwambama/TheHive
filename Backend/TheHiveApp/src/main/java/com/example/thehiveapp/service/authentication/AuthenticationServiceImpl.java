@@ -3,6 +3,7 @@ package com.example.thehiveapp.service.authentication;
 import com.example.thehiveapp.config.SecurityConfig;
 import com.example.thehiveapp.dto.authentication.LoginRequest;
 import com.example.thehiveapp.dto.authentication.SignUpRequest;
+import com.example.thehiveapp.dto.email.ChangePasswordRequest;
 import com.example.thehiveapp.entity.authentication.Authentication;
 import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.entity.user.Student;
@@ -53,13 +54,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public void login(LoginRequest loginRequest){
-        Long userId = userService.getIdByEmail(loginRequest.getEmail(), loginRequest.getRole());
+        Long userId = userService.getIdByEmail(loginRequest.getEmail());
         Authentication authentication = authenticationRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User not found"));
         boolean isPasswordMatch = securityConfig.passwordEncoder().matches(loginRequest.getPassword(), authentication.getPassword());
         if (!isPasswordMatch) {
             throw new IllegalArgumentException("Invalid password for email: " + loginRequest.getEmail());
         }
+    }
+
+    public String changePassword(ChangePasswordRequest changePasswordRequest) {
+        if (!changePasswordRequest.getPassword().equals(changePasswordRequest.getConfirmPassword())){
+            return "Passwords do not match! Try again!";
+        }
+        Long userId = userService.getIdByEmail(changePasswordRequest.getEmail());
+        Authentication authentication = authenticationRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException("User not found"));
+        authentication.setPassword(securityConfig.passwordEncoder().encode(changePasswordRequest.getConfirmPassword()));
+        authenticationRepository.save(authentication);
+        return "Password changed successfully";
     }
 
 
