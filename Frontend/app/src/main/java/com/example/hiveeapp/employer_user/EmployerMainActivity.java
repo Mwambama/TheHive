@@ -1,117 +1,69 @@
 package com.example.hiveeapp.employer_user;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import android.widget.TextView;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.volley.VolleySingleton;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-    public class EmployerMainActivity extends AppCompatActivity {
-        private EditText companyNameEditText;
-        private EditText companyLogoUrlEditText;
-        private EditText companyDescriptionEditText;
-        private EditText industryEditText;
-        private EditText locationEditText;
-        private EditText websiteEditText;
-        private EditText recruiterNameEditText;
-        private EditText contactEmailEditText;
-        private EditText phoneNumberEditText;
-        //private EditText socialMediaLinksEditText;
-        private Button saveProfileButton;
+public class EmployerMainActivity extends AppCompatActivity {
+    private TextView employerNameTextView;
+    private TextView jobTitleTextView;
+    private TextView aboutDescriptionTextView;
+    private Button addJobButton;
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.employer_activity);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_employer_profile);
 
-            // Initialize EditText fields
-            companyNameEditText = findViewById(R.id.company_name);
-            //companyLogoUrlEditText = findViewById(R.id.company_logo_url);
-            companyDescriptionEditText = findViewById(R.id.company_description);
-            industryEditText = findViewById(R.id.industry);
-            locationEditText = findViewById(R.id.location);
-            websiteEditText = findViewById(R.id.website);
-            recruiterNameEditText = findViewById(R.id.recruiter_name);
-            contactEmailEditText = findViewById(R.id.contact_email);
-            phoneNumberEditText = findViewById(R.id.phone_number);
-          //  socialMediaLinksEditText = findViewById(R.id.social_media_links);
-            saveProfileButton = findViewById(R.id.save_profile_button);
+        // Initialize TextView fields
+        employerNameTextView = findViewById(R.id.employer_name);
+        jobTitleTextView = findViewById(R.id.job_title);
+        aboutDescriptionTextView = findViewById(R.id.about_description);
 
-            // Save button click listener
-            saveProfileButton.setOnClickListener(view -> {
-                String companyName = companyNameEditText.getText().toString();
-                String companyLogoUrl = companyLogoUrlEditText.getText().toString();
-                String companyDescription = companyDescriptionEditText.getText().toString();
-                String industry = industryEditText.getText().toString();
-                String location = locationEditText.getText().toString();
-                String website = websiteEditText.getText().toString();
-                String recruiterName = recruiterNameEditText.getText().toString();
-                String contactEmail = contactEmailEditText.getText().toString();
-                String phoneNumber = phoneNumberEditText.getText().toString();
-              //  String socialMediaLinks = socialMediaLinksEditText.getText().toString();
+        // Set employer information
+        employerNameTextView.setText("John Steve");
+        jobTitleTextView.setText("HR Manager");
+        aboutDescriptionTextView.setText("I work at Pella Corporation and work with the engineering team.");
 
-                // Check for empty fields
-                if (companyName.isEmpty() || companyDescription.isEmpty() || industry.isEmpty() || location.isEmpty() || website.isEmpty() ||
-                        recruiterName.isEmpty() || contactEmail.isEmpty() || phoneNumber.isEmpty()) {
-                    Toast.makeText(EmployerMainActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                // Create JSON object with profile data
-                JSONObject profileData = new JSONObject();
-                try {
-                    profileData.put("companyName", companyName);
-                    profileData.put("companyLogoUrl", companyLogoUrl);
-                    profileData.put("companyDescription", companyDescription);
-                    profileData.put("industry", industry);
-                    profileData.put("location", location);
-                    profileData.put("website", website);
-                    profileData.put("recruiterName", recruiterName);
-                    profileData.put("contactEmail", contactEmail);
-                    profileData.put("phoneNumber", phoneNumber);
+        // Initialize Add Job button
+        addJobButton = findViewById(R.id.add_job_button);
+        addJobButton.setOnClickListener(view -> {
+            Intent intent = new Intent(EmployerMainActivity.this, AddJobActivity.class);
+            startActivity(intent);
+        });
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                // URL for the Postman mock server
-                String url = "https://8c5d8b24-4a9a-4ce2-bf22-1aa5316f76a2.mock.pstmn.io/employer/profile"; // Replace with your mock server URL
+        // Display posted jobs
+        displayPostedJobs();
 
-                // Create JSON request
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                        Request.Method.POST,
-                        url,
-                        profileData,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                // Handle successful profile save
-                                Toast.makeText(EmployerMainActivity.this, "Profile saved successfully", Toast.LENGTH_SHORT).show();
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                // Handle error
-                                Toast.makeText(EmployerMainActivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                );
-
-                // Add request to the Volley request queue
-                VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
-            });
-        }
+        // Set up bottom navigation
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
 
-
-
-
+    private void displayPostedJobs() {
+        // Code to display posted jobs
+    }
+    private boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.nav_chat) {
+            // Navigate to Chat activity
+            startActivity(new Intent(this, ChatActivity.class));
+            return true;
+        } else if (item.getItemId() == R.id.nav_home) {
+            // Already on home, do nothing or add intent if needed
+            return true;
+        } else if (item.getItemId() == R.id.nav_tracking) {
+            // Navigate to Tracking activity
+            startActivity(new Intent(this, TrackingApplicationActivity.class));
+            return true;
+        } else {
+            return false;
+        }
+    }
+}

@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.hiveeapp.employer_user.mainEmployer;
+import com.example.hiveeapp.employer_user.EmployerMainActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         goToEmployerActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, mainEmployer.class);
+                Intent intent = new Intent(MainActivity.this, EmployerMainActivity.class);
                 startActivity(intent);
             }
         });
