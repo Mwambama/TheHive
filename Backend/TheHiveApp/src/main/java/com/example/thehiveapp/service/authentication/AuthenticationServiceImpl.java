@@ -20,6 +20,7 @@ import com.example.thehiveapp.service.user.StudentService;
 import com.example.thehiveapp.service.user.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -79,6 +80,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return employer;
     }
 
+    @Override
+    public String changePassword(ChangePasswordRequest changePasswordRequest) {
+        if (!changePasswordRequest.getPassword().equals(changePasswordRequest.getConfirmPassword())){
+            return "Passwords do not match! Try again!";
+        }
+        User user = userService.getUserByEmail(changePasswordRequest.getEmail());
+        Authentication authentication = authenticationRepository.findById(user.getUserId()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found"));
+        authentication.setPassword(securityConfig.passwordEncoder().encode(changePasswordRequest.getConfirmPassword()));
+        authenticationRepository.save(authentication);
+        return "Password changed successfully";
+    }
 
     private void createAuthentication(BaseSignUpRequest baseSignUpRequest, Long userId) {
         Authentication authentication = new Authentication();
