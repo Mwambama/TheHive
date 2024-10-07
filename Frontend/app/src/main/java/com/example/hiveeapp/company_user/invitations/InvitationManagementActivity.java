@@ -20,7 +20,6 @@ public class InvitationManagementActivity extends AppCompatActivity {
 
     private RecyclerView invitationsRecyclerView;
     private InvitationAdapter invitationAdapter;
-    private ImageButton backArrowIcon;
     private Button addInvitationButton;
 
     @Override
@@ -30,11 +29,7 @@ public class InvitationManagementActivity extends AppCompatActivity {
 
         // Initialize views
         invitationsRecyclerView = findViewById(R.id.invitationsRecyclerView);
-        backArrowIcon = findViewById(R.id.backArrowIcon);
         addInvitationButton = findViewById(R.id.addInvitationButton);
-
-        // Set up back navigation
-        backArrowIcon.setOnClickListener(v -> finish());
 
         // Set up RecyclerView
         invitationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
