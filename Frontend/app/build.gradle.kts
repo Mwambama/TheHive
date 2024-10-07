@@ -40,9 +40,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("com.android.volley:volley:1.2.1")
-    implementation ("com.google.android.material:material:1.9.0")
-    implementation ("androidx.recyclerview:recyclerview:1.2.1")
-    implementation ("com.google.code.gson:gson:2.10")
-    implementation ("com.google.android.material:material:1.4.0")
-    implementation ("androidx.constraintlayout:constraintlayout:2.0.4")
+    implementation("com.google.code.gson:gson:2.10")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
 }
