@@ -1,7 +1,6 @@
 package com.example.thehiveapp.service.user;
 
 import com.example.thehiveapp.entity.user.User;
-import com.example.thehiveapp.enums.user.Role;
 import com.example.thehiveapp.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -46,12 +45,10 @@ public class UserServiceImpl implements UserService{
         userRepository.delete(user);
     }
 
-    public Long getIdByEmail(String email, Role role){
-        User user = userRepository.findByEmailAndRole(email, role);
-        if (user == null){
-            throw new ResourceNotFoundException(role + " not found with email " + email);
-        }
-        return user.getUserId();
+    public User getUserByEmail(String email){
+       return userRepository.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFoundException("User not found with email " + email)
+        );
     }
 
     public Boolean existsByEmail(String email) {
