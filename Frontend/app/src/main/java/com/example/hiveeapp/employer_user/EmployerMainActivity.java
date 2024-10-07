@@ -1,3 +1,5 @@
+package com.example.hiveeapp.employer_user;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -8,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.employer_user.model.postedjobs; // Import your model class
+import com.example.hiveeapp.employer_user.model.postedjobs;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -19,7 +21,8 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class EmployerMainActivity extends AppCompatActivity {
+public class EmployerMainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+
     private TextView employerNameTextView;
     private TextView jobTitleTextView;
     private TextView emailTextView;
@@ -38,7 +41,7 @@ public class EmployerMainActivity extends AppCompatActivity {
 
         // Set employer information
         employerNameTextView.setText("John Steve");
-        jobTitleTextView.setText("(123) 456-7890");
+        jobTitleTextView.setText("Software Developer");
         emailTextView.setText("john.steve@example.com");
 
         // Initialize Add Job button
@@ -57,15 +60,17 @@ public class EmployerMainActivity extends AppCompatActivity {
 
         // Set up bottom navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
     }
 
     private void displayPostedJobs() {
-        List<postedjobs> jobs = loadJobsFromAssets(); // Load jobs from JSON
-        RecyclerView recyclerView = findViewById(R.id.posted_jobs_recycler_view);
-        JobAdapter adapter = new JobAdapter(jobs);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this)); // Set layout manager
+        List<postedjobs> jobs = loadJobsFromAssets();
+        if (jobs != null) {
+            RecyclerView recyclerView = findViewById(R.id.posted_jobs_recycler_view);
+            JobAdapter adapter = new JobAdapter(jobs);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        }
     }
 
     private List<postedjobs> loadJobsFromAssets() {
@@ -77,17 +82,20 @@ public class EmployerMainActivity extends AppCompatActivity {
             return gson.fromJson(reader, jobListType);
         } catch (IOException e) {
             e.printStackTrace();
-            return null; // Handle error
+            return null;
         }
     }
 
-    private boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.nav_chat) {
-            startActivity(new Intent(this,ChatActivity.class));
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.nav_chat) {
+            startActivity(new Intent(this, ChatActivity.class));
             return true;
-        } else if (item.getItemId() == R.id.nav_home) {
+        } else if (itemId == R.id.nav_home) {
             return true;
-        } else if (item.getItemId() == R.id.nav_tracking) {
+        } else if (itemId == R.id.nav_tracking) {
             startActivity(new Intent(this, TrackingApplicationActivity.class));
             return true;
         } else {
