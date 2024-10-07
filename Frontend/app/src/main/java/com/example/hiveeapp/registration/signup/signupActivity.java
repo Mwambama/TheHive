@@ -1,4 +1,4 @@
-package com.example.hiveeapp.registration.signUP;
+package com.example.hiveeapp.registration.signup;
 
 import android.text.InputType;
 import android.widget.ImageButton;
@@ -18,7 +18,7 @@ import org.json.JSONObject;
 import android.view.LayoutInflater;
 import android.view.View;
 
-public class SignupActivity extends AppCompatActivity {
+public class signupActivity extends AppCompatActivity {
     private EditText usernameEditText;
     private EditText passwordEditText;
     private EditText emailEditText;
@@ -55,18 +55,18 @@ public class SignupActivity extends AppCompatActivity {
 
             // Check for empty fields
             if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
-                Toast.makeText(SignupActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
+                Toast.makeText(signupActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
                 return;
             }
             // Check if passwords match
             if (!password.equals(confirmPassword)) {
-                Toast.makeText(SignupActivity.this, "Passwords don't match", Toast.LENGTH_LONG).show();
+                Toast.makeText(signupActivity.this, "Passwords don't match", Toast.LENGTH_LONG).show();
                 return;
             }
 
             // Check if password is valid
             if (!isPasswordValid(password)) {
-                Toast.makeText(SignupActivity.this, "Password must be at least 7 characters long, contain an uppercase letter, and a number", Toast.LENGTH_LONG).show();
+                Toast.makeText(signupActivity.this, "Password must be at least 7 characters long, contain an uppercase letter, and a number", Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -92,14 +92,14 @@ public class SignupActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             // Handle successful signup
-                            Toast.makeText(SignupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(signupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             // Handle signup error
-                            Toast.makeText(SignupActivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(signupActivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
             );
