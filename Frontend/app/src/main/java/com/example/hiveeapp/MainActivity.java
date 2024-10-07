@@ -4,11 +4,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.hiveeapp.company_user.CompanyActivity;
-import com.example.hiveeapp.employer_user.AddJobActivity;
+
 import com.example.hiveeapp.employer_user.mainEmployer;
-import com.example.hiveeapp.registration.LoginActivity;
-import com.example.hiveeapp.employer_user.EmployerMainActivity; // Import the EmployerMainActivity
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_employer_main);
 
         //goToCompanyActivityButton = findViewById(R.id.goToCompanyActivityButton);
         //goToLoginActivityButton = findViewById(R.id.goToLoginActivityButton); // Initialize the login button

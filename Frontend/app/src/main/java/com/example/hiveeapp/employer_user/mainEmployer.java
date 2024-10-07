@@ -16,7 +16,7 @@ import com.example.hiveeapp.R;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main_employer);
+            setContentView(R.layout.activity_main_employer_profile);
 
             // Initialize TextView fields
             employerNameTextView = findViewById(R.id.employer_name);

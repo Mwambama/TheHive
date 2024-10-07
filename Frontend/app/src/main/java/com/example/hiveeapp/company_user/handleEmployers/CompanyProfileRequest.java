@@ -17,7 +17,7 @@ public class CompanyProfileRequest extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_employer_main);
 
         // Load the company profile from the assets folder
         String jsonStr = loadJSONFromAsset(this, "sampledata/json/company/get_company.json");
