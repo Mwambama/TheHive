@@ -14,18 +14,16 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomAuthenticationProvider customAuthenticationProvider) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                // Specify authorization rules
                 .authorizeHttpRequests(auth -> auth
-                        // Permit access to certain endpoints
-                        .requestMatchers("/**").permitAll()
-                        // Require authentication for other endpoints
+                        .requestMatchers("/account/login").authenticated()
+                        .requestMatchers("/account/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                // Use HTTP Basic authentication (can be replaced with form login or JWT)
-                .httpBasic(withDefaults());
+                .httpBasic(withDefaults())
+                .authenticationProvider(customAuthenticationProvider);
         return http.build();
     }
 
@@ -33,11 +31,5 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    // In case you're using a custom UserDetailsService
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        return new CustomUserDetailsService(); // Replace with your actual implementation
-//    }
 }
 

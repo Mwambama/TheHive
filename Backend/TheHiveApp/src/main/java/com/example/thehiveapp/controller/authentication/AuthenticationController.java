@@ -1,8 +1,9 @@
 package com.example.thehiveapp.controller.authentication;
 
-import com.example.thehiveapp.dto.authentication.LoginRequest;
 import com.example.thehiveapp.dto.authentication.SignUpRequest;
+import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.service.authentication.AuthenticationService;
+import com.example.thehiveapp.service.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -16,12 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/account")
 public class AuthenticationController {
 
-    private final AuthenticationService authenticationService;
+    @Autowired private AuthenticationService authenticationService;
+    @Autowired private UserService userService;
 
-    @Autowired
-    public AuthenticationController(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
+    public AuthenticationController() {}
 
     @PostMapping("/signup")
     public void createAuthentication(@Valid @RequestBody SignUpRequest request) {
@@ -29,7 +28,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public void loginAuthentication(@RequestBody LoginRequest request){
-        authenticationService.login(request);
+    public User loginAuthentication(){
+        return userService.getCurrentUser();
     }
 }
