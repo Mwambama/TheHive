@@ -2,56 +2,103 @@ package com.example.hiveeapp.company_user;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.example.hiveeapp.MainActivity;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.company_user.handleEmployers.EmployerListActivity;
 import com.example.hiveeapp.company_user.invitations.InvitationManagementActivity;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
 
 public class CompanyActivity extends AppCompatActivity {
 
-    private ImageButton backArrowIcon;
-    private ImageButton manageEmployersIcon;
-    private ImageButton mainUserPageIcon;
-    private ImageButton manageInvitationsIcon;
+    private MaterialToolbar topAppBar;
+    private BottomNavigationView bottomNavigationView;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company);
 
-        // Find the ImageButtons in the layout
-        backArrowIcon = findViewById(R.id.backArrowIcon);
-        manageEmployersIcon = findViewById(R.id.manageEmployersIcon);
-        mainUserPageIcon = findViewById(R.id.mainUserPageIcon);
-        manageInvitationsIcon = findViewById(R.id.manageInvitationsIcon);
+        // Initialize views
+        topAppBar = findViewById(R.id.topAppBar);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        tabLayout = findViewById(R.id.tabLayout);
 
-        // Set click listener for back arrow
-        backArrowIcon.setOnClickListener(v -> {
+        // Set up the top app bar with a back button
+        topAppBar.setNavigationOnClickListener(v -> {
             Intent intent = new Intent(CompanyActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         });
 
-        // Set click listener to navigate to CompanyActivityApi
-        manageEmployersIcon.setOnClickListener(v -> {
-            Intent intent = new Intent(CompanyActivity.this, EmployerListActivity.class);
-            startActivity(intent);
+        // Add tabs programmatically for "Company Info", "Invitations", and "Employers"
+        tabLayout.addTab(tabLayout.newTab().setText("Company Info"));
+        tabLayout.addTab(tabLayout.newTab().setText("Invitations"));
+        tabLayout.addTab(tabLayout.newTab().setText("Employers"));
+
+        // Set up the tab layout listener for fragment switching
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                Fragment selectedFragment;
+                switch (tab.getPosition()) {
+                    case 0:
+                        selectedFragment = new CompanyInfoFragment();
+                        break;
+                    case 1:
+                        selectedFragment = new InvitationsFragment();
+                        break;
+                    case 2:
+                        selectedFragment = new EmployersFragment();
+                        break;
+                    default:
+                        selectedFragment = new CompanyInfoFragment();
+                }
+                loadFragment(selectedFragment);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        // Set up the main user page icon click listener
-        mainUserPageIcon.setOnClickListener(v -> {
-            Toast.makeText(CompanyActivity.this, "You are already on this page", Toast.LENGTH_SHORT).show();
+        // Load default fragment (Company Info) when the activity is opened
+        loadFragment(new CompanyInfoFragment());
+
+        // Set up bottom navigation view for navigation to Employers and Invitations
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_invitations) {
+                startActivity(new Intent(CompanyActivity.this, InvitationManagementActivity.class));
+                return true;
+            } else if (itemId == R.id.navigation_employers) {
+                startActivity(new Intent(CompanyActivity.this, EmployerListActivity.class));
+                return true;
+            } else if (itemId == R.id.navigation_main_user_page) {
+                Toast.makeText(CompanyActivity.this, "You are already on this page", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            return false;
         });
 
-        // Set click listener to navigate to AddInvitationActivity
-        manageInvitationsIcon.setOnClickListener(v -> {
-            Intent intent = new Intent(CompanyActivity.this, InvitationManagementActivity.class);
-            startActivity(intent);
-        });
+        // Set the default selected item in the bottom navigation
+        bottomNavigationView.setSelectedItemId(R.id.navigation_main_user_page);
+    }
+
+    // Helper method to load fragments into the frame layout
+    private void loadFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frameLayout, fragment)
+                .commit();
     }
 }

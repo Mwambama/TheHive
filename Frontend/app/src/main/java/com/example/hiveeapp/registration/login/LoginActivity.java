@@ -2,7 +2,6 @@ package com.example.hiveeapp.registration.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.*;
@@ -30,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private MaterialButton loginButton;
     private TextView forgotPasswordButton, registerText;
     private ProgressBar loadingProgressBar;
-    private boolean isPasswordVisible = false; // Added this variable
+    private boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
