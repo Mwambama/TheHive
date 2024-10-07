@@ -63,7 +63,7 @@ public class mainEmployer extends AppCompatActivity {
                 return true;
             case R.id.nav_tracking:
                 // Navigate to Tracking activity
-                startActivity(new Intent(this, TrackingActivity.class));
+                startActivity(new Intent(this, TrackingApplicationActivity.class));
                 return true;
             default:
                 return false;
