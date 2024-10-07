@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <!-- Back Arrow Icon at the top left -->
+    <ImageButton
+        android:id="@+id/backArrowIcon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_back_arrow"
+        android:contentDescription="Back Arrow"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="#333333"
+        android:scaleType="fitCenter"
+        android:padding="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Bottom Section with Icon Buttons -->
+    <LinearLayout
+        android:id="@+id/bottomSection"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="#F5F5F5"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Manage Employers Icon -->
+        <ImageButton
+            android:id="@+id/manageEmployersIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_background"
+            android:clickable="true"
+            android:contentDescription="Manage Employers"
+            android:focusable="true"
+            android:padding="15dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_manage_employers"
+            app:tint="#6200EE" />
+
+        <!-- Main User Page Icon -->
+        <ImageButton
+            android:id="@+id/mainUserPageIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_background"
+            android:clickable="true"
+            android:contentDescription="Main User Page"
+            android:focusable="true"
+            android:padding="15dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_profile"
+            app:tint="#808080" />
+
+        <!-- Manage Invitations Icon -->
+        <ImageButton
+            android:id="@+id/manageInvitationsIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_background"
+            android:clickable="true"
+            android:contentDescription="Manage Invitations"
+            android:focusable="true"
+            android:padding="15dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_manage_invitations"
+            app:tint="#808080" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

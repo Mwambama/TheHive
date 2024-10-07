@@ -1,5 +1,6 @@
 package com.example.thehiveapp.entity.user;
 
+import com.example.thehiveapp.entity.address.Address;
 import com.example.thehiveapp.enums.user.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,16 +9,21 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "user")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private Long id;
+    @Column(name="user_id")
+    private Long userId;
 
     @Column(name="name", nullable = false)
     private String name;
@@ -25,25 +31,23 @@ public class User {
     @Column(name="email", nullable = false, unique = true)
     private String email;
 
-    @Column(name="password", nullable = false)
-    private String password;
-
     @Column(name="role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "address_id")
-    private Long addressId;
+    @OneToOne
+    @JoinColumn(name = "address_id", referencedColumnName = "address_id")
+    private Address address;
 
     @Column(name = "phone", length = 15)
     private String phone;
 
-    public Long getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long id) {
+        this.userId = id;
     }
 
     public String getName() {
@@ -62,14 +66,6 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Role getRole() {
         return role;
     }
@@ -78,12 +74,12 @@ public class User {
         this.role = role;
     }
 
-    public Long getAddressId() {
-        return addressId;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setAddressId(Long addressId) {
-        this.addressId = addressId;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public String getPhone() {

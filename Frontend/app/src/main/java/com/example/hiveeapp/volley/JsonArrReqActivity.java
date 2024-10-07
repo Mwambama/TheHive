@@ -4,15 +4,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
+<<<<<<< HEAD
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.MainActivity;
+=======
+>>>>>>> origin/main
 import com.example.hiveeapp.R;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,8 +28,8 @@ public class JsonArrReqActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); // Replace with actual layout
 
+<<<<<<< HEAD
      //   textView = findViewById(R.id.textView);
         mainSignupBtn = findViewById(R.id.main_signup_btn);  // Initialize the signup button
 
@@ -76,6 +77,54 @@ public class JsonArrReqActivity extends AppCompatActivity {
                 VolleySingleton.getInstance(JsonArrReqActivity.this).addToRequestQueue(jsonObjectRequest);
             }
         });
+=======
+        // Load the JSON data from assets
+        String jsonString = loadJSONFromAsset("sampledata/json/company/employers.json");
+
+        if (jsonString != null) {
+            try {
+                // Parse the JSON array
+                JSONArray jsonArray = new JSONArray(jsonString);
+                StringBuilder jsonData = new StringBuilder();
+
+                // Loop through the array and append each company's details
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject company = jsonArray.getJSONObject(i);
+
+                    // Get basic company info
+                    String companyName = company.getString("name");
+                    String companyEmail = company.getString("email");
+                    String companyPhone = company.getString("phone");
+
+                    // Get the nested address object
+                    JSONObject address = company.getJSONObject("address");
+                    String street = address.getString("street");
+                    String complement = address.getString("complement");
+                    String city = address.getString("city");
+                    String state = address.getString("state");
+                    int zipCode = address.getInt("zip_code");
+
+                    // Build the display string
+                    jsonData.append("Company Name: ").append(companyName)
+                            .append("\nEmail: ").append(companyEmail)
+                            .append("\nPhone: ").append(companyPhone)
+                            .append("\nAddress: ").append(street)
+                            .append(", ").append(complement.isEmpty() ? "" : complement + ", ")
+                            .append(city).append(", ").append(state).append(" ").append(zipCode)
+                            .append("\n\n");
+                }
+
+                // Display the data in the TextView
+                textView.setText(jsonData.toString());
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                textView.setText("Error parsing JSON data");
+            }
+        } else {
+            textView.setText("Failed to load JSON file");
+        }
+>>>>>>> origin/main
     }
 
     private String loadJSONFromAsset(String fileName) {
@@ -94,7 +143,10 @@ public class JsonArrReqActivity extends AppCompatActivity {
         return json;
     }
 }
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> origin/main
