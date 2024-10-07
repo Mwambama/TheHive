@@ -1,16 +1,12 @@
 package com.example.thehiveapp.dto.authentication;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 public class StudentSignUpRequest extends BaseSignUpRequest{
-
     private String university;
-
-    public StudentSignUpRequest() {}
-
-    public String getUniversity() {
-        return university;
-    }
-
-    public void setUniversity(String university) {
-        this.university = university;
-    }
 }

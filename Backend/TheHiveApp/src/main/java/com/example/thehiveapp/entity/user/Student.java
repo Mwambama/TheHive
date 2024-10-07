@@ -3,29 +3,26 @@ package com.example.thehiveapp.entity.user;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
+@EqualsAndHashCode(callSuper = true)
 @Entity
+@NoArgsConstructor
+@Data
 @Table(name = "student")
 public class Student extends User{
-
     @Column(name="university", nullable = false)
     private String university;
-    @Column(name="graduationDate", nullable = false)
-    private String graduationDate;
-    @Column(name="GPA", nullable = false)
-    private double GPA;
-    @Column(name="resumePath", nullable = false)
-    private String resumePath;
 
-    public String getUniversity(){ return this.university; }
-    public void setUniversity(String university){this.university = university;}
-    public String getGraduationDate(){return this.graduationDate;}
-    public void setGraduationDate(String graduationDate){this.graduationDate = graduationDate;}
-    public double getGPA(){ return this.GPA; }
-    public void setGPA(double GPA){ this.GPA = GPA; }
-    public String getResumePath(){ return this.resumePath; }
-    public void setResumePath(String resumePath){ this.resumePath = resumePath; }
+    @Column(name="graduation_date", nullable = false)
+    private String graduationDate;
+
+    @Column(name="gpa", nullable = false)
+    private Double gpa;
+
+    @Column(name="resume_path", nullable = false)
+    private String resumePath;
 
 }
