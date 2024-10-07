@@ -5,11 +5,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
-
+import com.example.hiveeapp.R;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.hiveeapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class mainEmployer extends AppCompatActivity {
@@ -51,22 +50,20 @@ public class mainEmployer extends AppCompatActivity {
     private void displayPostedJobs() {
         // Code to display posted jobs
     }
-
     private boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.nav_chat:
-                // Navigate to Chat activity
-                startActivity(new Intent(this, ChatActivity.class));
-                return true;
-            case R.id.nav_home:
-                // Already on home, do nothing or add intent if needed
-                return true;
-            case R.id.nav_tracking:
-                // Navigate to Tracking activity
-                startActivity(new Intent(this, TrackingApplicationActivity.class));
-                return true;
-            default:
-                return false;
+        if (item.getItemId() == R.id.nav_chat) {
+            // Navigate to Chat activity
+            startActivity(new Intent(this, ChatActivity.class));
+            return true;
+        } else if (item.getItemId() == R.id.nav_home) {
+            // Already on home, do nothing or add intent if needed
+            return true;
+        } else if (item.getItemId() == R.id.nav_tracking) {
+            // Navigate to Tracking activity
+            startActivity(new Intent(this, TrackingApplicationActivity.class));
+            return true;
+        } else {
+            return false;
         }
     }
 }

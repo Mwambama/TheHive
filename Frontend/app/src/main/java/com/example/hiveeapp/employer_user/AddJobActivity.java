@@ -1,5 +1,4 @@
 package com.example.hiveeapp.employer_user;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +27,7 @@ import org.json.JSONObject;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_job);
+            setContentView(R.layout.activity_add_job);
 
             // Initialize EditText fields
             jobTitleEditText = findViewById(R.id.job_title);

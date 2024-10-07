@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/job_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Job Title"
+            app:layout_constraintTop_toBottomOf="@id/back_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText
+            android:id="@+id/job_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Job Description"
+            android:inputType="textMultiLine"
+            android:lines="4"
+            android:gravity="top"
+            app:layout_constraintTop_toBottomOf="@id/job_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText
+            android:id="@+id/job_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Job Type"
+            app:layout_constraintTop_toBottomOf="@id/job_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText
+            android:id="@+id/salary_requirements"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Salary Requirements"
+            app:layout_constraintTop_toBottomOf="@id/job_type"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText
+            android:id="@+id/age_requirement"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Age Requirement"
+            app:layout_constraintTop_toBottomOf="@id/salary_requirements"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText
+            android:id="@+id/minimum_gpa"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Minimum GPA"
+            app:layout_constraintTop_toBottomOf="@id/age_requirement"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <Button
+            android:id="@+id/post_job_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Post Job"
+            app:layout_constraintTop_toBottomOf="@id/minimum_gpa"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Job Details"
+            android:textSize="16sp"
+            android:padding="16dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/post_job_button"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
