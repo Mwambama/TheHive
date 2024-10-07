@@ -2,7 +2,6 @@ package com.example.hiveeapp.registration.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.*;

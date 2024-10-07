@@ -29,6 +29,12 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".registration.signup.signupActivity" android:exported="true">
+
+
+        </activity>
+
+
         <!-- Company Activity -->
         <activity android:name=".company_user.CompanyActivity"
             android:exported="true">
