@@ -46,7 +46,6 @@ public class EmployerMainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
-
     private void displayPostedJobs() {
         // Code to display posted jobs
     }
