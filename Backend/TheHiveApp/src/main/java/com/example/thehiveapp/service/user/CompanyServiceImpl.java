@@ -9,12 +9,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CompanyServiceImpl implements CompanyService{
-    private final CompanyRepository companyRepository;
-    @Autowired
-    public CompanyServiceImpl(CompanyRepository companyRepository) {
-        this.companyRepository = companyRepository;
-    }
+public class CompanyServiceImpl implements CompanyService {
+
+    @Autowired private CompanyRepository companyRepository;
+
+    public CompanyServiceImpl() {}
 
     public List<Company> getCompanies() {
         return companyRepository.findAll();

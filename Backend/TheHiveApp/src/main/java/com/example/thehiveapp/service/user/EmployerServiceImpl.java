@@ -10,9 +10,10 @@ import java.util.List;
 
 @Service
 public class EmployerServiceImpl implements EmployerService{
-    private final EmployerRepository employerRepository;
-    @Autowired
-    public EmployerServiceImpl(EmployerRepository employerRepository){ this.employerRepository = employerRepository; }
+
+    @Autowired private EmployerRepository employerRepository;
+
+    public EmployerServiceImpl(){}
 
     @Override
     public List<Employer> getEmployers() { return employerRepository.findAll(); }

@@ -18,12 +18,9 @@ import java.util.List;
 @RequestMapping("/job-posting")
 public class JobPostingController {
 
-    private final JobPostingService jobPostingService;
+    @Autowired private JobPostingService jobPostingService;
 
-    @Autowired
-    public JobPostingController(JobPostingService jobPostingService) {
-        this.jobPostingService = jobPostingService;
-    }
+    public JobPostingController() {}
 
     @GetMapping
     public List<JobPostingDto> getJobPostings() {

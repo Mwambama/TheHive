@@ -9,6 +9,7 @@ import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.enums.user.Role;
 import com.example.thehiveapp.repository.authentication.AuthenticationRepository;
 import com.example.thehiveapp.service.user.CompanyService;
+import com.example.thehiveapp.service.user.EmployerService;
 import com.example.thehiveapp.service.user.StudentService;
 import com.example.thehiveapp.service.user.UserService;
 import jakarta.transaction.Transactional;
@@ -20,17 +21,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    @Autowired AuthenticationRepository authenticationRepository;
-
+    @Autowired private AuthenticationRepository authenticationRepository;
     @Autowired private SecurityConfig securityConfig;
-
     @Autowired private CompanyService companyService;
-
     @Autowired private StudentService studentService;
-
     @Autowired private UserService userService;
-
-    // @Autowired private EmployerService employerService;
+    @Autowired private EmployerService employerService;
 
     @Override
     public UserDetails loadUserByUsername(String email) {
@@ -42,9 +38,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public void signUp(SignUpRequest signUpRequest) {
         Long userId;
         switch (signUpRequest.getRole()) {
-            case company -> userId = createCompany(signUpRequest);
-            case employer -> userId = createEmployer(signUpRequest);
-            case student -> userId = createStudent(signUpRequest);
+            case COMPANY -> userId = createCompany(signUpRequest);
+            case EMPLOYER -> userId = createEmployer(signUpRequest);
+            case STUDENT -> userId = createStudent(signUpRequest);
             default -> throw new IllegalArgumentException("Invalid role: " + signUpRequest.getRole());
         }
         createAuthentication(signUpRequest, userId);
@@ -61,7 +57,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Company company = new Company();
         company.setEmail(signUpRequest.getEmail());
         company.setName(signUpRequest.getName());
-        company.setRole(Role.company);
+        company.setRole(Role.COMPANY);
         companyService.createCompany(company);
         return company.getUserId();
     }

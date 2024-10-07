@@ -19,8 +19,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/employer")
 public class EmployerController {
-    @Autowired
-    private EmployerService employerService;
+
+    @Autowired private EmployerService employerService;
 
     public EmployerController(){}
 

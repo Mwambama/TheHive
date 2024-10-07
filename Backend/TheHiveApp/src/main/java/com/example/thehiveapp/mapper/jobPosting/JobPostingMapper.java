@@ -12,12 +12,10 @@ public class JobPostingMapper {
     @Autowired
     private EmployerService employerService;
 
-    // Converts JobPosting entity to JobPostingDto
     public JobPostingDto entityToDto(JobPosting entity) {
         if (entity == null) {
             return null;
         }
-
         JobPostingDto dto = new JobPostingDto();
         dto.setJobPostingId(entity.getJobPostingId());
         dto.setTitle(entity.getTitle());
@@ -34,12 +32,10 @@ public class JobPostingMapper {
         return dto;
     }
 
-    // Converts JobPostingDto to JobPosting entity
     public JobPosting dtoToEntity(JobPostingDto dto) {
         if (dto == null) {
             return null;
         }
-
         JobPosting entity = new JobPosting();
         entity.setJobPostingId(dto.getJobPostingId());
         entity.setTitle(dto.getTitle());

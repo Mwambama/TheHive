@@ -14,11 +14,8 @@ import java.util.stream.Collectors;
 @Service
 public class JobPostingServiceImpl implements JobPostingService{
 
-    @Autowired
-    private JobPostingRepository jobPostingRepository;
-
-    @Autowired
-    private JobPostingMapper jobPostingMapper;
+    @Autowired private JobPostingRepository jobPostingRepository;
+    @Autowired private JobPostingMapper jobPostingMapper;
 
     public JobPostingServiceImpl() {}
 
