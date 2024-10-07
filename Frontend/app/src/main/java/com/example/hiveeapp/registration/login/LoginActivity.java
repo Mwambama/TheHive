@@ -16,7 +16,7 @@ import com.example.hiveeapp.admin_user.AdminMainActivity;
 import com.example.hiveeapp.company_user.handleEmployers.EmployerCreationActivity;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.registration.forgotPassword.ForgotPasswordActivity;
-import com.example.hiveeapp.registration.signup.signupActivity;
+import com.example.hiveeapp.registration.signUP.SignupActivity;
 import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
 import com.google.android.material.button.MaterialButton;
@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Register text click event
         registerText.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, signupActivity.class);
+            Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
             startActivity(intent);
             overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
         });

@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".signup.signUP.SignupActivity" android:exported="true">
+        <activity android:name=".registration.signUP.SignupActivity" android:exported="true">
 
         </activity>
 

@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp">
-=======
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -25,46 +17,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="50dp" />
->>>>>>> origin/main
 
     <!-- Button to go to LoginActivity -->
     <Button
         android:id="@+id/goToLoginActivityButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-<!--        android:src="@drawable/signupbackground" />-->
+        android:layout_height="wrap_content"
+        android:text="Go to Login"
+        app:layout_constraintTop_toBottomOf="@id/goToCompanyActivityButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="28dp" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/textView"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Hiveapp"-->
-<!--        android:layout_marginTop="25dp" />-->
-<!--       remove login in button-->
-<!--    <Button-->
-<!--        android:id="@+id/main_login_btn"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Login"-->
-<!--        android:layout_marginTop="16dp" />-->
-
-
+    <!-- Signup Button -->
     <Button
         android:id="@+id/main_signup_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-<<<<<<< HEAD
         android:text="Signup"
+        app:layout_constraintTop_toBottomOf="@id/goToLoginActivityButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
 
-</LinearLayout>
-=======
-        android:layout_marginTop="28dp"
-        android:text="Go to Login"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/goToCompanyActivityButton" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
->>>>>>> origin/main

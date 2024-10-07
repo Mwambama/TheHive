@@ -1,18 +1,15 @@
 package com.example.hiveeapp.volley;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-<<<<<<< HEAD
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.hiveeapp.MainActivity;
-=======
->>>>>>> origin/main
+
 import com.example.hiveeapp.R;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,7 +18,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class JsonArrReqActivity extends AppCompatActivity {
+public class JsonArrRequestActivity extends AppCompatActivity {
     TextView textView;
     private Button mainSignupBtn;
 
@@ -29,7 +26,6 @@ public class JsonArrReqActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-<<<<<<< HEAD
      //   textView = findViewById(R.id.textView);
         mainSignupBtn = findViewById(R.id.main_signup_btn);  // Initialize the signup button
 
@@ -74,10 +70,10 @@ public class JsonArrReqActivity extends AppCompatActivity {
                         }
                 );
 
-                VolleySingleton.getInstance(JsonArrReqActivity.this).addToRequestQueue(jsonObjectRequest);
+                VolleySingleton.getInstance(JsonArrRequestActivity.this).addToRequestQueue(jsonObjectRequest);
             }
         });
-=======
+
         // Load the JSON data from assets
         String jsonString = loadJSONFromAsset("sampledata/json/company/employers.json");
 
@@ -124,7 +120,7 @@ public class JsonArrReqActivity extends AppCompatActivity {
         } else {
             textView.setText("Failed to load JSON file");
         }
->>>>>>> origin/main
+
     }
 
     private String loadJSONFromAsset(String fileName) {
@@ -143,10 +139,5 @@ public class JsonArrReqActivity extends AppCompatActivity {
         return json;
     }
 }
-<<<<<<< HEAD
 
 
-
-
-=======
->>>>>>> origin/main

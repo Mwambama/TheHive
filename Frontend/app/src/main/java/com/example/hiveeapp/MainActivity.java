@@ -6,8 +6,9 @@ import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.hiveeapp.registration.signup.signupActivity;
-import com.example.hiveeapp.signup.signUP.SignupActivity;
+import com.example.hiveeapp.registration.signUP.SignupActivity;
+import com.example.hiveeapp.registration.login.LoginActivity;
+import com.example.hiveeapp.company_user.CompanyActivity;
 
 public class MainActivity extends AppCompatActivity {
     private Button mainSignupBtn;
@@ -28,28 +29,29 @@ public class MainActivity extends AppCompatActivity {
         mainSignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Start SignupActivity
+                 // Start SignupActivity
+
                 Intent intent = new Intent(MainActivity.this, SignupActivity.class);
                 startActivity(intent);
             }
         });
 
-//        // Navigate to CompanyActivity
-//        goToCompanyActivityButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, CompanyActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+        // Navigate to CompanyActivity
+        goToCompanyActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CompanyActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Navigate to LoginActivity
-//        goToLoginActivityButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+        goToLoginActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
