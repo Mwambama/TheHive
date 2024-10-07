@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public class SignUpRequest {
+public class BaseSignUpRequest {
     @NotNull(message = "Email is required")
     @Email(message = "Invalid email format")
     @DuplicateEmail
@@ -27,12 +27,7 @@ public class SignUpRequest {
     @ValidSignUpRole
     private Role role;
 
-    public SignUpRequest(String email, String password, String name, Role role) {
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.role = role;
-    }
+    public BaseSignUpRequest() {}
 
     public String getEmail() {
         return email;

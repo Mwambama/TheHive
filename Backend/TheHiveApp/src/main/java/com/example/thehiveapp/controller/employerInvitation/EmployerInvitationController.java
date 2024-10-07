@@ -18,12 +18,10 @@ import java.util.List;
 @RequestMapping("/employer-invitation")
 public class EmployerInvitationController {
 
-    private final EmployerInvitationService employerInvitationService;
+    @Autowired private EmployerInvitationService employerInvitationService;
 
-    @Autowired
-    public EmployerInvitationController(EmployerInvitationService employerInvitationService) {
-        this.employerInvitationService = employerInvitationService;
-    }
+
+    public EmployerInvitationController() {}
 
     @GetMapping
     public List<EmployerInvitation> getEmployerInvitations() {

@@ -18,12 +18,9 @@ import java.util.List;
 @RequestMapping("/company")
 public class CompanyController {
 
-    private final CompanyService companyService;
+    @Autowired private CompanyService companyService;
 
-    @Autowired
-    public CompanyController(CompanyService companyService) {
-        this.companyService = companyService;
-    }
+    public CompanyController() {}
 
     @GetMapping
     public List<Company> getCompanies() {

@@ -16,10 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/student")
 public class StudentController {
-    private final StudentService studentService;
 
-    @Autowired
-    public StudentController(StudentService studentService){ this.studentService = studentService; }
+    @Autowired private StudentService studentService;
+
+    public StudentController(){}
 
     @GetMapping
     public List<Student> getStudents() { return studentService.getStudents(); }

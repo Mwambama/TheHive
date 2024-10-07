@@ -11,12 +11,9 @@ import java.util.List;
 @Service
 public class EmployerInvitationServiceImpl implements EmployerInvitationService {
 
-    @Autowired
-    private final EmployerInvitationRepository employerInvitationRepository;
+    @Autowired private EmployerInvitationRepository employerInvitationRepository;
 
-    public EmployerInvitationServiceImpl(EmployerInvitationRepository repository) {
-        this.employerInvitationRepository = repository;
-    }
+    public EmployerInvitationServiceImpl() {}
 
     @Override
     public List<EmployerInvitation> getEmployerInvitations() {

@@ -11,7 +11,7 @@ public class ValidSignUpRoleValidator implements ConstraintValidator<ValidSignUp
         if (role == null) {
             return true;
         }
-        return role == Role.student || role == Role.employer || role == Role.company;
+        return role == Role.STUDENT || role == Role.EMPLOYER || role == Role.COMPANY;
     }
 }
 

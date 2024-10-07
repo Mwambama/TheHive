@@ -9,5 +9,4 @@ public class TheHiveAppApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TheHiveAppApplication.class, args);
 	}
-
 }
