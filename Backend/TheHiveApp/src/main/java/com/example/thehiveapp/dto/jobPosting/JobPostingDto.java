@@ -19,28 +19,7 @@ public class JobPostingDto {
     private LocalDate applicationEnd;
     private Long employerId;
 
-    public JobPostingDto(String title,
-                         String description,
-                         String summary,
-                         BigDecimal salary,
-                         JobType jobType,
-                         BigDecimal minimumGpa,
-                         LocalDate jobStart,
-                         LocalDate applicationStart,
-                         LocalDate applicationEnd,
-                         Long employerId
-    ) {
-        this.title = title;
-        this.description = description;
-        this.summary = summary;
-        this.salary = salary;
-        this.jobType = jobType;
-        this.minimumGpa = minimumGpa;
-        this.jobStart = jobStart;
-        this.applicationStart = applicationStart;
-        this.applicationEnd = applicationEnd;
-        this.employerId = employerId;
-    }
+    public JobPostingDto() {}
 
     public Long getJobPostingId() {
         return jobPostingId;
