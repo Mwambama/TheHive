@@ -51,10 +51,6 @@ public class AuthenticationController {
 
     @PostMapping("/change-password")
     public ResponseEntity<?> changePasswordAuthentication(@RequestBody ChangePasswordRequest changePasswordRequest){
-//        if (!isTokenValid(token)) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized: Invalid token");
-//        }
-        // Proceed with password update
         return ResponseEntity.ok(authenticationService.changePassword(changePasswordRequest));
     }
 }

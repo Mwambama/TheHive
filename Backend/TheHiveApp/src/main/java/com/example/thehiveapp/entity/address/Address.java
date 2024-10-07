@@ -7,6 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,19 +27,25 @@ public class Address {
     @Column(name = "address_id")
     private Long addressId;
 
-    @Column(name = "street", nullable = false)
+    @NotNull
+    @Column(name = "street")
     private String street;
 
     @Column(name = "complement")
     private String complement;
 
-    @Column(name = "city", nullable = false)
+    @NotNull
+    @Column(name = "city")
     private String city;
 
-    @Column(name = "state", nullable = false, length = 2)
+    @NotNull
+    @Size(min = 2, max = 2, message = "Enter state as a two-letter code")
+    @Column(name = "state")
     private String state;
 
-    @Column(name = "zip_code", nullable = false, length = 5)
+    @NotNull
+    @Size(min = 5, max = 5, message = "Enter zip as a five-digit code")
+    @Column(name = "zip_code", nullable = false)
     private String zipCode;
 }
 
