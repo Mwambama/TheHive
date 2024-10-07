@@ -46,11 +46,8 @@ public class UserServiceImpl implements UserService{
         userRepository.delete(user);
     }
 
-    public Long getIdByEmail(String email, Role role){
-        User user = userRepository.findByEmailAndRole(email, role);
-        if (user == null){
-            throw new ResourceNotFoundException(role + " not found with email " + email);
-        }
+    public Long getIdByEmail(String email){
+        User user = userRepository.findByEmail(email);
         return user.getUserId();
     }
 
