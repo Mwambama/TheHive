@@ -28,12 +28,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
+
         <activity android:name=".signup.signUP.SignupActivity" android:exported="true">
 
         </activity>
 
-=======
 
         <!-- Company Activity -->
         <activity android:name=".company_user.CompanyActivity"
@@ -52,7 +51,6 @@
         <activity android:name=".registration.forgotPassword.ForgotPasswordActivity" />
         <activity android:name=".registration.forgotPassword.VerifyKeyActivity" />
         <activity android:name=".registration.forgotPassword.ResetPasswordActivity" />
->>>>>>> origin/main
     </application>
 
 </manifest>
