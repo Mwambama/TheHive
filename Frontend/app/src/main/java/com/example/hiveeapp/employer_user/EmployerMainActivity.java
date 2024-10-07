@@ -29,8 +29,8 @@ public class EmployerMainActivity extends AppCompatActivity {
 
         // Set employer information
         employerNameTextView.setText("John Steve");
-        jobTitleTextView.setText("Phone Number: (123) 456-7890");
-        emailTextView.setText("Employer Email: john.steve@example.com"); // Set email
+        jobTitleTextView.setText("(123) 456-7890");
+        emailTextView.setText("john.steve@example.com"); // Set email
 
         // Initialize Add Job button
         addJobButton = findViewById(R.id.add_job_button);
