@@ -6,6 +6,7 @@ import com.example.thehiveapp.config.SecurityConfig;
 import com.example.thehiveapp.dto.authentication.BaseSignUpRequest;
 import com.example.thehiveapp.dto.authentication.EmployerSignUpRequest;
 import com.example.thehiveapp.dto.authentication.StudentSignUpRequest;
+import com.example.thehiveapp.dto.email.ChangePasswordRequest;
 import com.example.thehiveapp.entity.authentication.Authentication;
 import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.entity.user.Employer;

@@ -7,10 +7,12 @@ import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.entity.user.Employer;
 import com.example.thehiveapp.entity.user.Student;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import com.example.thehiveapp.dto.email.ChangePasswordRequest;
 
 
 public interface AuthenticationService extends UserDetailsService {
     Company signUpCompany(CompanySignUpRequest signUpRequest);
     Student signUpStudent(StudentSignUpRequest studentSignUpRequest);
     Employer signUpEmployer(EmployerSignUpRequest employerSignUpRequest);
+    String changePassword(ChangePasswordRequest changePasswordRequest);
 }
