@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Add Employer"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:textColor="@android:color/white"
         app:cornerRadius="8dp"
         app:layout_constraintStart_toStartOf="parent"

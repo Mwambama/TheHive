@@ -30,6 +30,11 @@ public class EmployerCreationActivity extends AppCompatActivity {
         // Initialize views
         initViews();
 
+        // Set the back arrow functionality to navigate back
+        backArrowIcon.setOnClickListener(v -> {
+            finish(); // This will close the current activity and go back to the previous one.
+        });
+
         // Check if editing an existing employer
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("employerId")) {
