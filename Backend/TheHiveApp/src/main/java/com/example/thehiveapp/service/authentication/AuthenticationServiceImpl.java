@@ -2,7 +2,7 @@ package com.example.thehiveapp.service.authentication;
 
 import com.example.thehiveapp.dto.authentication.CustomUserDetails;
 import com.example.thehiveapp.config.SecurityConfig;
-import com.example.thehiveapp.dto.authentication.SignUpRequest;
+import com.example.thehiveapp.dto.authentication.BaseSignUpRequest;
 import com.example.thehiveapp.entity.authentication.Authentication;
 import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.entity.user.User;
@@ -35,39 +35,39 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Transactional
-    public void signUp(SignUpRequest signUpRequest) {
+    public void signUp(BaseSignUpRequest baseSignUpRequest) {
         Long userId;
-        switch (signUpRequest.getRole()) {
-            case COMPANY -> userId = createCompany(signUpRequest);
-            case EMPLOYER -> userId = createEmployer(signUpRequest);
-            case STUDENT -> userId = createStudent(signUpRequest);
-            default -> throw new IllegalArgumentException("Invalid role: " + signUpRequest.getRole());
+        switch (baseSignUpRequest.getRole()) {
+            case COMPANY -> userId = createCompany(baseSignUpRequest);
+            case EMPLOYER -> userId = createEmployer(baseSignUpRequest);
+            case STUDENT -> userId = createStudent(baseSignUpRequest);
+            default -> throw new IllegalArgumentException("Invalid role: " + baseSignUpRequest.getRole());
         }
-        createAuthentication(signUpRequest, userId);
+        createAuthentication(baseSignUpRequest, userId);
     }
 
-    private void createAuthentication(SignUpRequest signUpRequest, Long userId) {
+    private void createAuthentication(BaseSignUpRequest baseSignUpRequest, Long userId) {
         Authentication authentication = new Authentication();
         authentication.setUserId(userId);
-        authentication.setPassword(securityConfig.passwordEncoder().encode(signUpRequest.getPassword()));
+        authentication.setPassword(securityConfig.passwordEncoder().encode(baseSignUpRequest.getPassword()));
         authenticationRepository.save(authentication);
     }
 
-    private Long createCompany(SignUpRequest signUpRequest) {
+    private Long createCompany(BaseSignUpRequest baseSignUpRequest) {
         Company company = new Company();
-        company.setEmail(signUpRequest.getEmail());
-        company.setName(signUpRequest.getName());
+        company.setEmail(baseSignUpRequest.getEmail());
+        company.setName(baseSignUpRequest.getName());
         company.setRole(Role.COMPANY);
         companyService.createCompany(company);
         return company.getUserId();
     }
 
-    private Long createEmployer(SignUpRequest signUpRequest) {
+    private Long createEmployer(BaseSignUpRequest baseSignUpRequest) {
         return 1L;
         // TODO
     }
 
-    private Long createStudent(SignUpRequest signUpRequest) {
+    private Long createStudent(BaseSignUpRequest baseSignUpRequest) {
         return 2L;
         // TODO
     }

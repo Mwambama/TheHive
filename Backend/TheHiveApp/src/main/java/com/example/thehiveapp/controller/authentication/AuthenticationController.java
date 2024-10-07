@@ -1,6 +1,6 @@
 package com.example.thehiveapp.controller.authentication;
 
-import com.example.thehiveapp.dto.authentication.SignUpRequest;
+import com.example.thehiveapp.dto.authentication.BaseSignUpRequest;
 import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.service.authentication.AuthenticationService;
 import com.example.thehiveapp.service.user.UserService;
@@ -23,7 +23,7 @@ public class AuthenticationController {
     public AuthenticationController() {}
 
     @PostMapping("/signup")
-    public void createAuthentication(@Valid @RequestBody SignUpRequest request) {
+    public void createAuthentication(@Valid @RequestBody BaseSignUpRequest request) {
         authenticationService.signUp(request);
     }
 
