@@ -41,4 +41,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation("com.android.volley:volley:1.2.1")
     implementation ("com.google.android.material:material:1.9.0")
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
+    implementation ("com.google.code.gson:gson:2.10")
 }

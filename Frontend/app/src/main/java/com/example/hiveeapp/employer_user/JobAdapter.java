@@ -7,15 +7,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.employer_user.model.postedjobs;
 import java.util.List;
 
-public class TrackingAdapter extends RecyclerView.Adapter<TrackingAdapter.ViewHolder> {
+public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
 
-    private List<String> trackingItems; // Replace String with your data model
+    private List<postedjobs> jobs;
 
-    public TrackingAdapter(List<String> trackingItems) {
-        this.trackingItems = trackingItems;
+    public JobAdapter(List<postedjobs> jobs) {
+        this.jobs = jobs;
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -25,23 +27,25 @@ public class TrackingAdapter extends RecyclerView.Adapter<TrackingAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String item = trackingItems.get(position);
-        holder.textView.setText(item);
+        postedjobs job = jobs.get(position);
+        holder.jobTitleTextView.setText(job.getJobTitle());
+        holder.jobDescriptionTextView.setText(job.getJobDescription());
+        // Set other fields as necessary
     }
 
     @Override
-    // counting the number  of items in our count
     public int getItemCount() {
-        return trackingItems.size();
+        return jobs.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
+        public TextView jobTitleTextView;
+        public TextView jobDescriptionTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.tracking_item_text); // Ensure you have this ID in tracking_item.xml
+            jobTitleTextView = itemView.findViewById(R.id.tracking_item_text);
+            jobDescriptionTextView = itemView.findViewById(R.id.tracking_item_description);
         }
     }
 }
-
