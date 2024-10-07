@@ -74,7 +74,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         employer.setName(employerSignUpRequest.getName());
         employer.setRole(Role.EMPLOYER);
         Company company = companyService.getCompanyById(employerSignUpRequest.getCompanyId());
-        employer.setCompanyID(company.getUserId());
+        employer.setCompanyId(company.getUserId());
         employerService.createEmployer(employer);
         createAuthentication(employerSignUpRequest, employer.getUserId());
         return employer;
