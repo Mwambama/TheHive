@@ -8,14 +8,14 @@ import android.widget.TextView;
 import com.example.hiveeapp.R;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class EmployerMainActivity extends AppCompatActivity {
     private TextView employerNameTextView;
     private TextView jobTitleTextView;
-    private TextView aboutDescriptionTextView;
+    private TextView emailTextView; // Change variable name to reflect email
     private Button addJobButton;
+    private Button backButton; // Add back button variable
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +25,12 @@ public class EmployerMainActivity extends AppCompatActivity {
         // Initialize TextView fields
         employerNameTextView = findViewById(R.id.employer_name);
         jobTitleTextView = findViewById(R.id.job_title);
-        aboutDescriptionTextView = findViewById(R.id.about_description);
+        emailTextView = findViewById(R.id.email); // Initialize email TextView
 
         // Set employer information
         employerNameTextView.setText("John Steve");
-        jobTitleTextView.setText("HR Manager");
-        aboutDescriptionTextView.setText("I work at Pella Corporation and work with the engineering team.");
+        jobTitleTextView.setText("Phone Number: (123) 456-7890");
+        emailTextView.setText("Employer Email: john.steve@example.com"); // Set email
 
         // Initialize Add Job button
         addJobButton = findViewById(R.id.add_job_button);
@@ -39,6 +39,10 @@ public class EmployerMainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // Initialize Back button
+        backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(view -> finish()); // Close current activity
+
         // Display posted jobs
         displayPostedJobs();
 
@@ -46,9 +50,11 @@ public class EmployerMainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
+
     private void displayPostedJobs() {
         // Code to display posted jobs
     }
+
     private boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_chat) {
             // Navigate to Chat activity
