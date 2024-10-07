@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private MaterialButton loginButton;
     private TextView forgotPasswordButton, registerText;
     private ProgressBar loadingProgressBar;
-    private boolean isPasswordVisible = false; // Added this variable
+    private boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
