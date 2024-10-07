@@ -1,5 +1,8 @@
 package com.example.hiveeapp.company_user.handleEmployers;
 
+import static com.example.hiveeapp.company_user.handleEmployers.EmployerApi.updateEmployer;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.widget.Button;
@@ -8,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import org.json.JSONObject;
@@ -23,18 +27,65 @@ public class EmployerCreationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_employer);
 
-        // Initialize all the views
+        // Initialize views
         initViews();
 
-        // Back navigation
-        backArrowIcon.setOnClickListener(v -> finish());
-
-        // Add employer button logic
-        addEmployerButton.setOnClickListener(v -> {
-            if (validateInput()) {
-                addEmployer();
-            }
+        // Set the back arrow functionality to navigate back
+        backArrowIcon.setOnClickListener(v -> {
+            finish(); // This will close the current activity and go back to the previous one.
         });
+
+        // Check if editing an existing employer
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("employerId")) {
+            // Pre-fill the fields with employer data
+            int employerId = intent.getIntExtra("employerId", -1);
+            nameField.setText(intent.getStringExtra("name"));
+            emailField.setText(intent.getStringExtra("email"));
+            phoneField.setText(intent.getStringExtra("phone"));
+            streetField.setText(intent.getStringExtra("street"));
+            cityField.setText(intent.getStringExtra("city"));
+            stateField.setText(intent.getStringExtra("state"));
+            zipField.setText(intent.getStringExtra("zip_code"));
+
+            addEmployerButton.setText("Update Employer"); // Change the button text
+            addEmployerButton.setOnClickListener(v -> {
+                if (validateInput()) {
+                    // Correct method call with all necessary parameters
+                    updateEmployer(
+                            this, // Context
+                            employerId, // Employer ID
+                            nameField.getText().toString().trim(), // Name
+                            emailField.getText().toString().trim(), // Email
+                            phoneField.getText().toString().trim(), // Phone
+                            streetField.getText().toString().trim(), // Street
+                            cityField.getText().toString().trim(), // City
+                            stateField.getText().toString().trim(), // State
+                            zipField.getText().toString().trim(), // Zip code
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    Toast.makeText(EmployerCreationActivity.this, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
+                                    finish(); // Close the activity after successful update
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Toast.makeText(EmployerCreationActivity.this, "Error updating employer: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                    );
+                }
+            });
+        } else {
+            // Handle adding a new employer
+            addEmployerButton.setOnClickListener(v -> {
+                if (validateInput()) {
+                    addEmployer();
+                }
+            });
+        }
     }
 
     /**
