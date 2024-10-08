@@ -29,7 +29,15 @@
             </intent-filter>
         </activity>
 
+<!--                       got to sign up page-->
         <activity android:name=".registration.signup.signupActivity" android:exported="true">
+           </activity>
+
+        <!--                go to student signup activity -->
+        <activity android:name=".registration.signup.studentsignupActivity" android:exported="true">
+        </activity>
+<!--                       go to employer signup activity -->
+        <activity android:name=".registration.signup.employersignupActivity" android:exported="true">
 
 
         </activity>
