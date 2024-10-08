@@ -1,7 +1,9 @@
 package com.example.hiveeapp.company_user.handleEmployers;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
+import android.util.Base64;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -18,9 +20,10 @@ import java.util.Map;
 
 public class EmployerApi {
 
-    private static final String BASE_URL = "https://0426e89a-dc0e-4f75-8adb-c324dd58c2a8.mock.pstmn.io/";
+    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer-invitation";
     private static final String EMPLOYERS_FILE = "employers.json";
     private static final String TAG = "EmployerApi";
+    private static final String USER_PREFS = "UserPrefs";
 
     // Helper method to merge local and server data without duplicates
     private static JSONArray mergeEmployerData(JSONArray localData, JSONArray serverData) {
@@ -101,6 +104,25 @@ public class EmployerApi {
         return newId;
     }
 
+    // Helper method to get headers with authorization for the currently logged-in user
+    private static Map<String, String> getHeaders(Context context) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        // Retrieve username and password from SharedPreferences
+        SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
+        String username = preferences.getString("username", null); // Retrieve username
+        String password = preferences.getString("password", null); // Retrieve password
+
+        if (username != null && password != null) {
+            String credentials = username + ":" + password;
+            String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+            headers.put("Authorization", auth);
+        }
+
+        return headers;
+    }
+
     // Get Employers (READ)
     public static void getEmployers(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
         // Read employers from local file
@@ -110,7 +132,7 @@ public class EmployerApi {
         listener.onResponse(localEmployers);
 
         // Fetch from the server and update the local file
-        String url = BASE_URL + "get_all";
+        String url = BASE_URL;
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
@@ -138,9 +160,7 @@ public class EmployerApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+                return EmployerApi.getHeaders(context); // Include the authorization header
             }
         };
 
@@ -182,8 +202,8 @@ public class EmployerApi {
             return;
         }
 
-        //Sync with the server
-        String url = BASE_URL + "add";
+        // Sync with the server
+        String url = BASE_URL;
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
@@ -196,9 +216,7 @@ public class EmployerApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+                return EmployerApi.getHeaders(context); // Include the authorization header
             }
         };
 
@@ -251,8 +269,8 @@ public class EmployerApi {
             return;
         }
 
-        // Optionally, sync with the server
-        String url = BASE_URL + "update/" + employerId;
+        // Sync with the server
+        String url = BASE_URL;
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.PUT,
                 url,
@@ -265,9 +283,7 @@ public class EmployerApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+                return EmployerApi.getHeaders(context); // Include the authorization header
             }
         };
 
@@ -306,8 +322,8 @@ public class EmployerApi {
             return;
         }
 
-        //Sync with the server
-        String url = BASE_URL + "delete/" + employerId;
+        // Sync with the server
+        String url = BASE_URL + "/" + employerId;
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.DELETE,
                 url,
@@ -325,9 +341,7 @@ public class EmployerApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+                return EmployerApi.getHeaders(context); // Include the authorization header
             }
         };
 
