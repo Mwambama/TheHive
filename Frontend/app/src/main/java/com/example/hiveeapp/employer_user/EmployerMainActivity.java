@@ -1,4 +1,5 @@
 package com.example.hiveeapp.employer_user;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -11,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.model.postedjobs;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
@@ -26,7 +26,6 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
     private TextView employerNameTextView;
     private TextView jobTitleTextView;
     private TextView emailTextView;
-    private Button addJobButton;
     private Button backButton;
 
     @Override
@@ -43,13 +42,6 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         employerNameTextView.setText("John Steve");
         jobTitleTextView.setText("Software Developer");
         emailTextView.setText("john.steve@example.com");
-
-        // Initialize Add Job button
-        addJobButton = findViewById(R.id.add_job_button);
-        addJobButton.setOnClickListener(view -> {
-            Intent intent = new Intent(EmployerMainActivity.this, AddJobActivity.class);
-            startActivity(intent);
-        });
 
         // Initialize Back button
         backButton = findViewById(R.id.back_button);
@@ -90,7 +82,10 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
 
-        if (itemId == R.id.nav_chat) {
+        if (itemId == R.id.nav_add_job) {
+            startActivity(new Intent(this, AddJobActivity.class));
+            return true;
+        } else if (itemId == R.id.nav_chat) {
             startActivity(new Intent(this, ChatActivity.class));
             return true;
         } else if (itemId == R.id.nav_home) {
