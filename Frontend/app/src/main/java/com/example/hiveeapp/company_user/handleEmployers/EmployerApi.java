@@ -22,15 +22,27 @@ public class EmployerApi {
     private static final String TAG = "EmployerApi";
     private static final String USER_PREFS = "UserPrefs"; // Shared preferences key
 
+    // Flag to enable testing mode
+    private static final boolean TESTING_MODE = true;
+
     // Helper method to get headers with authorization for the currently logged-in user
     private static Map<String, String> getHeaders(Context context) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
-        // Retrieve username and password from SharedPreferences
-        SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
-        String username = preferences.getString("username", null); // Retrieve username
-        String password = preferences.getString("password", null); // Retrieve password
+        String username = null;
+        String password = null;
+
+        if (TESTING_MODE) {
+            // For testing purposes, use hardcoded credentials
+            username = "employer@example.com"; // e.g., "employer@example.com"
+            password = "Test@1234"; // e.g., "Test@1234"
+        } else {
+            // Retrieve username and password from SharedPreferences
+            SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
+            username = preferences.getString("username", null); // Retrieve username
+            password = preferences.getString("password", null); // Retrieve password
+        }
 
         if (username != null && password != null) {
             String credentials = username + ":" + password;
