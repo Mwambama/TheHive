@@ -73,37 +73,14 @@ public class EmployerApi {
     }
 
     // Add Employer (CREATE)
-    public static void addEmployer(Context context, String name, String email, String phone, String street, String complement, String city, String state, String zipCode,
+// Add Employer (CREATE)
+    public static void addEmployer(Context context, JSONObject employerData,
                                    Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        // Create the employer JSON object
-        JSONObject employer = new JSONObject();
-        try {
-            employer.put("name", name);
-            employer.put("email", email);
-            employer.put("phone", phone);
-            employer.put("role", "EMPLOYER");  // Adjust role if necessary
-
-            JSONObject address = new JSONObject();
-            address.put("street", street);
-            address.put("complement", complement);  // New field: complement
-            address.put("city", city);
-            address.put("state", state);
-            address.put("zipCode", zipCode);
-
-            employer.put("address", address);
-
-        } catch (JSONException e) {
-            Log.e(TAG, "Error creating employer: " + e.getMessage());
-            errorListener.onErrorResponse(new VolleyError("Invalid employer data"));
-            return;
-        }
-
-        // Send the employer data to the server
         String url = BASE_URL;
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
-                employer,
+                employerData,
                 listener,
                 error -> {
                     Log.e(TAG, "Error adding employer to server: " + error.getMessage());
