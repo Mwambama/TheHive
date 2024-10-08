@@ -151,13 +151,13 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
             TextView editEmail = view.findViewById(R.id.editEmail);
             TextView editPhone = view.findViewById(R.id.editPhone);
             TextView editStreet = view.findViewById(R.id.editStreet);
-            TextView editComplement = view.findViewById(R.id.editComplement); // Added line
+            TextView editComplement = view.findViewById(R.id.editComplement);
             TextView editCity = view.findViewById(R.id.editCity);
             TextView editState = view.findViewById(R.id.editState);
             TextView editZipCode = view.findViewById(R.id.editZipCode);
             View saveChangesButton = view.findViewById(R.id.saveChangesButton);
 
-// Pre-fill the fields with current employer data
+            // Pre-fill the fields with current employer data
             editName.setText(employer.optString("name"));
             editEmail.setText(employer.optString("email"));
             editPhone.setText(employer.optString("phone"));
@@ -165,20 +165,23 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
             JSONObject address = employer.optJSONObject("address");
             if (address != null) {
                 editStreet.setText(address.optString("street"));
-                editComplement.setText(address.optString("complement")); // Added line
+                editComplement.setText(address.optString("complement"));
                 editCity.setText(address.optString("city"));
                 editState.setText(address.optString("state"));
                 editZipCode.setText(address.optString("zipCode"));
             }
 
-// Save changes logic
+            // Save changes logic
             saveChangesButton.setOnClickListener(v -> {
+                // Get the current adapter position
+                int currentPosition = position;
+
                 // Get updated values from fields
                 String updatedName = editName.getText().toString().trim();
                 String updatedEmail = editEmail.getText().toString().trim();
                 String updatedPhone = editPhone.getText().toString().trim();
                 String updatedStreet = editStreet.getText().toString().trim();
-                String updatedComplement = editComplement.getText().toString().trim(); // Added line
+                String updatedComplement = editComplement.getText().toString().trim();
                 String updatedCity = editCity.getText().toString().trim();
                 String updatedState = editState.getText().toString().trim();
                 String updatedZip = editZipCode.getText().toString().trim();
@@ -186,14 +189,15 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                 // Construct a new JSON object with updated data
                 try {
                     JSONObject updatedEmployer = new JSONObject();
-                    updatedEmployer.put("id", employer.getInt("id")); // Include the employer ID
+                    updatedEmployer.put("userId", employer.getInt("userId")); // Use the correct identifier as required by the backend
                     updatedEmployer.put("name", updatedName);
                     updatedEmployer.put("email", updatedEmail);
                     updatedEmployer.put("phone", updatedPhone);
+                    updatedEmployer.put("role", "EMPLOYER"); // Adjust role if necessary
 
                     JSONObject updatedAddress = new JSONObject();
                     updatedAddress.put("street", updatedStreet);
-                    updatedAddress.put("complement", updatedComplement); // Added line
+                    updatedAddress.put("complement", updatedComplement);
                     updatedAddress.put("city", updatedCity);
                     updatedAddress.put("state", updatedState);
                     updatedAddress.put("zipCode", updatedZip);
@@ -201,26 +205,20 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
 
                     // Update employer via EmployerApi
                     EmployerApi.updateEmployer(context, updatedEmployer,
-                            new Response.Listener<JSONObject>() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    Toast.makeText(context, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
+                            response -> {
+                                Toast.makeText(context, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
 
-                                    // Update the employer in the local list and refresh the RecyclerView
-                                    try {
-                                        employers.put(position, updatedEmployer);
-                                        notifyItemChanged(position);
-                                        bottomSheetDialog.dismiss();
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
+                                // Update the employer in the local list and refresh the RecyclerView
+                                try {
+                                    employers.put(currentPosition, updatedEmployer);
+                                    notifyItemChanged(currentPosition);
+                                    bottomSheetDialog.dismiss();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
                             },
-                            new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Toast.makeText(context, "Error updating employer", Toast.LENGTH_SHORT).show();
-                                }
+                            error -> {
+                                Toast.makeText(context, "Error updating employer", Toast.LENGTH_SHORT).show();
                             });
                 } catch (JSONException e) {
                     e.printStackTrace();

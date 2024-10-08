@@ -4,15 +4,19 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,8 +39,8 @@ public class EmployerApi {
 
         if (TESTING_MODE) {
             // For testing purposes, use hardcoded credentials
-            username = "employer@example.com"; // e.g., "employer@example.com"
-            password = "Test@1234"; // e.g., "Test@1234"
+            username = "employer@example.com";
+            password = "Test@1234";
         } else {
             // Retrieve username and password from SharedPreferences
             SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
@@ -56,12 +60,17 @@ public class EmployerApi {
     // Get Employers (READ)
     public static void getEmployers(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL;
+
+        Log.d(TAG, "GET Employers Request URL: " + url);
+
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
                 null,
                 listener,  // Directly passing the response to the listener
-                errorListener
+                error -> {
+                    handleErrorResponse("Error fetching employers", error, errorListener);
+                }
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -73,18 +82,20 @@ public class EmployerApi {
     }
 
     // Add Employer (CREATE)
-// Add Employer (CREATE)
     public static void addEmployer(Context context, JSONObject employerData,
                                    Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL;
+
+        Log.d(TAG, "POST Employer Request URL: " + url);
+        Log.d(TAG, "Request Payload: " + employerData.toString());
+
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
                 employerData,
                 listener,
                 error -> {
-                    Log.e(TAG, "Error adding employer to server: " + error.getMessage());
-                    errorListener.onErrorResponse(error);
+                    handleErrorResponse("Error adding employer", error, errorListener);
                 }
         ) {
             @Override
@@ -100,14 +111,17 @@ public class EmployerApi {
     public static void updateEmployer(Context context, JSONObject employerData,
                                       Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL;
+
+        Log.d(TAG, "PUT Employer Request URL: " + url);
+        Log.d(TAG, "Request Payload: " + employerData.toString());
+
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.PUT,
                 url,
                 employerData,
                 listener,
                 error -> {
-                    Log.e(TAG, "Error updating employer on server: " + error.getMessage());
-                    errorListener.onErrorResponse(error);
+                    handleErrorResponse("Error updating employer", error, errorListener);
                 }
         ) {
             @Override
@@ -123,6 +137,9 @@ public class EmployerApi {
     public static void deleteEmployer(Context context, long employerId,
                                       Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "/" + employerId;
+
+        Log.d(TAG, "DELETE Employer Request URL: " + url);
+
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.DELETE,
                 url,
@@ -132,9 +149,8 @@ public class EmployerApi {
                     if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
                         Log.e(TAG, "Error: Employer not found on server (404)");
                     } else {
-                        Log.e(TAG, "Error deleting employer on server: " + error.getMessage());
+                        handleErrorResponse("Error deleting employer", error, errorListener);
                     }
-                    errorListener.onErrorResponse(error);
                 }
         ) {
             @Override
@@ -144,5 +160,20 @@ public class EmployerApi {
         };
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    // Helper method to handle error responses and log details
+    private static void handleErrorResponse(String errorMessagePrefix, VolleyError error, Response.ErrorListener errorListener) {
+        String responseBody = null;
+        if (error.networkResponse != null && error.networkResponse.data != null) {
+            try {
+                responseBody = new String(error.networkResponse.data, "UTF-8");
+                Log.e(TAG, errorMessagePrefix + ". Server Error Response: " + responseBody);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.e(TAG, errorMessagePrefix + ": " + error.getMessage());
+        errorListener.onErrorResponse(error);
     }
 }

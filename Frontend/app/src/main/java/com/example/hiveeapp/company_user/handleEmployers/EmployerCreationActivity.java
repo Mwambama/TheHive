@@ -9,7 +9,6 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import org.json.JSONException;
@@ -52,44 +51,46 @@ public class EmployerCreationActivity extends AppCompatActivity {
             addEmployerButton.setOnClickListener(v -> {
                 if (validateInput()) {
                     try {
+                        // Get updated values from fields
+                        String updatedName = nameField.getText().toString().trim();
+                        String updatedEmail = emailField.getText().toString().trim();
+                        String updatedPhone = phoneField.getText().toString().trim();
+                        String updatedStreet = streetField.getText().toString().trim();
+                        String updatedComplement = complementField.getText().toString().trim();
+                        String updatedCity = cityField.getText().toString().trim();
+                        String updatedState = stateField.getText().toString().trim();
+                        String updatedZip = zipField.getText().toString().trim();
+
                         // Construct a JSONObject for the employer data
                         JSONObject employerData = new JSONObject();
-                        employerData.put("id", employerId);
-                        employerData.put("name", nameField.getText().toString().trim());
-                        employerData.put("email", emailField.getText().toString().trim());
-                        employerData.put("phone", phoneField.getText().toString().trim());
+                        employerData.put("userId", employerId); // Include the userId or id as required by the backend
+                        employerData.put("name", updatedName);
+                        employerData.put("email", updatedEmail);
+                        employerData.put("phone", updatedPhone);
+                        employerData.put("role", "EMPLOYER"); // Adjust role if necessary
 
                         JSONObject address = new JSONObject();
-                        address.put("street", streetField.getText().toString().trim());
-                        address.put("complement", complementField.getText().toString().trim());
-                        address.put("city", cityField.getText().toString().trim());
-                        address.put("state", stateField.getText().toString().trim());
-                        address.put("zipCode", zipField.getText().toString().trim());
+                        address.put("street", updatedStreet);
+                        address.put("complement", updatedComplement);
+                        address.put("city", updatedCity);
+                        address.put("state", updatedState);
+                        address.put("zipCode", updatedZip);
 
                         employerData.put("address", address);
 
                         // Call the updateEmployer method with the constructed JSONObject
-                        EmployerApi.updateEmployer(
-                                this,
-                                employerData,
-                                new Response.Listener<JSONObject>() {
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        Toast.makeText(EmployerCreationActivity.this, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
-                                        finish(); // Close the activity after successful update
-                                    }
+                        EmployerApi.updateEmployer(this, employerData,
+                                response -> {
+                                    Toast.makeText(EmployerCreationActivity.this, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
+                                    finish(); // Close the activity after successful update
                                 },
-                                new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        String errorMessage = getErrorMessage(error);
-                                        Toast.makeText(EmployerCreationActivity.this, "Error updating employer: " + errorMessage, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                        );
+                                error -> {
+                                    String errorMessage = getErrorMessage(error);
+                                    Toast.makeText(EmployerCreationActivity.this, "Error updating employer: " + errorMessage, Toast.LENGTH_SHORT).show();
+                                });
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Toast.makeText(this, "Error constructing employer data", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Error creating employer data", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -133,7 +134,6 @@ public class EmployerCreationActivity extends AppCompatActivity {
         String email = emailField.getText().toString().trim();
         String phone = phoneField.getText().toString().trim();
         String street = streetField.getText().toString().trim();
-        String complement = complementField.getText().toString().trim();
         String city = cityField.getText().toString().trim();
         String state = stateField.getText().toString().trim();
         String zip = zipField.getText().toString().trim();
@@ -180,7 +180,7 @@ public class EmployerCreationActivity extends AppCompatActivity {
     }
 
     /**
-     * Adds a new employer by calling the Employer API
+     * Adds a new employer by constructing the JSON object and calling the Employer API
      */
     private void addEmployer() {
         String name = nameField.getText().toString().trim();
@@ -190,26 +190,44 @@ public class EmployerCreationActivity extends AppCompatActivity {
         String complement = complementField.getText().toString().trim();
         String city = cityField.getText().toString().trim();
         String state = stateField.getText().toString().trim();
-        String zip = zipField.getText().toString().trim();
+        String zipCode = zipField.getText().toString().trim();
+
+        // Construct the employer JSON object
+        JSONObject employerData = new JSONObject();
+        try {
+            employerData.put("name", name);
+            employerData.put("email", email);
+            employerData.put("phone", phone);
+            employerData.put("role", "EMPLOYER"); // Adjust role if necessary
+
+            JSONObject address = new JSONObject();
+            address.put("street", street);
+            address.put("complement", complement);
+            address.put("city", city);
+            address.put("state", state);
+            address.put("zipCode", zipCode);
+
+            employerData.put("address", address);
+
+            // Include other fields as necessary
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error creating employer data", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Call the EmployerApi to add the employer
-        EmployerApi.addEmployer(this, name, email, phone, street, complement, city, state, zip,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // Handle the success response
-                        Toast.makeText(EmployerCreationActivity.this, "Employer added successfully!", Toast.LENGTH_SHORT).show();
-                        // Finish the activity to return to EmployerListActivity
-                        finish();
-                    }
+        EmployerApi.addEmployer(this, employerData,
+                response -> {
+                    // Handle the success response
+                    Toast.makeText(EmployerCreationActivity.this, "Employer added successfully!", Toast.LENGTH_SHORT).show();
+                    // Finish the activity to return to EmployerListActivity
+                    finish();
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle error response
-                        String errorMessage = getErrorMessage(error);
-                        Toast.makeText(EmployerCreationActivity.this, "Error adding employer: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    }
+                error -> {
+                    // Handle error response
+                    String errorMessage = getErrorMessage(error);
+                    Toast.makeText(EmployerCreationActivity.this, "Error adding employer: " + errorMessage, Toast.LENGTH_SHORT).show();
                 });
     }
 
