@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class EmployerApi {
 
-    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer?companyId=234";
+    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer";
     private static final String TAG = "EmployerApi";
     private static final String USER_PREFS = "UserPrefs"; // Shared preferences key
 
