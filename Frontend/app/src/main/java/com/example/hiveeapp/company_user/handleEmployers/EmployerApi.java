@@ -73,7 +73,7 @@ public class EmployerApi {
                     listener.onResponse(response);
                 },
                 error -> {
-                    handleErrorResponse("Error fetching employers", error, errorListener);
+                    errorListener.onErrorResponse(new VolleyError(getErrorMessage(error)));
                 }
         ) {
             @Override
@@ -99,7 +99,7 @@ public class EmployerApi {
                 employerData,
                 listener,
                 error -> {
-                    handleErrorResponse("Error adding employer", error, errorListener);
+                    errorListener.onErrorResponse(new VolleyError(getErrorMessage(error)));
                 }
         ) {
             @Override
@@ -133,7 +133,7 @@ public class EmployerApi {
                 employerData,
                 listener,
                 error -> {
-                    handleErrorResponse("Error updating employer", error, errorListener);
+                    errorListener.onErrorResponse(new VolleyError(getErrorMessage(error)));
                 }
         ) {
             @Override
@@ -161,7 +161,7 @@ public class EmployerApi {
                     if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
                         Log.e(TAG, "Error: Employer not found on server (404)");
                     } else {
-                        handleErrorResponse("Error deleting employer", error, errorListener);
+                        errorListener.onErrorResponse(new VolleyError(getErrorMessage(error)));
                     }
                 }
         ) {
@@ -174,18 +174,20 @@ public class EmployerApi {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    // Helper method to handle error responses and log details
-    private static void handleErrorResponse(String errorMessagePrefix, VolleyError error, Response.ErrorListener errorListener) {
-        String responseBody = null;
+    // Helper method to handle and extract meaningful error messages
+    private static String getErrorMessage(VolleyError error) {
+        String errorMsg = "An unexpected error occurred";
         if (error.networkResponse != null && error.networkResponse.data != null) {
             try {
-                responseBody = new String(error.networkResponse.data, "UTF-8");
-                Log.e(TAG, errorMessagePrefix + ". Server Error Response: " + responseBody);
-            } catch (UnsupportedEncodingException e) {
+                String errorData = new String(error.networkResponse.data, "UTF-8");
+                JSONObject jsonError = new JSONObject(errorData);
+                errorMsg = jsonError.optString("message", errorMsg);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else if (error.getMessage() != null) {
+            errorMsg = error.getMessage();
         }
-        Log.e(TAG, errorMessagePrefix + ": " + error.getMessage());
-        errorListener.onErrorResponse(error);
+        return errorMsg;
     }
 }
