@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,7 +24,10 @@ public class JobPostingController {
     public JobPostingController() {}
 
     @GetMapping
-    public List<JobPostingDto> getJobPostings() {
+    public List<JobPostingDto> getJobPostings(@RequestParam(value = "employerId", required = false) Long employerId) {
+        if (employerId != null) {
+            return jobPostingService.getJobPostingsByEmployerId(employerId);
+        }
         return jobPostingService.getJobPostings();
     }
 
