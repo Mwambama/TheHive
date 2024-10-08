@@ -1,6 +1,7 @@
 package com.example.hiveeapp.company_user.handleEmployers;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.widget.Button;
@@ -11,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +22,8 @@ public class EmployerCreationActivity extends AppCompatActivity {
     private EditText nameField, emailField, phoneField, streetField, complementField, cityField, stateField, zipField;
     private Button addEmployerButton;
     private ImageButton backArrowIcon;
+
+    private static final String USER_PREFS = "UserPrefs"; // Shared preferences key
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,17 +66,25 @@ public class EmployerCreationActivity extends AppCompatActivity {
                         String updatedState = stateField.getText().toString().trim();
                         String updatedZip = zipField.getText().toString().trim();
 
+                        // Retrieve companyId from SharedPreferences or other source
+                        SharedPreferences preferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
+                        int companyId = preferences.getInt("companyId", -1); // Replace with actual key and default value
+
                         // Construct a JSONObject for the employer data
                         JSONObject employerData = new JSONObject();
-                        employerData.put("userId", employerId); // Include the userId or id as required by the backend
+                        employerData.put("userId", employerId); // Include the userId as required by the backend
                         employerData.put("name", updatedName);
                         employerData.put("email", updatedEmail);
                         employerData.put("phone", updatedPhone);
                         employerData.put("role", "EMPLOYER"); // Adjust role if necessary
+                        employerData.put("companyId", companyId);
+                        employerData.put("field", JSONObject.NULL);
+                        employerData.put("jobPostings", new JSONArray());
 
                         JSONObject address = new JSONObject();
+                        address.put("addressId", JSONObject.NULL); // Include addressId if required
                         address.put("street", updatedStreet);
-                        address.put("complement", updatedComplement);
+                        address.put("complement", updatedComplement.isEmpty() ? JSONObject.NULL : updatedComplement);
                         address.put("city", updatedCity);
                         address.put("state", updatedState);
                         address.put("zipCode", updatedZip);
@@ -192,6 +205,10 @@ public class EmployerCreationActivity extends AppCompatActivity {
         String state = stateField.getText().toString().trim();
         String zipCode = zipField.getText().toString().trim();
 
+        // Retrieve companyId from SharedPreferences or other source
+        SharedPreferences preferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
+        int companyId = preferences.getInt("companyId", -1); // Replace with actual key and default value
+
         // Construct the employer JSON object
         JSONObject employerData = new JSONObject();
         try {
@@ -199,22 +216,28 @@ public class EmployerCreationActivity extends AppCompatActivity {
             employerData.put("email", email);
             employerData.put("phone", phone);
             employerData.put("role", "EMPLOYER"); // Adjust role if necessary
+            employerData.put("companyId", companyId);
+            employerData.put("field", JSONObject.NULL);
+            employerData.put("jobPostings", new JSONArray());
 
             JSONObject address = new JSONObject();
+            address.put("addressId", JSONObject.NULL); // Include addressId if required
             address.put("street", street);
-            address.put("complement", complement);
+            address.put("complement", complement.isEmpty() ? JSONObject.NULL : complement);
             address.put("city", city);
             address.put("state", state);
             address.put("zipCode", zipCode);
 
             employerData.put("address", address);
 
-            // Include other fields as necessary
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error creating employer data", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // Log the JSON payload for debugging
+        // Log.d("EmployerCreation", "Employer Data: " + employerData.toString());
 
         // Call the EmployerApi to add the employer
         EmployerApi.addEmployer(this, employerData,

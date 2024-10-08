@@ -96,22 +96,19 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                                     .setMessage("Are you sure you want to delete this employer?")
                                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                                         try {
-                                            int employerId = currentEmployer.getInt("id");
-                                            EmployerApi.deleteEmployer(context, employerId, new Response.Listener<JSONObject>() {
-                                                @Override
-                                                public void onResponse(JSONObject response) {
-                                                    Toast.makeText(context, "Employer deleted successfully", Toast.LENGTH_SHORT).show();
-                                                    // Remove the deleted employer from the list and refresh the RecyclerView
-                                                    employers.remove(currentPosition);
-                                                    notifyItemRemoved(currentPosition);
-                                                    notifyItemRangeChanged(currentPosition, employers.length());
-                                                }
-                                            }, new Response.ErrorListener() {
-                                                @Override
-                                                public void onErrorResponse(VolleyError error) {
-                                                    Toast.makeText(context, "Error deleting employer", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
+                                            long employerId = currentEmployer.getLong("userId"); // Ensure you're using the correct key
+                                            EmployerApi.deleteEmployer(context, employerId,
+                                                    response -> {
+                                                        Toast.makeText(context, "Employer deleted successfully", Toast.LENGTH_SHORT).show();
+                                                        // Remove the deleted employer from the list and refresh the RecyclerView
+                                                        employers.remove(currentPosition);
+                                                        notifyItemRemoved(currentPosition);
+                                                        notifyItemRangeChanged(currentPosition, employers.length());
+                                                    },
+                                                    error -> {
+                                                        Toast.makeText(context, "Error deleting employer", Toast.LENGTH_SHORT).show();
+                                                    }
+                                            );
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                             Toast.makeText(context, "Error deleting employer", Toast.LENGTH_SHORT).show();
@@ -173,9 +170,6 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
 
             // Save changes logic
             saveChangesButton.setOnClickListener(v -> {
-                // Get the current adapter position
-                int currentPosition = position;
-
                 // Get updated values from fields
                 String updatedName = editName.getText().toString().trim();
                 String updatedEmail = editEmail.getText().toString().trim();
@@ -186,18 +180,27 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                 String updatedState = editState.getText().toString().trim();
                 String updatedZip = editZipCode.getText().toString().trim();
 
-                // Construct a new JSON object with updated data
                 try {
+                    // Construct a new JSON object with updated data
                     JSONObject updatedEmployer = new JSONObject();
-                    updatedEmployer.put("userId", employer.getInt("userId")); // Use the correct identifier as required by the backend
+                    updatedEmployer.put("userId", employer.getLong("userId")); // Use the correct identifier
                     updatedEmployer.put("name", updatedName);
                     updatedEmployer.put("email", updatedEmail);
                     updatedEmployer.put("phone", updatedPhone);
-                    updatedEmployer.put("role", "EMPLOYER"); // Adjust role if necessary
+                    updatedEmployer.put("role", employer.optString("role", "EMPLOYER")); // Retain existing role
+                    updatedEmployer.put("companyId", employer.optLong("companyId")); // Retain existing companyId
+                    updatedEmployer.put("field", employer.optString("field", null));
+                    updatedEmployer.put("jobPostings", employer.optJSONArray("jobPostings"));
 
                     JSONObject updatedAddress = new JSONObject();
+                    JSONObject existingAddress = employer.optJSONObject("address");
+                    if (existingAddress != null) {
+                        updatedAddress.put("addressId", existingAddress.optLong("addressId", 0));
+                    } else {
+                        updatedAddress.put("addressId", JSONObject.NULL);
+                    }
                     updatedAddress.put("street", updatedStreet);
-                    updatedAddress.put("complement", updatedComplement);
+                    updatedAddress.put("complement", updatedComplement.isEmpty() ? JSONObject.NULL : updatedComplement);
                     updatedAddress.put("city", updatedCity);
                     updatedAddress.put("state", updatedState);
                     updatedAddress.put("zipCode", updatedZip);
@@ -206,15 +209,15 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                     // Update employer via EmployerApi
                     EmployerApi.updateEmployer(context, updatedEmployer,
                             response -> {
-                                Toast.makeText(context, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
-
-                                // Update the employer in the local list and refresh the RecyclerView
                                 try {
-                                    employers.put(currentPosition, updatedEmployer);
-                                    notifyItemChanged(currentPosition);
+                                    // Update the employer in the local list and refresh the RecyclerView
+                                    employers.put(position, updatedEmployer);
+                                    notifyItemChanged(position);
                                     bottomSheetDialog.dismiss();
+                                    Toast.makeText(context, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
+                                    Toast.makeText(context, "Error updating employer list", Toast.LENGTH_SHORT).show();
                                 }
                             },
                             error -> {
