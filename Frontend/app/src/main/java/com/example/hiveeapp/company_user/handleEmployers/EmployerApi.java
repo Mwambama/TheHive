@@ -61,7 +61,7 @@ public class EmployerApi {
     }
 
     // Add Employer (CREATE)
-    public static void addEmployer(Context context, String name, String email, String phone, String street, String city, String state, String zip,
+    public static void addEmployer(Context context, String name, String email, String phone, String street, String complement, String city, String state, String zipCode,
                                    Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         // Create the employer JSON object
         JSONObject employer = new JSONObject();
@@ -69,21 +69,24 @@ public class EmployerApi {
             employer.put("name", name);
             employer.put("email", email);
             employer.put("phone", phone);
+            employer.put("role", "EMPLOYER");  // Adjust role if necessary
 
             JSONObject address = new JSONObject();
             address.put("street", street);
+            address.put("complement", complement);  // New field: complement
             address.put("city", city);
             address.put("state", state);
-            address.put("zip_code", zip);
+            address.put("zipCode", zipCode);
+
             employer.put("address", address);
 
         } catch (JSONException e) {
             Log.e(TAG, "Error creating employer: " + e.getMessage());
-            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
+            errorListener.onErrorResponse(new VolleyError("Invalid employer data"));
             return;
         }
 
-        // Sync with the server
+        // Send the employer data to the server
         String url = BASE_URL;
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
@@ -105,33 +108,13 @@ public class EmployerApi {
     }
 
     // Update Employer (UPDATE)
-    public static void updateEmployer(Context context, int employerId, String name, String email, String phone, String street, String city, String state, String zip,
+    public static void updateEmployer(Context context, JSONObject employerData,
                                       Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        JSONObject updatedEmployer = new JSONObject();
-        try {
-            updatedEmployer.put("name", name);
-            updatedEmployer.put("email", email);
-            updatedEmployer.put("phone", phone);
-
-            JSONObject address = new JSONObject();
-            address.put("street", street);
-            address.put("city", city);
-            address.put("state", state);
-            address.put("zip_code", zip);
-            updatedEmployer.put("address", address);
-
-        } catch (JSONException e) {
-            Log.e(TAG, "Error updating employer: " + e.getMessage());
-            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
-            return;
-        }
-
-        // Sync with the server
         String url = BASE_URL;
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.PUT,
                 url,
-                updatedEmployer,
+                employerData,
                 listener,
                 error -> {
                     Log.e(TAG, "Error updating employer on server: " + error.getMessage());
@@ -148,7 +131,8 @@ public class EmployerApi {
     }
 
     // Delete Employer (DELETE)
-    public static void deleteEmployer(Context context, int employerId, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public static void deleteEmployer(Context context, long employerId,
+                                      Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "/" + employerId;
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.DELETE,

@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
@@ -56,7 +58,7 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                 address = addressJson.optString("street", "N/A") + ", " +
                         addressJson.optString("city", "N/A") + ", " +
                         addressJson.optString("state", "N/A") + " " +
-                        addressJson.optString("zip_code", "N/A");
+                        addressJson.optString("zipCode", "N/A");
             }
 
             // Set the extracted data to the corresponding views
@@ -71,32 +73,57 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                 holder.deleteButton.setVisibility(View.GONE);
             } else {
                 // Setup the update button to show a BottomSheetDialog for editing
-                holder.updateButton.setOnClickListener(v -> showEditBottomSheet(employer, position));
+                holder.updateButton.setOnClickListener(v -> {
+                    int currentPosition = holder.getAdapterPosition();
+                    if (currentPosition != RecyclerView.NO_POSITION) {
+                        try {
+                            JSONObject currentEmployer = employers.getJSONObject(currentPosition);
+                            showEditBottomSheet(currentEmployer, currentPosition);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
 
                 // Setup the delete button click event
                 holder.deleteButton.setOnClickListener(v -> {
-                    new AlertDialog.Builder(context)
-                            .setTitle("Delete Employer")
-                            .setMessage("Are you sure you want to delete this employer?")
-                            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                                try {
-                                    int employerId = employer.getInt("id");
-                                    EmployerApi.deleteEmployer(context, employerId, response -> {
-                                        Toast.makeText(context, "Employer deleted successfully", Toast.LENGTH_SHORT).show();
-                                        // Remove the deleted employer from the list and refresh the RecyclerView
-                                        employers.remove(position);
-                                        notifyItemRemoved(position);
-                                        notifyItemRangeChanged(position, employers.length());
-                                    }, error -> {
-                                        Toast.makeText(context, "Error deleting employer", Toast.LENGTH_SHORT).show();
-                                    });
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                    Toast.makeText(context, "Error deleting employer", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton(android.R.string.no, null)
-                            .show();
+                    int currentPosition = holder.getAdapterPosition();
+                    if (currentPosition != RecyclerView.NO_POSITION) {
+                        try {
+                            JSONObject currentEmployer = employers.getJSONObject(currentPosition);
+                            new AlertDialog.Builder(context)
+                                    .setTitle("Delete Employer")
+                                    .setMessage("Are you sure you want to delete this employer?")
+                                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                                        try {
+                                            int employerId = currentEmployer.getInt("id");
+                                            EmployerApi.deleteEmployer(context, employerId, new Response.Listener<JSONObject>() {
+                                                @Override
+                                                public void onResponse(JSONObject response) {
+                                                    Toast.makeText(context, "Employer deleted successfully", Toast.LENGTH_SHORT).show();
+                                                    // Remove the deleted employer from the list and refresh the RecyclerView
+                                                    employers.remove(currentPosition);
+                                                    notifyItemRemoved(currentPosition);
+                                                    notifyItemRangeChanged(currentPosition, employers.length());
+                                                }
+                                            }, new Response.ErrorListener() {
+                                                @Override
+                                                public void onErrorResponse(VolleyError error) {
+                                                    Toast.makeText(context, "Error deleting employer", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                            Toast.makeText(context, "Error deleting employer", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.no, null)
+                                    .show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(context, "Error retrieving employer data", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 });
             }
 
@@ -124,12 +151,13 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
             TextView editEmail = view.findViewById(R.id.editEmail);
             TextView editPhone = view.findViewById(R.id.editPhone);
             TextView editStreet = view.findViewById(R.id.editStreet);
+            TextView editComplement = view.findViewById(R.id.editComplement); // Added line
             TextView editCity = view.findViewById(R.id.editCity);
             TextView editState = view.findViewById(R.id.editState);
             TextView editZipCode = view.findViewById(R.id.editZipCode);
             View saveChangesButton = view.findViewById(R.id.saveChangesButton);
 
-            // Pre-fill the fields with current employer data
+// Pre-fill the fields with current employer data
             editName.setText(employer.optString("name"));
             editEmail.setText(employer.optString("email"));
             editPhone.setText(employer.optString("phone"));
@@ -137,52 +165,67 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
             JSONObject address = employer.optJSONObject("address");
             if (address != null) {
                 editStreet.setText(address.optString("street"));
+                editComplement.setText(address.optString("complement")); // Added line
                 editCity.setText(address.optString("city"));
                 editState.setText(address.optString("state"));
-                editZipCode.setText(address.optString("zip_code"));
+                editZipCode.setText(address.optString("zipCode"));
             }
 
-            // Save changes logic
+// Save changes logic
             saveChangesButton.setOnClickListener(v -> {
                 // Get updated values from fields
                 String updatedName = editName.getText().toString().trim();
                 String updatedEmail = editEmail.getText().toString().trim();
                 String updatedPhone = editPhone.getText().toString().trim();
                 String updatedStreet = editStreet.getText().toString().trim();
+                String updatedComplement = editComplement.getText().toString().trim(); // Added line
                 String updatedCity = editCity.getText().toString().trim();
                 String updatedState = editState.getText().toString().trim();
                 String updatedZip = editZipCode.getText().toString().trim();
 
-                // Update employer via EmployerApi
-                int employerId = employer.optInt("id");
-                EmployerApi.updateEmployer(context, employerId, updatedName, updatedEmail, updatedPhone, updatedStreet, updatedCity, updatedState, updatedZip,
-                        response -> {
-                            Toast.makeText(context, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
+                // Construct a new JSON object with updated data
+                try {
+                    JSONObject updatedEmployer = new JSONObject();
+                    updatedEmployer.put("id", employer.getInt("id")); // Include the employer ID
+                    updatedEmployer.put("name", updatedName);
+                    updatedEmployer.put("email", updatedEmail);
+                    updatedEmployer.put("phone", updatedPhone);
 
-                            // Update the employer in the local list and refresh the RecyclerView
-                            try {
-                                employer.put("name", updatedName);
-                                employer.put("email", updatedEmail);
-                                employer.put("phone", updatedPhone);
+                    JSONObject updatedAddress = new JSONObject();
+                    updatedAddress.put("street", updatedStreet);
+                    updatedAddress.put("complement", updatedComplement); // Added line
+                    updatedAddress.put("city", updatedCity);
+                    updatedAddress.put("state", updatedState);
+                    updatedAddress.put("zipCode", updatedZip);
+                    updatedEmployer.put("address", updatedAddress);
 
-                                JSONObject updatedAddress = new JSONObject();
-                                updatedAddress.put("street", updatedStreet);
-                                updatedAddress.put("city", updatedCity);
-                                updatedAddress.put("state", updatedState);
-                                updatedAddress.put("zip_code", updatedZip);
-                                employer.put("address", updatedAddress);
+                    // Update employer via EmployerApi
+                    EmployerApi.updateEmployer(context, updatedEmployer,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    Toast.makeText(context, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
 
-                                employers.put(position, employer);
-                                notifyItemChanged(position);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                            bottomSheetDialog.dismiss();
-                        },
-                        error -> {
-                            Toast.makeText(context, "Error updating employer", Toast.LENGTH_SHORT).show();
-                        });
+                                    // Update the employer in the local list and refresh the RecyclerView
+                                    try {
+                                        employers.put(position, updatedEmployer);
+                                        notifyItemChanged(position);
+                                        bottomSheetDialog.dismiss();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Toast.makeText(context, "Error updating employer", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(context, "Error constructing update request", Toast.LENGTH_SHORT).show();
+                }
             });
 
             bottomSheetDialog.show();

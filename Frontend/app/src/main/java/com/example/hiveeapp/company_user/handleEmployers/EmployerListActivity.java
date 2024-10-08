@@ -14,7 +14,6 @@ import com.example.hiveeapp.company_user.CompanyActivity;
 import com.example.hiveeapp.company_user.invitations.InvitationManagementActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 
