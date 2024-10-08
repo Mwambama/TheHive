@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.hiveeapp.R;
+
 public class signupActivity extends AppCompatActivity {
     private LinearLayout userTypeButtonsLayout;
     private Button studentButton;

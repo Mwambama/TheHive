@@ -1,28 +1,24 @@
 package com.example.hiveeapp.registration.signup;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.text.InputType;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import com.example.hiveeapp.R;
+import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
-import com.example.hiveeapp.R;
-//import com.example.hiveeapp.VolleySingleton;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.view.LayoutInflater;
+import android.view.View;
+import com.example.hiveeapp.registration.login.LoginActivity;
 
 public class studentsignupActivity extends AppCompatActivity {
     private EditText usernameEditText;
@@ -32,21 +28,16 @@ public class studentsignupActivity extends AppCompatActivity {
     private ImageButton togglePasswordVisibilityButton;
     private boolean isPasswordVisible = false;
 
-    private LinearLayout userTypeButtonsLayout;
-    private Button studentButton;
-    private Button employerButton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_signup);
+        setContentView(R.layout.activity_employer_signup);
 
         // Initialize EditText fields
         usernameEditText = findViewById(R.id.signup_username_edt);
         passwordEditText = findViewById(R.id.signup_password_edt);
         emailEditText = findViewById(R.id.signup_email_edt);
         confirmPasswordEditText = findViewById(R.id.signup_confirm_password_edt);
-
 
         // Inflate the additional layout
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -101,9 +92,14 @@ public class studentsignupActivity extends AppCompatActivity {
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            // Show user type buttons
-                            userTypeButtonsLayout.setVisibility(View.VISIBLE);
+                            // Handle successful signup
                             Toast.makeText(studentsignupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
+                            // Navigate to LoginActivity
+                            Intent intent = new Intent(studentsignupActivity.this, LoginActivity.class);
+                            //    it makes sure that the back stack is cleared and a new task is started when navigating to the LoginActivity
+                            //so the after login, ti shoudnlt go back to previous page
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
                         }
                     },
                     new Response.ErrorListener() {
@@ -144,6 +140,4 @@ public class studentsignupActivity extends AppCompatActivity {
         // Move cursor to the end of the text
         passwordEditText.setSelection(passwordEditText.getText().length());
     }
-
-
 }

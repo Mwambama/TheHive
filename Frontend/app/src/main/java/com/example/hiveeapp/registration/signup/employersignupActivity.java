@@ -7,7 +7,7 @@ import com.example.hiveeapp.R;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.example.hiveeapp.registration.login.LoginActivity;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.view.LayoutInflater;
 import android.view.View;
+import com.example.hiveeapp.registration.login.LoginActivity;
 
 public class employersignupActivity extends AppCompatActivity {
     private EditText usernameEditText;
@@ -81,7 +82,7 @@ public class employersignupActivity extends AppCompatActivity {
             }
 
             // URL for the Postman mock server
-            String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/registration/signup/employersignupActivity"; // Replace with your mock server URL
+            String url = "https://8c5d8b24-4a9a-4ce2-bf22-1aa5316f76a2.mock.pstmn.io/signup/post"; // Replace with your mock server URL
 
             // Create JSON request
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -95,8 +96,10 @@ public class employersignupActivity extends AppCompatActivity {
                             Toast.makeText(employersignupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
                             // Navigate to LoginActivity
                             Intent intent = new Intent(employersignupActivity.this, LoginActivity.class);
+                            //  it makes sure that the back stack is cleared and a new task is started when navigating to the LoginActivity
+                            //so the after login, ti shoudnlt go back to previous page
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
-                            finish(); // Optional: finish the current activity so the user can't navigate back to the signup screen
                         }
                     },
                     new Response.ErrorListener() {
