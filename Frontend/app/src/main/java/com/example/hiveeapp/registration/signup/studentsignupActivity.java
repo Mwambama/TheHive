@@ -31,7 +31,7 @@ public class studentsignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_employer_signup);
+        setContentView(R.layout.activity_student_signup);  // Update to the correct XML layout
 
         // Initialize EditText fields
         usernameEditText = findViewById(R.id.signup_username_edt);
@@ -96,8 +96,7 @@ public class studentsignupActivity extends AppCompatActivity {
                             Toast.makeText(studentsignupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
                             // Navigate to LoginActivity
                             Intent intent = new Intent(studentsignupActivity.this, LoginActivity.class);
-                            //    it makes sure that the back stack is cleared and a new task is started when navigating to the LoginActivity
-                            //so the after login, ti shoudnlt go back to previous page
+                            // Ensure the back stack is cleared
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                         }
