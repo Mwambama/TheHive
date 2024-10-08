@@ -6,12 +6,16 @@ import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.content.Intent;
+import android.view.MenuItem;
+import androidx.annotation.NonNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class studentProfileActivity extends AppCompatActivity {
+public class studentProfileActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private EditText etName, etEmail, etPhoneNumber, etAddress, etUniversity, etGPA, etGradDate, etResumePath, etPassword;
     private Button btnUpdateProfile;
@@ -37,6 +41,10 @@ public class studentProfileActivity extends AppCompatActivity {
 
         // Set up onClick listener for the update button
         btnUpdateProfile.setOnClickListener(v -> updateProfile());
+
+        // Set up bottom navigation
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
     }
 
     private void loadProfileData() {
@@ -84,5 +92,25 @@ public class studentProfileActivity extends AppCompatActivity {
     private void updateProfile() {
         // Logic to update profile information
         Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.nav_add_job) {
+            startActivity(new Intent(this, AddJobActivity.class));
+            return true;
+        } else if (itemId == R.id.nav_chat) {
+            startActivity(new Intent(this, ChatActivity.class));
+            return true;
+        } else if (itemId == R.id.nav_home) {
+            return true;
+        } else if (itemId == R.id.nav_tracking) {
+            startActivity(new Intent(this, TrackingApplicationActivity.class));
+            return true;
+        } else {
+            return false;
+        }
     }
 }
