@@ -236,9 +236,6 @@ public class EmployerCreationActivity extends AppCompatActivity {
             return;
         }
 
-        // Log the JSON payload for debugging
-        // Log.d("EmployerCreation", "Employer Data: " + employerData.toString());
-
         // Call the EmployerApi to add the employer
         EmployerApi.addEmployer(this, employerData,
                 response -> {

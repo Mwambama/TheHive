@@ -1,6 +1,7 @@
 package com.example.hiveeapp.company_user.handleEmployers;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
@@ -25,6 +24,7 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
     private JSONArray employers = new JSONArray();
     private Context context;
     private boolean isEditable;
+    private static final String USER_PREFS = "UserPrefs"; // Shared preferences key
 
     public EmployerAdapter(Context context, boolean isEditable) {
         this.context = context;
@@ -47,6 +47,10 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
         try {
             // Extract employer details
             JSONObject employer = employers.getJSONObject(position);
+
+            // Debugging: Log the employer object
+            // Log.d("EmployerAdapter", "Employer JSON: " + employer.toString());
+
             String name = employer.optString("name", "Unknown");
             String email = employer.optString("email", "N/A");
             String phone = employer.optString("phone", "N/A");
@@ -55,10 +59,12 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
             JSONObject addressJson = employer.optJSONObject("address");
             String address = "Unknown address";
             if (addressJson != null) {
-                address = addressJson.optString("street", "N/A") + ", " +
-                        addressJson.optString("city", "N/A") + ", " +
-                        addressJson.optString("state", "N/A") + " " +
-                        addressJson.optString("zipCode", "N/A");
+                String street = addressJson.optString("street", "N/A");
+                String city = addressJson.optString("city", "N/A");
+                String state = addressJson.optString("state", "N/A");
+                String zipCode = addressJson.optString("zipCode", "N/A");
+
+                address = street + ", " + city + ", " + state + " " + zipCode;
             }
 
             // Set the extracted data to the corresponding views
@@ -181,6 +187,10 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                 String updatedZip = editZipCode.getText().toString().trim();
 
                 try {
+                    // Retrieve companyId from SharedPreferences or other source
+                    SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
+                    int companyId = preferences.getInt("companyId", -1); // Replace with actual key and default value
+
                     // Construct a new JSON object with updated data
                     JSONObject updatedEmployer = new JSONObject();
                     updatedEmployer.put("userId", employer.getLong("userId")); // Use the correct identifier
@@ -188,8 +198,8 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                     updatedEmployer.put("email", updatedEmail);
                     updatedEmployer.put("phone", updatedPhone);
                     updatedEmployer.put("role", employer.optString("role", "EMPLOYER")); // Retain existing role
-                    updatedEmployer.put("companyId", employer.optLong("companyId")); // Retain existing companyId
-                    updatedEmployer.put("field", employer.optString("field", null));
+                    updatedEmployer.put("companyId", employer.optLong("companyId", companyId)); // Use the companyId
+                    updatedEmployer.put("field", JSONObject.NULL);
                     updatedEmployer.put("jobPostings", employer.optJSONArray("jobPostings"));
 
                     JSONObject updatedAddress = new JSONObject();

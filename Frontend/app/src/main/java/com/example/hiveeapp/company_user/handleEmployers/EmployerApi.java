@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class EmployerApi {
 
-    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer-invitation";
+    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer?companyId=234";
     private static final String TAG = "EmployerApi";
     private static final String USER_PREFS = "UserPrefs"; // Shared preferences key
 
@@ -67,14 +67,18 @@ public class EmployerApi {
                 Request.Method.GET,
                 url,
                 null,
-                listener,  // Directly passing the response to the listener
+                response -> {
+                    // Log the response for debugging
+                    Log.d(TAG, "Response: " + response.toString());
+                    listener.onResponse(response);
+                },
                 error -> {
                     handleErrorResponse("Error fetching employers", error, errorListener);
                 }
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return EmployerApi.getHeaders(context); // Include the authorization header
+                return EmployerApi.getHeaders(context);
             }
         };
 
@@ -110,7 +114,15 @@ public class EmployerApi {
     // Update Employer (UPDATE)
     public static void updateEmployer(Context context, JSONObject employerData,
                                       Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL;
+        long employerId = employerData.optLong("userId", -1);
+        if (employerId == -1) {
+            Log.e(TAG, "Invalid employerId for update");
+            if (errorListener != null) {
+                errorListener.onErrorResponse(new VolleyError("Invalid employerId"));
+            }
+            return;
+        }
+        String url = BASE_URL + "/" + employerId;
 
         Log.d(TAG, "PUT Employer Request URL: " + url);
         Log.d(TAG, "Request Payload: " + employerData.toString());
