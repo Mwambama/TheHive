@@ -45,6 +45,6 @@ public class CompanyController {
     @DeleteMapping("/{id}")
     public String deleteCompany(@PathVariable Long id) {
         companyService.deleteCompany(id);
-        return "Account successfully deleted";
+        return "Company account successfully deleted";
     }
 }
