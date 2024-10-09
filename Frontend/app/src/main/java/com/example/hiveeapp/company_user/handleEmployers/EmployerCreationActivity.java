@@ -1,6 +1,5 @@
 package com.example.hiveeapp.company_user.handleEmployers;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -23,7 +22,7 @@ public class EmployerCreationActivity extends AppCompatActivity {
     private Button addEmployerButton;
     private ImageButton backArrowIcon;
 
-    private static final String USER_PREFS = "UserPrefs"; // Shared preferences key
+    private static final String USER_PREFS = "MyAppPrefs"; // Shared preferences key
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,83 +37,12 @@ public class EmployerCreationActivity extends AppCompatActivity {
             finish(); // This will close the current activity and go back to the previous one.
         });
 
-        // Check if editing an existing employer
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("employerId")) {
-            // Pre-fill the fields with employer data
-            int employerId = intent.getIntExtra("employerId", -1);
-            nameField.setText(intent.getStringExtra("name"));
-            emailField.setText(intent.getStringExtra("email"));
-            phoneField.setText(intent.getStringExtra("phone"));
-            streetField.setText(intent.getStringExtra("street"));
-            complementField.setText(intent.getStringExtra("complement"));
-            cityField.setText(intent.getStringExtra("city"));
-            stateField.setText(intent.getStringExtra("state"));
-            zipField.setText(intent.getStringExtra("zip_code"));
-
-            addEmployerButton.setText("Update Employer"); // Change the button text
-            addEmployerButton.setOnClickListener(v -> {
-                if (validateInput()) {
-                    try {
-                        // Get updated values from fields
-                        String updatedName = nameField.getText().toString().trim();
-                        String updatedEmail = emailField.getText().toString().trim();
-                        String updatedPhone = phoneField.getText().toString().trim();
-                        String updatedStreet = streetField.getText().toString().trim();
-                        String updatedComplement = complementField.getText().toString().trim();
-                        String updatedCity = cityField.getText().toString().trim();
-                        String updatedState = stateField.getText().toString().trim();
-                        String updatedZip = zipField.getText().toString().trim();
-
-                        // Retrieve companyId from SharedPreferences or other source
-                        SharedPreferences preferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-                        int companyId = preferences.getInt("companyId", -1); // Replace with actual key and default value
-
-                        // Construct a JSONObject for the employer data
-                        JSONObject employerData = new JSONObject();
-                        employerData.put("userId", employerId); // Include the userId as required by the backend
-                        employerData.put("name", updatedName);
-                        employerData.put("email", updatedEmail);
-                        employerData.put("phone", updatedPhone);
-                        employerData.put("role", "EMPLOYER"); // Adjust role if necessary
-                        employerData.put("companyId", companyId);
-                        employerData.put("field", JSONObject.NULL);
-                        employerData.put("jobPostings", new JSONArray());
-
-                        JSONObject address = new JSONObject();
-                        address.put("addressId", JSONObject.NULL); // Include addressId if required
-                        address.put("street", updatedStreet);
-                        address.put("complement", updatedComplement.isEmpty() ? JSONObject.NULL : updatedComplement);
-                        address.put("city", updatedCity);
-                        address.put("state", updatedState);
-                        address.put("zipCode", updatedZip);
-
-                        employerData.put("address", address);
-
-                        // Call the updateEmployer method with the constructed JSONObject
-                        EmployerApi.updateEmployer(this, employerData,
-                                response -> {
-                                    Toast.makeText(EmployerCreationActivity.this, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
-                                    finish(); // Close the activity after successful update
-                                },
-                                error -> {
-                                    String errorMessage = getErrorMessage(error);
-                                    Toast.makeText(EmployerCreationActivity.this, "Error updating employer: " + errorMessage, Toast.LENGTH_SHORT).show();
-                                });
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, "Error creating employer data", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        } else {
-            // Handle adding a new employer
-            addEmployerButton.setOnClickListener(v -> {
-                if (validateInput()) {
-                    addEmployer();
-                }
-            });
-        }
+        // Handle adding a new employer
+        addEmployerButton.setOnClickListener(v -> {
+            if (validateInput()) {
+                addEmployer();
+            }
+        });
     }
 
     /**
@@ -205,9 +133,8 @@ public class EmployerCreationActivity extends AppCompatActivity {
         String state = stateField.getText().toString().trim();
         String zipCode = zipField.getText().toString().trim();
 
-        // Retrieve companyId from SharedPreferences or other source
-        SharedPreferences preferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-        int companyId = preferences.getInt("companyId", -1); // Replace with actual key and default value
+        // Retrieve the correct companyId from the SharedPreferences (Test company ID: 1029)
+        int companyId = 1029;  // Use the companyId of the test user
 
         // Construct the employer JSON object
         JSONObject employerData = new JSONObject();
@@ -215,13 +142,13 @@ public class EmployerCreationActivity extends AppCompatActivity {
             employerData.put("name", name);
             employerData.put("email", email);
             employerData.put("phone", phone);
-            employerData.put("role", "EMPLOYER"); // Adjust role if necessary
-            employerData.put("companyId", companyId);
+            employerData.put("role", "EMPLOYER");
+            employerData.put("companyId", companyId);  // Set companyId to the Test company's ID (1029)
             employerData.put("field", JSONObject.NULL);
             employerData.put("jobPostings", new JSONArray());
 
             JSONObject address = new JSONObject();
-            address.put("addressId", JSONObject.NULL); // Include addressId if required
+            address.put("addressId", JSONObject.NULL);  // Include addressId if required
             address.put("street", street);
             address.put("complement", complement.isEmpty() ? JSONObject.NULL : complement);
             address.put("city", city);
