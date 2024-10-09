@@ -1,6 +1,7 @@
 package com.example.thehiveapp.entity.user;
 
 import com.example.thehiveapp.entity.jobPosting.JobPosting;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +25,7 @@ public class Employer extends User{
     @Column(name="field", nullable = false)
     private String field;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<JobPosting> jobPostings;
 }

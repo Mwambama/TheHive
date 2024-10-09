@@ -19,6 +19,11 @@ public class EmployerServiceImpl implements EmployerService{
     public List<Employer> getEmployers() { return employerRepository.findAll(); }
 
     @Override
+    public List<Employer> getEmployersByCompanyId(Long companyId) {
+        return employerRepository.findByCompanyId(companyId);
+    }
+
+    @Override
     public Employer createEmployer(Employer request) { return employerRepository.save(request); }
 
     @Override
