@@ -1,6 +1,6 @@
 package com.example.thehiveapp.controller.employerInvitation;
 
-import com.example.thehiveapp.entity.employerInvitation.EmployerInvitation;
+import com.example.thehiveapp.dto.employerInvitation.EmployerInvitationDto;
 import com.example.thehiveapp.service.employerInvitation.EmployerInvitationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,22 +24,22 @@ public class EmployerInvitationController {
     public EmployerInvitationController() {}
 
     @GetMapping
-    public List<EmployerInvitation> getEmployerInvitations() {
+    public List<EmployerInvitationDto> getEmployerInvitations() {
         return employerInvitationService.getEmployerInvitations();
     }
 
     @PostMapping
-    public EmployerInvitation createEmployerInvitation(@RequestBody EmployerInvitation request) {
+    public EmployerInvitationDto createEmployerInvitation(@RequestBody EmployerInvitationDto request) {
         return employerInvitationService.createEmployerInvitation(request);
     }
 
     @GetMapping("/{id}")
-    public EmployerInvitation getEmployerInvitationById(@PathVariable Long id) {
+    public EmployerInvitationDto getEmployerInvitationById(@PathVariable Long id) {
         return employerInvitationService.getEmployerInvitationById(id);
     }
 
     @PutMapping
-    public EmployerInvitation updateEmployerInvitation(@RequestBody EmployerInvitation request) {
+    public EmployerInvitationDto updateEmployerInvitation(@RequestBody EmployerInvitationDto request) {
         return employerInvitationService.updateEmployerInvitation(request);
     }
 

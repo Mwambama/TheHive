@@ -39,7 +39,6 @@ public class JobPostingServiceImpl implements JobPostingService{
     public JobPostingDto createJobPosting(JobPostingDto dto) {
         JobPosting jobPosting = jobPostingRepository.save(jobPostingMapper.dtoToEntity(dto));
         dto = jobPostingMapper.entityToDto(jobPosting);
-        dto.setJobPostingId(jobPosting.getJobPostingId());
         return dto;
     }
 
