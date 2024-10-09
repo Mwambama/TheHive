@@ -13,7 +13,7 @@ public class signupActivity extends AppCompatActivity {
     private LinearLayout userTypeButtonsLayout;
     private Button studentButton;
     private Button employerButton;
-    private Button companyButton; // Corrected spelling from companyBUtton
+    private Button companyButton; // Corrected variable name
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

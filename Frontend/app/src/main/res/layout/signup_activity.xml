@@ -1,47 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@drawable/gradient_background"
+    android:padding="24dp">
 
+    <!-- Illustration Image -->
+    <ImageView
+        android:id="@+id/illustrationImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/illustration"
+        android:contentDescription="@string/illustration_desc"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Welcome Text -->
+    <TextView
+        android:id="@+id/loginTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/illustrationImage"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Buttons Layout for Student and Employer -->
     <LinearLayout
         android:id="@+id/user_type_buttons_layout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_marginTop="30dp"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp">
+        app:layout_constraintTop_toBottomOf="@id/loginTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Button
             android:id="@+id/signup_student_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Student"
-            android:textSize="20sp"
-            android:backgroundTint="#3F51B5"
-            android:textColor="#FFFFFF"
-            android:layout_margin="10dp"/>
+            android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:text="Student"
+        android:textSize="20sp"
+        android:textColor="#ffffff"
+        android:backgroundTint="@color/light_blue" />
+        <!-- Increased button width -->
 
         <Button
             android:id="@+id/signup_employer_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Employer"
-            android:textSize="20sp"
-            android:backgroundTint="#3F51B5"
-            android:textColor="#FFFFFF"
-            android:layout_margin="10dp"/>
-
-        <!-- Corrected ID -->
-        <Button
-            android:id="@+id/signup_company_btn"
-        android:layout_width="wrap_content"
+            android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:text="Company"
+        android:layout_marginRight="10dp"
+        android:text="Employer"
         android:textSize="20sp"
-        android:backgroundTint="#3F51B5"
-        android:textColor="#FFFFFF"
-        android:layout_margin="10dp"/>
+        android:textColor="#ffffff"
+        android:backgroundTint="@color/light_blue" />
+       <!-- Increased button width -->
     </LinearLayout>
-</LinearLayout>
+
+    <!-- Company Button -->
+    <Button
+        android:id="@+id/signup_company_btn"
+        android:layout_width="120dp"
+    android:layout_height="wrap_content"
+    android:text="Company"
+    android:textSize="20sp"
+    android:textColor="#ffffff"
+    android:backgroundTint="@color/light_blue"
+    app:layout_constraintTop_toBottomOf="@id/user_type_buttons_layout"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginTop="16dp"/>
+    <!-- Add margin for spacing -->
+    <!-- Position below the buttons layout -->
+    <!-- Increased button width -->
+</androidx.constraintlayout.widget.ConstraintLayout>
