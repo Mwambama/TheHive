@@ -1,4 +1,4 @@
-package com.example.hiveeapp.employer_user;
+package com.example.hiveeapp.employer_user.display;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -101,7 +101,7 @@ public class AddJobActivity extends AppCompatActivity {
                             Toast.makeText(AddJobActivity.this, "Job posted successfully", Toast.LENGTH_SHORT).show();
 
                             // Create a new postedjobs object from the input fields
-                            postedjobs newJob = new postedjobs(
+                            PostedJobs newJob = new PostedJobs(
                                     jobTitle,
                                     jobDescription,
                                     jobType,

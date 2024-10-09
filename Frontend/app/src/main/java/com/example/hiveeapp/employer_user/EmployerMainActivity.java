@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.employer_user.model.postedjobs;
+import com.example.hiveeapp.employer_user.display.PostedJobs;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -57,7 +57,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
     }
 
     private void displayPostedJobs() {
-        List<postedjobs> jobs = loadJobsFromAssets();
+        List<PostedJobs> jobs = loadJobsFromAssets();
         if (jobs != null) {
             RecyclerView recyclerView = findViewById(R.id.posted_jobs_recycler_view);
             JobAdapter adapter = new JobAdapter(jobs);
@@ -66,9 +66,9 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         }
     }
 
-    private List<postedjobs> loadJobsFromAssets() {
+    private List<PostedJobs> loadJobsFromAssets() {
         Gson gson = new Gson();
-        Type jobListType = new TypeToken<List<postedjobs>>() {}.getType();
+        Type jobListType = new TypeToken<List<PostedJobs>>() {}.getType();
         try {
             InputStream inputStream = getAssets().open("jobs.json");
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));

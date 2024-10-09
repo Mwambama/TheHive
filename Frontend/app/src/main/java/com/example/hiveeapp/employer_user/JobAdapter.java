@@ -7,14 +7,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.employer_user.model.postedjobs;
+import com.example.hiveeapp.employer_user.display.PostedJobs;
+
 import java.util.List;
 
 public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
 
-    private List<postedjobs> jobs;
+    private List<PostedJobs> jobs;
 
-    public JobAdapter(List<postedjobs> jobs) {
+    public JobAdapter(List<PostedJobs> jobs) {
         this.jobs = jobs;
     }
 
@@ -27,7 +28,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        postedjobs job = jobs.get(position);
+        PostedJobs job = jobs.get(position);
         holder.jobTitleTextView.setText(job.getJobTitle());
         holder.jobDescriptionTextView.setText(job.getJobDescription());
         // Set other fields as necessary
