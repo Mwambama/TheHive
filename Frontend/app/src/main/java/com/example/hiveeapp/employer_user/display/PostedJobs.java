@@ -3,6 +3,7 @@ package com.example.hiveeapp.employer_user.display;
 import java.io.Serializable;
 
 public class PostedJobs implements Serializable {
+    private String jobId; // Unique identifier for the job
     private String jobTitle;
     private String jobDescription;
     private String jobType;
@@ -11,7 +12,8 @@ public class PostedJobs implements Serializable {
     private String minimumGpa;
 
     // Constructor
-    public PostedJobs(String jobTitle, String jobDescription, String jobType, String salaryRequirements, String ageRequirement, String minimumGpa) {
+    public PostedJobs(String jobId, String jobTitle, String jobDescription, String jobType, String salaryRequirements, String ageRequirement, String minimumGpa) {
+        this.jobId = jobId; // Initialize jobId
         this.jobTitle = jobTitle;
         this.jobDescription = jobDescription;
         this.jobType = jobType;
@@ -21,6 +23,10 @@ public class PostedJobs implements Serializable {
     }
 
     // Getters
+    public String getJobId() {
+        return jobId; // Return the job ID
+    }
+
     public String getJobTitle() {
         return jobTitle;
     }
@@ -46,7 +52,11 @@ public class PostedJobs implements Serializable {
     }
 
     // Setters
-    // for when the user/employer the job posting, the setters update
+    // For when the user/employer updates the job posting
+    public void setJobId(String jobId) {
+        this.jobId = jobId; // Add setter for jobId if needed
+    }
+
     public void setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
     }

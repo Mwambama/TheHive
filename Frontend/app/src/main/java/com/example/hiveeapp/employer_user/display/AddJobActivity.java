@@ -14,7 +14,6 @@ import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.io.Serializable;
 
 public class AddJobActivity extends AppCompatActivity {
     private EditText jobTitleEditText;
@@ -100,8 +99,17 @@ public class AddJobActivity extends AppCompatActivity {
                             // Handle successful job post
                             Toast.makeText(AddJobActivity.this, "Job posted successfully", Toast.LENGTH_SHORT).show();
 
-                            // Create a new postedjobs object from the input fields
+                            // Extract jobId from the response if available
+                            String jobId;
+                            try {
+                                jobId = response.getString("jobId"); // Adjust based on your server response
+                            } catch (JSONException e) {
+                                jobId = "unknown"; // Default value if not present
+                            }
+
+                            // Create a new PostedJobs object from the input fields
                             PostedJobs newJob = new PostedJobs(
+                                    jobId, // Pass the jobId here
                                     jobTitle,
                                     jobDescription,
                                     jobType,
@@ -112,7 +120,7 @@ public class AddJobActivity extends AppCompatActivity {
 
                             // Create an Intent to return the new job to the CreateJobsActivity
                             Intent resultIntent = new Intent();
-                            resultIntent.putExtra("newJob", (Serializable) newJob); // Ensure postedjobs implements Serializable
+                            resultIntent.putExtra("newJob", newJob); // Ensure PostedJobs implements Serializable
                             setResult(RESULT_OK, resultIntent);
 
                             finish(); // Close AddJobActivity and go back to CreateJobsActivity

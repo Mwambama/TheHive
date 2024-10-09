@@ -42,4 +42,6 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
     implementation("com.google.code.gson:gson:2.10")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation ("com.android.volley:volley:1.2.0")
+
 }
