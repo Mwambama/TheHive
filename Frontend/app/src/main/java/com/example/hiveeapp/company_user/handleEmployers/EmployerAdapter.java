@@ -19,25 +19,41 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Adapter class for managing the display of a list of employers in a RecyclerView.
+ * Handles both read-only and editable modes, allowing users to update or delete employers.
+ */
 public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.EmployerViewHolder> {
 
-    private JSONArray employers = new JSONArray();
-    private Context context;
-    private boolean isEditable;
-    private static final String USER_PREFS = "UserPrefs"; // Shared preferences key
+    private JSONArray employers = new JSONArray(); // Holds the list of employers
+    private final Context context; // The context of the activity/fragment
+    private final boolean isEditable; // Flag to check if the list is editable
+    private static final String USER_PREFS = "UserPrefs"; // Shared preferences key for user data
 
+    /**
+     * Constructor for EmployerAdapter.
+     *
+     * @param context    the context in which the adapter is used
+     * @param isEditable indicates if the list is editable (shows update/delete buttons)
+     */
     public EmployerAdapter(Context context, boolean isEditable) {
         this.context = context;
         this.isEditable = isEditable;
     }
 
+    /**
+     * Updates the employer list and refreshes the RecyclerView.
+     *
+     * @param employers the JSONArray of employer data
+     */
     public void setEmployers(JSONArray employers) {
         this.employers = employers;
-        notifyDataSetChanged();
+        notifyDataSetChanged(); // Notify the adapter to refresh the RecyclerView
     }
 
     @Override
     public EmployerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // Inflate the layout for each employer item
         View view = LayoutInflater.from(context).inflate(R.layout.item_employer, parent, false);
         return new EmployerViewHolder(view);
     }
@@ -45,17 +61,15 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
     @Override
     public void onBindViewHolder(EmployerViewHolder holder, int position) {
         try {
-            // Extract employer details
+            // Get the employer object at the current position
             JSONObject employer = employers.getJSONObject(position);
 
-            // Debugging: Log the employer object
-            // Log.d("EmployerAdapter", "Employer JSON: " + employer.toString());
-
+            // Extract employer details and handle null cases with default values
             String name = employer.optString("name", "Unknown");
             String email = employer.optString("email", "N/A");
             String phone = employer.optString("phone", "N/A");
 
-            // Address extraction with null checks
+            // Extract address details, handle missing address gracefully
             JSONObject addressJson = employer.optJSONObject("address");
             String address = "Unknown address";
             if (addressJson != null) {
@@ -63,35 +77,34 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                 String city = addressJson.optString("city", "N/A");
                 String state = addressJson.optString("state", "N/A");
                 String zipCode = addressJson.optString("zipCode", "N/A");
-
                 address = street + ", " + city + ", " + state + " " + zipCode;
             }
 
-            // Set the extracted data to the corresponding views
+            // Set employer details to the corresponding TextViews
             holder.nameTextView.setText(name);
             holder.emailTextView.setText(email);
             holder.phoneTextView.setText(phone);
             holder.addressTextView.setText(address);
 
-            // Check if edit mode is enabled, otherwise hide buttons
+            // If the list is not editable, hide the update and delete buttons
             if (!isEditable) {
                 holder.updateButton.setVisibility(View.GONE);
                 holder.deleteButton.setVisibility(View.GONE);
             } else {
-                // Setup the update button to show a BottomSheetDialog for editing
+                // Handle update button click to show a bottom sheet for editing employer
                 holder.updateButton.setOnClickListener(v -> {
                     int currentPosition = holder.getAdapterPosition();
                     if (currentPosition != RecyclerView.NO_POSITION) {
                         try {
                             JSONObject currentEmployer = employers.getJSONObject(currentPosition);
-                            showEditBottomSheet(currentEmployer, currentPosition);
+                            showEditBottomSheet(currentEmployer, currentPosition); // Show edit dialog
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 });
 
-                // Setup the delete button click event
+                // Handle delete button click to delete the employer
                 holder.deleteButton.setOnClickListener(v -> {
                     int currentPosition = holder.getAdapterPosition();
                     if (currentPosition != RecyclerView.NO_POSITION) {
@@ -102,14 +115,14 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                                     .setMessage("Are you sure you want to delete this employer?")
                                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                                         try {
-                                            long employerId = currentEmployer.getLong("userId"); // Ensure you're using the correct key
+                                            long employerId = currentEmployer.getLong("userId");
                                             EmployerApi.deleteEmployer(context, employerId,
                                                     response -> {
-                                                        Toast.makeText(context, "Employer deleted successfully", Toast.LENGTH_SHORT).show();
-                                                        // Remove the deleted employer from the list and refresh the RecyclerView
+                                                        // Remove deleted employer from list and update RecyclerView
                                                         employers.remove(currentPosition);
                                                         notifyItemRemoved(currentPosition);
                                                         notifyItemRangeChanged(currentPosition, employers.length());
+                                                        Toast.makeText(context, "Employer deleted successfully", Toast.LENGTH_SHORT).show();
                                                     },
                                                     error -> {
                                                         Toast.makeText(context, "Error deleting employer", Toast.LENGTH_SHORT).show();
@@ -129,7 +142,6 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                     }
                 });
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(context, "Error parsing employer data", Toast.LENGTH_SHORT).show();
@@ -138,10 +150,15 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
 
     @Override
     public int getItemCount() {
-        return employers.length();
+        return employers.length(); // Return the number of employers in the list
     }
 
-    // Method to show BottomSheetDialog for editing employer details
+    /**
+     * Displays a BottomSheetDialog for editing the employer details.
+     *
+     * @param employer the JSONObject containing employer details
+     * @param position the position of the employer in the list
+     */
     private void showEditBottomSheet(JSONObject employer, int position) {
         try {
             // Inflate the bottom sheet layout
@@ -187,9 +204,9 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                 String updatedZip = editZipCode.getText().toString().trim();
 
                 try {
-                    // Retrieve companyId from SharedPreferences or other source
+                    // Retrieve companyId from SharedPreferences
                     SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
-                    int companyId = preferences.getInt("companyId", -1); // Replace with actual key and default value
+                    int companyId = preferences.getInt("companyId", -1);
 
                     // Construct a new JSON object with updated data
                     JSONObject updatedEmployer = new JSONObject();
@@ -198,10 +215,9 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                     updatedEmployer.put("email", updatedEmail);
                     updatedEmployer.put("phone", updatedPhone);
                     updatedEmployer.put("role", employer.optString("role", "EMPLOYER")); // Retain existing role
-                    updatedEmployer.put("companyId", employer.optLong("companyId", companyId)); // Use the companyId
-                    updatedEmployer.put("field", JSONObject.NULL);
-                    updatedEmployer.put("jobPostings", employer.optJSONArray("jobPostings"));
+                    updatedEmployer.put("companyId", employer.optLong("companyId", companyId));
 
+                    // Update address in the employer object
                     JSONObject updatedAddress = new JSONObject();
                     JSONObject existingAddress = employer.optJSONObject("address");
                     if (existingAddress != null) {
@@ -230,9 +246,7 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                                     Toast.makeText(context, "Error updating employer list", Toast.LENGTH_SHORT).show();
                                 }
                             },
-                            error -> {
-                                Toast.makeText(context, "Error updating employer", Toast.LENGTH_SHORT).show();
-                            });
+                            error -> Toast.makeText(context, "Error updating employer", Toast.LENGTH_SHORT).show());
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(context, "Error constructing update request", Toast.LENGTH_SHORT).show();
@@ -246,12 +260,16 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
         }
     }
 
+    /**
+     * ViewHolder class to hold views for each employer item.
+     */
     class EmployerViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView, emailTextView, phoneTextView, addressTextView;
         ImageButton updateButton, deleteButton;
 
         public EmployerViewHolder(View itemView) {
             super(itemView);
+            // Initialize views from the layout
             nameTextView = itemView.findViewById(R.id.nameTextView);
             emailTextView = itemView.findViewById(R.id.emailTextView);
             phoneTextView = itemView.findViewById(R.id.phoneTextView);

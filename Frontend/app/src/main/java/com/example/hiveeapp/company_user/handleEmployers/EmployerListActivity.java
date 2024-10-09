@@ -17,11 +17,15 @@ import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
 
+/**
+ * EmployerListActivity handles the display and management of a list of employers.
+ * It allows users to view, add, and interact with employers, and also includes a bottom navigation for navigation to other activities.
+ */
 public class EmployerListActivity extends AppCompatActivity {
 
-    private RecyclerView employerRecyclerView;
-    private EmployerAdapter employerAdapter;
-    private MaterialButton addEmployerButton;
+    private RecyclerView employerRecyclerView;   // RecyclerView for displaying the list of employers
+    private EmployerAdapter employerAdapter;     // Adapter for managing employer data in the RecyclerView
+    private MaterialButton addEmployerButton;    // Button for adding a new employer
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,19 +35,18 @@ public class EmployerListActivity extends AppCompatActivity {
         // Initialize views
         initViews();
 
-        // Set up Add Employer button
+        // Set up "Add Employer" button to navigate to EmployerCreationActivity
         addEmployerButton.setOnClickListener(v -> {
             Intent intent = new Intent(EmployerListActivity.this, EmployerCreationActivity.class);
             startActivity(intent);
         });
 
-        // Set up RecyclerView
+        // Set up the RecyclerView with a linear layout and the employer adapter
         employerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        employerAdapter = new EmployerAdapter(this, true);
+        employerAdapter = new EmployerAdapter(this, true);  // true indicates editable mode
         employerRecyclerView.setAdapter(employerAdapter);
 
-        // Load employers from the server
+        // Load the list of employers from the server
         loadEmployers();
 
         // Set up Bottom Navigation View
@@ -67,12 +70,12 @@ public class EmployerListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh the employer list when returning to this activity
+        // Refresh the employer list when the activity is resumed
         loadEmployers();
     }
 
     /**
-     * Initialize views in the activity
+     * Initialize views in the activity.
      */
     private void initViews() {
         employerRecyclerView = findViewById(R.id.employerRecyclerView);
@@ -80,19 +83,21 @@ public class EmployerListActivity extends AppCompatActivity {
     }
 
     /**
-     * Load employers from the server using EmployerApi
+     * Load the list of employers from the server using EmployerApi and update the adapter.
      */
     private void loadEmployers() {
         EmployerApi.getEmployers(this,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
+                        // Set the retrieved employers to the adapter
                         employerAdapter.setEmployers(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        // Handle error when fetching employers fails
                         Toast.makeText(EmployerListActivity.this, "Error fetching employers: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });

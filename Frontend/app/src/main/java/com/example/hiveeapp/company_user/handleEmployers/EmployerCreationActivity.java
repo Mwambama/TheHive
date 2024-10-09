@@ -16,6 +16,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * EmployerCreationActivity allows the user to add a new employer by filling out a form.
+ * The form includes fields like name, email, phone number, address, etc., which are validated before submission.
+ */
 public class EmployerCreationActivity extends AppCompatActivity {
 
     private EditText nameField, emailField, phoneField, streetField, complementField, cityField, stateField, zipField;
@@ -29,24 +33,22 @@ public class EmployerCreationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_employer);
 
-        // Initialize views
+        // Initialize the input fields and buttons
         initViews();
 
-        // Set the back arrow functionality to navigate back
-        backArrowIcon.setOnClickListener(v -> {
-            finish(); // This will close the current activity and go back to the previous one.
-        });
+        // Set up back arrow functionality to close the current activity and return to the previous one
+        backArrowIcon.setOnClickListener(v -> finish());
 
-        // Handle adding a new employer
+        // Handle the "Add Employer" button click and validate inputs
         addEmployerButton.setOnClickListener(v -> {
             if (validateInput()) {
-                addEmployer();
+                addEmployer();  // If inputs are valid, proceed to add the employer
             }
         });
     }
 
     /**
-     * Initialize all views in the activity
+     * Initializes the input fields and buttons in the activity layout.
      */
     private void initViews() {
         nameField = findViewById(R.id.nameField);
@@ -62,15 +64,18 @@ public class EmployerCreationActivity extends AppCompatActivity {
     }
 
     /**
-     * Validates the input fields and provides feedback if any input is invalid
+     * Validates the input fields to ensure that all required fields are filled and valid.
+     *
+     * @return true if all fields are valid, false otherwise
      */
     private boolean validateInput() {
         boolean isValid = true;
 
-        // Reset previous error messages
+        // Reset any previous error messages
         nameField.setError(null);
         emailField.setError(null);
 
+        // Get the input values from the fields
         String name = nameField.getText().toString().trim();
         String email = emailField.getText().toString().trim();
         String phone = phoneField.getText().toString().trim();
@@ -79,24 +84,25 @@ public class EmployerCreationActivity extends AppCompatActivity {
         String state = stateField.getText().toString().trim();
         String zip = zipField.getText().toString().trim();
 
-        // Validate name field
+        // Validate the name field
         if (name.isEmpty()) {
             nameField.setError("Name is required");
             isValid = false;
         }
 
-        // Validate email field
+        // Validate the email field
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailField.setError("Valid email is required");
             isValid = false;
         }
 
-        // Validate other fields if needed
+        // Validate the phone field
         if (phone.isEmpty()) {
             phoneField.setError("Phone number is required");
             isValid = false;
         }
 
+        // Validate the address fields
         if (street.isEmpty()) {
             streetField.setError("Street address is required");
             isValid = false;
@@ -121,9 +127,10 @@ public class EmployerCreationActivity extends AppCompatActivity {
     }
 
     /**
-     * Adds a new employer by constructing the JSON object and calling the Employer API
+     * Constructs a JSON object with employer details and sends a request to add a new employer.
      */
     private void addEmployer() {
+        // Get the values from the input fields
         String name = nameField.getText().toString().trim();
         String email = emailField.getText().toString().trim();
         String phone = phoneField.getText().toString().trim();
@@ -133,8 +140,8 @@ public class EmployerCreationActivity extends AppCompatActivity {
         String state = stateField.getText().toString().trim();
         String zipCode = zipField.getText().toString().trim();
 
-        // Retrieve the correct companyId from the SharedPreferences (Test company ID: 1029)
-        int companyId = 1029;  // Use the companyId of the test user
+        // Retrieve the companyId from SharedPreferences (or use a hardcoded value for testing)
+        int companyId = 1029;  // This is a test company ID
 
         // Construct the employer JSON object
         JSONObject employerData = new JSONObject();
@@ -143,12 +150,13 @@ public class EmployerCreationActivity extends AppCompatActivity {
             employerData.put("email", email);
             employerData.put("phone", phone);
             employerData.put("role", "EMPLOYER");
-            employerData.put("companyId", companyId);  // Set companyId to the Test company's ID (1029)
+            employerData.put("companyId", companyId);
             employerData.put("field", JSONObject.NULL);
             employerData.put("jobPostings", new JSONArray());
 
+            // Construct the address JSON object
             JSONObject address = new JSONObject();
-            address.put("addressId", JSONObject.NULL);  // Include addressId if required
+            address.put("addressId", JSONObject.NULL);
             address.put("street", street);
             address.put("complement", complement.isEmpty() ? JSONObject.NULL : complement);
             address.put("city", city);
@@ -163,13 +171,12 @@ public class EmployerCreationActivity extends AppCompatActivity {
             return;
         }
 
-        // Call the EmployerApi to add the employer
+        // Send the employer data to the server using the EmployerApi
         EmployerApi.addEmployerWithAddress(this, employerData,
                 response -> {
-                    // Handle the success response
+                    // Handle successful response
                     Toast.makeText(EmployerCreationActivity.this, "Employer added successfully!", Toast.LENGTH_SHORT).show();
-                    // Finish the activity to return to EmployerListActivity
-                    finish();
+                    finish();  // Close the activity and return to the previous screen
                 },
                 error -> {
                     // Handle error response
@@ -179,7 +186,10 @@ public class EmployerCreationActivity extends AppCompatActivity {
     }
 
     /**
-     * Extracts and returns a meaningful error message from the VolleyError object
+     * Extracts and returns a meaningful error message from a VolleyError.
+     *
+     * @param error The VolleyError object containing the error details
+     * @return A user-friendly error message
      */
     private String getErrorMessage(VolleyError error) {
         String errorMsg = "An unexpected error occurred";
