@@ -40,7 +40,7 @@ public class JsonArrReqActivity extends AppCompatActivity {
 
     // Fetch job posts from the backend
     private void fetchJobPosts() {
-        String url = "https://8c5d8b24-4a9a-4ce2-bf22-1aa5316f76a2.mock.pstmn.io/employer_user/posts"; // Replace with your server URL
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting"; // Replace with your server URL
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
