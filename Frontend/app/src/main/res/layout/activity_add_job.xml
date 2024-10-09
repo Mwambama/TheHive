@@ -40,11 +40,23 @@
             app:layout_constraintEnd_toEndOf="parent"/>
 
         <EditText
+            android:id="@+id/summary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Summary"
+            android:inputType="textMultiLine"
+            android:lines="3"
+            android:gravity="top"
+            app:layout_constraintTop_toBottomOf="@id/job_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText
             android:id="@+id/job_type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Job Type"
-            app:layout_constraintTop_toBottomOf="@id/job_description"
+            app:layout_constraintTop_toBottomOf="@id/summary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -75,12 +87,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <EditText
+            android:id="@+id/job_start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Job Start Date (YYYY-MM-DD)"
+            app:layout_constraintTop_toBottomOf="@id/minimum_gpa"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText
+            android:id="@+id/application_start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Application Start Date (YYYY-MM-DD)"
+            app:layout_constraintTop_toBottomOf="@id/job_start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText
+            android:id="@+id/application_end"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Application End Date (YYYY-MM-DD)"
+            app:layout_constraintTop_toBottomOf="@id/application_start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
         <Button
             android:id="@+id/post_job_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Post Job"
-            app:layout_constraintTop_toBottomOf="@id/minimum_gpa"
+            app:layout_constraintTop_toBottomOf="@id/application_end"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="16dp"/>
