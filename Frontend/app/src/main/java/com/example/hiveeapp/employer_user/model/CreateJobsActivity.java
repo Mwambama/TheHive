@@ -1,4 +1,4 @@
-package com.example.hiveeapp.employer_user;
+package com.example.hiveeapp.employer_user.model;
 
 import android.content.Intent;
 import android.os.Bundle;

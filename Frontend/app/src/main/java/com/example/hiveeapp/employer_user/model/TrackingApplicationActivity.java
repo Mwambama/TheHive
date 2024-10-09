@@ -1,6 +1,5 @@
-package com.example.hiveeapp.employer_user;
+package com.example.hiveeapp.employer_user.model;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -8,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.employer_user.TrackingAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
