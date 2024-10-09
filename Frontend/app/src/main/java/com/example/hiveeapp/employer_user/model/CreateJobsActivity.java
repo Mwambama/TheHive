@@ -11,13 +11,14 @@ import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.display.AddJobActivity;
 import com.example.hiveeapp.employer_user.display.JobDetailsActivity;
 import com.example.hiveeapp.employer_user.display.PostedJobs;
-
+import com.example.hiveeapp.employer_user.EmployerMainActivity; // Import the main activity
 
 public class CreateJobsActivity extends AppCompatActivity {
 
     private static final int ADD_JOB_REQUEST_CODE = 1;
     private static final int EDIT_JOB_REQUEST_CODE = 2;
     private Button addJobButton;
+    private Button backButton; // Declare the back button
     private TextView postedJobTextView;
     private PostedJobs currentJob;
 
@@ -27,7 +28,18 @@ public class CreateJobsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_jobs);
 
         addJobButton = findViewById(R.id.add_job_button);
+        backButton = findViewById(R.id.back_button); // Initialize the back button
         postedJobTextView = findViewById(R.id.posted_job_text_view);
+
+        // Set up the back button listener
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CreateJobsActivity.this, EmployerMainActivity.class);
+                startActivity(intent);
+                finish(); // Optional: call finish() to remove this activity from the back stack
+            }
+        });
 
         addJobButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -14,6 +14,7 @@ import com.example.hiveeapp.employer_user.display.PostedJobs;
 import com.example.hiveeapp.employer_user.model.ChatActivity;
 import com.example.hiveeapp.employer_user.model.CreateJobsActivity;
 import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
+import com.example.hiveeapp.registration.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -30,7 +31,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
     private TextView employerNameTextView;
     private TextView jobTitleTextView;
     private TextView emailTextView;
-    private Button backButton;
+    private Button logoutButton; // Declare logout button
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +48,9 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         jobTitleTextView.setText("Software Developer");
         emailTextView.setText("john.steve@example.com");
 
-        // Initialize Back button
-        backButton = findViewById(R.id.back_button);
-        backButton.setOnClickListener(view -> finish());
+        // Initialize Log Out button
+        logoutButton = findViewById(R.id.logout_button); // Initialize logout button
+        logoutButton.setOnClickListener(view -> logout());
 
         // Display posted jobs
         displayPostedJobs();
@@ -100,5 +101,13 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         } else {
             return false;
         }
+    }
+
+    private void logout() {
+        Intent intent = new Intent(EmployerMainActivity.this, LoginActivity.class);
+        // Clear the back stack so that user cannot return to the employer main activity
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish(); // Finish current activity
     }
 }
