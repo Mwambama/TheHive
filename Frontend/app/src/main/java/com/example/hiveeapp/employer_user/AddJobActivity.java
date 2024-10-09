@@ -1,5 +1,6 @@
 package com.example.hiveeapp.employer_user;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,9 +12,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.io.Serializable;
 
 public class AddJobActivity extends AppCompatActivity {
     private EditText jobTitleEditText;
@@ -98,7 +99,23 @@ public class AddJobActivity extends AppCompatActivity {
                         public void onResponse(JSONObject response) {
                             // Handle successful job post
                             Toast.makeText(AddJobActivity.this, "Job posted successfully", Toast.LENGTH_SHORT).show();
-                            finish(); // Close AddJobActivity and go back to EmployerMainActivity
+
+                            // Create a new postedjobs object from the input fields
+                            postedjobs newJob = new postedjobs(
+                                    jobTitle,
+                                    jobDescription,
+                                    jobType,
+                                    salaryRequirements,
+                                    ageRequirement,
+                                    minimumGpa
+                            );
+
+                            // Create an Intent to return the new job to the CreateJobsActivity
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("newJob", (Serializable) newJob); // Ensure postedjobs implements Serializable
+                            setResult(RESULT_OK, resultIntent);
+
+                            finish(); // Close AddJobActivity and go back to CreateJobsActivity
                         }
                     },
                     new Response.ErrorListener() {

@@ -1,22 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_home"
-        android:icon="@drawable/ic_home"
-    android:title="Profile" />
-    <!-- Replace with your profile icon -->
-    <item
-        android:id="@+id/nav_tracking"
-        android:icon="@drawable/ic_tracking"
-    android:title="Tracking" />
-    <!-- Replace with your tracking icon -->
+        android:title="Home"
+        android:icon="@drawable/ic_home" />
     <item
         android:id="@+id/nav_add_job"
-        android:icon="@drawable/ic_manage_invitations"
-    android:title="Add Job" />
-    <!-- Replace with your add job icon -->
+        android:title="Add Job"
+        android:icon="@drawable/ic_manage_invitations" />
     <item
         android:id="@+id/nav_chat"
-        android:icon="@drawable/ic_chat"
-    android:title="Chat" />
-    <!-- Replace with your chat icon -->
+        android:title="Chat"
+        android:icon="@drawable/ic_chat" />
+    <item
+        android:id="@+id/nav_tracking"
+        android:title="Tracking"
+        android:icon="@drawable/ic_tracking" />
 </menu>

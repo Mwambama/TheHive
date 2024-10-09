@@ -53,6 +53,7 @@
 <!--        <activity android:name=".model.employerProfile"/>-->
 <!--             page to add new jobs and information-->
         <activity android:name=".employer_user.AddJobActivity" android:exported="true"/>
+        <activity android:name=".employer_user.CreateJobsActivity" android:exported="true"/>
 <!--          page for the employer-->
         <activity android:name=".employer_user.EmployerMainActivity" android:exported="true"/>
         <activity android:name=".employer_user.TrackingApplicationActivity" android:exported="true"/>

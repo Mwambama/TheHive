@@ -14,6 +14,7 @@ import com.example.hiveeapp.employer_user.model.postedjobs;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,7 +84,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         int itemId = item.getItemId();
 
         if (itemId == R.id.nav_add_job) {
-            startActivity(new Intent(this, AddJobActivity.class));
+            startActivity(new Intent(this, CreateJobsActivity.class)); // Navigate to CreateJobsActivity
             return true;
         } else if (itemId == R.id.nav_chat) {
             startActivity(new Intent(this, ChatActivity.class));
