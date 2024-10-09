@@ -69,6 +69,16 @@ public class EmployerApi {
         Log.d(TAG, "POST Employer Request URL: " + url);
         Log.d(TAG, "Request Payload: " + employerData.toString());
 
+        // Make sure the addressId is set to null to allow the server to generate it
+        try {
+            JSONObject address = employerData.getJSONObject("address");
+            address.put("addressId", JSONObject.NULL);
+            employerData.put("address", address);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Error ensuring the addressId is null.");
+        }
+
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
@@ -84,6 +94,7 @@ public class EmployerApi {
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
 
     // Update Employer (UPDATE)
     public static void updateEmployer(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
