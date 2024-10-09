@@ -15,14 +15,14 @@ import com.example.hiveeapp.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * InvitationCreationActivity allows the company user to create and send employer invitations.
+ */
 public class InvitationCreationActivity extends AppCompatActivity {
 
     private EditText emailField, messageField;
     private Button sendInvitationButton;
     private ImageButton backArrowIcon;
-
-    private static final String USER_PREFS = "MyAppPrefs"; // Shared preferences key
-    private int companyId; // Variable to store the company ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +31,6 @@ public class InvitationCreationActivity extends AppCompatActivity {
 
         // Initialize views
         initViews();
-
-        // Retrieve company ID from SharedPreferences
-        SharedPreferences preferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-        companyId = preferences.getInt("companyId", -1);  // Retrieve the actual company ID
 
         // Set up back navigation
         backArrowIcon.setOnClickListener(v -> finish());
@@ -54,6 +50,9 @@ public class InvitationCreationActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the views in the activity.
+     */
     private void initViews() {
         emailField = findViewById(R.id.emailField);
         messageField = findViewById(R.id.messageField);
@@ -61,51 +60,48 @@ public class InvitationCreationActivity extends AppCompatActivity {
         backArrowIcon = findViewById(R.id.backArrowIcon);
     }
 
+    /**
+     * Validates the email format.
+     *
+     * @param email The email string to validate.
+     * @return True if the email is valid, false otherwise.
+     */
     private boolean isValidEmail(String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
+    /**
+     * Sends the invitation using the InvitationApi.
+     *
+     * @param email   The email address to send the invitation to.
+     * @param message The message to include with the invitation.
+     */
     private void sendInvitation(String email, String message) {
-        if (companyId == -1) {
-            Toast.makeText(this, "Company ID not found. Please try again.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Create JSON payload
-        JSONObject payload = new JSONObject();
-        try {
-            payload.put("email", email);
-            payload.put("message", message);
-            payload.put("company_id", companyId);  // Use the retrieved company ID
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to create request.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         // Send the invitation using InvitationApi
         InvitationApi.sendInvitation(
                 this,
-                companyId,  // Pass the actual company ID
                 email,
                 message,
                 response -> {
                     // Invitation sent successfully
                     Toast.makeText(this, "Invitation sent successfully!", Toast.LENGTH_SHORT).show();
-                    // Go back to InvitationManagementActivity and refresh the list
-                    finish(); // This will go back to the previous activity (InvitationManagementActivity)
+                    // Finish the activity and return to the previous screen
+                    finish();
                 },
-                new com.android.volley.Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle the error correctly as VolleyError
-                        String errorMessage = getErrorMessage(error);
-                        Toast.makeText(InvitationCreationActivity.this, "Failed to send invitation: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    }
+                error -> {
+                    // Handle the error correctly as VolleyError
+                    String errorMessage = getErrorMessage(error);
+                    Toast.makeText(InvitationCreationActivity.this, "Failed to send invitation: " + errorMessage, Toast.LENGTH_SHORT).show();
                 }
         );
     }
 
+    /**
+     * Extracts and returns a meaningful error message from a VolleyError.
+     *
+     * @param error The VolleyError object containing the error details.
+     * @return A user-friendly error message.
+     */
     private String getErrorMessage(VolleyError error) {
         String errorMsg = "An unexpected error occurred";
         if (error.networkResponse != null && error.networkResponse.data != null) {

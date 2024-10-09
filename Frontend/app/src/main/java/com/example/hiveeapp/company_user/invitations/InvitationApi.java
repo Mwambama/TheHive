@@ -21,8 +21,15 @@ public class InvitationApi {
 
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer-invitation";
     private static final String TAG = "InvitationApi";
+    private static final int COMPANY_ID = 1029; // Hardcoded companyId matching EmployerApi
 
-    // Helper method to get headers with authorization for the currently logged-in user
+
+    /**
+     * Helper method to get headers with authorization for the currently logged-in user.
+     *
+     * @param context The application context.
+     * @return A map containing the headers for the API request.
+     */
     private static Map<String, String> getHeaders(Context context) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
@@ -37,33 +44,27 @@ public class InvitationApi {
         return headers;
     }
 
-    // Method to send an invitation (Create)
-    public static void sendInvitation(Context context, int companyId, String email,
-                                      String message,
+    /**
+     * Sends an employer invitation to a specified email.
+     *
+     * @param context       The application context.
+     * @param email         The email address to send the invitation to.
+     * @param message       The message to include with the invitation.
+     * @param listener      Response listener for successful invitation creation.
+     * @param errorListener Error listener for handling errors.
+     */
+    public static void sendInvitation(Context context, String email, String message,
                                       Response.Listener<JSONObject> listener,
                                       Response.ErrorListener errorListener) {
 
         // Create new invitation object
         JSONObject newInvitation = new JSONObject();
         try {
-            // Creating a mock company structure inside the invitation
+            // Create company object with userId
             JSONObject company = new JSONObject();
-            company.put("userId", companyId); // Setting company ID
-            company.put("name", "Test Company"); // Adjust this accordingly
-            company.put("email", "testcompany@example.com"); // Adjust this accordingly
-            company.put("role", "COMPANY");
+            company.put("userId", COMPANY_ID);
 
-            // Creating an address object
-            JSONObject address = new JSONObject();
-            address.put("addressId", JSONObject.NULL); // Set to NULL for a new address
-            address.put("street", "5 Debs Hill");
-            address.put("complement", "Apt 563");
-            address.put("city", "Newton");
-            address.put("state", "MA");
-            address.put("zipCode", "02458");
-            company.put("address", address); // Attaching address to company
-
-            // Add company and email to the invitation
+            // Include company object in the invitation JSON
             newInvitation.put("company", company);
             newInvitation.put("email", email);
             newInvitation.put("message", message);
@@ -76,6 +77,8 @@ public class InvitationApi {
 
         // Define the URL for sending the invitation
         String invitationUrl = BASE_URL;
+        Log.d(TAG, "POST Invitation Request URL: " + invitationUrl);
+        Log.d(TAG, "Invitation Data Payload: " + newInvitation.toString());
 
         // Create a JsonObjectRequest to send the invitation
         JsonObjectRequest request = new JsonObjectRequest(
