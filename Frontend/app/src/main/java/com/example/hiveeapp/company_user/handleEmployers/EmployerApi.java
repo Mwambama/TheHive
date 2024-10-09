@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -27,6 +28,9 @@ public class EmployerApi {
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer";
     private static final String ADDRESS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/address";
     private static final String TAG = "EmployerApi";
+    private static final int MAX_PHONE_LENGTH = 10;
+    private static final int MIN_PHONE_LENGTH = 7;
+    private static final int ZIP_CODE_LENGTH = 5;
 
     /**
      * Generates the headers for API requests with authorization.
@@ -114,6 +118,13 @@ public class EmployerApi {
      * @param errorListener Error listener for handling errors.
      */
     public static void addEmployerWithAddress(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        // Validate employer data before proceeding
+        String validationError = validateEmployerData(employerData);
+        if (validationError != null) {
+            errorListener.onErrorResponse(new VolleyError(validationError));
+            return; // Validation failed, do not proceed
+        }
+
         // Extract address data from employerData
         JSONObject addressData;
         try {
@@ -166,7 +177,7 @@ public class EmployerApi {
             // Now, save the employer
             addEmployer(context, employerData, listener, errorListener);
 
-        }, errorListener);
+        }, error -> handleErrorResponse("Error adding address: " + getErrorMessage(error), error, errorListener));
     }
 
     /**
@@ -187,7 +198,7 @@ public class EmployerApi {
                 url,
                 employerData,
                 listener,
-                error -> handleErrorResponse("Error adding employer", error, errorListener)
+                error -> handleErrorResponse("Error adding employer: " + getErrorMessage(error), error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -207,6 +218,13 @@ public class EmployerApi {
      * @param errorListener Error listener for handling errors.
      */
     public static void updateEmployer(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        // Validate employer data before proceeding
+        String validationError = validateEmployerData(employerData);
+        if (validationError != null) {
+            errorListener.onErrorResponse(new VolleyError(validationError));
+            return; // Validation failed, do not proceed
+        }
+
         // Extract address data from employerData if present
         JSONObject addressData = employerData.optJSONObject("address");
 
@@ -216,7 +234,7 @@ public class EmployerApi {
                 updateAddress(context, addressData, addressResponse -> {
                     // Address updated successfully, proceed to update employer
                     performEmployerUpdate(context, employerData, listener, errorListener);
-                }, errorListener);
+                }, error -> handleErrorResponse("Error updating address: " + getErrorMessage(error), error, errorListener));
             } else {
                 // Address doesn't have an ID, create new address
                 try {
@@ -247,12 +265,80 @@ public class EmployerApi {
                     // Proceed to update employer
                     performEmployerUpdate(context, employerData, listener, errorListener);
 
-                }, errorListener);
+                }, error -> handleErrorResponse("Error adding address: " + getErrorMessage(error), error, errorListener));
             }
         } else {
             // No address to update, proceed to update employer
             performEmployerUpdate(context, employerData, listener, errorListener);
         }
+    }
+
+    /**
+     * Validates the employer data before sending it to the server.
+     *
+     * @param employerData The employer JSON object.
+     * @return A string containing the validation error message, or null if validation passes.
+     */
+    public static String validateEmployerData(JSONObject employerData) {
+        try {
+            // Validate name
+            String name = employerData.optString("name", "");
+            if (name.isEmpty()) {
+                return "Name is required.";
+            }
+
+            // Validate email
+            String email = employerData.optString("email", "");
+            if (email.isEmpty()) {
+                return "Email is required.";
+            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                return "Invalid email format.";
+            }
+
+            // Validate phone
+            String phone = employerData.optString("phone", "");
+            if (phone.isEmpty()) {
+                return "Phone number is required.";
+            } else if (phone.length() > MAX_PHONE_LENGTH || phone.length() < MIN_PHONE_LENGTH || !phone.matches("\\d+")) {
+                return "Phone number must be between " + MIN_PHONE_LENGTH + " and " + MAX_PHONE_LENGTH + " digits and contain only numbers.";
+            }
+
+            // Validate address if present
+            JSONObject addressData = employerData.optJSONObject("address");
+            if (addressData != null) {
+                // Validate street
+                String street = addressData.optString("street", "");
+                if (street.isEmpty()) {
+                    return "Street address is required.";
+                }
+
+                // Validate city
+                String city = addressData.optString("city", "");
+                if (city.isEmpty()) {
+                    return "City is required.";
+                }
+
+                // Validate state
+                String state = addressData.optString("state", "");
+                if (state.isEmpty()) {
+                    return "State is required.";
+                }
+
+                // Validate zip code
+                String zipCode = addressData.optString("zipCode", "");
+                if (zipCode.isEmpty()) {
+                    return "Zip code is required.";
+                } else if (zipCode.length() != ZIP_CODE_LENGTH || !zipCode.matches("\\d{" + ZIP_CODE_LENGTH + "}")) {
+                    return "Zip code must be " + ZIP_CODE_LENGTH + " digits.";
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error validating employer data.";
+        }
+
+        return null; // Validation passed
     }
 
     /**
@@ -273,7 +359,7 @@ public class EmployerApi {
                 url,
                 addressData,
                 listener,
-                error -> handleErrorResponse("Error updating address", error, errorListener)
+                error -> handleErrorResponse("Error updating address: " + getErrorMessage(error), error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -302,7 +388,7 @@ public class EmployerApi {
                 url,
                 employerData,
                 listener,
-                error -> handleErrorResponse("Error updating employer", error, errorListener)
+                error -> handleErrorResponse("Error updating employer: " + getErrorMessage(error), error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -325,16 +411,25 @@ public class EmployerApi {
         String url = BASE_URL + "/" + employerId;
         Log.d(TAG, "DELETE Employer Request URL: " + url);
 
+        // Create a JsonObjectRequest for the DELETE method
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.DELETE,
                 url,
-                null,
-                listener,
+                null,  // No request body needed for DELETE
+                response -> {
+                    // Check if the response is null, assuming it's successful
+                    if (response == null || response.length() == 0) {
+                        Log.d(TAG, "DELETE successful: No response body.");
+                        listener.onResponse(null);  // Notify the listener of success
+                    } else {
+                        listener.onResponse(response);  // Handle the non-empty response (if any)
+                    }
+                },
                 error -> {
                     if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
                         Log.e(TAG, "Error: Employer not found on server (404)");
                     } else {
-                        handleErrorResponse("Error deleting employer", error, errorListener);
+                        handleErrorResponse("Error deleting employer: " + getErrorMessage(error), error, errorListener);
                     }
                 }
         ) {
@@ -344,6 +439,7 @@ public class EmployerApi {
             }
         };
 
+        // Add the request to the Volley request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
@@ -355,29 +451,31 @@ public class EmployerApi {
      * @param errorListener      Error listener to handle the error response.
      */
     private static void handleErrorResponse(String errorMessagePrefix, VolleyError error, Response.ErrorListener errorListener) {
-        String responseBody = null;
-        if (error.networkResponse != null && error.networkResponse.data != null) {
-            try {
-                responseBody = new String(error.networkResponse.data, "UTF-8");
-                Log.e(TAG, errorMessagePrefix + ". Server Error Response: " + responseBody);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-        Log.e(TAG, errorMessagePrefix + ": " + error.getMessage());
-        errorListener.onErrorResponse(error);
+        String errorMsg = getErrorMessage(error);
+        String fullErrorMessage = errorMessagePrefix + ": " + errorMsg;
+        Log.e(TAG, fullErrorMessage);
+        errorListener.onErrorResponse(new VolleyError(fullErrorMessage));
     }
 
     /**
-     * Hides the soft keyboard.
+     * Extracts a meaningful error message from a VolleyError.
      *
-     * @param activity The activity where the keyboard is displayed.
+     * @param error The VolleyError object.
+     * @return A string containing the error message.
      */
-    public void hideKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        View view = activity.getCurrentFocus();
-        if (view != null) {
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    private static String getErrorMessage(VolleyError error) {
+        String errorMsg = "An unexpected error occurred";
+        if (error.networkResponse != null && error.networkResponse.data != null) {
+            try {
+                String errorData = new String(error.networkResponse.data, "UTF-8");
+                JSONObject jsonError = new JSONObject(errorData);
+                errorMsg = jsonError.optString("message", errorMsg);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (error.getMessage() != null) {
+            errorMsg = error.getMessage();
         }
+        return errorMsg;
     }
 }

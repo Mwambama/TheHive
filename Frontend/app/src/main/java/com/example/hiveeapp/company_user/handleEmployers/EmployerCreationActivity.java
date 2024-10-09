@@ -1,13 +1,12 @@
 package com.example.hiveeapp.company_user.handleEmployers;
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.util.Patterns;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
@@ -26,6 +25,10 @@ public class EmployerCreationActivity extends AppCompatActivity {
     private Button addEmployerButton;
     private ImageButton backArrowIcon;
 
+    // Constants for validation
+    private static final int MAX_PHONE_LENGTH = 15;  // Adjust based on your DB schema
+    private static final int MIN_PHONE_LENGTH = 7;   // Minimum acceptable phone length
+    private static final int ZIP_CODE_LENGTH = 5;    // Standard US ZIP code length
     private static final String USER_PREFS = "MyAppPrefs"; // Shared preferences key
 
     @Override
@@ -74,6 +77,11 @@ public class EmployerCreationActivity extends AppCompatActivity {
         // Reset any previous error messages
         nameField.setError(null);
         emailField.setError(null);
+        phoneField.setError(null);
+        streetField.setError(null);
+        cityField.setError(null);
+        stateField.setError(null);
+        zipField.setError(null);
 
         // Get the input values from the fields
         String name = nameField.getText().toString().trim();
@@ -90,15 +98,24 @@ public class EmployerCreationActivity extends AppCompatActivity {
             isValid = false;
         }
 
-        // Validate the email field
-        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailField.setError("Valid email is required");
+        // Validate the email field using Patterns.EMAIL_ADDRESS
+        if (email.isEmpty()) {
+            emailField.setError("Email is required");
+            isValid = false;
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailField.setError("Invalid email format");
             isValid = false;
         }
 
         // Validate the phone field
         if (phone.isEmpty()) {
             phoneField.setError("Phone number is required");
+            isValid = false;
+        } else if (phone.length() > MAX_PHONE_LENGTH || phone.length() < MIN_PHONE_LENGTH) {
+            phoneField.setError("Phone number must be between " + MIN_PHONE_LENGTH + " and " + MAX_PHONE_LENGTH + " digits");
+            isValid = false;
+        } else if (!phone.matches("\\d+")) {
+            phoneField.setError("Phone number must contain only digits");
             isValid = false;
         }
 
@@ -118,8 +135,12 @@ public class EmployerCreationActivity extends AppCompatActivity {
             isValid = false;
         }
 
+        // Validate the ZIP code format (assuming US ZIP code)
         if (zip.isEmpty()) {
             zipField.setError("Zip code is required");
+            isValid = false;
+        } else if (zip.length() != ZIP_CODE_LENGTH || !zip.matches("\\d{" + ZIP_CODE_LENGTH + "}")) {
+            zipField.setError("Zip code must be " + ZIP_CODE_LENGTH + " digits");
             isValid = false;
         }
 
@@ -179,7 +200,7 @@ public class EmployerCreationActivity extends AppCompatActivity {
                     finish();  // Close the activity and return to the previous screen
                 },
                 error -> {
-                    // Handle error response
+                    // Handle error response and display user-friendly message
                     String errorMessage = getErrorMessage(error);
                     Toast.makeText(EmployerCreationActivity.this, "Error adding employer: " + errorMessage, Toast.LENGTH_SHORT).show();
                 });
