@@ -1,6 +1,6 @@
 package com.example.hiveeapp.company_user.invitations;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.widget.Button;
@@ -9,8 +9,9 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.hiveeapp.R;
 import com.android.volley.VolleyError;
+import com.example.hiveeapp.R;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,6 +21,9 @@ public class InvitationCreationActivity extends AppCompatActivity {
     private Button sendInvitationButton;
     private ImageButton backArrowIcon;
 
+    private static final String USER_PREFS = "MyAppPrefs"; // Shared preferences key
+    private int companyId; // Variable to store the company ID
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +31,10 @@ public class InvitationCreationActivity extends AppCompatActivity {
 
         // Initialize views
         initViews();
+
+        // Retrieve company ID from SharedPreferences
+        SharedPreferences preferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
+        companyId = preferences.getInt("companyId", -1);  // Retrieve the actual company ID
 
         // Set up back navigation
         backArrowIcon.setOnClickListener(v -> finish());
@@ -58,12 +66,17 @@ public class InvitationCreationActivity extends AppCompatActivity {
     }
 
     private void sendInvitation(String email, String message) {
+        if (companyId == -1) {
+            Toast.makeText(this, "Company ID not found. Please try again.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Create JSON payload
         JSONObject payload = new JSONObject();
         try {
             payload.put("email", email);
             payload.put("message", message);
-            payload.put("company_id", 1);  // Dummy company ID, adjust if needed
+            payload.put("company_id", companyId);  // Use the retrieved company ID
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Failed to create request.", Toast.LENGTH_SHORT).show();
@@ -73,7 +86,7 @@ public class InvitationCreationActivity extends AppCompatActivity {
         // Send the invitation using InvitationApi
         InvitationApi.sendInvitation(
                 this,
-                1,
+                companyId,  // Pass the actual company ID
                 email,
                 message,
                 response -> {
@@ -82,10 +95,13 @@ public class InvitationCreationActivity extends AppCompatActivity {
                     // Go back to InvitationManagementActivity and refresh the list
                     finish(); // This will go back to the previous activity (InvitationManagementActivity)
                 },
-                error -> {
-                    // Handle the error
-                    String errorMessage = getErrorMessage(error);
-                    Toast.makeText(this, "Failed to send invitation: " + errorMessage, Toast.LENGTH_SHORT).show();
+                new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle the error correctly as VolleyError
+                        String errorMessage = getErrorMessage(error);
+                        Toast.makeText(InvitationCreationActivity.this, "Failed to send invitation: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    }
                 }
         );
     }
