@@ -13,6 +13,7 @@ public class signupActivity extends AppCompatActivity {
     private LinearLayout userTypeButtonsLayout;
     private Button studentButton;
     private Button employerButton;
+    private Button companyButton; // Corrected spelling from companyBUtton
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +24,7 @@ public class signupActivity extends AppCompatActivity {
         userTypeButtonsLayout = findViewById(R.id.user_type_buttons_layout);
         studentButton = findViewById(R.id.signup_student_btn);
         employerButton = findViewById(R.id.signup_employer_btn);
+        companyButton = findViewById(R.id.signup_company_btn); // Corrected ID
 
         // Set click listener for student button
         studentButton.setOnClickListener(new View.OnClickListener() {
@@ -39,6 +41,14 @@ public class signupActivity extends AppCompatActivity {
                 navigateToSignup("employer");
             }
         });
+
+        // Set click listener for company button
+        companyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToSignup("company");
+            }
+        });
     }
 
     private void navigateToSignup(String userType) {
@@ -49,6 +59,9 @@ public class signupActivity extends AppCompatActivity {
                 break;
             case "employer":
                 intent = new Intent(signupActivity.this, employersignupActivity.class);
+                break;
+            case "company":
+                intent = new Intent(signupActivity.this, companysignupActivity.class);
                 break;
             default:
                 Toast.makeText(signupActivity.this, "User type not recognized.", Toast.LENGTH_SHORT).show();

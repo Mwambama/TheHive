@@ -39,6 +39,9 @@
 <!--                       go to employer signup activity -->
         <activity android:name=".registration.signup.employersignupActivity" android:exported="true">
 
+        </activity>
+
+        <activity android:name=".registration.signup.companysignupActivity" android:exported="true">
 
         </activity>
 
