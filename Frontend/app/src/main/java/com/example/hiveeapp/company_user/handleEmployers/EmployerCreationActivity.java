@@ -164,7 +164,7 @@ public class EmployerCreationActivity extends AppCompatActivity {
         }
 
         // Call the EmployerApi to add the employer
-        EmployerApi.addEmployer(this, employerData,
+        EmployerApi.addEmployerWithAddress(this, employerData,
                 response -> {
                     // Handle the success response
                     Toast.makeText(EmployerCreationActivity.this, "Employer added successfully!", Toast.LENGTH_SHORT).show();
