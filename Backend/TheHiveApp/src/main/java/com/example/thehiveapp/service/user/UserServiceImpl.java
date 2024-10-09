@@ -2,6 +2,8 @@ package com.example.thehiveapp.service.user;
 
 import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.repository.user.UserRepository;
+import com.example.thehiveapp.service.address.AddressService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +15,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService{
 
     @Autowired private UserRepository userRepository;
+    @Autowired private AddressService addressService;
 
     public UserServiceImpl() {}
 
@@ -30,11 +33,13 @@ public class UserServiceImpl implements UserService{
         );
     }
 
+    @Transactional
     public User updateUser(User request) {
         Long id = request.getUserId();
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User not found with id " + id);
         }
+        addressService.updateAddress(request.getAddress());
         return userRepository.save(request);
     }
 
