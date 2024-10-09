@@ -44,8 +44,9 @@ public class EmployerInvitationController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteEmployerInvitation(@PathVariable Long id) {
+    public String deleteEmployerInvitation(@PathVariable Long id) {
         employerInvitationService.deleteEmployerInvitation(id);
+        return "Invitation successfully deleted";
     }
 }
 
