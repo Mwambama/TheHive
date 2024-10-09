@@ -7,6 +7,7 @@ import com.example.thehiveapp.dto.authentication.BaseSignUpRequest;
 import com.example.thehiveapp.dto.authentication.EmployerSignUpRequest;
 import com.example.thehiveapp.dto.authentication.StudentSignUpRequest;
 import com.example.thehiveapp.dto.email.ChangePasswordRequest;
+import com.example.thehiveapp.dto.email.EmailDetails;
 import com.example.thehiveapp.entity.authentication.Authentication;
 import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.entity.user.Employer;
@@ -14,10 +15,12 @@ import com.example.thehiveapp.entity.user.Student;
 import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.enums.user.Role;
 import com.example.thehiveapp.repository.authentication.AuthenticationRepository;
+import com.example.thehiveapp.service.email.EmailService;
 import com.example.thehiveapp.service.user.CompanyService;
 import com.example.thehiveapp.service.user.EmployerService;
 import com.example.thehiveapp.service.user.StudentService;
 import com.example.thehiveapp.service.user.UserService;
+import com.example.thehiveapp.utilities.SignUpUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -34,6 +37,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired private StudentService studentService;
     @Autowired private UserService userService;
     @Autowired private EmployerService employerService;
+    @Autowired private EmailService emailService;
 
     @Override
     public UserDetails loadUserByUsername(String email) {
@@ -63,6 +67,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         student.setUniversity(studentSignUpRequest.getUniversity());
         studentService.createStudent(student);
         createAuthentication(studentSignUpRequest, student.getUserId());
+        emailService.sendEmailWithLogo(EmailDetails.builder()
+                .name(studentSignUpRequest.getName())
+                .subject("Welcome to The Hive!")
+                .recipient(studentSignUpRequest.getEmail())
+                .messageBody(SignUpUtils.STUDENT_SUCCESSFUL_SIGNUP_MESSAGE)
+                .build());
         return student;
     }
 
@@ -77,6 +87,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         employer.setCompanyId(company.getUserId());
         employerService.createEmployer(employer);
         createAuthentication(employerSignUpRequest, employer.getUserId());
+        emailService.sendEmailWithLogo(EmailDetails.builder()
+                .name(employerSignUpRequest.getName())
+                .subject("Welcome to The Hive!")
+                .recipient(employerSignUpRequest.getEmail())
+                .messageBody(SignUpUtils.EMPLOYER_SUCCESSFUL_SIGNUP_MESSAGE)
+                .build());
         return employer;
     }
 
