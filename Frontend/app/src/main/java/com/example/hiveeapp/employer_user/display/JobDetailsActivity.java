@@ -1,7 +1,5 @@
 package com.example.hiveeapp.employer_user.display;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,8 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import com.example.hiveeapp.R;
-//import com.example.hiveeapp.employer_user.EditJobActivity;
-//import com.example.hiveeapp.employer_user.PostedJobs;
 
 public class JobDetailsActivity extends DialogFragment {
 
@@ -60,35 +56,25 @@ public class JobDetailsActivity extends DialogFragment {
             jobDetailsTextView.setText(jobDetailsText);
         }
 
-        updateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), EditJobActivity.class);
-                intent.putExtra("jobDetails", jobDetails);
-                startActivityForResult(intent, EDIT_JOB_REQUEST_CODE);
-            }
+        updateButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AddJobActivity.class);
+            intent.putExtra("jobDetails", jobDetails);
+            startActivityForResult(intent, EDIT_JOB_REQUEST_CODE);
         });
 
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle delete logic here
-                // Example: remove job from the list and notify the adapter
-                // CreateJobsActivity.deleteJob(jobDetails);
-                dismiss();
-            }
+        deleteButton.setOnClickListener(v -> {
+            // Handle delete logic here
+            // Example: remove job from the list and notify the adapter
+            // CreateJobsActivity.deleteJob(jobDetails);
+            dismiss();
         });
 
         builder.setView(view)
-                .setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
+                .setNegativeButton("Close", (dialog, id) -> dialog.dismiss());
 
         return builder.create();
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
