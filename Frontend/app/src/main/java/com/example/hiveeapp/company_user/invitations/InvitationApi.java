@@ -20,17 +20,21 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * InvitationApi handles all network requests related to invitations for employer users.
+ * It includes functionality to send, update, retrieve, and delete invitations.
+ */
 public class InvitationApi {
 
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer-invitation";
     private static final String TAG = "InvitationApi";
-    private static final int COMPANY_ID = 1029; // Update as needed
+    private static final int COMPANY_ID = 1029; // Update this with the correct company ID if needed
 
     /**
-     * Helper method to get headers with authorization for the currently logged-in user.
+     * Generates the headers required for the API requests, including authorization.
      *
      * @param context The application context.
-     * @return A map containing the headers for the API request.
+     * @return A map of headers with content type and authorization credentials.
      */
     private static Map<String, String> getHeaders(Context context) {
         Map<String, String> headers = new HashMap<>();
@@ -39,7 +43,6 @@ public class InvitationApi {
         // Replace these with actual user credentials or fetch from SharedPreferences
         String username = "test@example.com";
         String password = "Test@example1234";
-
         String credentials = username + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
         headers.put("Authorization", auth);
@@ -48,30 +51,23 @@ public class InvitationApi {
     }
 
     /**
-     * Retrieves a list of invitations from the server.
+     * Fetches a list of employer invitations from the server.
      *
      * @param context       The application context.
-     * @param listener      Response listener for successful fetch.
-     * @param errorListener Error listener for handling errors.
+     * @param listener      Listener for successful responses.
+     * @param errorListener Listener for handling errors.
      */
     public static void getInvitations(Context context,
                                       Response.Listener<JSONArray> listener,
                                       Response.ErrorListener errorListener) {
-
-        // Define the URL for retrieving invitations
         String url = BASE_URL;
-
         Log.d(TAG, "GET Invitations Request URL: " + url);
 
-        // Create a JsonArrayRequest to fetch the invitations
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
                 null,
-                response -> {
-                    Log.d(TAG, "Invitations Response: " + response.toString()); // Log the response
-                    listener.onResponse(response);
-                },
+                listener,
                 error -> {
                     String errorMsg = getErrorMessage(error);
                     Log.e(TAG, "Error fetching invitations: " + errorMsg);
@@ -84,40 +80,30 @@ public class InvitationApi {
             }
         };
 
-        // Add the request to the Volley request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
     /**
-     * Deletes an invitation from the server.
+     * Deletes an invitation by its ID.
      *
      * @param context       The application context.
      * @param invitationId  ID of the invitation to be deleted.
-     * @param listener      Response listener for successful invitation deletion.
-     * @param errorListener Error listener for handling errors.
+     * @param listener      Listener for successful responses.
+     * @param errorListener Listener for handling errors.
      */
     public static void deleteInvitation(Context context, int invitationId,
                                         Response.Listener<String> listener,
                                         Response.ErrorListener errorListener) {
-
-        // Define the URL for deleting the invitation
         String deleteUrl = BASE_URL + "/" + invitationId;
-
         Log.d(TAG, "DELETE Invitation Request URL: " + deleteUrl);
 
-        // Create a StringRequest to delete the invitation
         StringRequest request = new StringRequest(
                 Request.Method.DELETE,
                 deleteUrl,
-                response -> {
-                    // Log success and pass the string response to the listener
-                    Log.d(TAG, "Invitation deleted successfully: " + response);
-                    listener.onResponse(response);
-                },
+                listener,
                 error -> {
-                    // Handle error by extracting a meaningful error message
                     String errorMsg = getErrorMessage(error);
-                    Log.e(TAG, "Error deleting invitation on server: " + errorMsg);
+                    Log.e(TAG, "Error deleting invitation: " + errorMsg);
                     errorListener.onErrorResponse(new VolleyError(errorMsg));
                 }
         ) {
@@ -127,36 +113,32 @@ public class InvitationApi {
             }
         };
 
-        // Add the request to the Volley request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-
     /**
-     * Updates an existing invitation on the server.
+     * Updates an existing invitation.
      *
      * @param context       The application context.
      * @param invitationId  ID of the invitation to be updated.
-     * @param newEmail      New email address.
-     * @param newMessage    New message content.
-     * @param listener      Response listener for successful invitation update.
-     * @param errorListener Error listener for handling errors.
+     * @param newEmail      Updated email address.
+     * @param newMessage    Updated message content.
+     * @param listener      Listener for successful responses.
+     * @param errorListener Listener for handling errors.
      */
     public static void updateInvitation(Context context, int invitationId, String newEmail, String newMessage,
                                         Response.Listener<JSONObject> listener,
                                         Response.ErrorListener errorListener) {
-
         JSONObject updatedInvitation = new JSONObject();
 
         try {
+            // Set the updated invitation details
             updatedInvitation.put("employerInvitationId", invitationId);
-            // Include 'companyId' directly at the root level
-            updatedInvitation.put("companyId", COMPANY_ID); // COMPANY_ID should be 1029
+            updatedInvitation.put("companyId", COMPANY_ID);
             updatedInvitation.put("email", newEmail);
-            updatedInvitation.put("message", newMessage); // Include 'message' if supported
+            updatedInvitation.put("message", newMessage);
 
             String updateUrl = BASE_URL;
-
             Log.d(TAG, "PUT Invitation Request URL: " + updateUrl);
             Log.d(TAG, "Updated Invitation Data Payload: " + updatedInvitation.toString());
 
@@ -167,7 +149,7 @@ public class InvitationApi {
                     listener,
                     error -> {
                         String errorMsg = getErrorMessage(error);
-                        Log.e(TAG, "Error updating invitation on server: " + errorMsg);
+                        Log.e(TAG, "Error updating invitation: " + errorMsg);
                         errorListener.onErrorResponse(new VolleyError(errorMsg));
                     }
             ) {
@@ -186,24 +168,22 @@ public class InvitationApi {
     }
 
     /**
-     * Sends an employer invitation to a specified email.
+     * Sends a new invitation.
      *
      * @param context       The application context.
-     * @param email         The email address to send the invitation to.
-     * @param message       The message to include with the invitation.
-     * @param listener      Response listener for successful invitation creation.
-     * @param errorListener Error listener for handling errors.
+     * @param email         Recipient email address.
+     * @param message       Message to include with the invitation.
+     * @param listener      Listener for successful responses.
+     * @param errorListener Listener for handling errors.
      */
     public static void sendInvitation(Context context, String email, String message,
                                       Response.Listener<JSONObject> listener,
                                       Response.ErrorListener errorListener) {
-
         JSONObject newInvitation = new JSONObject();
         try {
-            // Include 'companyId' directly at the root level
-            newInvitation.put("companyId", COMPANY_ID); // COMPANY_ID should be 1029
-            newInvitation.put("email", email);
-            newInvitation.put("message", message); // Include 'message' if supported
+            newInvitation.put("companyId", COMPANY_ID); // Set company ID
+            newInvitation.put("email", email);          // Set recipient email
+            newInvitation.put("message", message);      // Set message content
 
         } catch (JSONException e) {
             Log.e(TAG, "Error creating invitation: " + e.getMessage());
@@ -222,7 +202,7 @@ public class InvitationApi {
                 listener,
                 error -> {
                     String errorMsg = getErrorMessage(error);
-                    Log.e(TAG, "Error sending invitation to server: " + errorMsg);
+                    Log.e(TAG, "Error sending invitation: " + errorMsg);
                     errorListener.onErrorResponse(new VolleyError(errorMsg));
                 }
         ) {
@@ -235,11 +215,10 @@ public class InvitationApi {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-
     /**
-     * Extracts and returns a meaningful error message from a VolleyError.
+     * Extracts a meaningful error message from the given VolleyError.
      *
-     * @param error The VolleyError object containing the error details.
+     * @param error The VolleyError object containing error details.
      * @return A user-friendly error message.
      */
     private static String getErrorMessage(VolleyError error) {
