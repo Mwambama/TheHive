@@ -7,6 +7,7 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -24,6 +25,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * EmployerApi handles all API operations related to employers, including CRUD operations and validation logic.
+ */
 public class EmployerApi {
 
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer";
@@ -123,7 +127,7 @@ public class EmployerApi {
         String validationError = validateEmployerData(employerData);
         if (validationError != null) {
             errorListener.onErrorResponse(new VolleyError(validationError));
-            return; // Validation failed, do not proceed
+            return;
         }
 
         // Extract address data from employerData
@@ -131,8 +135,7 @@ public class EmployerApi {
         try {
             addressData = employerData.getJSONObject("address");
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "Error extracting address data.");
+            Log.e(TAG, "Error extracting address data.", e);
             errorListener.onErrorResponse(new VolleyError("Error extracting address data."));
             return;
         }
@@ -144,40 +147,29 @@ public class EmployerApi {
         try {
             addressData.put("addressId", JSONObject.NULL);
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "Error setting addressId to null.");
+            Log.e(TAG, "Error setting addressId to null.", e);
             errorListener.onErrorResponse(new VolleyError("Error setting addressId to null."));
             return;
         }
 
         // First, save the address
         addAddress(context, addressData, addressResponse -> {
-            // Get the saved addressId from the address creation response
-            long addressId;
             try {
-                addressId = addressResponse.getLong("addressId");
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e(TAG, "Error parsing address response.");
-                errorListener.onErrorResponse(new VolleyError("Error parsing address response."));
-                return;
-            }
+                // Get the saved addressId from the address creation response
+                long addressId = addressResponse.getLong("addressId");
 
-            // Set the addressId in employerData
-            JSONObject address = new JSONObject();
-            try {
+                // Set the addressId in employerData
+                JSONObject address = new JSONObject();
                 address.put("addressId", addressId);
                 employerData.put("address", address);
+
+                // Now, save the employer
+                addEmployer(context, employerData, listener, errorListener);
+
             } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e(TAG, "Error setting addressId in employerData.");
-                errorListener.onErrorResponse(new VolleyError("Error setting addressId in employerData."));
-                return;
+                Log.e(TAG, "Error parsing address response.", e);
+                errorListener.onErrorResponse(new VolleyError("Error parsing address response."));
             }
-
-            // Now, save the employer
-            addEmployer(context, employerData, listener, errorListener);
-
         }, error -> handleErrorResponse("Error adding address: " + getErrorMessage(error), error, errorListener));
     }
 
@@ -222,8 +214,9 @@ public class EmployerApi {
         // Validate employer data before proceeding
         String validationError = validateEmployerData(employerData);
         if (validationError != null) {
+            Toast.makeText(context, validationError, Toast.LENGTH_LONG).show();
             errorListener.onErrorResponse(new VolleyError(validationError));
-            return; // Validation failed, do not proceed
+            return;
         }
 
         // Extract address data from employerData if present
@@ -231,45 +224,36 @@ public class EmployerApi {
 
         if (addressData != null) {
             if (addressData.has("addressId")) {
-                // If addressId exists, update the address
-                updateAddress(context, addressData, addressResponse -> {
-                    // Address updated successfully, proceed to update employer
-                    performEmployerUpdate(context, employerData, listener, errorListener);
-                }, error -> handleErrorResponse("Error updating address: " + getErrorMessage(error), error, errorListener));
+                // Update the address if addressId exists
+                updateAddress(context, addressData, addressResponse -> performEmployerUpdate(context, employerData, listener, errorListener),
+                        error -> handleErrorResponse("Error updating address: " + getErrorMessage(error), error, errorListener));
             } else {
-                // Address doesn't have an ID, create new address
+                // Create a new address if addressId does not exist
                 try {
                     addressData.put("addressId", JSONObject.NULL);
                 } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "Error setting addressId to null in addressData.");
+                    Log.e(TAG, "Error setting addressId to null in addressData.", e);
                     errorListener.onErrorResponse(new VolleyError("Error setting addressId to null in addressData."));
                     return;
                 }
 
                 addAddress(context, addressData, addressResponse -> {
-                    // Get the saved addressId from the address creation response
-                    long addressId;
                     try {
-                        addressId = addressResponse.getLong("addressId");
-                        // Set the addressId in employerData
+                        long addressId = addressResponse.getLong("addressId");
                         JSONObject address = new JSONObject();
                         address.put("addressId", addressId);
                         employerData.put("address", address);
+
+                        performEmployerUpdate(context, employerData, listener, errorListener);
+
                     } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "Error parsing address response.");
+                        Log.e(TAG, "Error parsing address response.", e);
                         errorListener.onErrorResponse(new VolleyError("Error parsing address response."));
-                        return;
                     }
-
-                    // Proceed to update employer
-                    performEmployerUpdate(context, employerData, listener, errorListener);
-
                 }, error -> handleErrorResponse("Error adding address: " + getErrorMessage(error), error, errorListener));
             }
         } else {
-            // No address to update, proceed to update employer
+            // No address to update, proceed with employer update
             performEmployerUpdate(context, employerData, listener, errorListener);
         }
     }
@@ -313,16 +297,20 @@ public class EmployerApi {
                     return "Street address is required.";
                 }
 
-                // Validate city
+                // Validate city (only letters)
                 String city = addressData.optString("city", "");
                 if (city.isEmpty()) {
                     return "City is required.";
+                } else if (!city.matches("[a-zA-Z]+")) {
+                    return "City must contain only letters.";
                 }
 
-                // Validate state
+                // Validate state (exactly 2 uppercase letters)
                 String state = addressData.optString("state", "");
                 if (state.isEmpty()) {
                     return "State is required.";
+                } else if (!state.matches("^[A-Z]{2}$")) {
+                    return "State must be exactly 2 uppercase letters (e.g., IA, IL).";
                 }
 
                 // Validate zip code
@@ -335,7 +323,7 @@ public class EmployerApi {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error validating employer data.", e);
             return "Error validating employer data.";
         }
 
@@ -412,7 +400,6 @@ public class EmployerApi {
         String url = BASE_URL + "/" + employerId;
         Log.d(TAG, "DELETE Employer Request URL: " + url);
 
-        // Create a StringRequest for the DELETE method
         StringRequest request = new StringRequest(
                 Request.Method.DELETE,
                 url,
@@ -420,10 +407,7 @@ public class EmployerApi {
                     Log.d(TAG, "Employer deleted successfully: " + response);
                     listener.onResponse(response);  // Notify the listener of success
                 },
-                error -> {
-                    String errorMsg = getErrorMessage(error);
-                    handleErrorResponse("Error deleting employer: " + errorMsg, error, errorListener);
-                }
+                error -> handleErrorResponse("Error deleting employer: " + getErrorMessage(error), error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -431,7 +415,6 @@ public class EmployerApi {
             }
         };
 
-        // Add the request to the Volley request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
@@ -460,18 +443,14 @@ public class EmployerApi {
         if (error.networkResponse != null && error.networkResponse.data != null) {
             try {
                 String errorData = new String(error.networkResponse.data, "UTF-8");
-
-                // Attempt to parse errorData as JSON
                 try {
                     JSONObject jsonError = new JSONObject(errorData);
                     errorMsg = jsonError.optString("message", errorMsg);
                 } catch (JSONException jsonException) {
-                    // If parsing fails, use the raw errorData
-                    errorMsg = errorData;
+                    errorMsg = errorData;  // Use raw error data if JSON parsing fails
                 }
-
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Error parsing error message.", e);
                 errorMsg = "Error parsing error message";
             }
         } else if (error.getMessage() != null) {
