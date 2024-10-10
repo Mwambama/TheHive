@@ -58,6 +58,7 @@
         <activity android:name=".employer_user.EmployerMainActivity" android:exported="true"/>
         <activity android:name=".employer_user.model.TrackingApplicationActivity" android:exported="true"/>
 <!--        <activity android:name=".employer_user.ChatActivity" android:exported="true"/>-->
+        <activity android:name=".employer_user.model.employerinfoActivity" android:exported="true"/>
 
 
 

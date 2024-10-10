@@ -32,6 +32,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
     private TextView jobTitleTextView;
     private TextView emailTextView;
     private Button logoutButton; // Declare logout button
+    private Button viewInfoButton; // Declare view info button
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +50,15 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         emailTextView.setText("john.steve@example.com");
 
         // Initialize Log Out button
-        logoutButton = findViewById(R.id.logout_button); // Initialize logout button
+        logoutButton = findViewById(R.id.logout_button);
         logoutButton.setOnClickListener(view -> logout());
+
+        // Initialize View Info button
+        viewInfoButton = findViewById(R.id.view_employer_info_button);
+        viewInfoButton.setOnClickListener(view -> {
+            Intent intent = new Intent(EmployerMainActivity.this, com.example.hiveeapp.employer_user.model.employerinfoActivity.class);
+            startActivity(intent);
+        });
 
         // Display posted jobs
         displayPostedJobs();
@@ -88,7 +96,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         int itemId = item.getItemId();
 
         if (itemId == R.id.nav_add_job) {
-            startActivity(new Intent(this, CreateJobsActivity.class)); // Navigate to CreateJobsActivity
+            startActivity(new Intent(this, CreateJobsActivity.class));
             return true;
         } else if (itemId == R.id.nav_chat) {
             startActivity(new Intent(this, ChatActivity.class));
