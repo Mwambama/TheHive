@@ -36,6 +36,7 @@ public class JsonArrRequestActivity extends AppCompatActivity {
 
         String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/signup/employer"; // Replace with your server URL
 
+
         mainSignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
