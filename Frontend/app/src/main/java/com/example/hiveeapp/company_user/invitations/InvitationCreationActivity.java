@@ -18,7 +18,8 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 
 /**
- * InvitationCreationActivity allows the company user to create and edit employer invitations.
+ * InvitationCreationActivity manages the creation and editing of employer invitations.
+ * It allows the user to either create a new invitation or update an existing one.
  */
 public class InvitationCreationActivity extends AppCompatActivity {
 
@@ -27,43 +28,41 @@ public class InvitationCreationActivity extends AppCompatActivity {
     private ImageButton backArrowIcon;
     private TextView invitationCreationTitle;
 
-    // Variables to handle editing
-    private boolean isEditing = false;
-    private int invitationId = -1;
+    private boolean isEditing = false;  // Flag to determine if the activity is in editing mode
+    private int invitationId = -1;      // ID of the invitation being edited
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invitation_creation);
 
-        // Initialize views
+        // Initialize the views
         initViews();
 
-        // Set up back navigation
+        // Set up the back button functionality
         backArrowIcon.setOnClickListener(v -> finish());
 
-        // Check if this activity was started for editing
+        // Check if the activity is in editing mode and populate fields if necessary
         if (getIntent().hasExtra("invitationId")) {
             isEditing = true;
             invitationId = getIntent().getIntExtra("invitationId", -1);
             String email = getIntent().getStringExtra("email");
             String message = getIntent().getStringExtra("message");
 
-            // Populate fields with existing data
+            // Populate the input fields with existing invitation data
             emailField.setText(email);
             messageField.setText(message);
 
-            // Change button text to "Update Invitation"
+            // Change UI to reflect editing mode
             sendInvitationButton.setText("Update Invitation");
-            // Change title to "Edit Invitation"
             invitationCreationTitle.setText("Edit Invitation");
         } else {
-            // Ensure default texts are set
+            // Default UI for creating a new invitation
             sendInvitationButton.setText("Send Invitation");
             invitationCreationTitle.setText("Create Invitation");
         }
 
-        // Send Invitation button logic
+        // Set up the send/update button logic
         sendInvitationButton.setOnClickListener(v -> {
             String email = emailField.getText().toString().trim();
             String message = messageField.getText().toString().trim();
@@ -74,10 +73,10 @@ public class InvitationCreationActivity extends AppCompatActivity {
                 Toast.makeText(this, "Please enter a message.", Toast.LENGTH_SHORT).show();
             } else {
                 if (isEditing) {
-                    // Update existing invitation
+                    // Update the existing invitation
                     updateInvitation(invitationId, email, message);
                 } else {
-                    // Create new invitation
+                    // Create a new invitation
                     sendInvitation(email, message);
                 }
             }
@@ -106,55 +105,51 @@ public class InvitationCreationActivity extends AppCompatActivity {
     }
 
     /**
-     * Sends the invitation using the InvitationApi.
+     * Sends a new invitation using the InvitationApi.
      *
-     * @param email   The email address to send the invitation to.
+     * @param email   The recipient email address.
      * @param message The message to include with the invitation.
      */
     private void sendInvitation(String email, String message) {
-        // Send the invitation using InvitationApi
         InvitationApi.sendInvitation(
                 this,
                 email,
                 message,
                 response -> {
-                    // Invitation sent successfully
+                    // Handle successful invitation creation
                     Toast.makeText(this, "Invitation sent successfully!", Toast.LENGTH_SHORT).show();
-                    // Finish the activity and return to the previous screen
-                    finish();
+                    finish(); // Return to the previous screen
                 },
                 error -> {
-                    // Handle the error correctly as VolleyError
+                    // Handle any errors during the invitation creation process
                     String errorMessage = getErrorMessage(error);
-                    Toast.makeText(InvitationCreationActivity.this, "Failed to send invitation: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Failed to send invitation: " + errorMessage, Toast.LENGTH_SHORT).show();
                 }
         );
     }
 
     /**
-     * Updates the invitation using the InvitationApi.
+     * Updates an existing invitation using the InvitationApi.
      *
      * @param invitationId The ID of the invitation to update.
-     * @param email        The new email address.
-     * @param message      The new message.
+     * @param email        The updated email address.
+     * @param message      The updated message content.
      */
     private void updateInvitation(int invitationId, String email, String message) {
-        // Send the update request using InvitationApi
         InvitationApi.updateInvitation(
                 this,
                 invitationId,
                 email,
                 message,
                 response -> {
-                    // Invitation updated successfully
+                    // Handle successful invitation update
                     Toast.makeText(this, "Invitation updated successfully!", Toast.LENGTH_SHORT).show();
-                    // Finish the activity and return to the previous screen
-                    finish();
+                    finish(); // Return to the previous screen
                 },
                 error -> {
-                    // Handle the error correctly as VolleyError
+                    // Handle any errors during the invitation update process
                     String errorMessage = getErrorMessage(error);
-                    Toast.makeText(InvitationCreationActivity.this, "Failed to update invitation: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Failed to update invitation: " + errorMessage, Toast.LENGTH_SHORT).show();
                 }
         );
     }
