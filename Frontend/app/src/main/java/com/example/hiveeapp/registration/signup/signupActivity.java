@@ -13,7 +13,7 @@ public class signupActivity extends AppCompatActivity {
     private LinearLayout userTypeButtonsLayout;
     private Button studentButton;
     private Button employerButton;
-    private Button companyButton; // Corrected variable name
+    private Button companyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public class signupActivity extends AppCompatActivity {
         userTypeButtonsLayout = findViewById(R.id.user_type_buttons_layout);
         studentButton = findViewById(R.id.signup_student_btn);
         employerButton = findViewById(R.id.signup_employer_btn);
-        companyButton = findViewById(R.id.signup_company_btn); // Corrected ID
+        companyButton = findViewById(R.id.signup_company_btn);
 
         // Set click listener for student button
         studentButton.setOnClickListener(new View.OnClickListener() {
