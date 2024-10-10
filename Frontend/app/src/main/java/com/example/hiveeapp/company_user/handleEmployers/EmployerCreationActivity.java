@@ -23,15 +23,16 @@ import java.io.UnsupportedEncodingException;
  */
 public class EmployerCreationActivity extends AppCompatActivity {
 
+    // UI Components for employer creation form
     private EditText nameField, emailField, phoneField, streetField, complementField, cityField, stateField, zipField;
     private Button addEmployerButton;
     private ImageButton backArrowIcon;
 
     // Constants for validation
-    private static final int MAX_PHONE_LENGTH = 15;  // Adjust based on your DB schema
-    private static final int MIN_PHONE_LENGTH = 7;   // Minimum acceptable phone length
+    private static final int MAX_PHONE_LENGTH = 15;  // Maximum phone number length allowed
+    private static final int MIN_PHONE_LENGTH = 7;   // Minimum phone number length required
     private static final int ZIP_CODE_LENGTH = 5;    // Standard US ZIP code length
-    private static final String USER_PREFS = "MyAppPrefs"; // Shared preferences key
+    private static final String USER_PREFS = "MyAppPrefs";  // SharedPreferences key
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class EmployerCreationActivity extends AppCompatActivity {
         // Handle the "Add Employer" button click and validate inputs
         addEmployerButton.setOnClickListener(v -> {
             if (validateInput()) {
-                addEmployer();  // If inputs are valid, proceed to add the employer
+                addEmployer();  // Proceed to add the employer if inputs are valid
             }
         });
     }
