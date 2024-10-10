@@ -1,5 +1,6 @@
 package com.example.thehiveapp.controller.authentication;
 
+import com.example.thehiveapp.dto.ResponseMessage;
 import com.example.thehiveapp.dto.authentication.CompanySignUpRequest;
 import com.example.thehiveapp.dto.authentication.EmployerSignUpRequest;
 import com.example.thehiveapp.dto.authentication.StudentSignUpRequest;
@@ -11,8 +12,8 @@ import com.example.thehiveapp.dto.email.ChangePasswordRequest;
 import com.example.thehiveapp.service.authentication.AuthenticationService;
 import com.example.thehiveapp.service.user.UserService;
 import jakarta.validation.Valid;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,7 +51,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<?> changePasswordAuthentication(@RequestBody ChangePasswordRequest changePasswordRequest){
-        return ResponseEntity.ok(authenticationService.changePassword(changePasswordRequest));
+    public ResponseMessage changePasswordAuthentication(@RequestBody ChangePasswordRequest changePasswordRequest) throws BadRequestException {
+        return authenticationService.changePassword(changePasswordRequest);
     }
 }

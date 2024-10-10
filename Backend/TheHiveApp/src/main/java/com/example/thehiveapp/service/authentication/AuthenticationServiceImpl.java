@@ -1,5 +1,6 @@
 package com.example.thehiveapp.service.authentication;
 
+import com.example.thehiveapp.dto.ResponseMessage;
 import com.example.thehiveapp.dto.authentication.CompanySignUpRequest;
 import com.example.thehiveapp.dto.authentication.CustomUserDetails;
 import com.example.thehiveapp.config.SecurityConfig;
@@ -22,6 +23,7 @@ import com.example.thehiveapp.service.user.StudentService;
 import com.example.thehiveapp.service.user.UserService;
 import com.example.thehiveapp.utilities.SignUpUtils;
 import jakarta.transaction.Transactional;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -97,16 +99,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public String changePassword(ChangePasswordRequest changePasswordRequest) {
+    public ResponseMessage changePassword(ChangePasswordRequest changePasswordRequest) throws BadRequestException {
         if (!changePasswordRequest.getPassword().equals(changePasswordRequest.getConfirmPassword())){
-            return "Passwords do not match! Try again!";
+            throw new BadRequestException("Passwords do not match! Try again!");
         }
         User user = userService.getUserByEmail(changePasswordRequest.getEmail());
         Authentication authentication = authenticationRepository.findById(user.getUserId()).orElseThrow(
                 () -> new ResourceNotFoundException("User not found"));
         authentication.setPassword(securityConfig.passwordEncoder().encode(changePasswordRequest.getConfirmPassword()));
         authenticationRepository.save(authentication);
-        return "Password changed successfully";
+        return ResponseMessage.builder().message("Password changed successfully").build();
     }
 
     private void createAuthentication(BaseSignUpRequest baseSignUpRequest, Long userId) {

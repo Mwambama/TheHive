@@ -1,12 +1,15 @@
 package com.example.thehiveapp.config;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,18 +17,13 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-//    @ExceptionHandler(HttpMessageNotReadableException.class)
-//    public ResponseEntity<CustomErrorResponse> handleMissingRequestBody(HttpMessageNotReadableException ex, HttpServletRequest request) {
-//        CustomErrorResponse response = new CustomErrorResponse();
-//
-//        response.setTimestamp(LocalDateTime.now());
-//        response.setStatus(HttpStatus.BAD_REQUEST.value());
-//        response.setError(HttpStatus.BAD_REQUEST.getReasonPhrase());
-//        response.setMessage("Required request body is missing.");
-//        response.setPath(request.getRequestURI());
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Map<String, String>> handleBadRequestException(BadRequestException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
