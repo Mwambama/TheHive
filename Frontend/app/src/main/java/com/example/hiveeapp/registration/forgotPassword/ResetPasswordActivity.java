@@ -2,8 +2,6 @@ package com.example.hiveeapp.registration.forgotPassword;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,7 +44,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
             if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
                 showToast("Please fill in all fields.");
             } else if (!newPassword.equals(confirmPassword)) {
-                showToast("Passwords do not match.");
+                showToast("Passwords do not match! Try again!");
             } else {
                 resetPassword(email, newPassword);
             }
@@ -80,15 +78,15 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 response -> {
                     showLoading(false);
                     try {
-                        boolean success = response.getBoolean("success");
-                        if (success) {
-                            showSnackbar("Password reset successfully.");
+                        String responseMessage = response.getString("responseMessage");
+                        if (responseMessage.equals("Password changed successfully")) {
+                            showSnackbar(responseMessage);
                             // Navigate back to LoginActivity
                             Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
                             startActivity(intent);
                             finish();
                         } else {
-                            showToast(response.getString("message"));
+                            showToast(responseMessage);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
