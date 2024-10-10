@@ -1,126 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp">
+    android:background="@drawable/gradient_background"
+    android:padding="24dp">
 
+    <!-- Illustration Image -->
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-<!--        android:src="@drawable/hollow" />-->
+        android:id="@+id/illustrationImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/illustration"
+        android:contentDescription="@string/illustration_desc"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Welcome Text -->
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/loginTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hiveapp"
-        android:layout_marginTop="16dp" />
+        android:text="Welcome"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/illustrationImage"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Buttons Layout for Student, Employer, and Company -->
     <LinearLayout
+        android:id="@+id/user_type_buttons_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="30dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Username: "
-            android:textSize="20sp"
-            android:textColor="#000000" />
-
-        <EditText
-            android:id="@+id/signup_username_edt"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:hint="Enter Username" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="30dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Password: "
-            android:textSize="20sp"
-            android:textColor="#000000" />
-
-        <EditText
-            android:id="@+id/signup_password_edt"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:hint="Enter Password"
-            android:inputType="textPassword" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="30dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Password: "
-            android:textSize="20sp"
-            android:textColor="#000000" />
-
-        <EditText
-            android:id="@+id/signup_confirm_password_edt"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:hint="Confirm Password"
-            android:inputType="textPassword" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="30dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Email: "
-            android:textSize="20sp"
-            android:textColor="#000000" />
-
-        <EditText
-            android:id="@+id/signup_email_edt"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:hint="Enter Email"
-            android:inputType="textEmailAddress" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"
-        android:orientation="horizontal">
+        android:layout_marginTop="30dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/loginTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_horizontal">
 
         <Button
-            android:id="@+id/signup_signup_btn"
-            android:layout_width="150dp"
+            android:id="@+id/signup_student_btn"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="Signup"
-            android:textSize="30sp"
-            android:textColor="#ffffff" />
-    </LinearLayout>
+            android:layout_marginBottom="16dp"
+            android:text="Student"
+            android:textSize="20sp"
+            android:textColor="#ffffff"
+            android:backgroundTint="@color/light_blue" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/signup_employer_btn"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Employer"
+            android:textSize="20sp"
+            android:textColor="#ffffff"
+            android:backgroundTint="@color/light_blue" />
+
+        <Button
+            android:id="@+id/signup_company_btn"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="Company"
+            android:textSize="20sp"
+            android:textColor="#ffffff"
+            android:backgroundTint="@color/light_blue" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
