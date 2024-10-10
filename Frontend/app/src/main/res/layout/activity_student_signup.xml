@@ -103,7 +103,7 @@
             android:id="@+id/signup_university_edt"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:hint="Enter University" />
+            android:hint="University" />
     </LinearLayout>
 
     <LinearLayout
