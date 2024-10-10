@@ -77,8 +77,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 response -> {
                     showLoading(false);
                     try {
-                        boolean success = response.getBoolean("success");
-                        if (success) {
+                        int statusCode = response.getInt("statusCode");
+                        String responseMessage = response.getString("responseMessage");
+
+                        if (statusCode == 200 && "SUCCESS".equalsIgnoreCase(responseMessage)) {
                             // Directly navigate to VerifyKeyActivity
                             Intent intent = new Intent(ForgotPasswordActivity.this, VerifyKeyActivity.class);
                             intent.putExtra("email", email);
@@ -86,7 +88,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                             overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
                         } else {
                             // Handle failure case if necessary
-                            showSnackbar("Failed to send OTP.");
+                            showSnackbar("Failed to send OTP: " + responseMessage);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -98,7 +100,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
-
 
     /**
      * Handles server errors.
