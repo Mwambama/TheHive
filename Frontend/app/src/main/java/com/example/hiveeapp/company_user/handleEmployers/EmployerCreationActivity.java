@@ -29,7 +29,7 @@ public class EmployerCreationActivity extends AppCompatActivity {
     private ImageButton backArrowIcon;
 
     // Constants for validation
-    private static final int MAX_PHONE_LENGTH = 15;  // Maximum phone number length allowed
+    private static final int MAX_PHONE_LENGTH = 10;  // Maximum phone number length allowed
     private static final int MIN_PHONE_LENGTH = 7;   // Minimum phone number length required
     private static final int ZIP_CODE_LENGTH = 5;    // Standard US ZIP code length
     private static final String USER_PREFS = "MyAppPrefs";  // SharedPreferences key

@@ -30,8 +30,26 @@ public class InvitationAdapter extends RecyclerView.Adapter<InvitationAdapter.In
     }
 
     public void setInvitations(JSONArray invitations) {
-        this.invitations = invitations;
+        this.invitations = reverseJSONArray(invitations);
         notifyDataSetChanged();
+    }
+
+    /**
+     * Reverses the order of the given JSONArray.
+     *
+     * @param array The JSONArray to be reversed.
+     * @return A new JSONArray in reversed order.
+     */
+    private JSONArray reverseJSONArray(JSONArray array) {
+        JSONArray reversedArray = new JSONArray();
+        for (int i = array.length() - 1; i >= 0; i--) {
+            try {
+                reversedArray.put(array.get(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return reversedArray;
     }
 
     @Override

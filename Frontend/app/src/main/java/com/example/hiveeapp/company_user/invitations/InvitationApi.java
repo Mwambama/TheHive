@@ -149,24 +149,17 @@ public class InvitationApi {
         JSONObject updatedInvitation = new JSONObject();
 
         try {
-            // Include required fields in the updated invitation object
-            // Use "id" instead of "employerInvitationId" if that's what the server expects
-            updatedInvitation.put("id", invitationId);
-
-            // Construct the company object as required by the server
-            JSONObject companyObject = new JSONObject();
-            companyObject.put("userId", COMPANY_ID);
-            updatedInvitation.put("company", companyObject);
+            updatedInvitation.put("employerInvitationId", invitationId);
+            // Include 'companyId' directly at the root level
+            updatedInvitation.put("companyId", COMPANY_ID); // COMPANY_ID should be 1029
             updatedInvitation.put("email", newEmail);
-            updatedInvitation.put("message", newMessage);
+            updatedInvitation.put("message", newMessage); // Include 'message' if supported
 
-            // Define the URL for updating the invitation, including the ID
             String updateUrl = BASE_URL;
 
             Log.d(TAG, "PUT Invitation Request URL: " + updateUrl);
             Log.d(TAG, "Updated Invitation Data Payload: " + updatedInvitation.toString());
 
-            // Create a JsonObjectRequest to update the invitation
             JsonObjectRequest request = new JsonObjectRequest(
                     Request.Method.PUT,
                     updateUrl,
@@ -184,7 +177,6 @@ public class InvitationApi {
                 }
             };
 
-            // Add the request to the Volley request queue
             VolleySingleton.getInstance(context).addToRequestQueue(request);
 
         } catch (JSONException e) {
@@ -206,16 +198,12 @@ public class InvitationApi {
                                       Response.Listener<JSONObject> listener,
                                       Response.ErrorListener errorListener) {
 
-        // Create new invitation object
         JSONObject newInvitation = new JSONObject();
         try {
-            // Construct the company object
-            JSONObject companyObject = new JSONObject();
-            companyObject.put("userId", COMPANY_ID);
-
-            newInvitation.put("company", companyObject);
+            // Include 'companyId' directly at the root level
+            newInvitation.put("companyId", COMPANY_ID); // COMPANY_ID should be 1029
             newInvitation.put("email", email);
-            newInvitation.put("message", message);
+            newInvitation.put("message", message); // Include 'message' if supported
 
         } catch (JSONException e) {
             Log.e(TAG, "Error creating invitation: " + e.getMessage());
@@ -223,19 +211,16 @@ public class InvitationApi {
             return;
         }
 
-        // Define the URL for sending the invitation
         String invitationUrl = BASE_URL;
         Log.d(TAG, "POST Invitation Request URL: " + invitationUrl);
         Log.d(TAG, "Invitation Data Payload: " + newInvitation.toString());
 
-        // Create a JsonObjectRequest to send the invitation
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 invitationUrl,
                 newInvitation,
                 listener,
                 error -> {
-                    // Extract and log detailed error information
                     String errorMsg = getErrorMessage(error);
                     Log.e(TAG, "Error sending invitation to server: " + errorMsg);
                     errorListener.onErrorResponse(new VolleyError(errorMsg));
@@ -247,9 +232,9 @@ public class InvitationApi {
             }
         };
 
-        // Add the request to the Volley request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
 
     /**
      * Extracts and returns a meaningful error message from a VolleyError.
