@@ -12,7 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 
 /**
  * InvitationCreationActivity allows the company user to create and edit employer invitations.
@@ -167,10 +170,19 @@ public class InvitationCreationActivity extends AppCompatActivity {
         if (error.networkResponse != null && error.networkResponse.data != null) {
             try {
                 String errorData = new String(error.networkResponse.data, "UTF-8");
-                JSONObject jsonError = new JSONObject(errorData);
-                errorMsg = jsonError.optString("message", errorMsg);
-            } catch (Exception e) {
+
+                // Attempt to parse errorData as JSON
+                try {
+                    JSONObject jsonError = new JSONObject(errorData);
+                    errorMsg = jsonError.optString("message", errorMsg);
+                } catch (JSONException jsonException) {
+                    // If parsing fails, use the raw errorData
+                    errorMsg = errorData;
+                }
+
+            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+                errorMsg = "Error parsing error message";
             }
         } else if (error.getMessage() != null) {
             errorMsg = error.getMessage();

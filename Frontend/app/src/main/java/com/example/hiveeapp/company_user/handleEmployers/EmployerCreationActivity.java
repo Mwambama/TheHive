@@ -15,6 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * EmployerCreationActivity allows the user to add a new employer by filling out a form.
  * The form includes fields like name, email, phone number, address, etc., which are validated before submission.
@@ -217,10 +219,19 @@ public class EmployerCreationActivity extends AppCompatActivity {
         if (error.networkResponse != null && error.networkResponse.data != null) {
             try {
                 String errorData = new String(error.networkResponse.data, "UTF-8");
-                JSONObject jsonError = new JSONObject(errorData);
-                errorMsg = jsonError.optString("message", errorMsg);
-            } catch (Exception e) {
+
+                // Attempt to parse errorData as JSON
+                try {
+                    JSONObject jsonError = new JSONObject(errorData);
+                    errorMsg = jsonError.optString("message", errorMsg);
+                } catch (JSONException jsonException) {
+                    // If parsing fails, use the raw errorData
+                    errorMsg = errorData;
+                }
+
+            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+                errorMsg = "Error parsing error message";
             }
         } else if (error.getMessage() != null) {
             errorMsg = error.getMessage();

@@ -125,7 +125,8 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
                                                         Toast.makeText(context, "Employer deleted successfully", Toast.LENGTH_SHORT).show();
                                                     },
                                                     error -> {
-                                                        Toast.makeText(context, "Error deleting employer", Toast.LENGTH_SHORT).show();
+                                                        String errorMsg = error.getMessage();
+                                                        Toast.makeText(context, "Error deleting employer: " + errorMsg, Toast.LENGTH_SHORT).show();
                                                     }
                                             );
                                         } catch (JSONException e) {

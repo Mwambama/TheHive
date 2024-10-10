@@ -13,6 +13,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONArray;
@@ -407,30 +408,21 @@ public class EmployerApi {
      * @param listener      Response listener for successful employer deletion.
      * @param errorListener Error listener for handling errors.
      */
-    public static void deleteEmployer(Context context, long employerId, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public static void deleteEmployer(Context context, long employerId, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "/" + employerId;
         Log.d(TAG, "DELETE Employer Request URL: " + url);
 
-        // Create a JsonObjectRequest for the DELETE method
-        JsonObjectRequest request = new JsonObjectRequest(
+        // Create a StringRequest for the DELETE method
+        StringRequest request = new StringRequest(
                 Request.Method.DELETE,
                 url,
-                null,  // No request body needed for DELETE
                 response -> {
-                    // Check if the response is null, assuming it's successful
-                    if (response == null || response.length() == 0) {
-                        Log.d(TAG, "DELETE successful: No response body.");
-                        listener.onResponse(null);  // Notify the listener of success
-                    } else {
-                        listener.onResponse(response);  // Handle the non-empty response (if any)
-                    }
+                    Log.d(TAG, "Employer deleted successfully: " + response);
+                    listener.onResponse(response);  // Notify the listener of success
                 },
                 error -> {
-                    if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
-                        Log.e(TAG, "Error: Employer not found on server (404)");
-                    } else {
-                        handleErrorResponse("Error deleting employer: " + getErrorMessage(error), error, errorListener);
-                    }
+                    String errorMsg = getErrorMessage(error);
+                    handleErrorResponse("Error deleting employer: " + errorMsg, error, errorListener);
                 }
         ) {
             @Override
@@ -468,10 +460,19 @@ public class EmployerApi {
         if (error.networkResponse != null && error.networkResponse.data != null) {
             try {
                 String errorData = new String(error.networkResponse.data, "UTF-8");
-                JSONObject jsonError = new JSONObject(errorData);
-                errorMsg = jsonError.optString("message", errorMsg);
-            } catch (Exception e) {
+
+                // Attempt to parse errorData as JSON
+                try {
+                    JSONObject jsonError = new JSONObject(errorData);
+                    errorMsg = jsonError.optString("message", errorMsg);
+                } catch (JSONException jsonException) {
+                    // If parsing fails, use the raw errorData
+                    errorMsg = errorData;
+                }
+
+            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+                errorMsg = "Error parsing error message";
             }
         } else if (error.getMessage() != null) {
             errorMsg = error.getMessage();
