@@ -81,13 +81,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                         String responseMessage = response.getString("responseMessage");
 
                         if (statusCode == 200 && "SUCCESS".equalsIgnoreCase(responseMessage)) {
-                            // Directly navigate to VerifyKeyActivity
+                            // OTP sent successfully, navigate to VerifyKeyActivity
                             Intent intent = new Intent(ForgotPasswordActivity.this, VerifyKeyActivity.class);
                             intent.putExtra("email", email);
                             startActivity(intent);
                             overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
                         } else {
-                            // Handle failure case if necessary
+                            // Handle failure case
                             showSnackbar("Failed to send OTP: " + responseMessage);
                         }
                     } catch (JSONException e) {

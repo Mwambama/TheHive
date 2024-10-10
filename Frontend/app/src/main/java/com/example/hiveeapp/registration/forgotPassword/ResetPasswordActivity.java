@@ -15,12 +15,16 @@ import com.google.android.material.snackbar.Snackbar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ResetPasswordActivity extends AppCompatActivity {
 
     private EditText newPasswordField, confirmPasswordField;
     private Button resetPasswordButton;
     private ProgressBar loadingProgressBar;
     private String email;
+    private String authToken;  // Token for authorization
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +37,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
         resetPasswordButton = findViewById(R.id.resetPasswordButton);
         loadingProgressBar = findViewById(R.id.loadingProgressBar);
 
-        // Get the email from previous activity
+        // Get the email and auth token from the previous activity
         email = getIntent().getStringExtra("email");
+        authToken = getIntent().getStringExtra("authToken");  // Authorization token passed from the previous step
 
         // Reset password button click event
         resetPasswordButton.setOnClickListener(v -> {
@@ -69,7 +74,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         }
 
         // URL for resetting the password
-        String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/resetPassword";
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/change-password";
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
@@ -94,7 +99,15 @@ public class ResetPasswordActivity extends AppCompatActivity {
                     }
                 },
                 this::handleError // Handle error
-        );
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + authToken);  // Add authorization token in the header
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
@@ -108,6 +121,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
             switch (error.networkResponse.statusCode) {
                 case 400:
                     showToast("Invalid request. Please check your input.");
+                    break;
+                case 401:
+                    showToast("Unauthorized. Please check your token.");
                     break;
                 case 404:
                     showToast("Server not found. Please try again later.");
