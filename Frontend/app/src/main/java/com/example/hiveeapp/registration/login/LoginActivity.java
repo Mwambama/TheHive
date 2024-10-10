@@ -2,6 +2,7 @@ package com.example.hiveeapp.registration.login;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.*;
@@ -23,13 +24,15 @@ import com.google.android.material.snackbar.Snackbar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailField, passwordField;
     private MaterialButton loginButton;
     private TextView forgotPasswordButton, registerText;
     private ProgressBar loadingProgressBar;
-    private boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,51 +83,80 @@ public class LoginActivity extends AppCompatActivity {
         loadingProgressBar.setVisibility(View.VISIBLE);
         loginButton.setEnabled(false); // Disable the login button during network request
 
-        // Create JSON payload for authentication
-        JSONObject loginPayload = new JSONObject();
-        try {
-            loginPayload.put("email", email);
-            loginPayload.put("password", password);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            showToast("Failed to create login request.");
-            return;
-        }
+        // Construct the login URL
+        String loginUrl = "http://coms-3090-063.class.las.iastate.edu:8080/account/login";
+
+        // Create the authentication header with email and password
+        String credentials = email + ":" + password;
+        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
         // Send login request to server
-        String loginUrl = "https://0426e89a-dc0e-4f75-8adb-c324dd58c2a8.mock.pstmn.io/login";
-
-        // Create the login request using Volley
         JsonObjectRequest loginRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 loginUrl,
-                loginPayload,
+                null,  // No body for this POST request
                 response -> {
                     hideLoading(); // Hide the loading indicator and enable login button
-                    try {
-                        boolean success = response.getBoolean("success");
-                        if (success) {
-                            int userType = response.getInt("user_type");
-                            navigateToUserActivity(userType);
-                        } else {
-                            String message = response.getString("message");
-                            showSnackbar(message);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        showSnackbar(getString(R.string.error_parsing_response));
-                    }
+                    handleLoginSuccess(response);
                 },
                 error -> {
-                    // Handle error
+                    hideLoading(); // Hide the loading indicator and enable login button
                     handleError(error);
                 }
-        );
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                // Add the authentication header
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", auth);
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
 
+        // Add the request to the Volley queue
         VolleySingleton.getInstance(this).addToRequestQueue(loginRequest);
     }
 
-    // Error handling function
+    private void handleLoginSuccess(JSONObject response) {
+        try {
+            // Parse the server response
+            int userId = response.getInt("userId");
+            String name = response.getString("name");
+            String role = response.getString("role");
+
+            // Navigate to the appropriate activity based on the user role
+            navigateToUserActivity(role);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            showSnackbar(getString(R.string.error_parsing_response));
+        }
+    }
+
+    private void navigateToUserActivity(String role) {
+        Intent intent;
+        switch (role) {
+            case "STUDENT":
+                intent = new Intent(LoginActivity.this, StudentMainActivity.class);
+                break;
+            case "EMPLOYER":
+                intent = new Intent(LoginActivity.this, EmployerMainActivity.class);
+                break;
+            case "COMPANY":
+                intent = new Intent(LoginActivity.this, EmployerCreationActivity.class);
+                break;
+            case "ADMIN":
+                intent = new Intent(LoginActivity.this, AdminMainActivity.class);
+                break;
+            default:
+                showSnackbar(getString(R.string.user_type_not_recognized));
+                return;
+        }
+        startActivity(intent);
+        overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+        finish();
+    }
+
     private void handleError(VolleyError error) {
         hideLoading(); // Ensure loading is hidden on error
 
@@ -152,30 +184,6 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             showToast("Login failed. Please check your network connection.");
         }
-    }
-
-    private void navigateToUserActivity(int userType) {
-        Intent intent;
-        switch (userType) {
-            case 1:
-                intent = new Intent(LoginActivity.this, StudentMainActivity.class);
-                break;
-            case 2:
-                intent = new Intent(LoginActivity.this, EmployerMainActivity.class);
-                break;
-            case 3:
-                intent = new Intent(LoginActivity.this, EmployerCreationActivity.class);
-                break;
-            case 4:
-                intent = new Intent(LoginActivity.this, AdminMainActivity.class);
-                break;
-            default:
-                showSnackbar(getString(R.string.user_type_not_recognized));
-                return;
-        }
-        startActivity(intent);
-        overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
-        finish();
     }
 
     // Method to show a Snackbar message
