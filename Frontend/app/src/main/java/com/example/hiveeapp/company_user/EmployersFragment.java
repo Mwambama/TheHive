@@ -14,6 +14,8 @@ import com.example.hiveeapp.R;
 import com.example.hiveeapp.company_user.handleEmployers.EmployerAdapter;
 import com.example.hiveeapp.company_user.handleEmployers.EmployerApi;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Fragment that displays a list of employers in a RecyclerView.
@@ -55,8 +57,10 @@ public class EmployersFragment extends Fragment {
         EmployerApi.getEmployers(
                 getContext(),
                 response -> {
-                    // Update the RecyclerView adapter with the employers
-                    employerAdapter.setEmployers(response);
+                    // Reverse the JSONArray to display the most recent employers first
+                    JSONArray reversedEmployers = reverseJSONArray(response);
+                    // Update the RecyclerView adapter with the reversed employers list
+                    employerAdapter.setEmployers(reversedEmployers);
                 },
                 error -> {
                     // Handle error from the API request
@@ -64,5 +68,24 @@ public class EmployersFragment extends Fragment {
                     Toast.makeText(getContext(), "Failed to load employers. Please try again.", Toast.LENGTH_SHORT).show();
                 }
         );
+    }
+
+    /**
+     * Reverses the order of the given JSONArray.
+     *
+     * @param array The JSONArray to be reversed.
+     * @return A new JSONArray in reversed order.
+     */
+    private JSONArray reverseJSONArray(JSONArray array) {
+        JSONArray reversedArray = new JSONArray();
+        for (int i = array.length() - 1; i >= 0; i--) {
+            try {
+                JSONObject jsonObject = array.getJSONObject(i);
+                reversedArray.put(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return reversedArray;
     }
 }

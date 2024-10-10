@@ -16,6 +16,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * EmployerListActivity handles the display and management of a list of employers.
@@ -84,14 +86,16 @@ public class EmployerListActivity extends AppCompatActivity {
 
     /**
      * Load the list of employers from the server using EmployerApi and update the adapter.
+     * The employers are reversed before being set in the adapter.
      */
     private void loadEmployers() {
         EmployerApi.getEmployers(this,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        // Set the retrieved employers to the adapter
-                        employerAdapter.setEmployers(response);
+                        // Reverse the JSONArray before setting it in the adapter
+                        JSONArray reversedEmployers = reverseJSONArray(response);
+                        employerAdapter.setEmployers(reversedEmployers);
                     }
                 },
                 new Response.ErrorListener() {
@@ -101,5 +105,24 @@ public class EmployerListActivity extends AppCompatActivity {
                         Toast.makeText(EmployerListActivity.this, "Error fetching employers: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    /**
+     * Reverses the order of the given JSONArray.
+     *
+     * @param array The JSONArray to be reversed.
+     * @return A new JSONArray in reversed order.
+     */
+    private JSONArray reverseJSONArray(JSONArray array) {
+        JSONArray reversedArray = new JSONArray();
+        for (int i = array.length() - 1; i >= 0; i--) {
+            try {
+                JSONObject jsonObject = array.getJSONObject(i);
+                reversedArray.put(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return reversedArray;
     }
 }
