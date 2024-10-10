@@ -36,7 +36,7 @@
 
 
         <!-- Company Activity -->
-        <activity android:name=".company_user.CompanyActivity"
+        <activity android:name=".company_user.CompanyMainActivity"
             android:exported="true">
         </activity>
 

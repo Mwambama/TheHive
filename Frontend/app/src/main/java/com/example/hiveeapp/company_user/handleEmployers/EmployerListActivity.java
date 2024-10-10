@@ -10,11 +10,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.company_user.CompanyActivity;
+import com.example.hiveeapp.company_user.CompanyMainActivity;
 import com.example.hiveeapp.company_user.invitations.InvitationManagementActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 
@@ -58,7 +57,7 @@ public class EmployerListActivity extends AppCompatActivity {
                 Toast.makeText(EmployerListActivity.this, "You are already on this page", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (itemId == R.id.navigation_main_user_page) {
-                startActivity(new Intent(EmployerListActivity.this, CompanyActivity.class));
+                startActivity(new Intent(EmployerListActivity.this, CompanyMainActivity.class));
                 return true;
             }
             return false;

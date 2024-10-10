@@ -13,7 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.admin_user.AdminMainActivity;
-import com.example.hiveeapp.company_user.handleEmployers.EmployerCreationActivity;
+import com.example.hiveeapp.company_user.CompanyMainActivity;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.registration.forgotPassword.ForgotPasswordActivity;
 import com.example.hiveeapp.registration.signup.signupActivity;
@@ -143,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
                 intent = new Intent(LoginActivity.this, EmployerMainActivity.class);
                 break;
             case "COMPANY":
-                intent = new Intent(LoginActivity.this, EmployerCreationActivity.class);
+                intent = new Intent(LoginActivity.this, CompanyMainActivity.class);
                 break;
             case "ADMIN":
                 intent = new Intent(LoginActivity.this, AdminMainActivity.class);

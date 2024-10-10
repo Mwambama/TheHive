@@ -15,7 +15,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
-public class CompanyActivity extends AppCompatActivity {
+public class CompanyMainActivity extends AppCompatActivity {
 
     private MaterialToolbar topAppBar;
     private BottomNavigationView bottomNavigationView;
@@ -33,7 +33,7 @@ public class CompanyActivity extends AppCompatActivity {
 
         // Set up the top app bar with a back button
         topAppBar.setNavigationOnClickListener(v -> {
-            Intent intent = new Intent(CompanyActivity.this, MainActivity.class);
+            Intent intent = new Intent(CompanyMainActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         });
@@ -78,13 +78,13 @@ public class CompanyActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_invitations) {
-                startActivity(new Intent(CompanyActivity.this, InvitationManagementActivity.class));
+                startActivity(new Intent(CompanyMainActivity.this, InvitationManagementActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_employers) {
-                startActivity(new Intent(CompanyActivity.this, EmployerListActivity.class));
+                startActivity(new Intent(CompanyMainActivity.this, EmployerListActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_main_user_page) {
-                Toast.makeText(CompanyActivity.this, "You are already on this page", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CompanyMainActivity.this, "You are already on this page", Toast.LENGTH_SHORT).show();
                 return true;
             }
             return false;
