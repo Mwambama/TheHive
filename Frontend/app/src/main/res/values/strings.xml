@@ -29,15 +29,16 @@
 
     <!-- Send Verification Key Button -->
     <string name="send_verification_key">Send Verification Key</string>
+    <string name="email_hint">Enter your email</string>
 
     <!-- Footer Text for Forgot Password -->
     <string name="footer_verification_key_text">A verification key will be sent to your email.</string>
 
     <!-- Verify Key Screen -->
     <string name="verify_key_title">Enter Verification Key</string>
-    <string name="key_input_hint">4-letter key</string>
+    <string name="key_input_hint">5-letter key</string>
     <string name="verify_key_button">Verify Key</string>
-    <string name="verify_key_desc">Enter the 4-letter verification key</string>
+    <string name="verify_key_desc">Enter the 5-letter verification key</string>
 
     <!-- Step Indicators for Multi-Step Forms -->
     <string name="step_1_of_3">Step 1 of 3</string>

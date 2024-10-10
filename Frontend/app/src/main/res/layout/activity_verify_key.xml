@@ -51,6 +51,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Email Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/emailInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/email_hint"
+        app:startIconDrawable="@drawable/ic_mail"
+        app:boxStrokeColor="#000000"
+        app:hintTextColor="#000000"
+        app:startIconTint="#000000"
+        app:layout_constraintTop_toBottomOf="@id/verifyKeyTitle"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/emailField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:hint="@string/email_hint"
+            android:textColor="#000000"
+            android:paddingStart="48dp"
+            android:imeOptions="actionNext" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Key Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/keyInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -61,7 +91,7 @@
         app:startIconTint="#000000"
         app:boxStrokeColor="#000000"
         app:hintTextColor="#000000"
-        app:layout_constraintTop_toBottomOf="@id/verifyKeyTitle"
+        app:layout_constraintTop_toBottomOf="@id/emailInputLayout"
         android:layout_marginTop="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,7 +102,7 @@
             android:id="@+id/keyField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLength="4"
+            android:maxLength="5"
             android:inputType="text"
             android:textColor="#000000"
             android:paddingStart="48dp"

@@ -6,15 +6,12 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.android.volley.Request;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
 import com.google.android.material.snackbar.Snackbar;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,6 +27,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
+        // Initialize views
         emailField = findViewById(R.id.forgotPasswordEmailField);
         sendKeyButton = findViewById(R.id.sendKeyButton);
         backArrowIcon = findViewById(R.id.backArrowIcon);
@@ -41,34 +39,35 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             overridePendingTransition(R.animator.slide_in_left, R.animator.slide_out_right);
         });
 
+        // Send OTP button click event
         sendKeyButton.setOnClickListener(v -> {
             String email = emailField.getText().toString().trim();
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 showToast("Please enter a valid email address.");
             } else {
-                sendVerificationKey(email);
+                sendOtpToEmail(email);
             }
         });
     }
 
-    private void sendVerificationKey(String email) {
-        // Show loading indicator
-        loadingProgressBar.setVisibility(View.VISIBLE);
-        sendKeyButton.setEnabled(false);  // Disable button during the request
+    /**
+     * Sends OTP to the given email address.
+     */
+    private void sendOtpToEmail(String email) {
+        showLoading(true); // Show loading while sending OTP
 
-        // Create JSON payload
         JSONObject payload = new JSONObject();
         try {
             payload.put("email", email);
         } catch (JSONException e) {
             e.printStackTrace();
             showSnackbar("Failed to create request.");
-            hideLoading();
+            showLoading(false);
             return;
         }
 
-        // URL for sending verification key
-        String url = "https://0426e89a-dc0e-4f75-8adb-c324dd58c2a8.mock.pstmn.io/send-key";
+        // URL for sending OTP
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/otp/sendOtp";
 
         // Create a new JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(
@@ -76,46 +75,41 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 url,
                 payload,
                 response -> {
-                    hideLoading();
+                    showLoading(false);
                     try {
-                        boolean success = response.getBoolean("success");
-                        String message = response.getString("message");
-                        if (success) {
-                            showSnackbar("Verification key sent to your email.");
-                            // Navigate to VerifyKeyActivity with animation
+                        int statusCode = response.getInt("statusCode");
+                        String responseMessage = response.getString("responseMessage");
+
+                        if (statusCode == 200 && "SUCCESS".equalsIgnoreCase(responseMessage)) {
+                            // OTP sent successfully, navigate to VerifyKeyActivity
                             Intent intent = new Intent(ForgotPasswordActivity.this, VerifyKeyActivity.class);
                             intent.putExtra("email", email);
                             startActivity(intent);
                             overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
                         } else {
-                            showToast(message);
+                            // Handle failure case
+                            showSnackbar("Failed to send OTP: " + responseMessage);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                         showSnackbar("Error parsing server response.");
                     }
                 },
-                error -> {
-                    // Handle error
-                    handleError(error);
-                }
+                this::handleError // Handle error
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
-    // Error handling function
+    /**
+     * Handles server errors.
+     */
     private void handleError(VolleyError error) {
-        if (error instanceof TimeoutError) {
-            showToast("The request timed out. Please try again.");
-        } else if (error.networkResponse != null) {
-            int statusCode = error.networkResponse.statusCode;
-            switch (statusCode) {
+        showLoading(false);
+        if (error.networkResponse != null) {
+            switch (error.networkResponse.statusCode) {
                 case 400:
                     showToast("Invalid request. Please check your input.");
-                    break;
-                case 401:
-                    showToast("Unauthorized. Please check your credentials.");
                     break;
                 case 404:
                     showToast("Server not found. Please try again later.");
@@ -124,7 +118,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     showToast("Internal server error. Please try again later.");
                     break;
                 default:
-                    showToast("Unexpected error: " + statusCode);
+                    showToast("Unexpected error: " + error.networkResponse.statusCode);
                     break;
             }
         } else {
@@ -132,19 +126,25 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
     }
 
-    // Method to show a Snackbar message
-    private void showSnackbar(String message) {
-        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show();
+    /**
+     * Shows or hides the loading spinner.
+     */
+    private void showLoading(boolean isLoading) {
+        loadingProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        sendKeyButton.setEnabled(!isLoading);
     }
 
-    // Method to hide the loading spinner and re-enable the button
-    private void hideLoading() {
-        loadingProgressBar.setVisibility(View.GONE);
-        sendKeyButton.setEnabled(true);
-    }
-
-    // Method to show a Toast message
+    /**
+     * Shows a Toast message.
+     */
     private void showToast(String message) {
         Toast.makeText(ForgotPasswordActivity.this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Shows a Snackbar message.
+     */
+    private void showSnackbar(String message) {
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show();
     }
 }

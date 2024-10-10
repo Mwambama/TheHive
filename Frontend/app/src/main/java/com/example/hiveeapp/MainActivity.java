@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hiveeapp.registration.signup.signupActivity;
 import com.example.hiveeapp.registration.signup.studentsignupActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
-import com.example.hiveeapp.company_user.CompanyActivity;
+import com.example.hiveeapp.company_user.CompanyMainActivity;
 
 public class MainActivity extends AppCompatActivity {
     private Button mainSignupBtn;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         goToCompanyActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CompanyActivity.class);
+                Intent intent = new Intent(MainActivity.this, CompanyMainActivity.class);
                 startActivity(intent);
             }
         });

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.company_user.CompanyActivity;
+import com.example.hiveeapp.company_user.CompanyMainActivity;
 import com.example.hiveeapp.company_user.handleEmployers.EmployerListActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -58,7 +58,7 @@ public class InvitationManagementActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.navigation_main_user_page) {
                 // Navigate to the Company Main User Page
-                startActivity(new Intent(InvitationManagementActivity.this, CompanyActivity.class));
+                startActivity(new Intent(InvitationManagementActivity.this, CompanyMainActivity.class));
                 return true;
             }
             return false;
