@@ -126,6 +126,26 @@
                 android:hint="Street" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Complement Field (Added) -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/complementTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintTop_toBottomOf="@id/streetTextInputLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/complementField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Complement" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- City Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/cityTextInputLayout"
@@ -134,7 +154,7 @@
             app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/streetTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/complementTextInputLayout"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="8dp">
@@ -146,7 +166,7 @@
                 android:hint="City" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- State Field -->
+        <!-- State and Zip Code Fields (Side by Side) -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/stateTextInputLayout"
             android:layout_width="0dp"
@@ -166,7 +186,6 @@
                 android:hint="State" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Zip Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/zipTextInputLayout"
             android:layout_width="0dp"

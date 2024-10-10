@@ -65,20 +65,27 @@ public class InvitationManagementActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Refreshes the invitations list when the activity resumes.
+     */
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh the invitation list when returning to this activity
-        getInvitations();
+        getInvitations(); // Refresh invitations when returning to the activity
     }
 
+    /**
+     * Loads the list of invitations using the InvitationApi and updates the adapter.
+     */
     private void getInvitations() {
         InvitationApi.getInvitations(
                 this,
                 response -> {
+                    // Successfully retrieved invitations, set them in the adapter
                     invitationAdapter.setInvitations(response);
                 },
                 error -> {
+                    // Failed to retrieve invitations, show an error message
                     Toast.makeText(this, "Failed to retrieve invitations: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
         );
