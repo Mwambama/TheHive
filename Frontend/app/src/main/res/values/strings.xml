@@ -29,6 +29,7 @@
 
     <!-- Send Verification Key Button -->
     <string name="send_verification_key">Send Verification Key</string>
+    <string name="email_hint">Enter your email</string>
 
     <!-- Footer Text for Forgot Password -->
     <string name="footer_verification_key_text">A verification key will be sent to your email.</string>

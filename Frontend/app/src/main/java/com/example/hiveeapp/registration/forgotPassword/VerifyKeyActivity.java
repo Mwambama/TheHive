@@ -16,10 +16,9 @@ import org.json.JSONObject;
 
 public class VerifyKeyActivity extends AppCompatActivity {
 
-    private EditText keyField;
+    private EditText emailField, keyField;
     private Button verifyKeyButton;
     private ProgressBar loadingProgressBar;
-    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,17 +26,18 @@ public class VerifyKeyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_verify_key);
 
         // Initialize views
+        emailField = findViewById(R.id.emailField);  // New email field
         keyField = findViewById(R.id.keyField);
         verifyKeyButton = findViewById(R.id.verifyKeyButton);
         loadingProgressBar = findViewById(R.id.loadingProgressBar);
 
-        // Get the email from previous activity
-        email = getIntent().getStringExtra("email");
-
         // Verify OTP button click event
         verifyKeyButton.setOnClickListener(v -> {
+            String email = emailField.getText().toString().trim();
             String key = keyField.getText().toString().trim();
-            if (key.isEmpty()) {
+            if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                showToast("Please enter a valid email address.");
+            } else if (key.isEmpty()) {
                 showToast("Please enter the verification key.");
             } else {
                 verifyOtp(email, key);
