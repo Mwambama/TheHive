@@ -26,8 +26,8 @@ public class VerifyKeyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_verify_key);
 
         // Initialize views
-        emailField = findViewById(R.id.emailField);  // New email field
-        keyField = findViewById(R.id.keyField);
+        emailField = findViewById(R.id.emailField);  // Email field
+        keyField = findViewById(R.id.keyField);      // OTP key field
         verifyKeyButton = findViewById(R.id.verifyKeyButton);
         loadingProgressBar = findViewById(R.id.loadingProgressBar);
 
@@ -73,16 +73,25 @@ public class VerifyKeyActivity extends AppCompatActivity {
                 response -> {
                     showLoading(false);
                     try {
-                        boolean success = response.getBoolean("success");
-                        if (success) {
-                            showSnackbar("OTP verified successfully.");
-                            // Navigate to ResetPasswordActivity
-                            Intent intent = new Intent(VerifyKeyActivity.this, ResetPasswordActivity.class);
-                            intent.putExtra("email", email);
-                            startActivity(intent);
-                            overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+                        int statusCode = response.getInt("statusCode");
+                        String responseMessage = response.getString("responseMessage");
+
+                        if (statusCode == 200) {
+                            JSONObject otpResponse = response.getJSONObject("otpResponse");
+                            boolean isOtpValid = otpResponse.getBoolean("isOtpValid");
+
+                            if (isOtpValid) {
+                                showSnackbar("OTP verified successfully.");
+                                // Navigate to ResetPasswordActivity
+                                Intent intent = new Intent(VerifyKeyActivity.this, ResetPasswordActivity.class);
+                                intent.putExtra("email", email);
+                                startActivity(intent);
+                                overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+                            } else {
+                                showToast("Invalid OTP.");
+                            }
                         } else {
-                            showToast(response.getString("message"));
+                            handleOtpError(statusCode, responseMessage);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -93,6 +102,25 @@ public class VerifyKeyActivity extends AppCompatActivity {
         );
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    /**
+     * Handles OTP validation error messages from the server.
+     */
+    private void handleOtpError(int statusCode, String responseMessage) {
+        if (statusCode == 400) {
+            if (responseMessage.equalsIgnoreCase("You have not sent an otp!")) {
+                showToast("You have not sent an OTP!");
+            } else if (responseMessage.equalsIgnoreCase("Expired otp!")) {
+                showToast("Your OTP has expired.");
+            } else if (responseMessage.equalsIgnoreCase("Invalid otp!")) {
+                showToast("Invalid OTP.");
+            } else {
+                showToast(responseMessage);
+            }
+        } else {
+            showToast("Unexpected error: " + statusCode);
+        }
     }
 
     /**
