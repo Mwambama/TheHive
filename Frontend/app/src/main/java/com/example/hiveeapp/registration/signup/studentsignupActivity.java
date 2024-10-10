@@ -21,10 +21,10 @@ import android.view.View;
 import com.example.hiveeapp.registration.login.LoginActivity;
 
 public class studentsignupActivity extends AppCompatActivity {
-    private EditText usernameEditText;
+    private EditText nameEditText;
     private EditText passwordEditText;
     private EditText emailEditText;
-    private EditText confirmPasswordEditText;
+    private EditText universityEditText;
     private ImageButton togglePasswordVisibilityButton;
     private boolean isPasswordVisible = false;
 
@@ -34,10 +34,10 @@ public class studentsignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student_signup);  // Update to the correct XML layout
 
         // Initialize EditText fields
-        usernameEditText = findViewById(R.id.signup_username_edt);
+        nameEditText = findViewById(R.id.signup_name_edt);
         passwordEditText = findViewById(R.id.signup_password_edt);
         emailEditText = findViewById(R.id.signup_email_edt);
-        confirmPasswordEditText = findViewById(R.id.signup_confirm_password_edt);
+        universityEditText = findViewById(R.id.signup_university_edt);
 
         // Inflate the additional layout
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -49,19 +49,14 @@ public class studentsignupActivity extends AppCompatActivity {
 
         // Signup button click listener
         findViewById(R.id.signup_signup_btn).setOnClickListener(view -> {
-            String username = usernameEditText.getText().toString();
+            String name = nameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
-            String confirmPassword = confirmPasswordEditText.getText().toString();
             String email = emailEditText.getText().toString();
+            String university = universityEditText.getText().toString();
 
             // Check for empty fields
-            if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
+            if (name.isEmpty() || password.isEmpty() || email.isEmpty() || university.isEmpty()) {
                 Toast.makeText(studentsignupActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            // Check if passwords match
-            if (!password.equals(confirmPassword)) {
-                Toast.makeText(studentsignupActivity.this, "Passwords don't match", Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -74,9 +69,10 @@ public class studentsignupActivity extends AppCompatActivity {
             // Create JSON object with signup data
             JSONObject signupData = new JSONObject();
             try {
-                signupData.put("username", username);
+                signupData.put("name", name);
                 signupData.put("password", password);
                 signupData.put("email", email);
+                signupData.put("university", university);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

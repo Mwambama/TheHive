@@ -1,45 +1,47 @@
 package com.example.hiveeapp.registration.signup;
 
 import android.content.Intent;
-import android.text.InputType;
-import android.widget.ImageButton;
-import com.example.hiveeapp.R;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.hiveeapp.R;
+import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.view.LayoutInflater;
-import android.view.View;
-import com.example.hiveeapp.registration.login.LoginActivity;
 
 public class employersignupActivity extends AppCompatActivity {
-    private EditText usernameEditText;
+    private EditText nameEditText;
     private EditText passwordEditText;
     private EditText emailEditText;
-    private EditText confirmPasswordEditText;
+    private EditText companyIdEditText;  // Added Company ID field
     private ImageButton togglePasswordVisibilityButton;
     private boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_employer_signup);
+        setContentView(R.layout.activity_employer_signup); // Updated layout file name
 
         // Initialize EditText fields
-        usernameEditText = findViewById(R.id.signup_username_edt);
+        nameEditText = findViewById(R.id.signup_name_edt);
         passwordEditText = findViewById(R.id.signup_password_edt);
         emailEditText = findViewById(R.id.signup_email_edt);
-        confirmPasswordEditText = findViewById(R.id.signup_confirm_password_edt);
+        companyIdEditText = findViewById(R.id.signup_company_id_edt);  // Initialize Company ID field
 
-        // Inflate the additional layout
+        // Inflate the additional layout for password visibility toggle
         LayoutInflater inflater = LayoutInflater.from(this);
         View passwordLayout = inflater.inflate(R.layout.activity_show_passwords, null);
         togglePasswordVisibilityButton = passwordLayout.findViewById(R.id.toggle_password_visibility_btn);
@@ -49,19 +51,14 @@ public class employersignupActivity extends AppCompatActivity {
 
         // Signup button click listener
         findViewById(R.id.signup_signup_btn).setOnClickListener(view -> {
-            String username = usernameEditText.getText().toString();
+            String name = nameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
-            String confirmPassword = confirmPasswordEditText.getText().toString();
             String email = emailEditText.getText().toString();
+            String companyId = companyIdEditText.getText().toString();  // Get Company ID
 
             // Check for empty fields
-            if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
+            if (name.isEmpty() || password.isEmpty() || email.isEmpty() || companyId.isEmpty()) {
                 Toast.makeText(employersignupActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            // Check if passwords match
-            if (!password.equals(confirmPassword)) {
-                Toast.makeText(employersignupActivity.this, "Passwords don't match", Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -74,15 +71,16 @@ public class employersignupActivity extends AppCompatActivity {
             // Create JSON object with signup data
             JSONObject signupData = new JSONObject();
             try {
-                signupData.put("username", username);
+                signupData.put("name", name);
                 signupData.put("password", password);
                 signupData.put("email", email);
+                signupData.put("companyId", companyId);  // Include Company ID in JSON
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            // URL for the Postman mock server
-            String url = "https://8c5d8b24-4a9a-4ce2-bf22-1aa5316f76a2.mock.pstmn.io/signup/post"; // Replace with your mock server URL
+            // URL for the employer signup server
+            String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/signup/employer"; // Updated URL
 
             // Create JSON request
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(

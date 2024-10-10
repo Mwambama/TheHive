@@ -3,41 +3,61 @@ package com.example.hiveeapp.volley;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-
 import com.example.hiveeapp.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JsonArrRequestActivity extends AppCompatActivity {
+public class JsonArrRequestActivity2 extends AppCompatActivity {
     TextView textView;
     private Button mainSignupBtn;
+    private EditText nameEditText, passwordEditText, companyIdEditText, emailEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_json_arr_request);  // Set the content view to the layout
+        setContentView(R.layout.activity_json_arr_request2);  // Set the content view to the layout
 
         textView = findViewById(R.id.textView);  // Initialize the TextView
         mainSignupBtn = findViewById(R.id.main_signup_btn);  // Initialize the signup button
+
+        nameEditText = findViewById(R.id.signup_name_edt);
+        passwordEditText = findViewById(R.id.signup_password_edt);
+        companyIdEditText = findViewById(R.id.signup_company_id_edt);
+        emailEditText = findViewById(R.id.signup_email_edt);
 
         String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/signup/employer"; // Replace with your server URL
 
         mainSignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Get the input values
+                String name = nameEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
+                String companyId = companyIdEditText.getText().toString();
+                String email = emailEditText.getText().toString();
+
+                // Check for empty fields
+                if (name.isEmpty() || password.isEmpty() || companyId.isEmpty() || email.isEmpty()) {
+                    Toast.makeText(JsonArrRequestActivity2.this, "All fields are required", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 // Mock signup data
                 JSONObject signupData = new JSONObject();
                 try {
-                    signupData.put("username", "testuser");
-                    signupData.put("password", "password123");
-                    signupData.put("email", "testuser@example.com");
+                    signupData.put("name", name);
+                    signupData.put("password", password);
+                    signupData.put("companyId", companyId);
+                    signupData.put("email", email);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -68,8 +88,9 @@ public class JsonArrRequestActivity extends AppCompatActivity {
                         }
                 );
 
-                VolleySingleton.getInstance(JsonArrRequestActivity.this).addToRequestQueue(jsonObjectRequest);
+                VolleySingleton.getInstance(JsonArrRequestActivity2.this).addToRequestQueue(jsonObjectRequest);
             }
         });
     }
 }
+

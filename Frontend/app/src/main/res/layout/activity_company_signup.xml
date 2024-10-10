@@ -16,6 +16,7 @@
         android:contentDescription="@string/illustration_desc"
         android:layout_marginTop="16dp" />
 
+    <!-- Name Field -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,17 +27,18 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Username: "
+            android:text="Name: "
             android:textSize="20sp"
             android:textColor="#000000" />
 
         <EditText
-            android:id="@+id/signup_username_edt"
+            android:id="@+id/signup_name_edt"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:hint="Enter Username" />
+            android:hint="Enter Name" />
     </LinearLayout>
 
+    <!-- Password Field -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,28 +61,7 @@
             android:inputType="textPassword" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="30dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Password: "
-            android:textSize="20sp"
-            android:textColor="#000000" />
-
-        <EditText
-            android:id="@+id/signup_confirm_password_edt"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:hint="Confirm Password"
-            android:inputType="textPassword" />
-    </LinearLayout>
-
+    <!-- Email Field -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -103,6 +84,7 @@
             android:inputType="textEmailAddress" />
     </LinearLayout>
 
+    <!-- Signup Button -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
