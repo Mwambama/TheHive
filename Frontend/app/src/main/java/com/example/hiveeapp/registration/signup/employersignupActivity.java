@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -108,6 +109,13 @@ public class employersignupActivity extends AppCompatActivity {
                     }
             );
 
+            // Set custom retry policy to increase timeout
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    10000, // Timeout in milliseconds (10 seconds)
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
+
             // Add request to the Volley request queue
             VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
         });
@@ -117,9 +125,10 @@ public class employersignupActivity extends AppCompatActivity {
         if (password.length() < 7) {
             return false;
         }
+        boolean hasLowercase = !password.equals(password.toUpperCase());
         boolean hasUppercase = !password.equals(password.toLowerCase());
         boolean hasDigit = password.matches(".*\\d.*");
-        return hasUppercase && hasDigit;
+        return hasLowercase && hasUppercase && hasDigit;
     }
 
     private void togglePasswordVisibility() {
