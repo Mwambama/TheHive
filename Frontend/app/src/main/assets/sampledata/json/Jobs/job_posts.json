@@ -1,0 +1,18 @@
+[
+  {
+    "jobTitle": "Software Developer",
+    "jobDescription": "Responsible for developing applications.",
+    "jobType": "Full-time",
+    "salaryRequirements": "50000",
+    "ageRequirement": "21",
+    "minimumGPA": "3.0"
+  },
+  {
+    "jobTitle": "Data Analyst",
+    "jobDescription": "Analyze data and create reports.",
+    "jobType": "Part-time",
+    "salaryRequirements": "30000",
+    "ageRequirement": "22",
+    "minimumGPA": "3.5"
+  }
+]

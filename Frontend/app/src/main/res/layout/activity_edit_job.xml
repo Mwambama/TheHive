@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/job_title_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Job Title"
+        android:padding="8dp" />
+
+    <EditText
+        android:id="@+id/job_description_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Job Description"
+        android:padding="8dp" />
+
+    <EditText
+        android:id="@+id/job_type_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Job Type"
+        android:padding="8dp" />
+
+    <EditText
+        android:id="@+id/salary_requirements_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Salary Requirements"
+        android:padding="8dp" />
+
+    <EditText
+        android:id="@+id/age_requirement_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Age Requirement"
+        android:padding="8dp" />
+
+    <EditText
+        android:id="@+id/minimum_gpa_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Minimum GPA"
+        android:padding="8dp" />
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
