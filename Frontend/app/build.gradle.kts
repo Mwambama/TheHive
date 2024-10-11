@@ -44,4 +44,8 @@ dependencies {
     implementation ("com.google.android.material:material:1.9.0")
     implementation ("androidx.appcompat:appcompat:1.6.1")
     implementation ("androidx.fragment:fragment:1.5.7")
+    implementation("com.google.code.gson:gson:2.10")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation ("com.android.volley:volley:1.2.0")
+
 }

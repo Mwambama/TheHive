@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.hiveeapp.employer_user.EmployerMainActivity;
 
 import com.example.hiveeapp.registration.signup.signupActivity;
 import com.example.hiveeapp.registration.signup.studentsignupActivity;
@@ -23,11 +24,15 @@ public class MainActivity extends AppCompatActivity {
     private Button goToCompanyActivityButton;
     private Button goToLoginActivityButton;
     private Button goToStudentMainActivityButton; // Declare the student main activity button
+    //private Button goToCompanyActivityButton;
+    //private Button goToLoginActivityButton; // Declare the login button
+    private Button goToEmployerActivityButton; // Declare the employer profile button
+   // private Button go
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_employer_main);
 
         // Find the views from the layout
         mainSignupBtn = findViewById(R.id.main_signup_btn);
@@ -45,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        //goToCompanyActivityButton = findViewById(R.id.goToCompanyActivityButton);
+        //goToLoginActivityButton = findViewById(R.id.goToLoginActivityButton); // Initialize the login button
+        goToEmployerActivityButton = findViewById(R.id.goToEmployerActivityButton); // Initialize the employer profile button
 
         // Navigate to CompanyActivity
         goToCompanyActivityButton.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         goToLoginActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                Intent intent = new Intent(MainActivity.this, EmployerMainActivity.class);
                 startActivity(intent);
             }
         });
