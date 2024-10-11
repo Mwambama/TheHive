@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Background Gradient Layer -->
+    <!-- Background Gradient Layer with Muted Professional Colors -->
     <item>
         <shape android:shape="rectangle">
             <gradient
-                android:startColor="#2196F3"
-                android:centerColor="#673AB7"
-                android:endColor="#9C27B0"
+                android:startColor="#FFDEE2E6"
+                android:centerColor="#FFB0BEC5"
+                android:endColor="#FF78909C"
                 android:angle="45" />
 
             <stroke

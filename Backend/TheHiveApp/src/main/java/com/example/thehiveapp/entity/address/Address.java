@@ -7,8 +7,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Data
 @Table(name = "address")
 public class Address {
 
@@ -17,67 +27,25 @@ public class Address {
     @Column(name = "address_id")
     private Long addressId;
 
-    @Column(name = "street", nullable = false)
+    @NotNull
+    @Column(name = "street")
     private String street;
 
     @Column(name = "complement")
     private String complement;
 
-    @Column(name = "city", nullable = false)
+    @NotNull
+    @Column(name = "city")
     private String city;
 
-    @Column(name = "state", nullable = false, length = 2)
+    @NotNull
+    @Size(min = 2, max = 2, message = "Enter state as a two-letter code")
+    @Column(name = "state")
     private String state;
 
-    @Column(name = "zip_code", nullable = false, length = 5)
+    @NotNull
+    @Size(min = 5, max = 5, message = "Enter zip as a five-digit code")
+    @Column(name = "zip_code", nullable = false)
     private String zipCode;
-
-    public Long getAddressId() {
-        return addressId;
-    }
-
-    public void setAddressId(Long addressId) {
-        this.addressId = addressId;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getComplement() {
-        return complement;
-    }
-
-    public void setComplement(String complement) {
-        this.complement = complement;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
 }
 

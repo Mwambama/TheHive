@@ -14,11 +14,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Data
 @Table(name = "job_posting")
 public class JobPosting {
 
@@ -58,93 +66,5 @@ public class JobPosting {
 
     @Column(name = "application_end")
     private LocalDate applicationEnd;
-
-    public Long getJobPostingId() {
-        return jobPostingId;
-    }
-
-    public void setJobPostingId(Long jobPostingId) {
-        this.jobPostingId = jobPostingId;
-    }
-
-    public Employer getEmployer() {
-        return employer;
-    }
-
-    public void setEmployer(Employer employer) {
-        this.employer = employer;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    public BigDecimal getSalary() {
-        return salary;
-    }
-
-    public void setSalary(BigDecimal salary) {
-        this.salary = salary;
-    }
-
-    public JobType getJobType() {
-        return jobType;
-    }
-
-    public void setJobType(JobType jobType) {
-        this.jobType = jobType;
-    }
-
-    public BigDecimal getMinimumGpa() {
-        return minimumGpa;
-    }
-
-    public void setMinimumGpa(BigDecimal minimumGpa) {
-        this.minimumGpa = minimumGpa;
-    }
-
-    public LocalDate getJobStart() {
-        return jobStart;
-    }
-
-    public void setJobStart(LocalDate jobStart) {
-        this.jobStart = jobStart;
-    }
-
-    public LocalDate getApplicationStart() {
-        return applicationStart;
-    }
-
-    public void setApplicationStart(LocalDate applicationStart) {
-        this.applicationStart = applicationStart;
-    }
-
-    public LocalDate getApplicationEnd() {
-        return applicationEnd;
-    }
-
-    public void setApplicationEnd(LocalDate applicationEnd) {
-        this.applicationEnd = applicationEnd;
-    }
 }
 

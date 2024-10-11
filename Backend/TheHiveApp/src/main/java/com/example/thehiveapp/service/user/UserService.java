@@ -11,6 +11,7 @@ public interface UserService {
     User getUserById(Long id);
     User updateUser(User request);
     void deleteUser(Long id);
-    Long getIdByEmail(String email, Role role);
+    User getUserByEmail(String email);
     Boolean existsByEmail(String email);
+    User getCurrentUser();
 }

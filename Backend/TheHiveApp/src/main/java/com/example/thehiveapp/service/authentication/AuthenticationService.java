@@ -1,10 +1,18 @@
 package com.example.thehiveapp.service.authentication;
 
-import com.example.thehiveapp.dto.authentication.LoginRequest;
-import com.example.thehiveapp.dto.authentication.SignUpRequest;
+import com.example.thehiveapp.dto.authentication.CompanySignUpRequest;
+import com.example.thehiveapp.dto.authentication.EmployerSignUpRequest;
+import com.example.thehiveapp.dto.authentication.StudentSignUpRequest;
+import com.example.thehiveapp.entity.user.Company;
+import com.example.thehiveapp.entity.user.Employer;
+import com.example.thehiveapp.entity.user.Student;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import com.example.thehiveapp.dto.email.ChangePasswordRequest;
 
 
-public interface AuthenticationService {
-    void signUp(SignUpRequest signUpRequest);
-    void login(LoginRequest loginRequest);
+public interface AuthenticationService extends UserDetailsService {
+    Company signUpCompany(CompanySignUpRequest signUpRequest);
+    Student signUpStudent(StudentSignUpRequest studentSignUpRequest);
+    Employer signUpEmployer(EmployerSignUpRequest employerSignUpRequest);
+    String changePassword(ChangePasswordRequest changePasswordRequest);
 }

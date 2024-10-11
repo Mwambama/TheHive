@@ -8,8 +8,10 @@
     <color name="weak">#FF0000</color>
     <color name="medium">#FFA500</color>
     <color name="strong">#008000</color>
+    <color name="gray">#808080</color>
     <!-- for signup buttons -->
     <color name="light_blue">#ADD8E6</color>
     <!-- Purple 700 color definition -->
     <color name="purple_700">#D32F2F</color> <!-- This is a red color -->
 </resources>
+

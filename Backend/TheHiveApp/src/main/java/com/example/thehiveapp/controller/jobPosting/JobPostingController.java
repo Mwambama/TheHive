@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -18,15 +19,15 @@ import java.util.List;
 @RequestMapping("/job-posting")
 public class JobPostingController {
 
-    private final JobPostingService jobPostingService;
+    @Autowired private JobPostingService jobPostingService;
 
-    @Autowired
-    public JobPostingController(JobPostingService jobPostingService) {
-        this.jobPostingService = jobPostingService;
-    }
+    public JobPostingController() {}
 
     @GetMapping
-    public List<JobPostingDto> getJobPostings() {
+    public List<JobPostingDto> getJobPostings(@RequestParam(value = "employerId", required = false) Long employerId) {
+        if (employerId != null) {
+            return jobPostingService.getJobPostingsByEmployerId(employerId);
+        }
         return jobPostingService.getJobPostings();
     }
 
@@ -46,7 +47,8 @@ public class JobPostingController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteJobPosting(@PathVariable Long id) {
+    public String deleteJobPosting(@PathVariable Long id) {
         jobPostingService.deleteJobPosting(id);
+        return "Job posting successfully deleted";
     }
 }

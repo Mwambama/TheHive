@@ -9,11 +9,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Data
 @Table(name = "employer_invitation")
 public class EmployerInvitation {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="employer_invitation_id")
@@ -25,28 +32,4 @@ public class EmployerInvitation {
 
     @Column(name = "email")
     private String email;
-
-    public Long getEmployerInvitationId() {
-        return employerInvitationId;
-    }
-
-    public void setEmployerInvitationId(Long employerInvitationId) {
-        this.employerInvitationId = employerInvitationId;
-    }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 }

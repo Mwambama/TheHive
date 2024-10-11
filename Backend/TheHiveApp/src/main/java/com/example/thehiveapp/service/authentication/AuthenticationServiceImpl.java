@@ -1,85 +1,120 @@
 package com.example.thehiveapp.service.authentication;
 
+import com.example.thehiveapp.dto.authentication.CompanySignUpRequest;
+import com.example.thehiveapp.dto.authentication.CustomUserDetails;
 import com.example.thehiveapp.config.SecurityConfig;
-import com.example.thehiveapp.dto.authentication.LoginRequest;
-import com.example.thehiveapp.dto.authentication.SignUpRequest;
+import com.example.thehiveapp.dto.authentication.BaseSignUpRequest;
+import com.example.thehiveapp.dto.authentication.EmployerSignUpRequest;
+import com.example.thehiveapp.dto.authentication.StudentSignUpRequest;
+import com.example.thehiveapp.dto.email.ChangePasswordRequest;
+import com.example.thehiveapp.dto.email.EmailDetails;
 import com.example.thehiveapp.entity.authentication.Authentication;
 import com.example.thehiveapp.entity.user.Company;
-import com.example.thehiveapp.entity.user.Student;
 import com.example.thehiveapp.entity.user.Employer;
+import com.example.thehiveapp.entity.user.Student;
+import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.enums.user.Role;
 import com.example.thehiveapp.repository.authentication.AuthenticationRepository;
+import com.example.thehiveapp.service.email.EmailService;
 import com.example.thehiveapp.service.user.CompanyService;
+import com.example.thehiveapp.service.user.EmployerService;
 import com.example.thehiveapp.service.user.StudentService;
 import com.example.thehiveapp.service.user.UserService;
+import com.example.thehiveapp.utilities.SignUpUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    @Autowired AuthenticationRepository authenticationRepository;
-
+    @Autowired private AuthenticationRepository authenticationRepository;
     @Autowired private SecurityConfig securityConfig;
-
     @Autowired private CompanyService companyService;
-
     @Autowired private StudentService studentService;
-
     @Autowired private UserService userService;
+    @Autowired private EmployerService employerService;
+    @Autowired private EmailService emailService;
 
-    // @Autowired private EmployerService employerService;
+    @Override
+    public UserDetails loadUserByUsername(String email) {
+        User user = userService.getUserByEmail(email);
+        return new CustomUserDetails(user, authenticationRepository);
+    }
 
+    @Override
     @Transactional
-    public void signUp(SignUpRequest signUpRequest) {
-        Long userId;
-        switch (signUpRequest.getRole()) {
-            case company -> userId = createCompany(signUpRequest);
-            case employer -> userId = createEmployer(signUpRequest);
-            case student -> userId = createStudent(signUpRequest);
-            default -> throw new IllegalArgumentException("Invalid role: " + signUpRequest.getRole());
-        }
-        createAuthentication(signUpRequest, userId);
-    }
-
-    private void createAuthentication(SignUpRequest signUpRequest, Long userId) {
-        Authentication authentication = new Authentication();
-        authentication.setUserId(userId);
-        authentication.setPassword(securityConfig.passwordEncoder().encode(signUpRequest.getPassword()));
-        authenticationRepository.save(authentication);
-    }
-
-    public void login(LoginRequest loginRequest){
-        Long userId = userService.getIdByEmail(loginRequest.getEmail(), loginRequest.getRole());
-        Authentication authentication = authenticationRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException("User not found"));
-        boolean isPasswordMatch = securityConfig.passwordEncoder().matches(loginRequest.getPassword(), authentication.getPassword());
-        if (!isPasswordMatch) {
-            throw new IllegalArgumentException("Invalid password for email: " + loginRequest.getEmail());
-        }
-    }
-
-
-    private Long createCompany(SignUpRequest signUpRequest) {
+    public Company signUpCompany(CompanySignUpRequest signUpRequest) {
         Company company = new Company();
         company.setEmail(signUpRequest.getEmail());
         company.setName(signUpRequest.getName());
-        company.setRole(Role.company);
+        company.setRole(Role.COMPANY);
         companyService.createCompany(company);
-        return company.getUserId();
+        createAuthentication(signUpRequest, company.getUserId());
+        return company;
     }
 
-    private Long createEmployer(SignUpRequest signUpRequest) {
-        return 1L;
-        // TODO
+    @Override
+    @Transactional
+    public Student signUpStudent(StudentSignUpRequest studentSignUpRequest) {
+        Student student = new Student();
+        student.setEmail(studentSignUpRequest.getEmail());
+        student.setName(studentSignUpRequest.getName());
+        student.setRole(Role.STUDENT);
+        student.setUniversity(studentSignUpRequest.getUniversity());
+        studentService.createStudent(student);
+        createAuthentication(studentSignUpRequest, student.getUserId());
+        emailService.sendEmailWithLogo(EmailDetails.builder()
+                .name(studentSignUpRequest.getName())
+                .subject("Welcome to The Hive!")
+                .recipient(studentSignUpRequest.getEmail())
+                .messageBody(SignUpUtils.STUDENT_SUCCESSFUL_SIGNUP_MESSAGE)
+                .build());
+        return student;
     }
 
-    private Long createStudent(SignUpRequest signUpRequest) {
-        return 2L;
-        // TODO
+    @Override
+    @Transactional
+    public Employer signUpEmployer(EmployerSignUpRequest employerSignUpRequest) {
+        Employer employer = new Employer();
+        employer.setEmail(employerSignUpRequest.getEmail());
+        employer.setName(employerSignUpRequest.getName());
+        employer.setRole(Role.EMPLOYER);
+        Company company = companyService.getCompanyById(employerSignUpRequest.getCompanyId());
+        employer.setCompanyId(company.getUserId());
+        employerService.createEmployer(employer);
+        createAuthentication(employerSignUpRequest, employer.getUserId());
+        emailService.sendEmailWithLogo(EmailDetails.builder()
+                .name(employerSignUpRequest.getName())
+                .subject("Welcome to The Hive!")
+                .recipient(employerSignUpRequest.getEmail())
+                .messageBody(SignUpUtils.EMPLOYER_SUCCESSFUL_SIGNUP_MESSAGE)
+                .build());
+        return employer;
     }
+
+    @Override
+    public String changePassword(ChangePasswordRequest changePasswordRequest) {
+        if (!changePasswordRequest.getPassword().equals(changePasswordRequest.getConfirmPassword())){
+            return "Passwords do not match! Try again!";
+        }
+        User user = userService.getUserByEmail(changePasswordRequest.getEmail());
+        Authentication authentication = authenticationRepository.findById(user.getUserId()).orElseThrow(
+                () -> new ResourceNotFoundException("User not found"));
+        authentication.setPassword(securityConfig.passwordEncoder().encode(changePasswordRequest.getConfirmPassword()));
+        authenticationRepository.save(authentication);
+        return "Password changed successfully";
+    }
+
+    private void createAuthentication(BaseSignUpRequest baseSignUpRequest, Long userId) {
+        Authentication authentication = new Authentication();
+        authentication.setUserId(userId);
+        authentication.setPassword(securityConfig.passwordEncoder().encode(baseSignUpRequest.getPassword()));
+        authenticationRepository.save(authentication);
+    }
+
 }
 
