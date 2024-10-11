@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         goToCompanyActivityButton = findViewById(R.id.goToCompanyActivityButton);
         goToLoginActivityButton = findViewById(R.id.goToLoginActivityButton);
         goToStudentMainActivityButton = findViewById(R.id.goToStudentMainActivityButton);
-        goToEmployerActivityButton = findViewById(R.id.goToEmployerActivityButton); // Add the correct button ID
+        goToEmployerActivityButton = findViewById(R.id.goToEmployerActivityButton);
 
         // Set OnClickListener for Signup Button
         mainSignupBtn.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +61,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, StudentMainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // Navigate to EmployerActivity
+        goToEmployerActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, EmployerMainActivity.class);
                 startActivity(intent);
             }
         });
