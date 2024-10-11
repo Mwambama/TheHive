@@ -51,6 +51,11 @@
             android:exported="true">
         </activity>
 
+        <!-- Student Activity -->
+        <activity android:name=".student_user.StudentMainActivity"
+            android:exported="true">
+        </activity>
+
         <!-- Admin Activity -->
         <activity android:name=".admin_user.AdminMainActivity"
             android:exported="true">
