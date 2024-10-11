@@ -14,10 +14,8 @@ import com.example.hiveeapp.employer_user.display.PostedJobs;
 import com.example.hiveeapp.employer_user.model.ChatActivity;
 import com.example.hiveeapp.employer_user.model.CreateJobsActivity;
 import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
-import com.example.hiveeapp.registration.LoginActivity;
+import com.example.hiveeapp.registration.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.IOException;
