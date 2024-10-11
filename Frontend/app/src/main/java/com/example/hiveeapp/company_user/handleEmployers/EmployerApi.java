@@ -320,8 +320,6 @@ public class EmployerApi {
                 String city = addressData.optString("city", "");
                 if (city.isEmpty()) {
                     return "City is required.";
-                } else if (!city.matches("[a-zA-Z]+")) {
-                    return "City must contain only letters.";
                 }
 
                 // Validate state - must be exactly 2 letters
