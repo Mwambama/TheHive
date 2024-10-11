@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -107,6 +108,12 @@ public class employersignupActivity extends AppCompatActivity {
                         }
                     }
             );
+
+                // Set a retry policy with a timeout of 10 seconds (10000 ms)
+               jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    10000, // Timeout in milliseconds (10 seconds)
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
             // Add request to the Volley request queue
             VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);

@@ -3,6 +3,8 @@ package com.example.hiveeapp.registration.signup;
 import android.content.Intent;
 import android.text.InputType;
 import android.widget.ImageButton;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.example.hiveeapp.R;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -105,6 +107,12 @@ public class studentsignupActivity extends AppCompatActivity {
                         }
                     }
             );
+
+              // Set a retry policy with a timeout of 10 seconds (10000 ms)
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    10000, // Timeout in milliseconds (10 seconds)
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
             // Add request to the Volley request queue
             VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);

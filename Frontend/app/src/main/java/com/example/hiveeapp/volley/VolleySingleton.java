@@ -31,11 +31,6 @@ public class VolleySingleton {
     }
 
     public <T> void addToRequestQueue(Request<T> req) {
-        // Set a retry policy with a timeout of 10 seconds (10000 ms)
-        req.setRetryPolicy(new DefaultRetryPolicy(
-                10000, // Timeout in milliseconds (10 seconds)
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         // Add the request to the request queue
         getRequestQueue().add(req);
