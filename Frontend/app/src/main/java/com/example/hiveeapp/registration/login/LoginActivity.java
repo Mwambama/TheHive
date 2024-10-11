@@ -3,6 +3,7 @@ package com.example.hiveeapp.registration.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
@@ -10,23 +11,22 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.android.volley.Request;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.admin_user.AdminMainActivity;
 import com.example.hiveeapp.company_user.CompanyMainActivity;
-import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.registration.forgotPassword.ForgotPasswordActivity;
 import com.example.hiveeapp.registration.signup.studentsignupActivity;
-import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,10 +35,13 @@ import java.util.Map;
  */
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String TAG = "LoginActivity";
+
     private EditText emailField, passwordField;
     private MaterialButton loginButton;
     private TextView forgotPasswordButton, registerText;
     private ProgressBar loadingProgressBar;
+    private TextView roleMessageTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         forgotPasswordButton = findViewById(R.id.forgotPasswordButton);
         registerText = findViewById(R.id.registerText);
         loadingProgressBar = findViewById(R.id.loadingProgressBar);
+        roleMessageTextView = findViewById(R.id.roleMessageTextView);
     }
 
     /**
@@ -154,15 +158,42 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void handleLoginSuccess(JSONObject response) {
         try {
+            // Log the entire response
+            Log.d(TAG, "Login response: " + response.toString());
+
             // Parse the server response for user role
-            String role = response.getString("role");
+            String role = extractUserRole(response);
+
+            // Log the extracted role
+            Log.d(TAG, "User role: " + role);
+
             navigateToUserActivity(role); // Navigate to the corresponding activity
         } catch (JSONException e) {
             e.printStackTrace();
-            showSnackbar(getString(R.string.error_parsing_response));
+            showSnackbar("Error parsing server response.");
+            Log.e(TAG, "Error parsing login response: " + e.getMessage());
         } finally {
             showLoading(false);
         }
+    }
+
+    /**
+     * Extracts the user role from the server response.
+     *
+     * @param response The JSON response from the server.
+     * @return The role of the user.
+     * @throws JSONException If parsing fails.
+     */
+    private String extractUserRole(JSONObject response) throws JSONException {
+        if (response.has("role")) {
+            return response.getString("role").trim().toUpperCase();
+        } else if (response.has("user")) {
+            JSONObject userObject = response.getJSONObject("user");
+            if (userObject.has("role")) {
+                return userObject.getString("role").trim().toUpperCase();
+            }
+        }
+        return "UNKNOWN";
     }
 
     /**
@@ -171,27 +202,21 @@ public class LoginActivity extends AppCompatActivity {
      * @param role The role of the user (e.g., STUDENT, EMPLOYER, COMPANY, ADMIN).
      */
     private void navigateToUserActivity(String role) {
-        Intent intent;
         switch (role) {
-            case "STUDENT":
-                intent = new Intent(LoginActivity.this, StudentMainActivity.class);
-                break;
-            case "EMPLOYER":
-                intent = new Intent(LoginActivity.this, EmployerMainActivity.class);
-                break;
             case "COMPANY":
-                intent = new Intent(LoginActivity.this, CompanyMainActivity.class);
-                break;
-            case "ADMIN":
-                intent = new Intent(LoginActivity.this, AdminMainActivity.class);
+                // Proceed as usual for COMPANY users
+                Intent companyIntent = new Intent(LoginActivity.this, CompanyMainActivity.class);
+                startActivity(companyIntent);
+                overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+                finish();
                 break;
             default:
-                showSnackbar(getString(R.string.user_type_not_recognized));
-                return;
+                // Show the message on the screen for other user roles
+                roleMessageTextView.setVisibility(View.VISIBLE);  // Display the message
+                roleMessageTextView.setText("We are still building your page, hold tight!");
+                Log.d(TAG, "User role not implemented: " + role);
+                break;
         }
-        startActivity(intent);
-        overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
-        finish();
     }
 
     /**
@@ -261,6 +286,6 @@ public class LoginActivity extends AppCompatActivity {
      * @param message The message to display.
      */
     private void showSnackbar(String message) {
-        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show();
     }
 }
