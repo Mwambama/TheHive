@@ -49,15 +49,11 @@ public class InvitationManagementActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_invitations) {
-                // Stay on this activity since it's the invitation page
-                Toast.makeText(InvitationManagementActivity.this, "You are already on this page", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (itemId == R.id.navigation_employers) {
-                // Navigate to Employer List Activity
                 startActivity(new Intent(InvitationManagementActivity.this, EmployerListActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_main_user_page) {
-                // Navigate to the Company Main User Page
                 startActivity(new Intent(InvitationManagementActivity.this, CompanyMainActivity.class));
                 return true;
             }
