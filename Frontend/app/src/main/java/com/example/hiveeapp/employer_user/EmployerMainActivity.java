@@ -17,11 +17,15 @@ import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EmployerMainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -77,16 +81,36 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
     }
 
     private List<PostedJobs> loadJobsFromAssets() {
-        Gson gson = new Gson();
-        Type jobListType = new TypeToken<List<PostedJobs>>() {}.getType();
+        List<PostedJobs> jobs = new ArrayList<>();
         try {
             InputStream inputStream = getAssets().open("jobs.json");
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            return gson.fromJson(reader, jobListType);
-        } catch (IOException e) {
+            StringBuilder jsonBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonBuilder.append(line);
+            }
+
+            // Parse JSON data
+            JSONArray jsonArray = new JSONArray(jsonBuilder.toString());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonJob = jsonArray.getJSONObject(i);
+                // Use constructor to create PostedJobs objects
+                PostedJobs job = new PostedJobs(
+                        jsonJob.getString("jobId"),
+                        jsonJob.getString("jobTitle"),
+                        jsonJob.getString("jobDescription"),
+                        jsonJob.getString("jobType"),
+                        jsonJob.getString("salaryRequirements"),
+                        jsonJob.getString("ageRequirement"),
+                        jsonJob.getString("minimumGpa")
+                );
+                jobs.add(job);
+            }
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
-            return null;
         }
+        return jobs;
     }
 
     @Override

@@ -6,6 +6,10 @@ import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.hiveeapp.employer_user.display.AddJobActivity;
+import com.example.hiveeapp.employer_user.model.ChatActivity;
+import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.content.Intent;
 import android.view.MenuItem;

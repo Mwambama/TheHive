@@ -51,11 +51,6 @@
             android:exported="true">
         </activity>
 
-        <!-- Student Activity -->
-<!--        <activity android:name=".student_user.StudentMainActivity"-->
-<!--            android:exported="true">-->
-<!--        </activity>-->
-
         <!-- Admin Activity -->
         <activity android:name=".admin_user.AdminMainActivity"
             android:exported="true">
@@ -69,18 +64,12 @@
         <!-- Company Add/Delete/Get/Update Invitation Activity -->
         <activity android:name=".company_user.invitations.InvitationManagementActivity" />
         <activity android:name=".company_user.invitations.InvitationCreationActivity" />
-        <activity android:name=".company_user.invitations.AddInvitationActivity" />
 
 <!--          page for the employer-->
         <activity android:name=".employer_user.EmployerMainActivity" android:exported="true"/>
         <activity android:name=".employer_user.model.TrackingApplicationActivity" android:exported="true"/>
 <!--        <activity android:name=".employer_user.ChatActivity" android:exported="true"/>-->
         <activity android:name=".employer_user.model.employerinfoActivity" android:exported="true"/>
-
-
-
-
-
 
         <!-- forgot password Activity -->
         <activity android:name=".registration.forgotPassword.ForgotPasswordActivity" />
