@@ -17,7 +17,7 @@
         android:usesCleartextTraffic="true">
 
         <!--Login Activity-->
-        <activity android:name=".registration.LoginActivity" />
+        <activity android:name=".registration.login.LoginActivity" />
 
         <!-- Main Activity -->
         <activity
@@ -29,31 +29,48 @@
             </intent-filter>
         </activity>
 
-        <!-- Company Data Activity -->
-        <activity android:name=".volley.JsonArrReqActivity" />
+<!--                       got to sign up page-->
+        <activity android:name=".registration.signup.signupActivity" android:exported="true">
+           </activity>
+
+        <!--                go to student signup activity -->
+        <activity android:name=".registration.signup.studentsignupActivity" android:exported="true">
+        </activity>
+<!--                       go to employer signup activity -->
+        <activity android:name=".registration.signup.employersignupActivity" android:exported="true">
+
+        </activity>
+
+        <activity android:name=".registration.signup.companysignupActivity" android:exported="true">
+
+        </activity>
+
 
         <!-- Company Activity -->
-        <activity android:name=".company_user.CompanyActivity"
+        <activity android:name=".company_user.CompanyMainActivity"
             android:exported="true">
         </activity>
 
-        <!-- Company Add/Delete/Get/Update Activity -->
-        <activity android:name=".company_user.handleEmployers.CompanyActivityApi"/>
+        <!-- Student Activity -->
+<!--        <activity android:name=".student_user.StudentMainActivity"-->
+<!--            android:exported="true">-->
+<!--        </activity>-->
 
-        <!-- Company See Employers Activity -->
-        <activity android:name=".company_user.handleEmployers.SeeUsersActivity" />
+        <!-- Admin Activity -->
+        <activity android:name=".admin_user.AdminMainActivity"
+            android:exported="true">
+        </activity>
+
+
+        <!-- Company Add/Delete/Get/Update Activity -->
+        <activity android:name=".company_user.handleEmployers.EmployerCreationActivity"/>
+        <activity android:name=".company_user.handleEmployers.EmployerListActivity"/>
 
         <!-- Company Add/Delete/Get/Update Invitation Activity -->
+        <activity android:name=".company_user.invitations.InvitationManagementActivity" />
+        <activity android:name=".company_user.invitations.InvitationCreationActivity" />
         <activity android:name=".company_user.invitations.AddInvitationActivity" />
-            <!--           employer main activity-->
-<!--        <activity android:name=".employer_user.EmployerMainActivity" android:exported="true"/>-->
-<!--        employer profile acitivity-->
-<!--        <activity android:name=".employer_user.employerProfileActivity" android:exported="true"/>-->
-<!--                employer profile layout-->
-<!--        <activity android:name=".model.employerProfile"/>-->
-<!--             page to add new jobs and information-->
-        <activity android:name=".employer_user.display.AddJobActivity" android:exported="true"/>
-        <activity android:name=".employer_user.model.CreateJobsActivity" android:exported="true"/>
+
 <!--          page for the employer-->
         <activity android:name=".employer_user.EmployerMainActivity" android:exported="true"/>
         <activity android:name=".employer_user.model.TrackingApplicationActivity" android:exported="true"/>
@@ -65,5 +82,12 @@
 
 
 
+        <!-- forgot password Activity -->
+        <activity android:name=".registration.forgotPassword.ForgotPasswordActivity" />
+        <activity android:name=".registration.forgotPassword.VerifyKeyActivity" />
+        <activity android:name=".registration.forgotPassword.ResetPasswordActivity" />
+        <activity android:name=".student_user.StudentMainActivity" />
+        <activity android:name=".student_user.studentProfileActivity" />
     </application>
+
 </manifest>

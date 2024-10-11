@@ -30,98 +30,71 @@ public class JsonArrReqActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_job);
+        setContentView(R.layout.activity_users);
 
         textView = findViewById(R.id.textView);
 
-        // Fetch job posts from the server
-        fetchJobPosts();
-    }
+        // Load the JSON data from assets
+        String jsonString = loadJSONFromAsset("sampledata/json/company/get_all_companies.json");
 
-    // Fetch job posts from the backend
-    private void fetchJobPosts() {
-        String url = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting"; // Replace with your server URL
+        if (jsonString != null) {
+            try {
+                // Parse the JSON array
+                JSONArray jsonArray = new JSONArray(jsonString);
+                StringBuilder jsonData = new StringBuilder();
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                url,
-                null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            StringBuilder jsonData = new StringBuilder();
+                // Loop through the array and append each company's details
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject company = jsonArray.getJSONObject(i);
 
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject job = response.getJSONObject(i);
+                    // Get basic company info
+                    String companyName = company.getString("name");
+                    String companyEmail = company.getString("email");
+                    String companyPhone = company.getString("phone");
 
-                                // Get job info
-                                String jobTitle = job.getString("jobTitle");
-                                String jobDescription = job.getString("jobDescription");
-                                String jobType = job.getString("jobType");
-                                String salaryRequirements = job.getString("salaryRequirements");
-                                String ageRequirement = job.getString("ageRequirement");
-                                String minimumGPA = job.getString("minimumGPA");
+                    // Get the nested address object
+                    JSONObject address = company.getJSONObject("address");
+                    String street = address.getString("street");
+                    String complement = address.getString("complement");
+                    String city = address.getString("city");
+                    String state = address.getString("state");
+                    int zipCode = address.getInt("zip_code");
 
-                                // Build the display string
-                                jsonData.append("Job Title: ").append(jobTitle)
-                                        .append("\nJob Description: ").append(jobDescription)
-                                        .append("\nJob Type: ").append(jobType)
-                                        .append("\nSalary Requirements: ").append(salaryRequirements)
-                                        .append("\nAge Requirement: ").append(ageRequirement)
-                                        .append("\nMinimum GPA: ").append(minimumGPA)
-                                        .append("\n\n");
-                            }
+                    // Build the display string
+                    jsonData.append("Company Name: ").append(companyName)
+                            .append("\nEmail: ").append(companyEmail)
+                            .append("\nPhone: ").append(companyPhone)
+                            .append("\nAddress: ").append(street)
+                            .append(", ").append(complement.isEmpty() ? "" : complement + ", ")
+                            .append(city).append(", ").append(state).append(" ").append(zipCode)
+                            .append("\n\n");
+                }
 
-                            // Display the data in the TextView
-                            textView.setText(jsonData.toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            textView.setText("Error parsing JSON data");
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        textView.setText("Error fetching job posts");
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() {
-                return createHeaders(); // Use the new method to get headers
+                // Display the data in the TextView
+                textView.setText(jsonData.toString());
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                textView.setText("Error parsing JSON data");
             }
-        };
-
-        VolleySingleton.getInstance(this).addToRequestQueue(jsonArrayRequest);
+        } else {
+            textView.setText("Failed to load JSON file");
+        }
     }
 
-    // Helper method to create headers with authorization for the currently logged-in user
-    private Map<String, String> createHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-
-        String username;
-        String password;
-
-        if (TESTING_MODE) {
-            // For testing purposes, use hardcoded credentials
-            username = "employer@example.com";
-            password = "Test@1234";
-        } else {
-            // Retrieve username and password from SharedPreferences
-            SharedPreferences preferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-            username = preferences.getString("username", null);
-            password = preferences.getString("password", null);
+    private String loadJSONFromAsset(String fileName) {
+        String json = null;
+        try {
+            InputStream is = getAssets().open(fileName);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
         }
-
-        if (username != null && password != null) {
-            String credentials = username + ":" + password;
-            String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-            headers.put("Authorization", auth);
-        }
-
-        return headers;
+        return json;
     }
 }

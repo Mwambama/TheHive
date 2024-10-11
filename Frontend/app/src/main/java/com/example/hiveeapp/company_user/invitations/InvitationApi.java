@@ -1,269 +1,242 @@
 package com.example.hiveeapp.company_user.invitations;
 
 import android.content.Context;
+import android.util.Base64;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * InvitationApi handles all network requests related to invitations for employer users.
+ * It includes functionality to send, update, retrieve, and delete invitations.
+ */
 public class InvitationApi {
 
-    private static final String BASE_URL = "https://2e7fd141-9a29-4eae-ac7f-4996f5e64e96.mock.pstmn.io/invitations/";
-    private static final String INVITATIONS_FILE = "invitations.json";
+    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer-invitation";
+    private static final String TAG = "InvitationApi";
+    private static final int COMPANY_ID = 1029; // Update this with the correct company ID if needed
 
-    // Helper method to read invitations from file
-    private static JSONArray readInvitationsFromFile(Context context) {
-        try {
-            FileInputStream fis = context.openFileInput(INVITATIONS_FILE);
-            byte[] data = new byte[fis.available()];
-            fis.read(data);
-            fis.close();
-            String jsonString = new String(data, "UTF-8");
-            Log.d("FileRead", "Invitations loaded from " + INVITATIONS_FILE);
-            return new JSONArray(jsonString);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new JSONArray();  // Return empty array if file does not exist
-        }
+    /**
+     * Generates the headers required for the API requests, including authorization.
+     *
+     * @param context The application context.
+     * @return A map of headers with content type and authorization credentials.
+     */
+    private static Map<String, String> getHeaders(Context context) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        // Replace these with actual user credentials or fetch from SharedPreferences
+        String username = "test@example.com";
+        String password = "Test@example1234";
+        String credentials = username + ":" + password;
+        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        headers.put("Authorization", auth);
+
+        return headers;
     }
 
-    // Helper method to write invitations to file
-    private static void writeInvitationsToFile(Context context, JSONArray invitations) {
-        try {
-            String jsonString = invitations.toString();
-            FileOutputStream fos = context.openFileOutput(INVITATIONS_FILE, Context.MODE_PRIVATE);
-            fos.write(jsonString.getBytes("UTF-8"));
-            fos.close();
-            Log.d("FileWrite", "Invitations saved to " + INVITATIONS_FILE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    /**
+     * Fetches a list of employer invitations from the server.
+     *
+     * @param context       The application context.
+     * @param listener      Listener for successful responses.
+     * @param errorListener Listener for handling errors.
+     */
+    public static void getInvitations(Context context,
+                                      Response.Listener<JSONArray> listener,
+                                      Response.ErrorListener errorListener) {
+        String url = BASE_URL;
+        Log.d(TAG, "GET Invitations Request URL: " + url);
 
-    // Helper method to generate a new ID
-    private static int generateNewId(JSONArray invitations) {
-        int newId = 1;
-        try {
-            for (int i = 0; i < invitations.length(); i++) {
-                JSONObject invitation = invitations.getJSONObject(i);
-                int id = invitation.getInt("id");
-                if (id >= newId) {
-                    newId = id + 1;
+        JsonArrayRequest request = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                listener,
+                error -> {
+                    String errorMsg = getErrorMessage(error);
+                    Log.e(TAG, "Error fetching invitations: " + errorMsg);
+                    errorListener.onErrorResponse(new VolleyError(errorMsg));
                 }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return InvitationApi.getHeaders(context);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return newId;
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    // Method to send an invitation (Create)
-    public static void sendInvitation(Context context, int companyId, String email, String message,
+    /**
+     * Deletes an invitation by its ID.
+     *
+     * @param context       The application context.
+     * @param invitationId  ID of the invitation to be deleted.
+     * @param listener      Listener for successful responses.
+     * @param errorListener Listener for handling errors.
+     */
+    public static void deleteInvitation(Context context, int invitationId,
+                                        Response.Listener<String> listener,
+                                        Response.ErrorListener errorListener) {
+        String deleteUrl = BASE_URL + "/" + invitationId;
+        Log.d(TAG, "DELETE Invitation Request URL: " + deleteUrl);
+
+        StringRequest request = new StringRequest(
+                Request.Method.DELETE,
+                deleteUrl,
+                listener,
+                error -> {
+                    String errorMsg = getErrorMessage(error);
+                    Log.e(TAG, "Error deleting invitation: " + errorMsg);
+                    errorListener.onErrorResponse(new VolleyError(errorMsg));
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return InvitationApi.getHeaders(context);
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    /**
+     * Updates an existing invitation.
+     *
+     * @param context       The application context.
+     * @param invitationId  ID of the invitation to be updated.
+     * @param newEmail      Updated email address.
+     * @param newMessage    Updated message content.
+     * @param listener      Listener for successful responses.
+     * @param errorListener Listener for handling errors.
+     */
+    public static void updateInvitation(Context context, int invitationId, String newEmail, String newMessage,
+                                        Response.Listener<JSONObject> listener,
+                                        Response.ErrorListener errorListener) {
+        JSONObject updatedInvitation = new JSONObject();
+
+        try {
+            // Set the updated invitation details
+            updatedInvitation.put("employerInvitationId", invitationId);
+            updatedInvitation.put("companyId", COMPANY_ID);
+            updatedInvitation.put("email", newEmail);
+            updatedInvitation.put("message", newMessage);
+
+            String updateUrl = BASE_URL;
+            Log.d(TAG, "PUT Invitation Request URL: " + updateUrl);
+            Log.d(TAG, "Updated Invitation Data Payload: " + updatedInvitation.toString());
+
+            JsonObjectRequest request = new JsonObjectRequest(
+                    Request.Method.PUT,
+                    updateUrl,
+                    updatedInvitation,
+                    listener,
+                    error -> {
+                        String errorMsg = getErrorMessage(error);
+                        Log.e(TAG, "Error updating invitation: " + errorMsg);
+                        errorListener.onErrorResponse(new VolleyError(errorMsg));
+                    }
+            ) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    return InvitationApi.getHeaders(context);
+                }
+            };
+
+            VolleySingleton.getInstance(context).addToRequestQueue(request);
+
+        } catch (JSONException e) {
+            Log.e(TAG, "Error updating invitation: " + e.getMessage());
+            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
+        }
+    }
+
+    /**
+     * Sends a new invitation.
+     *
+     * @param context       The application context.
+     * @param email         Recipient email address.
+     * @param message       Message to include with the invitation.
+     * @param listener      Listener for successful responses.
+     * @param errorListener Listener for handling errors.
+     */
+    public static void sendInvitation(Context context, String email, String message,
                                       Response.Listener<JSONObject> listener,
                                       Response.ErrorListener errorListener) {
-
-        // Create new invitation object locally
         JSONObject newInvitation = new JSONObject();
         try {
-            JSONArray invitations = readInvitationsFromFile(context);
-            int newId = generateNewId(invitations);
-            newInvitation.put("id", newId);
-            newInvitation.put("company_id", companyId);
-            newInvitation.put("email", email);
-            newInvitation.put("message", message);
+            newInvitation.put("companyId", COMPANY_ID); // Set company ID
+            newInvitation.put("email", email);          // Set recipient email
+            newInvitation.put("message", message);      // Set message content
 
-            // Add to invitations array
-            invitations.put(newInvitation);
-
-            // Write back to file
-            writeInvitationsToFile(context, invitations);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (JSONException e) {
+            Log.e(TAG, "Error creating invitation: " + e.getMessage());
             errorListener.onErrorResponse(new VolleyError(e.getMessage()));
             return;
         }
 
-        // Define the URL for sending the invitation
-        String invitationUrl = BASE_URL + "send";
+        String invitationUrl = BASE_URL;
+        Log.d(TAG, "POST Invitation Request URL: " + invitationUrl);
+        Log.d(TAG, "Invitation Data Payload: " + newInvitation.toString());
 
-        // Create a JsonObjectRequest to send the invitation
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 invitationUrl,
                 newInvitation,
-                response -> {
-                    listener.onResponse(response);
-                },
+                listener,
                 error -> {
-                    errorListener.onErrorResponse(error);
+                    String errorMsg = getErrorMessage(error);
+                    Log.e(TAG, "Error sending invitation: " + errorMsg);
+                    errorListener.onErrorResponse(new VolleyError(errorMsg));
                 }
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+                return InvitationApi.getHeaders(context);
             }
         };
 
-        // Add the request to the Volley request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    // Method to delete an invitation (Delete)
-    public static void deleteInvitation(Context context, int invitationId,
-                                        Response.Listener<JSONObject> listener,
-                                        Response.ErrorListener errorListener) {
-
-        try {
-            JSONArray invitations = readInvitationsFromFile(context);
-
-            // Find and remove invitation with the given id
-            boolean found = false;
-            for (int i = 0; i < invitations.length(); i++) {
-                JSONObject invitation = invitations.getJSONObject(i);
-                if (invitation.getInt("id") == invitationId) {
-                    invitations.remove(i);
-                    found = true;
-                    break;
-                }
+    /**
+     * Extracts a meaningful error message from the given VolleyError.
+     *
+     * @param error The VolleyError object containing error details.
+     * @return A user-friendly error message.
+     */
+    private static String getErrorMessage(VolleyError error) {
+        String errorMsg = "An unexpected error occurred";
+        if (error.networkResponse != null && error.networkResponse.data != null) {
+            try {
+                String errorData = new String(error.networkResponse.data, "UTF-8");
+                JSONObject jsonError = new JSONObject(errorData);
+                errorMsg = jsonError.optString("message", errorMsg);
+            } catch (Exception e) {
+                e.printStackTrace();
+                errorMsg = "Error parsing error message";
             }
-
-            if (found) {
-                // Write back to file
-                writeInvitationsToFile(context, invitations);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
-            return;
+        } else if (error.getMessage() != null) {
+            errorMsg = error.getMessage();
+        } else if (error instanceof AuthFailureError) {
+            errorMsg = "Authentication failed. Please check your credentials.";
         }
-
-        // Define the URL for deleting the invitation
-        String deleteUrl = BASE_URL + "delete/" + invitationId;
-
-        // Create a JsonObjectRequest to delete the invitation
-        JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.DELETE,
-                deleteUrl,
-                null,
-                response -> {
-                    // On success, you can update any additional data if needed
-                    listener.onResponse(response);
-                },
-                error -> {
-                    // Even if there is an error, we have already deleted the invitation locally
-                    errorListener.onErrorResponse(error);
-                }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
-            }
-        };
-
-        // Add the request to the Volley request queue
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
-    }
-
-    // Method to get invitations (Read)
-    public static void getInvitations(Context context,
-                                      Response.Listener<JSONArray> listener,
-                                      Response.ErrorListener errorListener) {
-
-        // Read invitations from local file
-        try {
-            JSONArray invitations = readInvitationsFromFile(context);
-
-            // Call the success listener
-            listener.onResponse(invitations);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
-        }
-    }
-
-    // Method to update an invitation (Update)
-    public static void updateInvitation(Context context, int invitationId, String newEmail, String newMessage,
-                                        Response.Listener<JSONObject> listener,
-                                        Response.ErrorListener errorListener) {
-
-        JSONObject updatedInvitation = null;
-
-        try {
-            JSONArray invitations = readInvitationsFromFile(context);
-
-            // Find the invitation with the given id
-            boolean found = false;
-            for (int i = 0; i < invitations.length(); i++) {
-                JSONObject invitation = invitations.getJSONObject(i);
-                if (invitation.getInt("id") == invitationId) {
-                    // Update the email and message
-                    invitation.put("email", newEmail);
-                    invitation.put("message", newMessage);
-                    updatedInvitation = invitation;
-                    found = true;
-                    break;
-                }
-            }
-
-            if (found) {
-                // Write back to file
-                writeInvitationsToFile(context, invitations);
-            } else {
-                errorListener.onErrorResponse(new VolleyError("Invitation not found"));
-                return;
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
-            return;
-        }
-
-        // Define the URL for updating the invitation
-        String updateUrl = BASE_URL + "update/" + invitationId;
-
-        // Create a JsonObjectRequest to update the invitation
-        JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.PUT,
-                updateUrl,
-                updatedInvitation,
-                response -> {
-                    // On success, you can update any additional data if needed
-                    listener.onResponse(response);
-                },
-                error -> {
-                    // Even if there is an error, we have already updated the invitation locally
-                    errorListener.onErrorResponse(error);
-                }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
-            }
-        };
-
-        // Add the request to the Volley request queue
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
+        return errorMsg;
     }
 }

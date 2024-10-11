@@ -1,0 +1,72 @@
+<!-- res/layout/activity_student_main.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Profile Button at the top right -->
+    <Button
+        android:id="@+id/btnProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp" />
+
+    <!-- Job Posting Card -->
+    <LinearLayout
+        android:id="@+id/jobCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Job Title -->
+        <TextView
+            android:id="@+id/jobTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Software Engineer - Intern"
+            android:textSize="24sp"
+            android:textColor="#000" />
+
+        <!-- Company Name -->
+        <TextView
+            android:id="@+id/companyName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Amazon"
+            android:textSize="18sp"
+            android:textColor="#666" />
+
+        <!-- Job Details -->
+        <TextView
+            android:id="@+id/jobDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remote | Full-time | $25/hr | Junior | New York"
+            android:textSize="16sp"
+            android:textColor="#666" />
+    </LinearLayout>
+
+    <!-- Swipe Left (Skip) Button at the bottom left -->
+    <Button
+        android:id="@+id/btnSkip"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="SKIP"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="16dp" />
+
+    <!-- Swipe Right (Apply) Button at the bottom right -->
+    <Button
+        android:id="@+id/btnApply"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="APPLY"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp" />
+</RelativeLayout>
