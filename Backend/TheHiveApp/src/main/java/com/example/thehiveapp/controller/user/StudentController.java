@@ -16,10 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/student")
 public class StudentController {
-    private final StudentService studentService;
 
-    @Autowired
-    public StudentController(StudentService studentService){ this.studentService = studentService; }
+    @Autowired private StudentService studentService;
+
+    public StudentController(){}
 
     @GetMapping
     public List<Student> getStudents() { return studentService.getStudents(); }
@@ -38,7 +38,8 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStudent(@PathVariable Long id) {
+    public String deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
+        return "Student account successfully deleted";
     }
 }

@@ -18,12 +18,9 @@ import java.util.List;
 @RequestMapping("/company")
 public class CompanyController {
 
-    private final CompanyService companyService;
+    @Autowired private CompanyService companyService;
 
-    @Autowired
-    public CompanyController(CompanyService companyService) {
-        this.companyService = companyService;
-    }
+    public CompanyController() {}
 
     @GetMapping
     public List<Company> getCompanies() {
@@ -46,7 +43,8 @@ public class CompanyController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCompany(@PathVariable Long id) {
+    public String deleteCompany(@PathVariable Long id) {
         companyService.deleteCompany(id);
+        return "Company account successfully deleted";
     }
 }

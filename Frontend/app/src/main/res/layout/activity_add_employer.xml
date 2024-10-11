@@ -3,19 +3,21 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
         <!-- Back Arrow Icon -->
         <ImageButton
             android:id="@+id/backArrowIcon"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="Back Arrow"
@@ -25,7 +27,7 @@
             android:src="@drawable/ic_back_arrow"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="#333333" />
+            app:tint="@android:color/white" />
 
         <!-- Title -->
         <TextView
@@ -35,116 +37,185 @@
             android:text="Add Employer"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="#333333"
+            android:textColor="@android:color/white"
             app:layout_constraintTop_toBottomOf="@id/backArrowIcon"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp" />
 
         <!-- Name Field -->
-        <EditText
-            android:id="@+id/nameField"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Name"
-            android:inputType="textPersonName"
-            app:layout_constraintTop_toBottomOf="@id/addEmployerTitle"
+            app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/addEmployerTitle"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nameField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name"
+                android:inputType="textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Email Field -->
-        <EditText
-            android:id="@+id/emailField"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            app:layout_constraintTop_toBottomOf="@id/nameField"
+            app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/nameTextInputLayout"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Phone Field -->
-        <EditText
-            android:id="@+id/phoneField"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/phoneTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Phone"
-            android:inputType="phone"
-            app:layout_constraintTop_toBottomOf="@id/emailField"
+            app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/emailTextInputLayout"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/phoneField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Phone"
+                android:inputType="phone" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Street Field -->
-        <EditText
-            android:id="@+id/streetField"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/streetTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Street"
-            app:layout_constraintTop_toBottomOf="@id/phoneField"
+            app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/phoneTextInputLayout"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/streetField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Street" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Complement Field (Added) -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/complementTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintTop_toBottomOf="@id/streetTextInputLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/complementField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Complement" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- City Field -->
-        <EditText
-            android:id="@+id/cityField"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/cityTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="City"
-            app:layout_constraintTop_toBottomOf="@id/streetField"
+            app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/complementTextInputLayout"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
 
-        <!-- State Field -->
-        <EditText
-            android:id="@+id/stateField"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cityField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="City" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- State and Zip Code Fields (Side by Side) -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/stateTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="State"
-            app:layout_constraintTop_toBottomOf="@id/cityField"
+            app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/zipField"
-            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@id/zipTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/cityTextInputLayout"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp" />
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp">
 
-        <!-- Zip Field -->
-        <EditText
-            android:id="@+id/zipField"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/stateField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="State" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/zipTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Zip Code"
-            android:inputType="number"
-            app:layout_constraintTop_toBottomOf="@id/cityField"
-            app:layout_constraintStart_toEndOf="@id/stateField"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toEndOf="@id/stateTextInputLayout"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/cityTextInputLayout"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/zipField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Zip Code"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Add Employer Button -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/addEmployerButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Add Employer"
             android:textColor="@android:color/white"
-            android:backgroundTint="#6200EE"
-            app:layout_constraintTop_toBottomOf="@id/zipField"
+            android:backgroundTint="@color/colorPrimaryDark"
+            app:cornerRadius="8dp"
+            app:layout_constraintTop_toBottomOf="@id/zipTextInputLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="16dp"

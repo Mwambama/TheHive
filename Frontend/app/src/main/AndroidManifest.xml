@@ -29,10 +29,38 @@
             </intent-filter>
         </activity>
 
+<!--                       got to sign up page-->
+        <activity android:name=".registration.signup.signupActivity" android:exported="true">
+           </activity>
+
+        <!--                go to student signup activity -->
+        <activity android:name=".registration.signup.studentsignupActivity" android:exported="true">
+        </activity>
+<!--                       go to employer signup activity -->
+        <activity android:name=".registration.signup.employersignupActivity" android:exported="true">
+
+        </activity>
+
+        <activity android:name=".registration.signup.companysignupActivity" android:exported="true">
+
+        </activity>
+
+
         <!-- Company Activity -->
-        <activity android:name=".company_user.CompanyActivity"
+        <activity android:name=".company_user.CompanyMainActivity"
             android:exported="true">
         </activity>
+
+        <!-- Student Activity -->
+<!--        <activity android:name=".student_user.StudentMainActivity"-->
+<!--            android:exported="true">-->
+<!--        </activity>-->
+
+        <!-- Admin Activity -->
+        <activity android:name=".admin_user.AdminMainActivity"
+            android:exported="true">
+        </activity>
+
 
         <!-- Company Add/Delete/Get/Update Activity -->
         <activity android:name=".company_user.handleEmployers.EmployerCreationActivity"/>

@@ -1,9 +1,7 @@
 package com.example.thehiveapp.controller.user;
 
 import com.example.thehiveapp.entity.user.Employer;
-import com.example.thehiveapp.entity.user.Student;
 import com.example.thehiveapp.service.user.EmployerService;
-import com.example.thehiveapp.service.user.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,13 +18,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/employer")
 public class EmployerController {
-    @Autowired
-    private EmployerService employerService;
+
+    @Autowired private EmployerService employerService;
 
     public EmployerController(){}
 
     @GetMapping
-    public List<Employer> getEmployers() { return employerService.getEmployers(); }
+    public List<Employer> getEmployers(@RequestParam(value = "companyId", required = false) Long companyId) {
+        if (companyId != null) {
+           return employerService.getEmployersByCompanyId(companyId);
+        }
+        return employerService.getEmployers();
+    }
 
     @PostMapping
     public Employer createEmployer(@RequestBody Employer request) { return employerService.createEmployer(request); }
@@ -41,8 +45,9 @@ public class EmployerController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteEmployer(@PathVariable Long id) {
+    public String deleteEmployer(@PathVariable Long id) {
         employerService.deleteEmployer(id);
+        return "Employer account successfully deleted";
     }
 }
 

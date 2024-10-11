@@ -1,0 +1,101 @@
+package com.example.hiveeapp.company_user;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+import com.example.hiveeapp.MainActivity;
+import com.example.hiveeapp.R;
+import com.example.hiveeapp.company_user.handleEmployers.EmployerListActivity;
+import com.example.hiveeapp.company_user.invitations.InvitationManagementActivity;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
+
+public class CompanyMainActivity extends AppCompatActivity {
+
+    private MaterialToolbar topAppBar;
+    private BottomNavigationView bottomNavigationView;
+    private TabLayout tabLayout;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_company);
+
+        // Initialize views
+        topAppBar = findViewById(R.id.topAppBar);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        tabLayout = findViewById(R.id.tabLayout);
+
+        // Set up the top app bar with a back button
+        topAppBar.setNavigationOnClickListener(v -> {
+            Intent intent = new Intent(CompanyMainActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        // Add tabs programmatically for "Company Info", "Invitations", and "Employers"
+        tabLayout.addTab(tabLayout.newTab().setText("Company Info"));
+        tabLayout.addTab(tabLayout.newTab().setText("Invitations"));
+        tabLayout.addTab(tabLayout.newTab().setText("Employers"));
+
+        // Set up the tab layout listener for fragment switching
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                Fragment selectedFragment;
+                switch (tab.getPosition()) {
+                    case 0:
+                        selectedFragment = new CompanyInfoFragment();
+                        break;
+                    case 1:
+                        selectedFragment = new InvitationsFragment();
+                        break;
+                    case 2:
+                        selectedFragment = new EmployersFragment();
+                        break;
+                    default:
+                        selectedFragment = new CompanyInfoFragment();
+                }
+                loadFragment(selectedFragment);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
+
+        // Load default fragment (Company Info) when the activity is opened
+        loadFragment(new CompanyInfoFragment());
+
+        // Set up bottom navigation view for navigation to Employers and Invitations
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_invitations) {
+                startActivity(new Intent(CompanyMainActivity.this, InvitationManagementActivity.class));
+                return true;
+            } else if (itemId == R.id.navigation_employers) {
+                startActivity(new Intent(CompanyMainActivity.this, EmployerListActivity.class));
+                return true;
+            } else if (itemId == R.id.navigation_main_user_page) {
+                return true;
+            }
+            return false;
+        });
+        bottomNavigationView.setSelectedItemId(R.id.navigation_main_user_page);
+    }
+
+    // Helper method to load fragments into the frame layout
+    private void loadFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frameLayout, fragment)
+                .commit();
+    }
+}

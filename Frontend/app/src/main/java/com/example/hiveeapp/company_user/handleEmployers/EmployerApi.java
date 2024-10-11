@@ -1,271 +1,487 @@
 package com.example.hiveeapp.company_user.handleEmployers;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.Base64;
 import android.util.Log;
+import android.util.Patterns;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EmployerApi {
 
-    private static final String BASE_URL = "";
-    private static final String EMPLOYERS_FILE = "employers.json";
+    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer";
+    private static final String ADDRESS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/address";
+    private static final String TAG = "EmployerApi";
+    private static final int MAX_PHONE_LENGTH = 10;
+    private static final int MIN_PHONE_LENGTH = 7;
+    private static final int ZIP_CODE_LENGTH = 5;
 
-    // Helper method to read employers from file
-    private static JSONArray readEmployersFromFile(Context context) {
-        try {
-            FileInputStream fis = context.openFileInput(EMPLOYERS_FILE);
-            byte[] data = new byte[fis.available()];
-            fis.read(data);
-            fis.close();
-            String jsonString = new String(data, "UTF-8");
-            Log.d("FileRead", "Employers loaded from " + EMPLOYERS_FILE);
-            return new JSONArray(jsonString);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new JSONArray();  // Return empty array if file does not exist
-        }
+    /**
+     * Generates the headers for API requests with authorization.
+     *
+     * @param context The application context used to retrieve user credentials.
+     * @return A map of headers including content type and authorization credentials.
+     */
+    public static Map<String, String> getHeaders(Context context) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        // Mocked username and password for testing purposes
+        String username = "test@example.com";
+        String password = "Test@example1234";
+
+        String credentials = username + ":" + password;
+        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        headers.put("Authorization", auth);
+
+        return headers;
     }
 
-    // Helper method to write employers to file
-    private static void writeEmployersToFile(Context context, JSONArray employers) {
-        try {
-            String jsonString = employers.toString();
-            FileOutputStream fos = context.openFileOutput(EMPLOYERS_FILE, Context.MODE_PRIVATE);
-            fos.write(jsonString.getBytes("UTF-8"));
-            fos.close();
-            Log.d("FileWrite", "Employers saved to " + EMPLOYERS_FILE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Helper method to generate a new ID
-    private static int generateNewId(JSONArray employers) {
-        int newId = 1;
-        try {
-            for (int i = 0; i < employers.length(); i++) {
-                JSONObject employer = employers.getJSONObject(i);
-                int id = employer.getInt("id");
-                if (id >= newId) {
-                    newId = id + 1;
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return newId;
-    }
-
-    // Get Employers (READ)
+    /**
+     * Retrieves a list of employers from the server.
+     *
+     * @param context       The application context.
+     * @param listener      Response listener for successful fetch.
+     * @param errorListener Error listener for handling errors.
+     */
     public static void getEmployers(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
-        // Read employers from local file
-        JSONArray localEmployers = readEmployersFromFile(context);
-        listener.onResponse(localEmployers);
+        String url = BASE_URL;
+        Log.d(TAG, "GET Employers Request URL: " + url);
 
-        // Optionally, you can also fetch from the server and update the local file
-        String url = BASE_URL + "get_all";
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
                 null,
-                response -> {
-                    // Store the server data locally
-                    writeEmployersToFile(context, response);
-                    listener.onResponse(response);
-                },
-                errorListener
+                listener,
+                error -> handleErrorResponse("Error fetching employers", error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+                return EmployerApi.getHeaders(context);
             }
         };
 
-        // Add request to queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    // Add Employer (CREATE)
-    public static void addEmployer(Context context, String name, String email, String phone, String street, String city, String state, String zip,
-                                   Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        // Create the employer JSON object
-        JSONObject employer = new JSONObject();
-        try {
-            JSONArray employers = readEmployersFromFile(context);
-            int newId = generateNewId(employers);
+    /**
+     * Adds a new address to the server.
+     *
+     * @param context       The application context.
+     * @param addressData   JSON object containing address details.
+     * @param listener      Response listener for successful address creation.
+     * @param errorListener Error listener for handling errors.
+     */
+    public static void addAddress(Context context, JSONObject addressData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = ADDRESS_URL;
+        Log.d(TAG, "POST Address Request URL: " + url);
+        Log.d(TAG, "Request Payload: " + addressData.toString());
 
-            employer.put("id", newId);
-            employer.put("name", name);
-            employer.put("email", email);
-            employer.put("phone", phone);
-
-            JSONObject address = new JSONObject();
-            address.put("street", street);
-            address.put("city", city);
-            address.put("state", state);
-            address.put("zip_code", zip);
-
-            employer.put("address", address);
-
-            // Add to employers array
-            employers.put(employer);
-
-            // Write back to file
-            writeEmployersToFile(context, employers);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
-            return;
-        }
-
-        //Sync with the server
-        String url = BASE_URL + "add";
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
-                employer,
+                addressData,
                 listener,
-                errorListener
+                error -> handleErrorResponse("Error adding address", error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+                return EmployerApi.getHeaders(context);
             }
         };
 
-        // Add request to queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    // Update Employer (UPDATE)
-    public static void updateEmployer(Context context, int employerId, String name, String email, String phone, String street, String city, String state, String zip,
-                                      Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        JSONObject updatedEmployer = null;
+    /**
+     * Adds a new employer with an associated address.
+     *
+     * @param context       The application context.
+     * @param employerData  JSON object containing employer details.
+     * @param listener      Response listener for successful employer creation.
+     * @param errorListener Error listener for handling errors.
+     */
+    public static void addEmployerWithAddress(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        // Validate employer data before proceeding
+        String validationError = validateEmployerData(employerData);
+        if (validationError != null) {
+            errorListener.onErrorResponse(new VolleyError(validationError));
+            return; // Validation failed, do not proceed
+        }
+
+        // Extract address data from employerData
+        JSONObject addressData;
         try {
-            JSONArray employers = readEmployersFromFile(context);
-
-            // Find the employer with the given ID
-            boolean found = false;
-            for (int i = 0; i < employers.length(); i++) {
-                JSONObject employer = employers.getJSONObject(i);
-                if (employer.getInt("id") == employerId) {
-                    // Update the employer details
-                    employer.put("name", name);
-                    employer.put("email", email);
-                    employer.put("phone", phone);
-
-                    JSONObject address = new JSONObject();
-                    address.put("street", street);
-                    address.put("city", city);
-                    address.put("state", state);
-                    address.put("zip_code", zip);
-                    employer.put("address", address);
-
-                    updatedEmployer = employer;
-                    found = true;
-                    break;
-                }
-            }
-
-            if (found) {
-                // Write updated employers back to file
-                writeEmployersToFile(context, employers);
-            } else {
-                errorListener.onErrorResponse(new VolleyError("Employer not found"));
-                return;
-            }
-
+            addressData = employerData.getJSONObject("address");
         } catch (JSONException e) {
             e.printStackTrace();
-            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
+            Log.e(TAG, "Error extracting address data.");
+            errorListener.onErrorResponse(new VolleyError("Error extracting address data."));
             return;
         }
 
-        // Optionally, sync with the server
-        String url = BASE_URL + "update/" + employerId;
+        // Remove address from employerData to avoid circular reference
+        employerData.remove("address");
+
+        // Ensure addressId is set to null
+        try {
+            addressData.put("addressId", JSONObject.NULL);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Error setting addressId to null.");
+            errorListener.onErrorResponse(new VolleyError("Error setting addressId to null."));
+            return;
+        }
+
+        // First, save the address
+        addAddress(context, addressData, addressResponse -> {
+            // Get the saved addressId from the address creation response
+            long addressId;
+            try {
+                addressId = addressResponse.getLong("addressId");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "Error parsing address response.");
+                errorListener.onErrorResponse(new VolleyError("Error parsing address response."));
+                return;
+            }
+
+            // Set the addressId in employerData
+            JSONObject address = new JSONObject();
+            try {
+                address.put("addressId", addressId);
+                employerData.put("address", address);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "Error setting addressId in employerData.");
+                errorListener.onErrorResponse(new VolleyError("Error setting addressId in employerData."));
+                return;
+            }
+
+            // Now, save the employer
+            addEmployer(context, employerData, listener, errorListener);
+
+        }, error -> handleErrorResponse("Error adding address: " + getErrorMessage(error), error, errorListener));
+    }
+
+    /**
+     * Internal method to add a new employer (called after address creation).
+     *
+     * @param context       The application context.
+     * @param employerData  JSON object containing employer details.
+     * @param listener      Response listener for successful employer creation.
+     * @param errorListener Error listener for handling errors.
+     */
+    private static void addEmployer(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL;
+        Log.d(TAG, "POST Employer Request URL: " + url);
+        Log.d(TAG, "Employer Data Payload: " + employerData.toString());
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                employerData,
+                listener,
+                error -> handleErrorResponse("Error adding employer: " + getErrorMessage(error), error, errorListener)
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return EmployerApi.getHeaders(context);
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    /**
+     * Updates an existing employer with or without an address.
+     *
+     * @param context       The application context.
+     * @param employerData  JSON object containing employer details.
+     * @param listener      Response listener for successful employer update.
+     * @param errorListener Error listener for handling errors.
+     */
+    public static void updateEmployer(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        // Validate employer data before proceeding
+        String validationError = validateEmployerData(employerData);
+        if (validationError != null) {
+            // Show a personalized error message if validation fails
+            Toast.makeText(context, validationError, Toast.LENGTH_LONG).show();
+            errorListener.onErrorResponse(new VolleyError(validationError));
+            return; // Validation failed, do not proceed
+        }
+
+        // Extract address data from employerData if present
+        JSONObject addressData = employerData.optJSONObject("address");
+
+        if (addressData != null) {
+            if (addressData.has("addressId")) {
+                // If addressId exists, update the address
+                updateAddress(context, addressData, addressResponse -> {
+                    // Address updated successfully, proceed to update employer
+                    performEmployerUpdate(context, employerData, listener, errorListener);
+                }, error -> handleErrorResponse("Error updating address: " + getErrorMessage(error), error, errorListener));
+            } else {
+                // Address doesn't have an ID, create new address
+                try {
+                    addressData.put("addressId", JSONObject.NULL);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "Error setting addressId to null in addressData.");
+                    errorListener.onErrorResponse(new VolleyError("Error setting addressId to null in addressData."));
+                    return;
+                }
+
+                addAddress(context, addressData, addressResponse -> {
+                    // Get the saved addressId from the address creation response
+                    long addressId;
+                    try {
+                        addressId = addressResponse.getLong("addressId");
+                        // Set the addressId in employerData
+                        JSONObject address = new JSONObject();
+                        address.put("addressId", addressId);
+                        employerData.put("address", address);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "Error parsing address response.");
+                        errorListener.onErrorResponse(new VolleyError("Error parsing address response."));
+                        return;
+                    }
+
+                    // Proceed to update employer
+                    performEmployerUpdate(context, employerData, listener, errorListener);
+
+                }, error -> handleErrorResponse("Error adding address: " + getErrorMessage(error), error, errorListener));
+            }
+        } else {
+            // No address to update, proceed to update employer
+            performEmployerUpdate(context, employerData, listener, errorListener);
+        }
+    }
+
+    /**
+     * Validates the employer data before sending it to the server.
+     *
+     * @param employerData The employer JSON object.
+     * @return A string containing the validation error message, or null if validation passes.
+     */
+    public static String validateEmployerData(JSONObject employerData) {
+        try {
+            // Validate name
+            String name = employerData.optString("name", "");
+            if (name.isEmpty()) {
+                return "Name is required.";
+            }
+
+            // Validate email
+            String email = employerData.optString("email", "");
+            if (email.isEmpty()) {
+                return "Email is required.";
+            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                return "Invalid email format.";
+            }
+
+            // Validate phone
+            String phone = employerData.optString("phone", "");
+            if (phone.isEmpty()) {
+                return "Phone number is required.";
+            } else if (phone.length() > MAX_PHONE_LENGTH || phone.length() < MIN_PHONE_LENGTH || !phone.matches("\\d+")) {
+                return "Phone number must be between " + MIN_PHONE_LENGTH + " and " + MAX_PHONE_LENGTH + " digits and contain only numbers.";
+            }
+
+            // Validate address if present
+            JSONObject addressData = employerData.optJSONObject("address");
+            if (addressData != null) {
+                // Validate street
+                String street = addressData.optString("street", "");
+                if (street.isEmpty()) {
+                    return "Street address is required.";
+                }
+
+                // Validate city - must contain only letters
+                String city = addressData.optString("city", "");
+                if (city.isEmpty()) {
+                    return "City is required.";
+                }
+
+                // Validate state - must be exactly 2 letters
+                String state = addressData.optString("state", "");
+                if (state.isEmpty()) {
+                    return "State is required.";
+                } else if (!state.matches("^[A-Z]{2}$")) {
+                    return "State must be exactly 2 uppercase letters (e.g., IA, IL).";
+                }
+
+                // Validate zip code
+                String zipCode = addressData.optString("zipCode", "");
+                if (zipCode.isEmpty()) {
+                    return "Zip code is required.";
+                } else if (zipCode.length() != ZIP_CODE_LENGTH || !zipCode.matches("\\d{" + ZIP_CODE_LENGTH + "}")) {
+                    return "Zip code must be " + ZIP_CODE_LENGTH + " digits.";
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error validating employer data.";
+        }
+
+        return null; // Validation passed
+    }
+
+    /**
+     * Updates an existing address on the server.
+     *
+     * @param context       The application context.
+     * @param addressData   JSON object containing address details.
+     * @param listener      Response listener for successful address update.
+     * @param errorListener Error listener for handling errors.
+     */
+    public static void updateAddress(Context context, JSONObject addressData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = ADDRESS_URL;
+        Log.d(TAG, "PUT Address Request URL: " + url);
+        Log.d(TAG, "Request Payload: " + addressData.toString());
+
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.PUT,
                 url,
-                updatedEmployer,
+                addressData,
                 listener,
-                errorListener
+                error -> handleErrorResponse("Error updating address: " + getErrorMessage(error), error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+                return EmployerApi.getHeaders(context);
             }
         };
 
-        // Add request to queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    // Delete Employer (DELETE)
-    public static void deleteEmployer(Context context, int employerId, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        try {
-            JSONArray employers = readEmployersFromFile(context);
+    /**
+     * Internal method to perform employer update after any address updates.
+     *
+     * @param context       The application context.
+     * @param employerData  JSON object containing employer details.
+     * @param listener      Response listener for successful employer update.
+     * @param errorListener Error listener for handling errors.
+     */
+    private static void performEmployerUpdate(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL;
+        Log.d(TAG, "PUT Employer Request URL: " + url);
+        Log.d(TAG, "Employer Data Payload: " + employerData.toString());
 
-            // Find and remove the employer with the given ID
-            boolean found = false;
-            for (int i = 0; i < employers.length(); i++) {
-                JSONObject employer = employers.getJSONObject(i);
-                if (employer.getInt("id") == employerId) {
-                    employers.remove(i);
-                    found = true;
-                    break;
-                }
-            }
-
-            if (found) {
-                // Write updated employers back to file
-                writeEmployersToFile(context, employers);
-            } else {
-                errorListener.onErrorResponse(new VolleyError("Employer not found"));
-                return;
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            errorListener.onErrorResponse(new VolleyError(e.getMessage()));
-            return;
-        }
-
-        //Sync with the server
-        String url = BASE_URL + "delete/" + employerId;
         JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.DELETE,
+                Request.Method.PUT,
                 url,
-                null,
+                employerData,
                 listener,
-                errorListener
+                error -> handleErrorResponse("Error updating employer: " + getErrorMessage(error), error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+                return EmployerApi.getHeaders(context);
             }
         };
 
-        // Add request to queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    /**
+     * Deletes an employer from the server.
+     *
+     * @param context       The application context.
+     * @param employerId    ID of the employer to be deleted.
+     * @param listener      Response listener for successful employer deletion.
+     * @param errorListener Error listener for handling errors.
+     */
+    public static void deleteEmployer(Context context, long employerId, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "/" + employerId;
+        Log.d(TAG, "DELETE Employer Request URL: " + url);
+
+        // Create a StringRequest for the DELETE method
+        StringRequest request = new StringRequest(
+                Request.Method.DELETE,
+                url,
+                response -> {
+                    Log.d(TAG, "Employer deleted successfully: " + response);
+                    listener.onResponse(response);  // Notify the listener of success
+                },
+                error -> {
+                    String errorMsg = getErrorMessage(error);
+                    handleErrorResponse("Error deleting employer: " + errorMsg, error, errorListener);
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return EmployerApi.getHeaders(context);
+            }
+        };
+
+        // Add the request to the Volley request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    /**
+     * Handles error responses from the server, logs the details, and invokes the error listener.
+     *
+     * @param errorMessagePrefix Prefix for the error message to log.
+     * @param error              The VolleyError object.
+     * @param errorListener      Error listener to handle the error response.
+     */
+    private static void handleErrorResponse(String errorMessagePrefix, VolleyError error, Response.ErrorListener errorListener) {
+        String errorMsg = getErrorMessage(error);
+        String fullErrorMessage = errorMessagePrefix + ": " + errorMsg;
+        Log.e(TAG, fullErrorMessage);
+        errorListener.onErrorResponse(new VolleyError(fullErrorMessage));
+    }
+
+    /**
+     * Extracts a meaningful error message from a VolleyError.
+     *
+     * @param error The VolleyError object.
+     * @return A string containing the error message.
+     */
+    private static String getErrorMessage(VolleyError error) {
+        String errorMsg = "An unexpected error occurred";
+        if (error.networkResponse != null && error.networkResponse.data != null) {
+            try {
+                String errorData = new String(error.networkResponse.data, "UTF-8");
+
+                // Attempt to parse errorData as JSON
+                try {
+                    JSONObject jsonError = new JSONObject(errorData);
+                    errorMsg = jsonError.optString("message", errorMsg);
+                } catch (JSONException jsonException) {
+                    // If parsing fails, use the raw errorData
+                    errorMsg = errorData;
+                }
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                errorMsg = "Error parsing error message";
+            }
+        } else if (error.getMessage() != null) {
+            errorMsg = error.getMessage();
+        }
+        return errorMsg;
     }
 }

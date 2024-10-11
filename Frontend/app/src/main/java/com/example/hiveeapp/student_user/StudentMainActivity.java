@@ -2,13 +2,17 @@ package com.example.hiveeapp.student_user;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.hiveeapp.R;
 
 public class StudentMainActivity extends AppCompatActivity {
+
+    private ImageButton backArrowIcon;
+    private TextView userTypeTextView;
 
     private TextView jobTitle, companyName, jobDetails;
     private Button btnSkip, btnApply, btnProfile;
@@ -16,7 +20,7 @@ public class StudentMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_main);
+        setContentView(R.layout.activity_student_main); // Ensure this is the correct layout file
 
         // Initialize views
         jobTitle = findViewById(R.id.jobTitle);

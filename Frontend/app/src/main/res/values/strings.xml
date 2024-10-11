@@ -1,3 +1,65 @@
 <resources>
-    <string name="app_name">HIveeApp</string>
+
+    <!-- Application Name -->
+    <string name="app_name">Hivee App</string>
+
+    <!-- Login Screen -->
+    <string name="login">Login</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="dont_have_account">Don\'t have an account? Register</string>
+    <string name="enter_email_password">Please enter email and password.</string>
+    <string name="login_failed">Login failed: </string>
+    <string name="error_parsing_response">Error parsing server response.</string>
+    <string name="user_type_not_recognized">User type not recognized.</string>
+
+    <!-- Accessibility Descriptions for Login Screen -->
+    <string name="illustration_desc">Illustration of login page</string>
+    <string name="email_field_desc">Email input field</string>
+    <string name="password_field_desc">Password input field</string>
+    <string name="forgot_password_desc">Forgot password button</string>
+    <string name="register_account_desc">Register account text</string>
+
+    <!-- Forgot Password Screen -->
+    <string name="forgot_password_title">Forgot Password</string>
+    <string name="forgot_password_email_hint">Enter your email</string>
+    <string name="forgot_password_email_desc">Input your email address to reset password</string>
+
+    <!-- Send Verification Key Button -->
+    <string name="send_verification_key">Send Verification Key</string>
+    <string name="email_hint">Enter your email</string>
+
+    <!-- Footer Text for Forgot Password -->
+    <string name="footer_verification_key_text">A verification key will be sent to your email.</string>
+
+    <!-- Verify Key Screen -->
+    <string name="verify_key_title">Enter Verification Key</string>
+    <string name="key_input_hint">5-letter key</string>
+    <string name="verify_key_button">Verify Key</string>
+    <string name="verify_key_desc">Enter the 5-letter verification key</string>
+
+    <!-- Step Indicators for Multi-Step Forms -->
+    <string name="step_1_of_3">Step 1 of 3</string>
+    <string name="step_2_of_3">Step 2 of 3</string>
+    <string name="step_3_of_3">Step 3 of 3</string>
+
+    <!-- Reset Password Screen -->
+    <string name="reset_password_title">Reset Password</string>
+
+    <!-- Input Field Hints and Descriptions for Reset Password Screen -->
+    <string name="new_password_hint">New Password</string>
+    <string name="confirm_new_password_hint">Confirm New Password</string>
+
+    <!-- Accessibility Descriptions for Reset Password Screen -->
+    <string name="new_password_field_desc">Enter your new password</string>
+    <string name="confirm_new_password_field_desc">Confirm your new password</string>
+
+    <!-- Reset Password Button -->
+    <string name="reset_password_button">Reset Password</string>
+
+    <!-- Back Arrow Description -->
+    <string name="back_arrow_desc">Back Arrow</string>
+
 </resources>
