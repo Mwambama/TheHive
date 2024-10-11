@@ -20,6 +20,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.company_user.CompanyMainActivity;
 import com.example.hiveeapp.registration.forgotPassword.ForgotPasswordActivity;
+import com.example.hiveeapp.registration.signup.signupActivity;
 import com.example.hiveeapp.registration.signup.studentsignupActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
 import com.google.android.material.button.MaterialButton;
@@ -84,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Register text click event
         registerText.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, studentsignupActivity.class);
+            Intent intent = new Intent(LoginActivity.this, signupActivity.class);
             startActivity(intent);
             overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
         });

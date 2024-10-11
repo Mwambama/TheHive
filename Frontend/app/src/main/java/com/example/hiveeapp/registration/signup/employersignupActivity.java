@@ -124,9 +124,10 @@ public class employersignupActivity extends AppCompatActivity {
         if (password.length() < 7) {
             return false;
         }
+        boolean hasLowercase = !password.equals(password.toUpperCase());
         boolean hasUppercase = !password.equals(password.toLowerCase());
         boolean hasDigit = password.matches(".*\\d.*");
-        return hasUppercase && hasDigit;
+        return hasLowercase && hasUppercase && hasDigit;
     }
 
     private void togglePasswordVisibility() {
