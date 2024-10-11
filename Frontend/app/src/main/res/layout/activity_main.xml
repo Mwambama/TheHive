@@ -40,15 +40,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
 
-    <!-- Button to go to StudentMainActivity -->
-    <Button
-        android:id="@+id/goToStudentMainActivityButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="Go to Student Main"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/goToLoginActivityButton" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

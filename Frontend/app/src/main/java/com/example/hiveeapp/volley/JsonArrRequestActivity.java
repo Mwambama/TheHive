@@ -34,7 +34,7 @@ public class JsonArrRequestActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.signup_email_edt);  // Initialize the Email EditText
         universityEditText = findViewById(R.id.signup_university_edt);  // Initialize the University EditText
 
-        String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/signup/student"; // Replace with your server URL
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/signup/employer"; // Replace with your server URL
 
 
         mainSignupBtn.setOnClickListener(new View.OnClickListener() {
