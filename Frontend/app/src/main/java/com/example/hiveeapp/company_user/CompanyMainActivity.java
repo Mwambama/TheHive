@@ -84,13 +84,10 @@ public class CompanyMainActivity extends AppCompatActivity {
                 startActivity(new Intent(CompanyMainActivity.this, EmployerListActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_main_user_page) {
-                Toast.makeText(CompanyMainActivity.this, "You are already on this page", Toast.LENGTH_SHORT).show();
                 return true;
             }
             return false;
         });
-
-        // Set the default selected item in the bottom navigation
         bottomNavigationView.setSelectedItemId(R.id.navigation_main_user_page);
     }
 

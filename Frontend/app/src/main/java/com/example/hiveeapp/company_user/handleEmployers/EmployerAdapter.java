@@ -58,6 +58,15 @@ public class EmployerAdapter extends RecyclerView.Adapter<EmployerAdapter.Employ
         return new EmployerViewHolder(view);
     }
 
+    /**
+     * Binds the data for a specific employer to the view holder and handles
+     * the display of employer information such as name, email, phone, and address.
+     * It also sets up functionality for updating and deleting employers, depending
+     * on the editability of the list.
+     *
+     * @param holder   The view holder to bind the employer data to.
+     * @param position The position of the employer in the RecyclerView list.
+     */
     @Override
     public void onBindViewHolder(EmployerViewHolder holder, int position) {
         try {

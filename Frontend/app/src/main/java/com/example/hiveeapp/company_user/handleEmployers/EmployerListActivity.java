@@ -59,7 +59,6 @@ public class EmployerListActivity extends AppCompatActivity {
                 startActivity(new Intent(EmployerListActivity.this, InvitationManagementActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_employers) {
-                Toast.makeText(EmployerListActivity.this, "You are already on this page", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (itemId == R.id.navigation_main_user_page) {
                 startActivity(new Intent(EmployerListActivity.this, CompanyMainActivity.class));
@@ -67,6 +66,7 @@ public class EmployerListActivity extends AppCompatActivity {
             }
             return false;
         });
+        bottomNavigationView.setSelectedItemId(R.id.navigation_employers);
     }
 
     @Override
