@@ -133,6 +133,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         }
     }
 
+    // log out of the profile | out fo the app
     private void logout() {
         Intent intent = new Intent(EmployerMainActivity.this, LoginActivity.class);
         // Clear the back stack so that user cannot return to the employer main activity
