@@ -27,9 +27,12 @@ public class employerinfoActivity extends AppCompatActivity {
     private EditText cityEditText;
     private EditText stateEditText;
     private EditText zipCodeEditText;
+    private EditText fieldEditText;
 
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer"; // Replace with your actual API URL
-    private String employerId; // Unique identifier for the employer
+    private String userId; // Unique identifier for the user
+    private String addressId; // Unique identifier for the address
+    private String companyId; // Unique identifier for the company
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,21 +48,25 @@ public class employerinfoActivity extends AppCompatActivity {
         cityEditText = findViewById(R.id.city);
         stateEditText = findViewById(R.id.state);
         zipCodeEditText = findViewById(R.id.zip_code);
+        fieldEditText = findViewById(R.id.field);
 
         Button updateButton = findViewById(R.id.update_button);
         Button deleteButton = findViewById(R.id.delete_button);
 
-        // Fetch initial employer data (this could be a specific employer's ID)
-        employerId = "180"; // Set the employer ID you want to fetch
-        fetchEmployerInfo(employerId);
+        // Set the user ID you want to fetch (same as employerId)
+        userId = "312";
 
-        updateButton.setOnClickListener(v -> updateEmployerInfo());
+        updateButton.setOnClickListener(v -> {
+            fetchEmployerInfo(userId);
+            updateEmployerInfo();
+        });
+
         deleteButton.setOnClickListener(v -> deleteEmployerInfo());
     }
 
     // Fetch employer information from the server
-    private void fetchEmployerInfo(String employerId) {
-        String url = BASE_URL + "get" + employerId; // Construct URL for fetching
+    private void fetchEmployerInfo(String userId) {
+        String url = BASE_URL + "/get/" + userId; // Construct URL for fetching
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
@@ -89,11 +96,19 @@ public class employerinfoActivity extends AppCompatActivity {
             nameEditText.setText(response.getString("name"));
             emailEditText.setText(response.getString("email"));
             phoneEditText.setText(response.getString("phone"));
-            streetEditText.setText(response.getJSONObject("address").getString("street"));
-            complementEditText.setText(response.getJSONObject("address").getString("complement"));
-            cityEditText.setText(response.getJSONObject("address").getString("city"));
-            stateEditText.setText(response.getJSONObject("address").getString("state"));
-            zipCodeEditText.setText(response.getJSONObject("address").getString("zipCode"));
+            fieldEditText.setText(response.getString("field"));
+
+            JSONObject address = response.getJSONObject("address");
+            streetEditText.setText(address.getString("street"));
+            complementEditText.setText(address.getString("complement"));
+            cityEditText.setText(address.getString("city"));
+            stateEditText.setText(address.getString("state"));
+            zipCodeEditText.setText(address.getString("zipCode"));
+
+            // Save IDs for updating
+            userId = response.getString("userId");
+            addressId = address.getString("addressId");
+            companyId = response.getString("companyId");
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error parsing employer info", Toast.LENGTH_SHORT).show();
@@ -102,18 +117,26 @@ public class employerinfoActivity extends AppCompatActivity {
 
     // Update employer information
     private void updateEmployerInfo() {
-        String url = BASE_URL; // Construct URL for updating
+        String url = BASE_URL + "/" + userId; // Construct URL for updating
 
         JSONObject jobData = new JSONObject();
         try {
+            jobData.put("userId", userId);
             jobData.put("name", nameEditText.getText().toString());
             jobData.put("email", emailEditText.getText().toString());
             jobData.put("phone", phoneEditText.getText().toString());
-            jobData.put("street", streetEditText.getText().toString());
-            jobData.put("complement", complementEditText.getText().toString());
-            jobData.put("city", cityEditText.getText().toString());
-            jobData.put("state", stateEditText.getText().toString());
-            jobData.put("zipCode", zipCodeEditText.getText().toString());
+            jobData.put("field", fieldEditText.getText().toString());
+            jobData.put("companyId", companyId);
+
+            JSONObject address = new JSONObject();
+            address.put("addressId", addressId);
+            address.put("street", streetEditText.getText().toString());
+            address.put("complement", complementEditText.getText().toString());
+            address.put("city", cityEditText.getText().toString());
+            address.put("state", stateEditText.getText().toString());
+            address.put("zipCode", zipCodeEditText.getText().toString());
+
+            jobData.put("address", address);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -142,7 +165,7 @@ public class employerinfoActivity extends AppCompatActivity {
 
     // Delete employer information
     private void deleteEmployerInfo() {
-        String url = BASE_URL + "/delete/" + employerId; // Construct URL for deleting
+        String url = BASE_URL + "/delete/" + userId; // Construct URL for deleting
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.DELETE,

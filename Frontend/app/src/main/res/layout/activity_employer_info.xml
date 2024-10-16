@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- Existing EditText fields for employer information -->
+    <!-- EditText fields for employer information -->
     <EditText
         android:id="@+id/name"
         android:layout_width="0dp"
@@ -102,17 +102,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <EditText
+        android:id="@+id/field"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Field"
+        android:minHeight="56dp"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/zip_code"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- Update Button -->
     <Button
         android:id="@+id/update_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Update"
-        app:layout_constraintTop_toBottomOf="@id/zip_code"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:padding="12dp"
-        android:minHeight="56dp" />
+        android:minHeight="56dp"
+        app:layout_constraintTop_toBottomOf="@id/field"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Delete Button -->
     <Button
@@ -120,10 +131,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Delete Account"
+        android:padding="12dp"
+        android:minHeight="56dp"
         app:layout_constraintTop_toBottomOf="@id/update_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="12dp"
-        android:minHeight="56dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
