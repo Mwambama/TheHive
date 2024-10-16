@@ -50,7 +50,7 @@ public class employerinfoActivity extends AppCompatActivity {
         Button deleteButton = findViewById(R.id.delete_button);
 
         // Fetch initial employer data (this could be a specific employer's ID)
-        employerId = "311"; // Set the employer ID you want to fetch
+        employerId = "180"; // Set the employer ID you want to fetch
         fetchEmployerInfo(employerId);
 
         updateButton.setOnClickListener(v -> updateEmployerInfo());
@@ -59,7 +59,7 @@ public class employerinfoActivity extends AppCompatActivity {
 
     // Fetch employer information from the server
     private void fetchEmployerInfo(String employerId) {
-        String url = BASE_URL + "/" + employerId; // Construct URL for fetching
+        String url = BASE_URL + "get" + employerId; // Construct URL for fetching
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
