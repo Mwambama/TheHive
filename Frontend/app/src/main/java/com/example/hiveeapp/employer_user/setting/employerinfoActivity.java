@@ -1,4 +1,4 @@
-package com.example.hiveeapp.employer_user.model;
+package com.example.hiveeapp.employer_user.setting;
 
 import android.os.Bundle;
 import android.widget.Button;

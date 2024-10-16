@@ -69,7 +69,7 @@
         <activity android:name=".employer_user.EmployerMainActivity" android:exported="true"/>
         <activity android:name=".employer_user.model.TrackingApplicationActivity" android:exported="true"/>
 <!--    <activity android:name=".employer_user.model." android:exported="true"/>-->
-        <activity android:name=".employer_user.model.employerinfoActivity" android:exported="true"/>
+        <activity android:name=".employer_user.setting.employerinfoActivity" android:exported="true"/>
         <activity android:name=".employer_user.model.CreateJobsActivity" android:exported="true"/>
 
 
