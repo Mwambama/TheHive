@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -16,6 +17,9 @@ import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class employerinfoActivity extends AppCompatActivity {
 
@@ -29,9 +33,9 @@ public class employerinfoActivity extends AppCompatActivity {
     private EditText zipCodeEditText;
     private EditText fieldEditText;
 
-    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer"; // Replace with your actual API URL
+    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/student"; // Replace with your actual API URL
     private String userId; // Unique identifier for the user
-    private String addressId; // Unique identifier for the address
+    private String addressId = "312"; // Hardcoded for testing
     private String companyId; // Unique identifier for the company
 
     @Override
@@ -56,11 +60,11 @@ public class employerinfoActivity extends AppCompatActivity {
         // Set the user ID you want to fetch (same as employerId)
         userId = "312";
 
-        updateButton.setOnClickListener(v -> {
-            fetchEmployerInfo(userId);
-            updateEmployerInfo();
-        });
+        // Fetch employer info when activity starts
+        fetchEmployerInfo(userId);
 
+        // Set listeners for the buttons
+        updateButton.setOnClickListener(v -> updateEmployerInfo());
         deleteButton.setOnClickListener(v -> deleteEmployerInfo());
     }
 
@@ -158,7 +162,16 @@ public class employerinfoActivity extends AppCompatActivity {
                         Toast.makeText(employerinfoActivity.this, "Error updating employer info", Toast.LENGTH_SHORT).show();
                     }
                 }
-        );
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "employer@example.com:Test@1234";
+                String auth = "Basic " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
 
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
@@ -185,7 +198,16 @@ public class employerinfoActivity extends AppCompatActivity {
                         Toast.makeText(employerinfoActivity.this, "Error deleting employer info", Toast.LENGTH_SHORT).show();
                     }
                 }
-        );
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "employer@example.com:Test@1234";
+                String auth = "Basic " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
 
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
