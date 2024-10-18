@@ -14,7 +14,7 @@ import com.example.hiveeapp.employer_user.display.PostedJobs;
 import com.example.hiveeapp.employer_user.model.ChatActivity;
 import com.example.hiveeapp.employer_user.model.CreateJobsActivity;
 import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
-import com.example.hiveeapp.employer_user.setting.employerinfoActivity;
+import com.example.hiveeapp.employer_user.setting.ViewEmployerInfoActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -59,7 +59,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         // Initialize View Info button
         viewInfoButton = findViewById(R.id.view_employer_info_button);
         viewInfoButton.setOnClickListener(view -> {
-            Intent intent = new Intent(EmployerMainActivity.this, employerinfoActivity.class);
+            Intent intent = new Intent(EmployerMainActivity.this, ViewEmployerInfoActivity.class);
             startActivity(intent);
         });
 

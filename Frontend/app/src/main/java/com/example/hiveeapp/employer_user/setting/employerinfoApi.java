@@ -6,6 +6,8 @@ import android.util.Log;
 import android.util.Patterns;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -22,11 +24,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EmployerApi {
+public class employerinfoApi extends AppCompatActivity {
 
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer";
     private static final String ADDRESS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/address";
-    private static final String TAG = "EmployerApi";
+    private static final String TAG = "employerinfoApi";
     private static final int MAX_PHONE_LENGTH = 10;
     private static final int MIN_PHONE_LENGTH = 7;
     private static final int ZIP_CODE_LENGTH = 5;
@@ -36,8 +38,8 @@ public class EmployerApi {
         headers.put("Content-Type", "application/json");
 
         // Mocked username and password for testing purposes
-        String username = "test@example.com";
-        String password = "Test@example1234";
+        String username = "employer@example.com";
+        String password = "Test@1234";
         String credentials = username + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
         headers.put("Authorization", auth);
@@ -58,7 +60,7 @@ public class EmployerApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return EmployerApi.getHeaders(context);
+                return employerinfoApi.getHeaders(context);
             }
         };
 
@@ -85,7 +87,7 @@ public class EmployerApi {
                     addressData.put("addressId", addressId);
                     employerData.put("address", addressData);
                 } catch (JSONException e) {
-                    handleErrorResponse("Error setting addressId in employerData.", e, errorListener);
+                    handleJsonException("Error setting addressId in employerData.", e, errorListener);
                     return;
                 }
                 performEmployerUpdate(context, employerData, listener, errorListener);
@@ -108,7 +110,7 @@ public class EmployerApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return EmployerApi.getHeaders(context);
+                return employerinfoApi.getHeaders(context);
             }
         };
 
@@ -129,7 +131,7 @@ public class EmployerApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return EmployerApi.getHeaders(context);
+                return employerinfoApi.getHeaders(context);
             }
         };
 
@@ -150,7 +152,7 @@ public class EmployerApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return EmployerApi.getHeaders(context);
+                return employerinfoApi.getHeaders(context);
             }
         };
 
@@ -171,7 +173,7 @@ public class EmployerApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return EmployerApi.getHeaders(context);
+                return employerinfoApi.getHeaders(context);
             }
         };
 
@@ -241,18 +243,17 @@ public class EmployerApi {
         errorListener.onErrorResponse(new VolleyError(fullErrorMessage));
     }
 
+    private static void handleJsonException(String errorMessagePrefix, JSONException e, Response.ErrorListener errorListener) {
+        String fullErrorMessage = errorMessagePrefix + ": " + e.getMessage();
+        Log.e(TAG, fullErrorMessage);
+        errorListener.onErrorResponse(new VolleyError(fullErrorMessage));
+    }
+
     private static String getErrorMessage(VolleyError error) {
-        String errorMsg = "An unexpected error occurred";
+        String errorMsg = "Unknown error";
         if (error.networkResponse != null && error.networkResponse.data != null) {
             try {
-                String errorData = new String(error.networkResponse.data, "UTF-8");
-
-                try {
-                    JSONObject jsonError = new JSONObject(errorData);
-                    errorMsg = jsonError.optString("message", errorMsg);
-                } catch (JSONException e) {
-                    errorMsg = errorData;  // Fallback to raw error data
-                }
+                errorMsg = new String(error.networkResponse.data, "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
