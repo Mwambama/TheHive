@@ -76,7 +76,7 @@ public class JsonArrRequestActivity2 extends AppCompatActivity {
         String zipCode = zipCodeEditText.getText().toString();
 
         // Assuming the URL is set properly
-        String url = "http://coms-3090-063.class.las.iastate.edu:8080/employer/update";
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/employer/update" + userId;
 
         // Create a JSONObject with the collected data
         JSONObject jsonObject = new JSONObject();
