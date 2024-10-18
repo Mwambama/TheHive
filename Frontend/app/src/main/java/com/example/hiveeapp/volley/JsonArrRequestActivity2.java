@@ -17,11 +17,12 @@ import org.json.JSONObject;
 
 public class JsonArrRequestActivity2 extends AppCompatActivity {
     TextView textView;
-    private Button updateInfoBtn;
+    private Button updateInfoBtn, deleteInfoBtn;
     private EditText nameEditText, passwordEditText, companyIdEditText, emailEditText, phoneEditText, fieldEditText;
     private EditText streetEditText, complementEditText, cityEditText, stateEditText, zipCodeEditText;
 
-    private String userId, addressId;
+    private String userId = "314"; // Initialize with actual user ID
+    private String addressId = "314"; // Initialize with actual address ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,7 @@ public class JsonArrRequestActivity2 extends AppCompatActivity {
 
         textView = findViewById(R.id.textView);
         updateInfoBtn = findViewById(R.id.update_info_btn);
+        deleteInfoBtn = findViewById(R.id.delete_info_btn);
 
         nameEditText = findViewById(R.id.signup_name_edt);
         passwordEditText = findViewById(R.id.signup_password_edt);
@@ -43,116 +45,100 @@ public class JsonArrRequestActivity2 extends AppCompatActivity {
         stateEditText = findViewById(R.id.signup_state_edt);
         zipCodeEditText = findViewById(R.id.signup_zipcode_edt);
 
-        String fetchUrl = "http://coms-3090-063.class.las.iastate.edu:8080/account/employer/{employerId}";
-        fetchEmployerInfo(fetchUrl.replace("{employerId}", userId));
-
-        String updateUrl = "http://coms-3090-063.class.las.iastate.edu:8080/account/update/employer";
-
+        // Set click listeners for update and delete buttons
         updateInfoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateEmployerInfo(updateUrl);
+                updateInfo();
+            }
+        });
+
+        deleteInfoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteInfo();
             }
         });
     }
 
-    private void fetchEmployerInfo(String url) {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.GET, url, null,
+    private void updateInfo() {
+        // Collect data from EditText fields
+        String name = nameEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
+        String companyId = companyIdEditText.getText().toString();
+        String email = emailEditText.getText().toString();
+        String phone = phoneEditText.getText().toString();
+        String field = fieldEditText.getText().toString();
+        String street = streetEditText.getText().toString();
+        String complement = complementEditText.getText().toString();
+        String city = cityEditText.getText().toString();
+        String state = stateEditText.getText().toString();
+        String zipCode = zipCodeEditText.getText().toString();
+
+        // Assuming the URL is set properly
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/employer/update";
+
+        // Create a JSONObject with the collected data
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("name", name);
+            jsonObject.put("password", password);
+            jsonObject.put("companyId", companyId);
+            jsonObject.put("email", email);
+            jsonObject.put("phone", phone);
+            jsonObject.put("field", field);
+            jsonObject.put("street", street);
+            jsonObject.put("complement", complement);
+            jsonObject.put("city", city);
+            jsonObject.put("state", state);
+            jsonObject.put("zipCode", zipCode);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // Create a JsonObjectRequest to send the update request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        populateEmployerInfo(response);
+                        // Handle the response
+                        textView.setText("Update successful: " + response.toString());
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        // Handle the error
                         textView.setText("Error: " + error.toString());
                     }
-                }
-        );
+                });
 
+        // Add the request to the VolleySingleton request queue
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
-    private void populateEmployerInfo(JSONObject response) {
-        try {
-            nameEditText.setText(response.getString("name"));
-            emailEditText.setText(response.getString("email"));
-            phoneEditText.setText(response.getString("phone"));
-            fieldEditText.setText(response.getString("field"));
+    private void deleteInfo() {
+        // Assuming the URL is set properly and userId is available
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/employer/delete/" + userId;
 
-            JSONObject address = response.getJSONObject("address");
-            streetEditText.setText(address.getString("street"));
-            complementEditText.setText(address.getString("complement"));
-            cityEditText.setText(address.getString("city"));
-            stateEditText.setText(address.getString("state"));
-            zipCodeEditText.setText(address.getString("zipCode"));
-
-            userId = response.getString("userId");
-            addressId = address.getString("addressId");
-            companyIdEditText.setText(response.getString("companyId"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error parsing employer info", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void updateEmployerInfo(String updateUrl) {
-        JSONObject updateData = new JSONObject();
-        try {
-            updateData.put("name", nameEditText.getText().toString());
-            updateData.put("password", passwordEditText.getText().toString());
-            updateData.put("companyId", companyIdEditText.getText().toString());
-            updateData.put("email", emailEditText.getText().toString());
-            updateData.put("phone", phoneEditText.getText().toString());
-            updateData.put("field", fieldEditText.getText().toString());
-
-            JSONObject address = new JSONObject();
-            address.put("street", streetEditText.getText().toString());
-            address.put("complement", complementEditText.getText().toString());
-            address.put("city", cityEditText.getText().toString());
-            address.put("state", stateEditText.getText().toString());
-            address.put("zipCode", zipCodeEditText.getText().toString());
-
-            updateData.put("address", address);
-            updateData.put("userId", userId);
-            updateData.put("addressId", addressId);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.PUT, updateUrl, updateData,
+        // Create a JsonObjectRequest to send the delete request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        handleUpdateResponse(response);
+                        // Handle the response
+                        textView.setText("Delete successful: " + response.toString());
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        // Handle the error
                         textView.setText("Error: " + error.toString());
                     }
-                }
-        );
+                });
 
+        // Add the request to the VolleySingleton request queue
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
-    }
-
-    private void handleUpdateResponse(JSONObject response) {
-        StringBuilder responseData = new StringBuilder();
-        try {
-            String status = response.getString("status");
-            String message = response.getString("message");
-            responseData.append("Status: ").append(status).append("\n");
-            responseData.append("Message: ").append(message).append("\n\n");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        textView.setText(responseData.toString());
     }
 }

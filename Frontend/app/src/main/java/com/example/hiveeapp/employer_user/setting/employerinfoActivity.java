@@ -198,16 +198,7 @@ public class employerinfoActivity extends AppCompatActivity {
                         Toast.makeText(employerinfoActivity.this, "Error deleting employer info", Toast.LENGTH_SHORT).show();
                     }
                 }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                String credentials = "employer@example.com:Test@1234";
-                String auth = "Basic " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
-            }
-        };
+        );
 
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }

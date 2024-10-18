@@ -78,6 +78,11 @@
 
 <!--        <activity android:name=".employer_user.display." android:exported="true"/>-->
 
+        <activity android:name=".volley.JsonArrRequestActivity2" android:exported="true"/>
+<!--        <activity android:name=".volley.JsonArrRequestActivity2" android:exported="true"/>-->
+
+
+
 
         <!-- forgot password Activity -->
         <activity android:name=".registration.forgotPassword.ForgotPasswordActivity" />
