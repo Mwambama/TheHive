@@ -12,10 +12,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_back_arrow"
-    android:contentDescription="Back"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    android:background="?attr/selectableItemBackground" /> <!-- Optional: adds ripple effect -->
+        android:contentDescription="Back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="?attr/selectableItemBackground" /> <!-- Optional: adds ripple effect -->
 
     <!-- EditText fields for employer information -->
     <EditText
