@@ -91,7 +91,7 @@
         <activity android:name=".registration.forgotPassword.VerifyKeyActivity" />
         <activity android:name=".registration.forgotPassword.ResetPasswordActivity" />
         <activity android:name=".student_user.StudentMainActivity" />
-        <activity android:name=".student_user.studentProfileActivity" />
+        <activity android:name=".student_user.setting.studentProfileActivity" />
 
     </application>
 

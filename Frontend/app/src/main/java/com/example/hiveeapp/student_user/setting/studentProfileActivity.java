@@ -1,4 +1,4 @@
-package com.example.hiveeapp.student_user;
+package com.example.hiveeapp.student_user.setting;
 
 import android.os.Bundle;
 import android.widget.Button;

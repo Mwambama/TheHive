@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.student_user.setting.studentProfileActivity;
 
 public class StudentMainActivity extends AppCompatActivity {
 
