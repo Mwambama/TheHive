@@ -23,11 +23,11 @@ import java.util.Map;
 
 public class studentProfileActivity extends AppCompatActivity {
 
-    private EditText etName, etEmail, etPhoneNumber, etAddress, etUniversity, etGPA, etGradDate, etResumePath, etPassword;
+    private EditText etName, etEmail, etPhoneNumber, etAddress, etUniversity, etGPA, etGradDate, etResumePath;
     private Button btnUpdateProfile, btnDeleteAccount, backButton;
 
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/student"; // Replace with your actual API URL
-    private String userId; // Unique identifier for the student
+    private String companyId; // Unique identifier for the student
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +43,14 @@ public class studentProfileActivity extends AppCompatActivity {
         etGPA = findViewById(R.id.etGPA);
         etGradDate = findViewById(R.id.etGradDate);
         etResumePath = findViewById(R.id.etResumePath);
-        etPassword = findViewById(R.id.etPassword);
 
         btnUpdateProfile = findViewById(R.id.btnUpdateProfile);
         btnDeleteAccount = findViewById(R.id.btnDeleteAccount);
         backButton = findViewById(R.id.back_button);
 
         // Fetch student info when activity starts
-        userId = "312"; // Replace with the actual user ID
-        fetchStudentInfo(userId);
+        companyId = "200"; // Replace with the actual company ID
+        fetchStudentInfo(companyId);
 
         // Set listeners for the buttons
         btnUpdateProfile.setOnClickListener(v -> updateStudentInfo());
@@ -60,8 +59,8 @@ public class studentProfileActivity extends AppCompatActivity {
     }
 
     // Fetch student information from the server
-    private void fetchStudentInfo(String userId) {
-        String url = BASE_URL + "/get/" + userId; // Construct URL for fetching
+    private void fetchStudentInfo(String companyId) {
+        String url = BASE_URL + "/get/" + companyId; // Construct URL for fetching
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
@@ -96,10 +95,9 @@ public class studentProfileActivity extends AppCompatActivity {
             etGPA.setText(response.getString("gpa"));
             etGradDate.setText(response.getString("gradDate"));
             etResumePath.setText(response.getString("resumePath"));
-            etPassword.setText(response.getString("password"));
 
-            // Save user ID for updating
-            userId = response.getString("userId");
+            // Save company ID for updating
+            companyId = response.getString("companyId");
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error parsing student info", Toast.LENGTH_SHORT).show();
@@ -108,11 +106,11 @@ public class studentProfileActivity extends AppCompatActivity {
 
     // Update student information
     private void updateStudentInfo() {
-        String url = BASE_URL + "/" + userId; // Construct URL for updating
+        String url = BASE_URL; // Construct URL for updating
 
         JSONObject studentData = new JSONObject();
         try {
-            studentData.put("userId", userId);
+            studentData.put("companyId", companyId);
             studentData.put("name", etName.getText().toString());
             studentData.put("email", etEmail.getText().toString());
             studentData.put("phoneNumber", etPhoneNumber.getText().toString());
@@ -121,7 +119,6 @@ public class studentProfileActivity extends AppCompatActivity {
             studentData.put("gpa", etGPA.getText().toString());
             studentData.put("gradDate", etGradDate.getText().toString());
             studentData.put("resumePath", etResumePath.getText().toString());
-            studentData.put("password", etPassword.getText().toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -147,7 +144,7 @@ public class studentProfileActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                String credentials = "student@example.com:Test@1234"; // Replace with actual credentials
+                String credentials = "employer@example.com:Test@1234"; // Replace with actual credentials
                 String auth = "Basic " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
                 headers.put("Authorization", auth);
                 return headers;
@@ -159,7 +156,7 @@ public class studentProfileActivity extends AppCompatActivity {
 
     // Delete student information
     private void deleteStudentInfo() {
-        String url = BASE_URL + "/delete/" + userId; // Construct URL for deleting
+        String url = BASE_URL + "/delete/" + companyId; // Construct URL for deleting
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.DELETE,
@@ -183,7 +180,7 @@ public class studentProfileActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                String credentials = "student@example.com:Test@1234"; // Replace with actual credentials
+                String credentials = "employer@example.com:Test@1234"; // Replace with actual credentials
                 String auth = "Basic " + android.util.Base64.encodeToString(credentials.getBytes(), android.util.Base64.NO_WRAP);
                 headers.put("Authorization", auth);
                 return headers;

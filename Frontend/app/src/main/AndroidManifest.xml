@@ -82,6 +82,8 @@
 
         <activity android:name=".volley.JsonArrRequestActivity2" android:exported="true"/>
 <!--        <activity android:name=".volley.JsonArrRequestActivity2" android:exported="true"/>-->
+        <activity android:name=".volley.JsonArrReqActivity3" android:exported="true"/>
+
 
 
 
@@ -92,6 +94,7 @@
         <activity android:name=".registration.forgotPassword.ResetPasswordActivity" />
         <activity android:name=".student_user.StudentMainActivity" />
         <activity android:name=".student_user.setting.studentProfileActivity" />
+        <activity android:name=".student_user.setting.studentinfoApi" />
 
     </application>
 
