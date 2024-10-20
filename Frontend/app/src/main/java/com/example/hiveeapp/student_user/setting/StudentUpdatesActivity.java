@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
  * StudentUpdateActivity allows the user to update their information by filling out a form.
  * The form includes fields like name, email, phone number, address, etc., which are validated before submission.
  */
-public class StudentUpdateActivity extends AppCompatActivity {
+public class StudentUpdatesActivity extends AppCompatActivity {
 
     private EditText nameField, emailField, phoneField, streetField, complementField, cityField, stateField, zipField;
     private Button updateStudentButton;
@@ -199,13 +199,13 @@ public class StudentUpdateActivity extends AppCompatActivity {
         studentinfoApi.updateStudent(this, studentData,
                 response -> {
                     // Handle successful response
-                    Toast.makeText(StudentUpdateActivity.this, "Student updated successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StudentUpdatesActivity.this, "Student updated successfully!", Toast.LENGTH_SHORT).show();
                     finish();  // Close the activity and return to the previous screen
                 },
                 error -> {
                     // Handle error response and display user-friendly message
                     String errorMessage = getErrorMessage(error);
-                    Toast.makeText(StudentUpdateActivity.this, "Error updating student: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StudentUpdatesActivity.this, "Error updating student: " + errorMessage, Toast.LENGTH_SHORT).show();
                 });
     }
 

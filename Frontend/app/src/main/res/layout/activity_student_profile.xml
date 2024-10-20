@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Back Arrow Icon at Top Left -->
-    <ImageView
+    <!-- Back Arrow Button at Top Left -->
+    <ImageButton
         android:id="@+id/backArrowIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_back_arrow"
+        android:background="?attr/selectableItemBackground"
+    android:contentDescription="@string/back_arrow_desc"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     android:layout_marginStart="16dp"
@@ -109,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:text="Delete Account"
                 android:textSize="18sp"
-                android:backgroundTint="@android:color/holo_red_light" /> <!-- Optional: Change background color -->
+                android:backgroundTint="@android:color/holo_red_light" />
 
         </LinearLayout>
     </ScrollView>
