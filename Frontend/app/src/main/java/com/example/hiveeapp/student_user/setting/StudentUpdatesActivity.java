@@ -165,7 +165,7 @@ public class StudentUpdatesActivity extends AppCompatActivity {
         String zipCode = zipField.getText().toString().trim();
 
         // Retrieve the studentId from SharedPreferences (or use a hardcoded value for testing)
-        int studentId = 1141;  // This is a test student ID
+        int studentId = 995;  // This is a test student ID
 
         // Construct the student JSON object
         JSONObject studentData = new JSONObject();
