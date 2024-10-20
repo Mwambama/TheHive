@@ -5,23 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Back Button at Top Left -->
-    <Button
-        android:id="@+id/back_button"
+    <!-- Back Arrow Icon at Top Left -->
+    <ImageView
+        android:id="@+id/backArrowIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp" />
+        android:src="@drawable/ic_back_arrow"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="16dp" />
 
     <!-- Profile Information Fields -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/back_button"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintTop_toBottomOf="@id/backArrowIcon"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -32,64 +32,71 @@
             android:padding="16dp">
 
             <EditText
-                android:id="@+id/etName"
+                android:id="@+id/nameField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Name"
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/etEmail"
+                android:id="@+id/emailField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/etPhoneNumber"
+                android:id="@+id/phoneField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Phone Number"
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/etAddress"
+                android:id="@+id/addressField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Address"
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/etUniversity"
+                android:id="@+id/universityField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="University"
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/etGPA"
+                android:id="@+id/gpaField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="GPA"
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/etGradDate"
+                android:id="@+id/gradDateField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Graduation Date"
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/etResumePath"
+                android:id="@+id/resumePathField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Resume Path"
                 android:textSize="18sp" />
 
+            <EditText
+                android:id="@+id/passwordField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:textSize="18sp" />
+
             <!-- Update Profile Button -->
             <Button
-                android:id="@+id/btnUpdateProfile"
+                android:id="@+id/updateProfileButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Update Profile"
@@ -106,13 +113,5 @@
 
         </LinearLayout>
     </ScrollView>
-
-    <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,5 @@
 package com.example.hiveeapp.student_user.setting;
 
-
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
@@ -251,16 +250,14 @@ public class studentinfoApi extends AppCompatActivity {
     }
 
     private static String getErrorMessage(VolleyError error) {
-        if (error.networkResponse != null && error.networkResponse.data != null) {
+        String errorMsg = "Unknown error";
+        if (error.networkResponse != null) {
             try {
-                String responseBody = new String(error.networkResponse.data, "UTF-8");
-                return "Response code: " + error.networkResponse.statusCode + ", message: " + responseBody;
+                errorMsg = new String(error.networkResponse.data, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                return "Error processing response: " + e.getMessage();
+                e.printStackTrace();
             }
-        } else {
-            return "Network error: " + error.getMessage();
         }
+        return errorMsg;
     }
 }
-

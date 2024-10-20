@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.student_user.setting.studentProfileActivity;
+import com.example.hiveeapp.student_user.setting.studentUpdateActivity;
 
 public class StudentMainActivity extends AppCompatActivity {
 
@@ -61,7 +61,7 @@ public class StudentMainActivity extends AppCompatActivity {
 
     private void goToProfile() {
         // Navigate to StudentProfileActivity
-        Intent intent = new Intent(StudentMainActivity.this, studentProfileActivity.class);
+        Intent intent = new Intent(StudentMainActivity.this, studentUpdateActivity.class);
         startActivity(intent);
     }
 }
