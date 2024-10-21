@@ -24,7 +24,7 @@ public class CompanyInfoFragment extends Fragment {
         companyName = view.findViewById(R.id.companyName);
         companyDescription = view.findViewById(R.id.companyDescription);
 
-        // Set company information (retrieve from database or shared preferences)
+        // Set company information
         companyName.setText("Your Company Name");
         companyDescription.setText("Brief description of your company.");
 

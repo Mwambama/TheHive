@@ -38,6 +38,7 @@
         <activity android:name=".company_user.CompanyMainActivity" android:exported="true" />
         <activity android:name=".student_user.StudentMainActivity" android:exported="true" />
         <activity android:name=".admin_user.AdminMainActivity" android:exported="true" />
+        <activity android:name=".employer_user.employerActivity" android:exported="true" />
 
         <!-- Company Management Activities -->
         <activity android:name=".company_user.handleEmployers.EmployerCreationActivity" />
