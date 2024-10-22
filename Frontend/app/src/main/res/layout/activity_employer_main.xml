@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- Button to go to CompanyActivity -->
+<!--    <Button-->
+<!--        android:id="@+id/goToCompanyActivityButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Go to Company Activity"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        android:layout_marginTop="50dp" />-->
+
+<!--    &lt;!&ndash; Button to go to LoginActivity &ndash;&gt;-->
+<!--    <Button-->
+<!--        android:id="@+id/goToLoginActivityButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="28dp"-->
+<!--        android:text="Go to Login"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/goToCompanyActivityButton" />-->
+
+<!--              button to go to goToEmployerActivityButton-->
+<!--    <Button-->
+<!--        android:id="@+id/ggoToEmployerActivityButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Go to Company Activity"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        android:layout_marginTop="50dp" />-->
+
+    <Button
+        android:id="@+id/goToEmployerActivityButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" Employer Profile"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="50dp"
+         />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/bottom_nav_employermenu"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="652dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
