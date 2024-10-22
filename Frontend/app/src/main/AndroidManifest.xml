@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -14,8 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HIveeApp"
-        android:usesCleartextTraffic="true"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        android:usesCleartextTraffic="true">
+
+        <!--Login Activity-->
+        <activity android:name=".registration.login.LoginActivity" />
 
         <!-- Main Activity -->
         <activity
@@ -27,32 +29,51 @@
             </intent-filter>
         </activity>
 
-        <!-- Login and Sign-up Activities -->
-        <activity android:name=".registration.login.LoginActivity" />
-        <activity android:name=".registration.signup.signupActivity" android:exported="true" />
-        <activity android:name=".registration.signup.studentsignupActivity" android:exported="true" />
-        <activity android:name=".registration.signup.employersignupActivity" android:exported="true" />
-        <activity android:name=".registration.signup.companysignupActivity" android:exported="true" />
+<!--                       got to sign up page-->
+        <activity android:name=".registration.signup.signupActivity" android:exported="true">
+           </activity>
 
-        <!-- User Role Activities -->
-        <activity android:name=".company_user.CompanyMainActivity" android:exported="true" />
-        <activity android:name=".student_user.StudentMainActivity" android:exported="true" />
-        <activity android:name=".admin_user.AdminMainActivity" android:exported="true" />
-        <activity android:name=".employer_user.employerActivity" android:exported="true" />
+        <!--                go to student signup activity -->
+        <activity android:name=".registration.signup.studentsignupActivity" android:exported="true">
+        </activity>
+<!--                       go to employer signup activity -->
+        <activity android:name=".registration.signup.employersignupActivity" android:exported="true">
 
-        <!-- Company Management Activities -->
-        <activity android:name=".company_user.handleEmployers.EmployerCreationActivity" />
-        <activity android:name=".company_user.handleEmployers.EmployerListActivity" />
+        </activity>
 
-        <!-- Invitation Management Activities -->
+        <activity android:name=".registration.signup.companysignupActivity" android:exported="true">
+
+        </activity>
+
+
+        <!-- Company Activity -->
+        <activity android:name=".company_user.CompanyMainActivity"
+            android:exported="true">
+        </activity>
+
+        <!-- Student Activity -->
+        <activity android:name=".student_user.StudentMainActivity"
+            android:exported="true">
+        </activity>
+
+        <!-- Admin Activity -->
+        <activity android:name=".admin_user.AdminMainActivity"
+            android:exported="true">
+        </activity>
+
+
+        <!-- Company Add/Delete/Get/Update Activity -->
+        <activity android:name=".company_user.handleEmployers.EmployerCreationActivity"/>
+        <activity android:name=".company_user.handleEmployers.EmployerListActivity"/>
+
+        <!-- Company Add/Delete/Get/Update Invitation Activity -->
         <activity android:name=".company_user.invitations.InvitationManagementActivity" />
         <activity android:name=".company_user.invitations.InvitationCreationActivity" />
 
-        <!-- Forgot Password Activities -->
+        <!-- forgot password Activity -->
         <activity android:name=".registration.forgotPassword.ForgotPasswordActivity" />
         <activity android:name=".registration.forgotPassword.VerifyKeyActivity" />
         <activity android:name=".registration.forgotPassword.ResetPasswordActivity" />
-
     </application>
 
 </manifest>
