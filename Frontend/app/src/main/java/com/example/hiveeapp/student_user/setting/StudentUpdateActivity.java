@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
  * StudentUpdateActivity allows the user to update their information by filling out a form.
  * The form includes fields like name, email, phone number, address, etc., which are validated before submission.
  */
-public class StudentUpdatesActivity extends AppCompatActivity {
+public class StudentUpdateActivity extends AppCompatActivity {
 
     private EditText nameField, emailField, phoneField, streetField, complementField, cityField, stateField, zipField;
     private Button updateStudentButton;
@@ -65,7 +65,7 @@ public class StudentUpdatesActivity extends AppCompatActivity {
         cityField = findViewById(R.id.cityField);
         stateField = findViewById(R.id.stateField);
         zipField = findViewById(R.id.zipField);
-        updateStudentButton = findViewById(R.id.updateProfileButton);
+//        updateStudentButton = findViewById(R.id.updateProfileButton);
         backArrowIcon = findViewById(R.id.backArrowIcon);
     }
 
@@ -196,16 +196,16 @@ public class StudentUpdatesActivity extends AppCompatActivity {
         }
 
         // Send the student data to the server using the StudentApi
-        studentinfoApi.updateStudent(this, studentData,
+        StudentApi.updateStudent(this, studentData,
                 response -> {
                     // Handle successful response
-                    Toast.makeText(StudentUpdatesActivity.this, "Student updated successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StudentUpdateActivity.this, "Student updated successfully!", Toast.LENGTH_SHORT).show();
                     finish();  // Close the activity and return to the previous screen
                 },
                 error -> {
                     // Handle error response and display user-friendly message
                     String errorMessage = getErrorMessage(error);
-                    Toast.makeText(StudentUpdatesActivity.this, "Error updating student: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StudentUpdateActivity.this, "Error updating student: " + errorMessage, Toast.LENGTH_SHORT).show();
                 });
     }
 
