@@ -56,7 +56,7 @@ public class ChatServer {
 
         // Handle the case of a duplicate username
         if (usernameSessionMap.containsKey(username)) {
-            session.getBasicRemote().sendText("Username already exists");
+            session.getBasicRemote().sendText("Username " + username + " already exists");
             session.close();
         }
         else {
@@ -67,7 +67,7 @@ public class ChatServer {
             usernameSessionMap.put(username, session);
 
             // send to the user joining in
-            sendMessageToPArticularUser(username, "Welcome to the chat server, "+username);
+            sendMessageToPArticularUser(username, "Welcome to the chat server, "  +username);
 
             // send to everyone in the chat
             broadcast("User: " + username + " has Joined the Chat");
@@ -145,7 +145,7 @@ public class ChatServer {
         String username = sessionUsernameMap.get(session);
 
         // do error handling here
-        logger.info("[onError]" + username + ": " + throwable.getMessage());
+        logger.error("[onError]" + username + ": " + throwable.getMessage());
     }
 
     /**
@@ -172,7 +172,7 @@ public class ChatServer {
             try {
                 session.getBasicRemote().sendText(message);
             } catch (IOException e) {
-                logger.info("[Broadcast Exception] " + e.getMessage());
+                logger.error("[Broadcast Exception] " + e.getMessage());
             }
         });
     }
