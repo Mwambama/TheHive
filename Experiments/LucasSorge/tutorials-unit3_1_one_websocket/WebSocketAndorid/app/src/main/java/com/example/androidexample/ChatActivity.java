@@ -1,6 +1,8 @@
 package com.example.androidexample;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -14,9 +16,11 @@ import org.java_websocket.handshake.ServerHandshake;
 
 public class ChatActivity extends AppCompatActivity implements WebSocketListener {
 
-    private Button sendBtn, clearBtn;  // Added clear button
+    private Button sendBtn, clearBtn;
     private EditText msgEtx;
     private TextView msgTv;
+    private SharedPreferences sharedPreferences;
+    private static final String CHAT_HISTORY = "chat_history";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,45 +28,62 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
         setContentView(R.layout.activity_chat);
 
         /* initialize UI elements */
-        sendBtn = (Button) findViewById(R.id.sendBtn);
-        clearBtn = (Button) findViewById(R.id.clearBtn);
-        msgEtx = (EditText) findViewById(R.id.msgEdt);
-        msgTv = (TextView) findViewById(R.id.tx1);
+        sendBtn = findViewById(R.id.sendBtn);
+        clearBtn = findViewById(R.id.clearBtn);
+        msgEtx = findViewById(R.id.msgEdt);
+        msgTv = findViewById(R.id.tx1);
 
-        /* connect this activity to the websocket instance */
+        sharedPreferences = getSharedPreferences("ChatPrefs", MODE_PRIVATE);
+
+        loadChatHistory();
+
         WebSocketManager.getInstance().setWebSocketListener(ChatActivity.this);
 
-        /* send button listener */
         sendBtn.setOnClickListener(v -> {
             String message = msgEtx.getText().toString().trim();
             if (!message.isEmpty()) {
                 try {
-                    // Send message with a timestamp
+                    // send message
                     WebSocketManager.getInstance().sendMessage(message);
                     String timestamp = getCurrentTimestamp();
                     appendMessageToChat("You", message, timestamp);
+                    saveChatHistory();  // Save message to chat history
                     msgEtx.setText("");
                 } catch (Exception e) {
-                    Log.d("ExceptionSendMessage:", e.getMessage().toString());
+                    Log.d("ExceptionSendMessage:", e.getMessage());
                 }
             } else {
-                // Show a toast if the message is empty
                 Toast.makeText(ChatActivity.this, "Message cannot be empty", Toast.LENGTH_SHORT).show();
             }
         });
 
-        /* clear button listener */
         clearBtn.setOnClickListener(v -> {
-            msgTv.setText("");  // Clear all chat messages
+            msgTv.setText("");
+            clearChatHistory();
         });
     }
 
-    /* Method to get the current timestamp */
+    private void saveChatHistory() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(CHAT_HISTORY, msgTv.getText().toString());
+        editor.apply();
+    }
+
+    private void loadChatHistory() {
+        String chatHistory = sharedPreferences.getString(CHAT_HISTORY, "");
+        msgTv.setText(chatHistory);  // Display saved chat history
+    }
+
+    private void clearChatHistory() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(CHAT_HISTORY);
+        editor.apply();
+    }
+
     private String getCurrentTimestamp() {
         return new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
     }
 
-    /* Helper method to append messages with a timestamp to the chat */
     private void appendMessageToChat(String sender, String message, String timestamp) {
         String existingMessages = msgTv.getText().toString();
         String newMessage = sender + " [" + timestamp + "]: " + message;
