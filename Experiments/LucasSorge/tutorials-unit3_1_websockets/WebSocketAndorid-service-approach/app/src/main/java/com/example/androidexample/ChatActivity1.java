@@ -8,7 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -19,7 +22,7 @@ public class ChatActivity1 extends AppCompatActivity {
 
     private Button sendBtn, backMainBtn;
     private EditText msgEtx;
-    private TextView msgTv;
+    private TextView msgTv, statusTv, typingTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,23 @@ public class ChatActivity1 extends AppCompatActivity {
         backMainBtn = (Button) findViewById(R.id.backMainBtn);
         msgEtx = (EditText) findViewById(R.id.msgEdt);
         msgTv = (TextView) findViewById(R.id.tx1);
+        statusTv = findViewById(R.id.statusTv);
+        typingTv = findViewById(R.id.typingTv);
+
+        msgEtx.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                typingTv.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                typingTv.setVisibility(View.GONE);
+            }
+        });
 
         /* send button listener */
         sendBtn.setOnClickListener(v -> {
@@ -42,6 +62,7 @@ public class ChatActivity1 extends AppCompatActivity {
             intent.putExtra("key", "chat1");
             intent.putExtra("message", msgEtx.getText().toString());
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            typingTv.setVisibility(View.GONE);
         });
 
         /* back button listener */
@@ -51,6 +72,7 @@ public class ChatActivity1 extends AppCompatActivity {
             startActivity(intent);
         });
     }
+
 
     // For receiving messages
     // only react to messages with tag "chat1"
@@ -73,11 +95,13 @@ public class ChatActivity1 extends AppCompatActivity {
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver,
                 new IntentFilter("WebSocketMessageReceived"));
+        statusTv.setText("Connected");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+        statusTv.setText("Disconnected");
     }
 }
