@@ -2,9 +2,38 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/studentActivityLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@drawable/gradient_background">
+
+    <!-- Top App Bar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:navigationIcon="@drawable/ic_back_arrow"
+        app:title="Student Page"
+        app:titleTextColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- TextView to display the main message -->
+    <TextView
+        android:id="@+id/userTypeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="This is the main page for Student"
+        android:textColor="#333333"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@id/topAppBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"/>
 
     <!-- Back Arrow Icon at the top left -->
     <ImageButton
@@ -24,80 +53,28 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- TextView to display the main message -->
-    <TextView
-        android:id="@+id/userTypeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="This is the main page for Student"
-        android:textColor="#333333"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginTop="32dp"
-        app:layout_constraintTop_toBottomOf="@id/backArrowIcon"
+    <!-- FrameLayout to hold content based on selected tab -->
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Bottom Section with Icon Buttons -->
-    <LinearLayout
-        android:id="@+id/bottomSection"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:gravity="center"
-        android:orientation="horizontal"
+    <!-- Bottom Navigation View -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:itemIconTint="@android:color/white"
+        app:itemTextColor="@android:color/white"
+        app:menu="@menu/nav_menu_student"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- Manage Employers Icon (change the icon) -->
-        <ImageButton
-            android:id="@+id/manageEmployersIcon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/rounded_background"
-            android:clickable="true"
-            android:contentDescription="Manage Employers"
-            android:focusable="true"
-            android:padding="15dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_manage_employers"
-            app:tint="#808080" /> <!-- Neutral color -->
-
-        <!-- Main User Page Icon -->
-        <ImageButton
-            android:id="@+id/mainUserPageIcon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/rounded_background"
-            android:clickable="true"
-            android:contentDescription="Main User Page"
-            android:focusable="true"
-            android:padding="15dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_profile"
-            app:tint="#6200EE" /> <!-- Highlighted color -->
-
-        <!-- Manage Invitations Icon (Change the icon)-->
-        <ImageButton
-            android:id="@+id/manageInvitationsIcon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/rounded_background"
-            android:clickable="true"
-            android:contentDescription="Manage Invitations"
-            android:focusable="true"
-            android:padding="15dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_manage_invitations"
-            app:tint="#808080" />
-
-    </LinearLayout>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
