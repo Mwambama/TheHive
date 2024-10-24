@@ -73,6 +73,9 @@ public class StudentServiceImpl implements StudentService{
         Student student = studentRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Student not found with id " + id));
         try {
+            if (student.getResumePath() == null){
+                throw new RuntimeException("Student has no resume on file");
+            }
             File resumeFile = new File(student.getResumePath());
             return Files.readAllBytes(resumeFile.toPath());
         } catch (IOException e) {
