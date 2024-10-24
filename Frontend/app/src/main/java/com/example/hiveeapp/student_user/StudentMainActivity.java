@@ -1,31 +1,38 @@
 package com.example.hiveeapp.student_user;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.employer_user.model.ChatActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class StudentMainActivity extends AppCompatActivity {
-    private ImageButton backArrowIcon;
-    private TextView userTypeTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mainstudent);
+        setContentView(R.layout.activity_student_main);
 
-        // Initialize views
-        backArrowIcon = findViewById(R.id.backArrowIcon);
-        userTypeTextView = findViewById(R.id.userTypeTextView);
+        // Set up bottom navigation view for navigation to Profile, Apply, and Chat
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
-        // Set the text dynamically based on the user type
-        String userType = "Student";  // Set user type dynamically here
-        userTypeTextView.setText("This is the main page for " + userType);
-
-        // Set back arrow click listener to finish activity
-        backArrowIcon.setOnClickListener(v -> finish());
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_profile) {
+                // Navigate to Profile Page
+                startActivity(new Intent(StudentMainActivity.this, StudentProfileActivity.class));
+                return true;
+            } else if (itemId == R.id.navigation_apply) {
+                // Navigate to Apply Page
+                startActivity(new Intent(StudentMainActivity.this, ApplyActivity.class));
+                return true;
+            } else if (itemId == R.id.navigation_chat) {
+                // Navigate to Chat Page
+                startActivity(new Intent(StudentMainActivity.this, ChatActivity.class));
+                return true;
+            }
+            return false;
+        });
     }
 }
