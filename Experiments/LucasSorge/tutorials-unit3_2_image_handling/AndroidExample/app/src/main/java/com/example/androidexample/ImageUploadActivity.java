@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.bumptech.glide.Glide;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,7 +65,13 @@ public class ImageUploadActivity extends AppCompatActivity {
      * to accept the image with a specific key ("image") in the request.
      *
      */
-    private void uploadImage(){
+    private void uploadImage() {
+        if (selectiedUri == null) {
+            Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Toast.makeText(this, "Uploading image...", Toast.LENGTH_SHORT).show();
 
         byte[] imageData = convertImageUriToBytes(selectiedUri);
         MultipartRequest multipartRequest = new MultipartRequest(
@@ -71,19 +79,30 @@ public class ImageUploadActivity extends AppCompatActivity {
                 UPLOAD_URL,
                 imageData,
                 response -> {
-                    // Handle response
-                    Toast.makeText(getApplicationContext(), response,Toast.LENGTH_LONG).show();
+                    // Handle successful response
+                    Toast.makeText(getApplicationContext(), "Upload successful! URL: " + response, Toast.LENGTH_LONG).show();
                     Log.d("Upload", "Response: " + response);
+
+                    // Use Glide to load the uploaded image from the server response URL
+                    Glide.with(this)
+                            .load(response)  // Load the image from the response URL
+                            .into(mImageView);
+
+                    // Optionally reset the selected image URI after loading the image
+                    selectiedUri = null;
                 },
                 error -> {
                     // Handle error
-                    Toast.makeText(getApplicationContext(), error.getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Failed to upload image: " + error.getMessage(), Toast.LENGTH_LONG).show();
                     Log.e("Upload", "Error: " + error.getMessage());
                 }
         );
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(multipartRequest);
     }
+
+
+
 
     /**
      * Converts the given image URI to a byte array.
