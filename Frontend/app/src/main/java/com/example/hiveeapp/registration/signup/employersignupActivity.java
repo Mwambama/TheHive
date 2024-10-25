@@ -135,12 +135,12 @@ public class employersignupActivity extends AppCompatActivity {
         if (isPasswordVisible) {
             // Hide password
             passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            togglePasswordVisibilityButton.setImageResource(R.drawable.closedeyes);
+            togglePasswordVisibilityButton.setImageResource(R.drawable.ic_visibility_off);
             isPasswordVisible = false;
         } else {
             // Show password
             passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-            togglePasswordVisibilityButton.setImageResource(R.drawable.openeyes);
+            togglePasswordVisibilityButton.setImageResource(R.drawable.ic_visibility_on);
             isPasswordVisible = true;
         }
         // Move cursor to the end of the text
