@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -33,6 +35,8 @@ public class ChatServer2 {
     // Two maps for the ease of retrieval by key
     private static Map < Session, String > sessionUsernameMap = new Hashtable < > ();
     private static Map < String, Session > usernameSessionMap = new Hashtable < > ();
+
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     // server side logger
     private final Logger logger = LoggerFactory.getLogger(ChatServer2.class);
@@ -150,8 +154,9 @@ public class ChatServer2 {
      * @param message  The message to be sent.
      */
     private void sendMessageToPArticularUser(String username, String message) {
+        String timestampedMessage = "[" + LocalDateTime.now().format(TIMESTAMP_FORMATTER) + "] " + message;
         try {
-            usernameSessionMap.get(username).getBasicRemote().sendText(message);
+            usernameSessionMap.get(username).getBasicRemote().sendText(timestampedMessage);
         } catch (IOException e) {
             logger.info("[DM Exception] " + e.getMessage());
         }
@@ -163,9 +168,10 @@ public class ChatServer2 {
      * @param message The message to be broadcasted to all users.
      */
     private void broadcast(String message) {
+        String timestampedMessage = "[" + LocalDateTime.now().format(TIMESTAMP_FORMATTER) + "] " + message;
         sessionUsernameMap.forEach((session, username) -> {
             try {
-                session.getBasicRemote().sendText(message);
+                session.getBasicRemote().sendText(timestampedMessage);
             } catch (IOException e) {
                 logger.info("[Broadcast Exception] " + e.getMessage());
             }
