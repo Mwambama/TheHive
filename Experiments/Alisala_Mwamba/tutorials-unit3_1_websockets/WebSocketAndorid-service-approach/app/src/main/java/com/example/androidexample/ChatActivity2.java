@@ -93,11 +93,6 @@ public class ChatActivity2 extends AppCompatActivity {
         intent.putExtra("key", "chat2");
         intent.putExtra("message", isTyping ? "typing..." : "stopped typing");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        if (isTyping) {
-            showTypingIndicator();  // Show typing animation when typing
-        } else {
-            hideTypingIndicator();  // Hide typing animation when stopped
-        }
     }
 
     // Method to parse and replace text with emojis

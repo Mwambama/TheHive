@@ -29,6 +29,8 @@ public class ChatActivity1 extends AppCompatActivity {
     private int dotIndex = 0;
     private Handler typingHandler = new Handler();
 
+    private final String userId = "User1";  // Unique identifier for this user
+
     private final Runnable typingAnimationRunnable = new Runnable() {
         @Override
         public void run() {
@@ -55,6 +57,7 @@ public class ChatActivity1 extends AppCompatActivity {
             Intent intent = new Intent("SendWebSocketMessage");
             intent.putExtra("key", "chat1");
             intent.putExtra("message", message);
+            intent.putExtra("userId", userId); // Include userId in the broadcast
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
             msgEtx.setText("");  // Clear input after sending
@@ -99,6 +102,7 @@ public class ChatActivity1 extends AppCompatActivity {
         Intent intent = new Intent("SendWebSocketMessage");
         intent.putExtra("key", "chat1");
         intent.putExtra("message", isTyping ? "typing..." : "stopped typing");
+        intent.putExtra("userId", userId); // Include userId in the broadcast
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
@@ -128,12 +132,17 @@ public class ChatActivity1 extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String key = intent.getStringExtra("key");
             String message = intent.getStringExtra("message");
+            String senderId = intent.getStringExtra("userId"); // Get the sender's userId
             if ("chat1".equals(key)) {
                 runOnUiThread(() -> {
                     if ("typing...".equals(message)) {
-                        showTypingIndicator();  // Start typing animation
+                        if (!userId.equals(senderId)) { // Show typing only for other user
+                            showTypingIndicator();  // Start typing animation
+                        }
                     } else if ("stopped typing".equals(message)) {
-                        hideTypingIndicator();  // Stop typing animation
+                        if (!userId.equals(senderId)) { // Hide typing only for other user
+                            hideTypingIndicator();  // Stop typing animation
+                        }
                     } else {
                         hideTypingIndicator();  // Ensure typing indicator is hidden after receiving a message
                         String s = msgTv.getText().toString();
