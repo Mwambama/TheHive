@@ -7,8 +7,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -24,6 +26,7 @@ public class ImageUploadActivity extends AppCompatActivity {
     Button uploadBtn;
     ImageView mImageView;
     Uri selectiedUri;
+    ProgressBar uploadProgressBar;
 
     // replace this with the actual address
     // 10.0.2.2 to be used for localhost if running springboot on the same host
@@ -38,6 +41,8 @@ public class ImageUploadActivity extends AppCompatActivity {
 
         mImageView = findViewById(R.id.imageSelView);
         selectBtn = findViewById(R.id.selectBtn);
+        uploadBtn = findViewById(R.id.uploadBtn);
+        uploadProgressBar = findViewById(R.id.uploadProgressBar);
 
         // select image from gallery
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
@@ -71,6 +76,8 @@ public class ImageUploadActivity extends AppCompatActivity {
             return;
         }
 
+        uploadProgressBar.setVisibility(View.VISIBLE);
+
         Toast.makeText(this, "Uploading image...", Toast.LENGTH_SHORT).show();
 
         byte[] imageData = convertImageUriToBytes(selectiedUri);
@@ -79,6 +86,8 @@ public class ImageUploadActivity extends AppCompatActivity {
                 UPLOAD_URL,
                 imageData,
                 response -> {
+                    uploadProgressBar.setVisibility(View.GONE);
+
                     // Handle successful response
                     Toast.makeText(getApplicationContext(), "Upload successful! URL: " + response, Toast.LENGTH_LONG).show();
                     Log.d("Upload", "Response: " + response);
@@ -92,6 +101,8 @@ public class ImageUploadActivity extends AppCompatActivity {
                     selectiedUri = null;
                 },
                 error -> {
+                    uploadProgressBar.setVisibility(View.GONE);
+
                     // Handle error
                     Toast.makeText(getApplicationContext(), "Failed to upload image: " + error.getMessage(), Toast.LENGTH_LONG).show();
                     Log.e("Upload", "Error: " + error.getMessage());
