@@ -1,6 +1,8 @@
 package com.cs309.websocket3.chat;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +26,9 @@ public class ChatSocket {
 
   // cannot autowire static directly (instead we do it by the below
   // method
-	private static MessageRepository msgRepo; 
+	private static MessageRepository msgRepo;
+
+	private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	/*
    * Grabs the MessageRepository singleton from the Spring Application
@@ -75,8 +79,10 @@ public class ChatSocket {
 			String destUsername = message.split(" ")[0].substring(1); 
 
       // send the message to the sender and receiver
-			sendMessageToPArticularUser(destUsername, "[DM] " + username + ": " + message);
-			sendMessageToPArticularUser(username, "[DM] " + username + ": " + message);
+			String timestampedMessage = "[" + LocalDateTime.now().format(TIMESTAMP_FORMATTER) + "] " + "[DM] " + username + ": " + message;
+
+			sendMessageToPArticularUser(destUsername, timestampedMessage);
+			sendMessageToPArticularUser(username, timestampedMessage);
 
 		} 
     else { // broadcast
@@ -124,8 +130,9 @@ public class ChatSocket {
 
 	private void broadcast(String message) {
 		sessionUsernameMap.forEach((session, username) -> {
+			String timestampedMessage = "[" + LocalDateTime.now().format(TIMESTAMP_FORMATTER) + "] " + message;
 			try {
-				session.getBasicRemote().sendText(message);
+				session.getBasicRemote().sendText(timestampedMessage);
 			} 
       catch (IOException e) {
 				logger.info("Exception: " + e.getMessage().toString());
@@ -145,7 +152,9 @@ public class ChatSocket {
 		StringBuilder sb = new StringBuilder();
 		if(messages != null && messages.size() != 0) {
 			for (Message message : messages) {
-				sb.append(message.getUserName() + ": " + message.getContent() + "\n");
+				String messageBody = message.getUserName() + ": " + message.getContent() + "\n";
+				String timestampedMessage = "[" + LocalDateTime.now().format(TIMESTAMP_FORMATTER) + "] " + messageBody;
+				sb.append(timestampedMessage);
 			}
 		}
 		return sb.toString();
