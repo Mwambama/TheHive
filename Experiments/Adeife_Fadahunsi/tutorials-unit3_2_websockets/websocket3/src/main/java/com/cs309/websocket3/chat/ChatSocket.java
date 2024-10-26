@@ -81,7 +81,6 @@ public class ChatSocket {
 			String time = formatter.format(text.getSent());
 			sendMessageToPArticularUser(destUsername, "[" + text.getSent() + "] [DM] " + username + ": " + message);
 			sendMessageToPArticularUser(username, time + " [DM] " + username + ": " + message);
-
 		} 
     else { // broadcast
 			broadcast(username + ": " + message);
