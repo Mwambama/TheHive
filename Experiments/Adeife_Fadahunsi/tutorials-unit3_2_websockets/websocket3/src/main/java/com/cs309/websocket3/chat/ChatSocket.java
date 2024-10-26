@@ -1,6 +1,7 @@
 package com.cs309.websocket3.chat;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class ChatSocket {
 		sendMessageToPArticularUser(username, getChatHistory());
 		
     // broadcast that new user joined
-		String message = "User:" + username + " has Joined the Chat";
+		String message = "User: " + username + " has joined the party!";
 		broadcast(message);
 	}
 
@@ -69,14 +70,17 @@ public class ChatSocket {
 		// Handle new messages
 		logger.info("Entered into Message: Got Message:" + message);
 		String username = sessionUsernameMap.get(session);
+		Message text = new Message(username, message);
 
     // Direct message to a user using the format "@username <message>"
 		if (message.startsWith("@")) {
 			String destUsername = message.split(" ")[0].substring(1); 
 
       // send the message to the sender and receiver
-			sendMessageToPArticularUser(destUsername, "[DM] " + username + ": " + message);
-			sendMessageToPArticularUser(username, "[DM] " + username + ": " + message);
+			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy - hh:mm a");
+			String time = formatter.format(text.getSent());
+			sendMessageToPArticularUser(destUsername, "[" + text.getSent() + "] [DM] " + username + ": " + message);
+			sendMessageToPArticularUser(username, time + " [DM] " + username + ": " + message);
 
 		} 
     else { // broadcast
