@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         // Navigate to LoginActivity
         goToLoginActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
