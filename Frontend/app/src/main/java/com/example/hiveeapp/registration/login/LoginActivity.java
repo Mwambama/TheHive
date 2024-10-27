@@ -23,6 +23,7 @@ import com.example.hiveeapp.company_user.CompanyMainActivity;
 import com.example.hiveeapp.registration.forgotPassword.ForgotPasswordActivity;
 import com.example.hiveeapp.registration.signup.signupActivity;
 import com.example.hiveeapp.registration.signup.studentsignupActivity;
+import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -57,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         setListeners();
 
         // test purpose
-        emailField.setText("teststudent@example.com");
+        emailField.setText("teststudent1@example.com");
         passwordField.setText("TestStudent1234@");
     }
 
@@ -103,20 +104,17 @@ public class LoginActivity extends AppCompatActivity {
         String email = emailField.getText().toString().trim();
         String password = passwordField.getText().toString();
 
-        // Validate email and password fields
+        // Ensure email and password are valid
         if (!validateInputs(email, password)) return;
-
-        // Show the loading indicator
-        showLoading(true);
 
         // Construct the login URL
         String loginUrl = "http://coms-3090-063.class.las.iastate.edu:8080/account/login";
 
-        // Create the authentication header
+        // Create authentication header
         String credentials = email + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
-        // Send login request to the server
+        // Send login request
         JsonObjectRequest loginRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 loginUrl,
@@ -126,7 +124,6 @@ public class LoginActivity extends AppCompatActivity {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                // Add the authentication header
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Authorization", auth);
                 headers.put("Content-Type", "application/json");
@@ -134,7 +131,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-        // Add the request to the Volley queue
         VolleySingleton.getInstance(this).addToRequestQueue(loginRequest);
     }
 
@@ -165,13 +161,13 @@ public class LoginActivity extends AppCompatActivity {
 // Inside the handleLoginSuccess method, after extracting userId from response
     private void handleLoginSuccess(JSONObject response) {
         try {
-            int userId = response.getInt("userId"); // Assuming userId is directly in the response as an integer
+            int userId = response.getInt("userId");
             String role = extractUserRole(response);
 
-            // Save userId to SharedPreferences as an integer
+            // Save userId as an integer to SharedPreferences
             SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putInt("userId", userId); // Save as an int
+            editor.putInt("userId", userId); // Store as int
             editor.apply();
 
             navigateToUserActivity(role);
@@ -211,15 +207,24 @@ public class LoginActivity extends AppCompatActivity {
     private void navigateToUserActivity(String role) {
         switch (role) {
             case "COMPANY":
-                // Proceed as usual for COMPANY users
+                // Navigate to CompanyMainActivity for COMPANY users
                 Intent companyIntent = new Intent(LoginActivity.this, CompanyMainActivity.class);
                 startActivity(companyIntent);
                 overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
                 finish();
                 break;
+
+            case "STUDENT":
+                // Navigate to StudentMainActivity for STUDENT users
+                Intent studentIntent = new Intent(LoginActivity.this, StudentMainActivity.class);
+                startActivity(studentIntent);
+                overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+                finish();
+                break;
+
             default:
-                // Show the message on the screen for other user roles
-                roleMessageTextView.setVisibility(View.VISIBLE);  // Display the message
+                // Show a message for unsupported roles
+                roleMessageTextView.setVisibility(View.VISIBLE);
                 roleMessageTextView.setText("We are still building your page, hold tight!");
                 Log.d(TAG, "User role not implemented: " + role);
                 break;
