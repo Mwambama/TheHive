@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.registration.signup.signupActivity;
 import com.example.hiveeapp.registration.signup.studentsignupActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
@@ -56,6 +57,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, StudentMainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // Navigate to employer Activity
+        goToStudentActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, EmployerMainActivity.class);
                 startActivity(intent);
             }
         });
