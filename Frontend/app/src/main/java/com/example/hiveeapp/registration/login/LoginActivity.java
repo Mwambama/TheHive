@@ -159,16 +159,20 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void handleLoginSuccess(JSONObject response) {
         try {
-            // Log the entire response
             Log.d(TAG, "Login response: " + response.toString());
 
-            // Parse the server response for user role
+            // Extract user ID and role from the response
+            int userId = response.getInt("userId");
             String role = extractUserRole(response);
 
-            // Log the extracted role
-            Log.d(TAG, "User role: " + role);
+            // Save user ID in SessionManager
+            SessionManager sessionManager = new SessionManager(this);
+            sessionManager.saveUserId(userId);
 
-            navigateToUserActivity(role); // Navigate to the corresponding activity
+            Log.d(TAG, "User ID saved: " + userId);
+
+            // Navigate based on role
+            navigateToUserActivity(role);
         } catch (JSONException e) {
             e.printStackTrace();
             showSnackbar("Error parsing server response.");

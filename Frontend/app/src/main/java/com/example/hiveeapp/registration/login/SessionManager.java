@@ -1,3 +1,5 @@
+package com.example.hiveeapp.registration.login;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
