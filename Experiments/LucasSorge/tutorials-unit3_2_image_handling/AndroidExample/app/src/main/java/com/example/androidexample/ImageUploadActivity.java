@@ -7,10 +7,14 @@ import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.android.volley.Request;
+import com.bumptech.glide.Glide;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,6 +66,14 @@ public class ImageUploadActivity extends AppCompatActivity {
                     progressDialog.dismiss(); // Dismiss progress dialog
                     Toast.makeText(getApplicationContext(), "Image Uploaded Successfully", Toast.LENGTH_LONG).show();
                     Log.d("Upload", "Response: " + response);
+
+                    // Use Glide to load the uploaded image from the server response URL
+                    Glide.with(this)
+                            .load(response)  // Load the image from the response URL
+                            .into(mImageView);
+
+                    // Optionally reset the selected image URI after loading the image
+                    selectiedUri = null;
                 },
                 error -> {
                     progressDialog.dismiss(); // Dismiss progress dialog
