@@ -1,7 +1,8 @@
-package com.example.hiveeapp.student_user;
+package com.example.hiveeapp.student_user.profile;
 
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ public class StudentProfileActivity extends AppCompatActivity {
 
     private EditText nameEditText, emailEditText, phoneEditText, universityEditText, gpaEditText;
     private MaterialButton saveButton;
+    private ImageButton backArrowIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,10 @@ public class StudentProfileActivity extends AppCompatActivity {
         universityEditText = findViewById(R.id.profileUniversity);
         gpaEditText = findViewById(R.id.profileGPA);
         saveButton = findViewById(R.id.saveProfileButton);
+        backArrowIcon = findViewById(R.id.backArrowIcon);
+
+        // Set up back button to finish activity
+        backArrowIcon.setOnClickListener(v -> finish());
 
         // Load student information
         loadStudentProfile();
@@ -41,16 +47,12 @@ public class StudentProfileActivity extends AppCompatActivity {
         saveButton.setOnClickListener(v -> updateStudentProfile());
     }
 
-    /**
-     * Loads the student profile data from the backend.
-     */
+    // Load student profile data from backend
     private void loadStudentProfile() {
-        // Call the StudentApi to get student info
         StudentApi.getStudents(this, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 try {
-                    // Assuming the first element is the student
                     JSONObject student = response.getJSONObject(0);
                     populateProfileFields(student);
                 } catch (JSONException e) {
@@ -66,9 +68,7 @@ public class StudentProfileActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Populates the UI fields with the student data.
-     */
+    // Populate UI fields with student data
     private void populateProfileFields(JSONObject student) throws JSONException {
         nameEditText.setText(student.optString("name"));
         emailEditText.setText(student.optString("email"));
@@ -77,12 +77,9 @@ public class StudentProfileActivity extends AppCompatActivity {
         gpaEditText.setText(String.valueOf(student.optDouble("gpa")));
     }
 
-    /**
-     * Sends the updated profile information to the backend.
-     */
+    // Update student profile information in the backend
     private void updateStudentProfile() {
         try {
-            // Create a JSONObject with the updated values
             JSONObject updatedStudent = new JSONObject();
             updatedStudent.put("name", nameEditText.getText().toString());
             updatedStudent.put("email", emailEditText.getText().toString());
@@ -90,7 +87,6 @@ public class StudentProfileActivity extends AppCompatActivity {
             updatedStudent.put("university", universityEditText.getText().toString());
             updatedStudent.put("gpa", Double.parseDouble(gpaEditText.getText().toString()));
 
-            // Call the API to update the student
             StudentApi.updateStudent(this, updatedStudent, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -108,4 +104,3 @@ public class StudentProfileActivity extends AppCompatActivity {
         }
     }
 }
-

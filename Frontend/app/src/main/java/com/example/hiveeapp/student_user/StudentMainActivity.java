@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.model.ChatActivity;
+import com.example.hiveeapp.student_user.profile.StudentProfileActivity;
+import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class StudentMainActivity extends AppCompatActivity {
@@ -21,7 +23,7 @@ public class StudentMainActivity extends AppCompatActivity {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_profile) {
                 // Navigate to Profile Page
-                startActivity(new Intent(StudentMainActivity.this, StudentProfileActivity.class));
+                startActivity(new Intent(StudentMainActivity.this, StudentProfileViewActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_apply) {
                 // Navigate to Apply Page
