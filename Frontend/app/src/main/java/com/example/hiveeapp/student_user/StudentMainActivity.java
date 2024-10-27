@@ -1,7 +1,10 @@
 package com.example.hiveeapp.student_user;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.model.ChatActivity;
@@ -11,10 +14,22 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class StudentMainActivity extends AppCompatActivity {
 
+    private int userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_main);
+
+        // Retrieve userId from SharedPreferences
+        SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
+        userId = preferences.getInt("userId", -1); // Use getInt and set a default value
+
+        if (userId == -1) {
+            // Handle case where userId is not set or invalid
+            Toast.makeText(this, "User ID not found. Please log in again.", Toast.LENGTH_SHORT).show();
+            // Optionally, redirect to login screen
+        }
 
         // Set up bottom navigation view for navigation to Profile, Apply, and Chat
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);

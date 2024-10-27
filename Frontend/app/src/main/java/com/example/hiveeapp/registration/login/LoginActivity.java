@@ -1,6 +1,7 @@
 package com.example.hiveeapp.registration.login;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -54,6 +55,10 @@ public class LoginActivity extends AppCompatActivity {
 
         // Set event listeners for buttons
         setListeners();
+
+        // test purpose
+        emailField.setText("teststudent@example.com");
+        passwordField.setText("TestStudent1234@");
     }
 
     /**
@@ -157,30 +162,27 @@ public class LoginActivity extends AppCompatActivity {
      *
      * @param response The response received from the server.
      */
+// Inside the handleLoginSuccess method, after extracting userId from response
     private void handleLoginSuccess(JSONObject response) {
         try {
-            Log.d(TAG, "Login response: " + response.toString());
-
-            // Extract user ID and role from the response
-            int userId = response.getInt("userId");
+            int userId = response.getInt("userId"); // Assuming userId is directly in the response as an integer
             String role = extractUserRole(response);
 
-            // Save user ID in SessionManager
-            SessionManager sessionManager = new SessionManager(this);
-            sessionManager.saveUserId(userId);
+            // Save userId to SharedPreferences as an integer
+            SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putInt("userId", userId); // Save as an int
+            editor.apply();
 
-            Log.d(TAG, "User ID saved: " + userId);
-
-            // Navigate based on role
             navigateToUserActivity(role);
         } catch (JSONException e) {
             e.printStackTrace();
             showSnackbar("Error parsing server response.");
-            Log.e(TAG, "Error parsing login response: " + e.getMessage());
         } finally {
             showLoading(false);
         }
     }
+
 
     /**
      * Extracts the user role from the server response.

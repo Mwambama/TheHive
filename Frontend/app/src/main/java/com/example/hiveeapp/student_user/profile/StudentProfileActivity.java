@@ -49,24 +49,34 @@ public class StudentProfileActivity extends AppCompatActivity {
 
     // Load student profile data from backend
     private void loadStudentProfile() {
-        StudentApi.getStudents(this, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    JSONObject student = response.getJSONObject(0);
-                    populateProfileFields(student);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(StudentProfileActivity.this, "Error loading profile", Toast.LENGTH_SHORT).show();
+        // Get the userId from the Intent as an integer
+        int userId = getIntent().getIntExtra("USER_ID", -1);
+
+        // Check if userId is valid
+        if (userId != -1) {
+            // Call API with userId
+            StudentApi.getStudents(this, userId, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    try {
+                        JSONObject student = response.getJSONObject(0);
+                        populateProfileFields(student);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(StudentProfileActivity.this, "Error loading profile", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(StudentProfileActivity.this, "Error fetching profile: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(StudentProfileActivity.this, "Error fetching profile: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(this, "Invalid User ID", Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     // Populate UI fields with student data
     private void populateProfileFields(JSONObject student) throws JSONException {

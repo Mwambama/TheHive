@@ -28,11 +28,15 @@ public class StudentListActivity extends AppCompatActivity {
     private RecyclerView studentRecyclerView;   // RecyclerView for displaying the list of students
     private StudentAdapter studentAdapter;     // Adapter for managing student data in the RecyclerView
     private MaterialButton addStudentButton;    // Button for adding a new student
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_list);
+
+        // Retrieve userId from intent or other shared preference mechanism
+        userId = getIntent().getIntExtra("USER_ID", -1);
 
         // Initialize views
         initViews();
@@ -72,41 +76,22 @@ public class StudentListActivity extends AppCompatActivity {
      * The students are reversed before being set in the adapter.
      */
     private void loadStudents() {
-        StudentApi.getStudents(this,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        // Reverse the JSONArray before setting it in the adapter
-                        JSONArray reversedStudents = reverseJSONArray(response);
-                        studentAdapter.setStudents(reversedStudents);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle error when fetching students fails
-                        Toast.makeText(StudentListActivity.this, "Error fetching students: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    /**
-     * Reverses the order of the given JSONArray.
-     *
-     * @param array The JSONArray to be reversed.
-     * @return A new JSONArray in reversed order.
-     */
-    private JSONArray reverseJSONArray(JSONArray array) {
-        JSONArray reversedArray = new JSONArray();
-        for (int i = array.length() - 1; i >= 0; i--) {
-            try {
-                JSONObject jsonObject = array.getJSONObject(i);
-                reversedArray.put(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        if (userId == -1) {  // Handle case where userId was not provided
+            Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show();
+            return;
         }
-        return reversedArray;
+
+        StudentApi.getStudents(this, userId, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                studentAdapter.setStudents(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(StudentListActivity.this, "Error fetching student profile: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
 

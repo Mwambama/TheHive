@@ -28,6 +28,8 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student_profile_view);
 
         // Initialize views
+        int userId = getIntent().getIntExtra("USER_ID", -1);
+
         nameTextView = findViewById(R.id.profileNameView);
         emailTextView = findViewById(R.id.profileEmailView);
         phoneTextView = findViewById(R.id.profilePhoneView);
@@ -39,7 +41,9 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         backArrowIcon = findViewById(R.id.backArrowIcon);
 
         // Load student information from the backend
-        loadStudentProfile();
+        if (userId != -1) {
+            loadStudentProfile(userId);
+        }
 
         // Set up the button to navigate to the update page
         updateInfoButton.setOnClickListener(v -> {
@@ -56,8 +60,9 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         });
     }
 
-    private void loadStudentProfile() {
-        StudentApi.getStudents(this, new Response.Listener<JSONArray>() {
+    private void loadStudentProfile(int userId) {
+        // Pass userId as an integer, not as a String
+        StudentApi.getStudents(this, userId, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 try {

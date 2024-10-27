@@ -26,8 +26,6 @@ public class StudentApi {
 
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/student";
     private static final String TAG = "StudentApi";
-    private static final int MAX_PHONE_LENGTH = 10;
-    private static final int MIN_PHONE_LENGTH = 7;
 
     /**
      * Generates the headers for API requests with authorization.
@@ -57,16 +55,16 @@ public class StudentApi {
      * @param listener      Response listener for successful fetch.
      * @param errorListener Error listener for handling errors.
      */
-    public static void getStudents(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL;
-        Log.d(TAG, "GET Students Request URL: " + url);
+    public static void getStudents(Context context, int userId, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "/" + userId;
+        Log.d(TAG, "GET Student Request URL: " + url);
 
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
                 null,
                 listener,
-                error -> handleErrorResponse("Error fetching students", error, errorListener)
+                error -> handleErrorResponse("Error fetching student", error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -76,6 +74,7 @@ public class StudentApi {
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
 
     /**
      * Adds a new student to the server.
