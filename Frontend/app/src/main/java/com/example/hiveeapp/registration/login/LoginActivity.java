@@ -33,9 +33,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * LoginActivity handles the user login functionality, sending user credentials to the server for authentication.
- */
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
@@ -62,9 +59,6 @@ public class LoginActivity extends AppCompatActivity {
         passwordField.setText("TestStudent1234@");
     }
 
-    /**
-     * Initialize all the views in the activity.
-     */
     private void initializeViews() {
         emailField = findViewById(R.id.emailField);
         passwordField = findViewById(R.id.passwordField);
@@ -75,21 +69,15 @@ public class LoginActivity extends AppCompatActivity {
         roleMessageTextView = findViewById(R.id.roleMessageTextView);
     }
 
-    /**
-     * Set up click listeners for login, forgot password, and register actions.
-     */
     private void setListeners() {
-        // Login button click event
         loginButton.setOnClickListener(v -> authenticateUser());
 
-        // Forgot password click event
         forgotPasswordButton.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
             startActivity(intent);
             overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
         });
 
-        // Register text click event
         registerText.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, signupActivity.class);
             startActivity(intent);
@@ -97,24 +85,20 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Authenticate user by sending email and password to the server.
-     */
     private void authenticateUser() {
         String email = emailField.getText().toString().trim();
         String password = passwordField.getText().toString();
 
-        // Ensure email and password are valid
+        // Debug: Log email and password inputs
+        Log.d(TAG, "authenticateUser: email=" + email + ", password=" + password);
+
         if (!validateInputs(email, password)) return;
 
-        // Construct the login URL
         String loginUrl = "http://coms-3090-063.class.las.iastate.edu:8080/account/login";
 
-        // Create authentication header
         String credentials = email + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
-        // Send login request
         JsonObjectRequest loginRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 loginUrl,
@@ -131,16 +115,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
+        Log.d(TAG, "Sending login request to URL: " + loginUrl);
         VolleySingleton.getInstance(this).addToRequestQueue(loginRequest);
     }
 
-    /**
-     * Validates the email and password fields.
-     *
-     * @param email    The entered email address.
-     * @param password The entered password.
-     * @return true if inputs are valid, false otherwise.
-     */
     private boolean validateInputs(String email, String password) {
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             showToast("Please enter a valid email address.");
@@ -153,22 +131,21 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * Handle login success by navigating to the respective user activity based on their role.
-     *
-     * @param response The response received from the server.
-     */
-// Inside the handleLoginSuccess method, after extracting userId from response
     private void handleLoginSuccess(JSONObject response) {
         try {
             int userId = response.getInt("userId");
             String role = extractUserRole(response);
 
-            // Save userId as an integer to SharedPreferences
+            // Debug: Log retrieved userId and role
+            Log.d(TAG, "handleLoginSuccess: userId=" + userId + ", role=" + role);
+
             SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putInt("userId", userId); // Store as int
+            editor.putInt("userId", userId);
             editor.apply();
+
+            // Debug: Confirm userId saved to SharedPreferences
+            Log.d(TAG, "UserId saved in SharedPreferences: " + preferences.getInt("userId", -1));
 
             navigateToUserActivity(role);
         } catch (JSONException e) {
@@ -179,14 +156,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
-    /**
-     * Extracts the user role from the server response.
-     *
-     * @param response The JSON response from the server.
-     * @return The role of the user.
-     * @throws JSONException If parsing fails.
-     */
     private String extractUserRole(JSONObject response) throws JSONException {
         if (response.has("role")) {
             return response.getString("role").trim().toUpperCase();
@@ -199,15 +168,11 @@ public class LoginActivity extends AppCompatActivity {
         return "UNKNOWN";
     }
 
-    /**
-     * Navigate to the appropriate activity based on the user's role.
-     *
-     * @param role The role of the user (e.g., STUDENT, EMPLOYER, COMPANY, ADMIN).
-     */
     private void navigateToUserActivity(String role) {
+        Log.d(TAG, "Navigating to activity based on role: " + role);
+
         switch (role) {
             case "COMPANY":
-                // Navigate to CompanyMainActivity for COMPANY users
                 Intent companyIntent = new Intent(LoginActivity.this, CompanyMainActivity.class);
                 startActivity(companyIntent);
                 overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
@@ -215,7 +180,6 @@ public class LoginActivity extends AppCompatActivity {
                 break;
 
             case "STUDENT":
-                // Navigate to StudentMainActivity for STUDENT users
                 Intent studentIntent = new Intent(LoginActivity.this, StudentMainActivity.class);
                 startActivity(studentIntent);
                 overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
@@ -223,7 +187,6 @@ public class LoginActivity extends AppCompatActivity {
                 break;
 
             default:
-                // Show a message for unsupported roles
                 roleMessageTextView.setVisibility(View.VISIBLE);
                 roleMessageTextView.setText("We are still building your page, hold tight!");
                 Log.d(TAG, "User role not implemented: " + role);
@@ -231,11 +194,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Handle errors from the server response.
-     *
-     * @param error The error received from the server.
-     */
     private void handleError(VolleyError error) {
         showLoading(false);
 
@@ -246,14 +204,13 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             showToast("Login failed. Please check your network connection.");
         }
+
+        // Debug: Log error details
+        Log.e(TAG, "Login error: ", error);
     }
 
-    /**
-     * Handle server-side error codes and display appropriate messages.
-     *
-     * @param statusCode The HTTP status code received from the server.
-     */
     private void handleServerError(int statusCode) {
+        Log.d(TAG, "Server responded with error code: " + statusCode);
         switch (statusCode) {
             case 400:
                 showToast("Invalid request. Please check your input.");
@@ -273,30 +230,15 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Shows or hides the loading spinner and disables/enables the login button.
-     *
-     * @param show true to show loading, false to hide it.
-     */
     private void showLoading(boolean show) {
         loadingProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
         loginButton.setEnabled(!show);
     }
 
-    /**
-     * Displays a Toast message.
-     *
-     * @param message The message to display.
-     */
     private void showToast(String message) {
         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * Displays a Snackbar message.
-     *
-     * @param message The message to display.
-     */
     private void showSnackbar(String message) {
         Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show();
     }

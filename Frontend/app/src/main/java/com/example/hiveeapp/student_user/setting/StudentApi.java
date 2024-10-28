@@ -55,11 +55,11 @@ public class StudentApi {
      * @param listener      Response listener for successful fetch.
      * @param errorListener Error listener for handling errors.
      */
-    public static void getStudents(Context context, int userId, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+    public static void getStudent(Context context, int userId, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "/" + userId;
         Log.d(TAG, "GET Student Request URL: " + url);
 
-        JsonArrayRequest request = new JsonArrayRequest(
+        JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
                 null,

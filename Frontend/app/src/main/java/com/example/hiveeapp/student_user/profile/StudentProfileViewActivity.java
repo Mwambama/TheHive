@@ -2,6 +2,7 @@ package com.example.hiveeapp.student_user.profile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Button;
@@ -18,6 +19,8 @@ import org.json.JSONObject;
 
 public class StudentProfileViewActivity extends AppCompatActivity {
 
+    private static final String TAG = "StudentProfileView";
+    private int userId;
     private TextView nameTextView, emailTextView, phoneTextView, universityTextView, graduationDateTextView, gpaTextView, addressTextView;
     private Button updateInfoButton;
     private ImageButton backArrowIcon;
@@ -27,9 +30,19 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_profile_view);
 
-        // Initialize views
-        int userId = getIntent().getIntExtra("USER_ID", -1);
+        // Retrieve userId from Intent
+        userId = getIntent().getIntExtra("USER_ID", -1);
 
+        // Debug: Log userId received from Intent
+        Log.d(TAG, "Received userId from Intent: " + userId);
+
+        if (userId == -1) {
+            Toast.makeText(this, "Invalid User ID", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Invalid userId. Cannot load profile.");
+            return;
+        }
+
+        // Initialize TextViews and Button with the corresponding views in XML
         nameTextView = findViewById(R.id.profileNameView);
         emailTextView = findViewById(R.id.profileEmailView);
         phoneTextView = findViewById(R.id.profilePhoneView);
@@ -37,36 +50,29 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         graduationDateTextView = findViewById(R.id.profileGraduationDateView);
         gpaTextView = findViewById(R.id.profileGpaView);
         addressTextView = findViewById(R.id.profileAddressView);
-        updateInfoButton = findViewById(R.id.updateInfoButton);
-        backArrowIcon = findViewById(R.id.backArrowIcon);
+        updateInfoButton = findViewById(R.id.updateInfoButton);  // Initialize update button
+
+        // Set up the update button to navigate to the update activity
+        updateInfoButton.setOnClickListener(v -> {
+            Log.d(TAG, "Update button clicked, navigating to StudentProfileActivity");
+
+            // Navigate to the StudentProfileActivity with userId
+            Intent intent = new Intent(StudentProfileViewActivity.this, StudentProfileActivity.class);
+            intent.putExtra("USER_ID", userId);  // Pass userId if needed in next activity
+            startActivity(intent);
+        });
 
         // Load student information from the backend
-        if (userId != -1) {
-            loadStudentProfile(userId);
-        }
-
-        // Set up the button to navigate to the update page
-        updateInfoButton.setOnClickListener(v -> {
-            Intent intent = new Intent(StudentProfileViewActivity.this, StudentProfileActivity.class);
-            startActivity(intent);
-        });
-
-        // Handle back arrow click
-        backArrowIcon.setOnClickListener(v -> {
-            // Navigate back to StudentMainActivity
-            Intent intent = new Intent(StudentProfileViewActivity.this, StudentMainActivity.class);
-            startActivity(intent);
-            finish();
-        });
+        loadStudentProfile(userId);
     }
 
     private void loadStudentProfile(int userId) {
-        // Pass userId as an integer, not as a String
-        StudentApi.getStudents(this, userId, new Response.Listener<JSONArray>() {
+        Log.d(TAG, "Loading student profile with userId: " + userId);
+
+        StudentApi.getStudent(this, userId, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray response) {
+            public void onResponse(JSONObject student) {
                 try {
-                    JSONObject student = response.getJSONObject(0);
                     displayProfile(student);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -82,22 +88,13 @@ public class StudentProfileViewActivity extends AppCompatActivity {
     }
 
     private void displayProfile(JSONObject student) throws JSONException {
+        Log.d(TAG, "Displaying profile data for student: " + student.optString("name"));
+
         nameTextView.setText(student.optString("name"));
         emailTextView.setText(student.optString("email"));
         phoneTextView.setText(student.optString("phone"));
         universityTextView.setText(student.optString("university"));
         graduationDateTextView.setText(student.optString("graduationDate"));
         gpaTextView.setText(String.valueOf(student.optDouble("gpa")));
-
-        // Format address details
-        JSONObject address = student.optJSONObject("address");
-        if (address != null) {
-            String formattedAddress = address.optString("street") + ", " +
-                    address.optString("complement") + ", " +
-                    address.optString("city") + ", " +
-                    address.optString("state") + " - " +
-                    address.optString("zipCode");
-            addressTextView.setText(formattedAddress);
-        }
     }
 }
