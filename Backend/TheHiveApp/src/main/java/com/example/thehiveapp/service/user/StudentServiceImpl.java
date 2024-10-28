@@ -45,7 +45,11 @@ public class StudentServiceImpl implements StudentService{
         if (!studentRepository.existsById(id)){
             throw new ResourceNotFoundException("Student not found with id " + id);
         }
-        addressService.updateAddress(request.getAddress());
+        if (request.getAddress().getAddressId() == null){
+            addressService.createAddress(request.getAddress());
+        } else {
+            addressService.updateAddress(request.getAddress());
+        }
         return studentRepository.save(request);
     }
 
