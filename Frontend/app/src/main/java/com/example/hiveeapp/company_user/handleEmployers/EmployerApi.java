@@ -27,9 +27,9 @@ import java.util.Map;
 
 public class EmployerApi {
 
-    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer";
+    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
     private static final String ADDRESS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/address";
-    private static final String TAG = "EmployerApi";
+    private static final String TAG = "employerApis";
     private static final int MAX_PHONE_LENGTH = 10;
     private static final int MIN_PHONE_LENGTH = 7;
     private static final int ZIP_CODE_LENGTH = 5;
@@ -45,8 +45,8 @@ public class EmployerApi {
         headers.put("Content-Type", "application/json");
 
         // Mocked username and password for testing purposes
-        String username = "test@example.com";
-        String password = "Test@example1234";
+        String username = "employer@example.com";
+        String password = "Test@1234";
 
         String credentials = username + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
