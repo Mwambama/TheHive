@@ -34,7 +34,7 @@
             android:id="@+id/profileTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Update Profile Information"
+            android:text="Profile Information"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"
@@ -48,20 +48,21 @@
             android:id="@+id/nameTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profileTitle"
-            android:layout_marginTop="16dp">
+            app:layout_constraintTop_toBottomOf="@id/profileTitle">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileName"
+                android:id="@+id/profileNameView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Name"
                 android:inputType="text"
                 android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Email Field -->
@@ -69,20 +70,21 @@
             android:id="@+id/emailTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/nameTextInputLayout"
-            android:layout_marginTop="8dp">
+            app:layout_constraintTop_toBottomOf="@id/nameTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileEmail"
+                android:id="@+id/profileEmailView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
                 android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Phone Field -->
@@ -90,20 +92,21 @@
             android:id="@+id/phoneTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/emailTextInputLayout"
-            android:layout_marginTop="8dp">
+            app:layout_constraintTop_toBottomOf="@id/emailTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profilePhone"
+                android:id="@+id/profilePhoneView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Phone"
                 android:inputType="phone"
                 android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- University Field -->
@@ -111,20 +114,21 @@
             android:id="@+id/universityTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/phoneTextInputLayout"
-            android:layout_marginTop="8dp">
+            app:layout_constraintTop_toBottomOf="@id/phoneTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileUniversity"
+                android:id="@+id/profileUniversityView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="University"
                 android:inputType="text"
                 android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Graduation Date Field -->
@@ -132,20 +136,21 @@
             android:id="@+id/graduationDateTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/universityTextInputLayout"
-            android:layout_marginTop="8dp">
+            app:layout_constraintTop_toBottomOf="@id/universityTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileGraduationDate"
+                android:id="@+id/profileGraduationDateView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Graduation Date"
                 android:inputType="date"
                 android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Street Field -->
@@ -258,28 +263,29 @@
             android:id="@+id/gpaTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/zipCodeTextInputLayout"
-            android:layout_marginTop="8dp">
+            app:layout_constraintTop_toBottomOf="@id/zipCodeTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileGPA"
+                android:id="@+id/profileGpaView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="GPA"
                 android:inputType="numberDecimal"
                 android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Save Changes Button -->
+        <!-- Update Information Button -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/saveProfileButton"
+            android:id="@+id/updateInfoButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Save Changes"
+            android:text="Update Information"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/colorPrimaryDark"
             app:cornerRadius="8dp"

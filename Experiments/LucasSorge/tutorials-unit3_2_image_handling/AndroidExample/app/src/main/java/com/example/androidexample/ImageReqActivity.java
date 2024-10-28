@@ -1,7 +1,7 @@
 package com.example.androidexample;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
@@ -18,8 +17,7 @@ public class ImageReqActivity extends AppCompatActivity {
 
     private Button btnImageReq;
     private ImageView imageView;
-
-//    public static final String URL_IMAGE = "http://sharding.org/outgoing/temp/testimg3.jpg";
+    private ProgressDialog progressDialog; // Add progress dialog
 
     public static final String URL_IMAGE = "http://sharding.org/outgoing/temp/testimg3.jpg";
 
@@ -28,45 +26,42 @@ public class ImageReqActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_req);
 
-        btnImageReq = (Button) findViewById(R.id.btnImageReq);
-        imageView = (ImageView) findViewById(R.id.imgView);
+        btnImageReq = findViewById(R.id.btnImageReq);
+        imageView = findViewById(R.id.imgView);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading image...");
 
-        btnImageReq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {makeImageRequest();}
-        });
+        btnImageReq.setOnClickListener(v -> makeImageRequest());
     }
 
     /**
-     * Making image request
-     * */
+     * Making image request with progress dialog
+     */
     private void makeImageRequest() {
+        progressDialog.show(); // Show progress dialog when request starts
 
         ImageRequest imageRequest = new ImageRequest(
-            URL_IMAGE,
-            new Response.Listener<Bitmap>() {
-                @Override
-                public void onResponse(Bitmap response) {
-                    // Display the image in the ImageView
-                    imageView.setImageBitmap(response);
+                URL_IMAGE,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        progressDialog.dismiss(); // Dismiss progress dialog
+                        imageView.setImageBitmap(response);
+                        Toast.makeText(getApplicationContext(), "Image Loaded Successfully", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                0, 0, ImageView.ScaleType.FIT_XY, Bitmap.Config.RGB_565,
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss(); // Dismiss progress dialog
+                        Toast.makeText(getApplicationContext(), "Error Loading Image", Toast.LENGTH_LONG).show();
+                        Log.e("Volley Error", error.toString());
+                    }
                 }
-            },
-            0, // Width, set to 0 to get the original width
-            0, // Height, set to 0 to get the original height
-            ImageView.ScaleType.FIT_XY, // ScaleType
-            Bitmap.Config.RGB_565, // Bitmap config
-
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    // Handle errors here
-                    Log.e("Volley Error", error.toString());
-                }
-            }
         );
 
-        // Adding request to request queue
+        // Add request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(imageRequest);
     }
-
 }

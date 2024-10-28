@@ -164,8 +164,8 @@ public class StudentUpdateActivity extends AppCompatActivity {
         String state = stateField.getText().toString().trim();
         String zipCode = zipField.getText().toString().trim();
 
-        // Retrieve the studentId from SharedPreferences (or use a hardcoded value for testing)
-        int studentId = 995;  // This is a test student ID
+        // Retrieve the studentId from SharedPreferences
+        int studentId = 995;
 
         // Construct the student JSON object
         JSONObject studentData = new JSONObject();

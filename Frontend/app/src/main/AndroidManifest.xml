@@ -29,51 +29,38 @@
             </intent-filter>
         </activity>
 
-<!--                       got to sign up page-->
-        <activity android:name=".registration.signup.signupActivity" android:exported="true">
-           </activity>
-
-        <!--                go to student signup activity -->
-        <activity android:name=".registration.signup.studentsignupActivity" android:exported="true">
-        </activity>
-<!--                       go to employer signup activity -->
-        <activity android:name=".registration.signup.employersignupActivity" android:exported="true">
-
-        </activity>
-
-        <activity android:name=".registration.signup.companysignupActivity" android:exported="true">
-
-        </activity>
-
+        <!-- Sign up and related activities -->
+        <activity android:name=".registration.signup.signupActivity" android:exported="true" />
+        <activity android:name=".registration.signup.studentsignupActivity" android:exported="true" />
+        <activity android:name=".registration.signup.employersignupActivity" android:exported="true" />
+        <activity android:name=".registration.signup.companysignupActivity" android:exported="true" />
 
         <!-- Company Activity -->
-        <activity android:name=".company_user.CompanyMainActivity"
-            android:exported="true">
-        </activity>
+        <activity android:name=".company_user.CompanyMainActivity" android:exported="true" />
 
         <!-- Student Activity -->
-        <activity android:name=".student_user.StudentMainActivity"
-            android:exported="true">
-        </activity>
+        <activity android:name=".student_user.StudentMainActivity" android:exported="true" />
+
+        <!-- Add the StudentProfileActivity -->
+        <activity android:name=".student_user.profile.StudentProfileActivity" android:exported="true" />
+        <activity android:name=".student_user.profile.StudentProfileViewActivity" android:exported="true" />
 
         <!-- Admin Activity -->
-        <activity android:name=".admin_user.AdminMainActivity"
-            android:exported="true">
-        </activity>
-
+        <activity android:name=".admin_user.AdminMainActivity" android:exported="true" />
 
         <!-- Company Add/Delete/Get/Update Activity -->
-        <activity android:name=".company_user.handleEmployers.EmployerCreationActivity"/>
-        <activity android:name=".company_user.handleEmployers.EmployerListActivity"/>
+        <activity android:name=".company_user.handleEmployers.EmployerCreationActivity" />
+        <activity android:name=".company_user.handleEmployers.EmployerListActivity" />
 
         <!-- Company Add/Delete/Get/Update Invitation Activity -->
         <activity android:name=".company_user.invitations.InvitationManagementActivity" />
         <activity android:name=".company_user.invitations.InvitationCreationActivity" />
 
-        <!-- forgot password Activity -->
+        <!-- Forgot Password Activities -->
         <activity android:name=".registration.forgotPassword.ForgotPasswordActivity" />
         <activity android:name=".registration.forgotPassword.VerifyKeyActivity" />
         <activity android:name=".registration.forgotPassword.ResetPasswordActivity" />
+
     </application>
 
 </manifest>
