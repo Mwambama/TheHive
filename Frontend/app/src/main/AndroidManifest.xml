@@ -47,6 +47,7 @@
         <activity android:name=".employer_user.display.EditJobActivity" android:exported="true" />
         <activity android:name=".employer_user.display.AddJobActivity" android:exported="true" />
 
+
         <activity android:name=".employer_user.setting.employerinfoApi" android:exported="true" />
         <activity android:name=".employer_user.setting.ViewEmployerInfoActivity" android:exported="true" />
 <!--        <activity android:name=".employer_user." android:exported="true" />-->

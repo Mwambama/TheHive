@@ -76,7 +76,7 @@ public class EmployerApis {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return com.example.hiveeapp.company_user.handleEmployers.EmployerApi.getHeaders(context);
+                return com.example.hiveeapp.employer_user.display.EmployerApis.getHeaders(context);
             }
         };
 
@@ -105,7 +105,7 @@ public class EmployerApis {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return com.example.hiveeapp.company_user.handleEmployers.EmployerApi.getHeaders(context);
+                return com.example.hiveeapp.employer_user.display.EmployerApis.getHeaders(context);
             }
         };
 
@@ -205,7 +205,7 @@ public class EmployerApis {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return com.example.hiveeapp.company_user.handleEmployers.EmployerApi.getHeaders(context);
+                return com.example.hiveeapp.employer_user.display.EmployerApis.getHeaders(context);
             }
         };
 
@@ -370,7 +370,7 @@ public class EmployerApis {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return com.example.hiveeapp.company_user.handleEmployers.EmployerApi.getHeaders(context);
+                return com.example.hiveeapp.employer_user.display.EmployerApis.getHeaders(context);
             }
         };
 
@@ -399,7 +399,7 @@ public class EmployerApis {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return com.example.hiveeapp.company_user.handleEmployers.EmployerApi.getHeaders(context);
+                return com.example.hiveeapp.employer_user.display.EmployerApis.getHeaders(context);
             }
         };
 
@@ -433,7 +433,7 @@ public class EmployerApis {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return com.example.hiveeapp.company_user.handleEmployers.EmployerApi.getHeaders(context);
+                return com.example.hiveeapp.employer_user.display.EmployerApis.getHeaders(context);
             }
         };
 
