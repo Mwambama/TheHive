@@ -31,7 +31,7 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student_profile_view);
 
         // Retrieve userId from Intent
-        userId = getIntent().getIntExtra("USER_ID", -1);
+        userId = 1165; //getIntent().getIntExtra("USER_ID", -1);
 
         // Debug: Log userId received from Intent
         Log.d(TAG, "Received userId from Intent: " + userId);
@@ -43,12 +43,12 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         }
 
         // Initialize TextViews and Button with the corresponding views in XML
-        nameTextView = findViewById(R.id.profileName);
-        emailTextView = findViewById(R.id.profileEmail);
-        phoneTextView = findViewById(R.id.profilePhone);
-        universityTextView = findViewById(R.id.profileUniversity);
-        graduationDateTextView = findViewById(R.id.profileGraduationDate);
-        gpaTextView = findViewById(R.id.profileGPA);
+        nameTextView = findViewById(R.id.profileNameView);
+        emailTextView = findViewById(R.id.profileEmailView);
+        phoneTextView = findViewById(R.id.profilePhoneView);
+        universityTextView = findViewById(R.id.profileUniversityView);
+        graduationDateTextView = findViewById(R.id.profileGraduationDateView);
+        gpaTextView = findViewById(R.id.profileGpaView);
         streetTextView = findViewById(R.id.profileStreet);
         complementTextView = findViewById(R.id.profileComplement);
         cityTextView = findViewById(R.id.profileCity);
