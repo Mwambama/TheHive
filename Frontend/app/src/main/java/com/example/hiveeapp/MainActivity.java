@@ -15,11 +15,12 @@ import com.example.hiveeapp.student_user.StudentMainActivity;
 public class MainActivity extends AppCompatActivity {
     private Button mainSignupBtn;
     private Button studentmainSignupBtn;
-    private Button employermainSignupBtn;
 
     private Button goToCompanyActivityButton;
     private Button goToStudentActivityButton;
     private Button goToLoginActivityButton; // Declare the login button
+
+    private Button goToEmployerActivityButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         mainSignupBtn = findViewById(R.id.main_signup_btn);
         goToCompanyActivityButton = findViewById(R.id.goToCompanyActivityButton);
         goToStudentActivityButton = findViewById(R.id.goToStudentActivityButton);
+        goToEmployerActivityButton = findViewById(R.id.goToEmployerActivityButton);
         goToLoginActivityButton = findViewById(R.id.goToLoginActivityButton); // Initialize the login button
 
         // Set OnClickListener for Signup Button
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Navigate to employer Activity
-        goToStudentActivityButton.setOnClickListener(new View.OnClickListener() {
+        goToEmployerActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, EmployerMainActivity.class);

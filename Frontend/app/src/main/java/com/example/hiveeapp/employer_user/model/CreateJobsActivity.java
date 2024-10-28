@@ -55,7 +55,7 @@ public class CreateJobsActivity extends AppCompatActivity {
 
     // Fetch job posts from the backend
     private void fetchJobPosts() {
-        String url = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting"; // Replace with your mock server URL
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting/4"; // Replace with your mock server URL
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
@@ -150,7 +150,7 @@ public class CreateJobsActivity extends AppCompatActivity {
     // Update an existing job post
     // the get  jobId propertyis here to store the unique identifier for each job.
     private void updateJobPost(PostedJobs job) {
-        String url = "https://8c5d8b24-4a9a-4ce2-bf22-1aa5316f76a2.mock.pstmn.io/employer_user/update/" + job.getJobId(); // Replace with your mock server URL
+        String url = "https://8c5d8b24-4a9a-4ce2-bf22-1aa5316f76a2.mock.pstmn.io/job-posting" + job.getJobId(); // Replace with your mock server URL
 
         JSONObject jobData = new JSONObject();
         try {
