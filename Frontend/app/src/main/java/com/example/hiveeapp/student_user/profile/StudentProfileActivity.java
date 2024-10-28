@@ -1,11 +1,16 @@
 package com.example.hiveeapp.student_user.profile;
 
+import static com.example.hiveeapp.student_user.setting.StudentApi.uploadPdfToServer;
+
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -14,16 +19,22 @@ import com.example.hiveeapp.student_user.setting.StudentApi;
 import com.google.android.material.button.MaterialButton;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 public class StudentProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "StudentProfileActivity";
+    private static final int PICK_PDF_REQUEST = 1;
     private EditText nameEditText, streetEditText, complementEditText, cityEditText, stateEditText, zipCodeEditText;
     private EditText emailEditText, phoneEditText, universityEditText, gpaEditText, graduationDateEditText;
-    private MaterialButton saveButton;
+    private MaterialButton saveButton, uploadResumeButton;
     private ImageButton backArrowIcon;
     private int userId;
+    private Uri pdfUri;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +55,9 @@ public class StudentProfileActivity extends AppCompatActivity {
 
         // Load student information
         loadStudentProfile();
+
+        uploadResumeButton = findViewById(R.id.uploadResumeButton);
+        uploadResumeButton.setOnClickListener(v -> selectPdf());
 
         // Set up Save button listener
         saveButton.setOnClickListener(v -> updateStudentProfile());
@@ -68,6 +82,35 @@ public class StudentProfileActivity extends AppCompatActivity {
         backArrowIcon = findViewById(R.id.backArrowIcon);
 
         backArrowIcon.setOnClickListener(v -> finish());
+    }
+
+    private void selectPdf(){
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("application/pdf");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(intent, "Select PDF"), PICK_PDF_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            pdfUri = data.getData();
+            uploadPdf();
+        }
+    }
+
+    private void uploadPdf() {
+        if (pdfUri == null) {
+            Toast.makeText(this, "No PDF selected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        uploadPdfToServer(this, userId, pdfUri,
+                response -> Toast.makeText(this, "Resume uploaded successfully", Toast.LENGTH_SHORT).show(),
+                error -> Toast.makeText(this, "Failed to upload resume", Toast.LENGTH_SHORT).show()
+        );
     }
 
     private void loadStudentProfile() {
@@ -117,8 +160,6 @@ public class StudentProfileActivity extends AppCompatActivity {
             updatedStudent.put("email", emailEditText.getText().toString());
             updatedStudent.put("phone", phoneEditText.getText().toString());
             updatedStudent.put("university", universityEditText.getText().toString());
-
-            // Add required role field
             updatedStudent.put("role", "STUDENT");
 
             // Validate and add GPA field

@@ -1,6 +1,7 @@
 package com.example.hiveeapp.student_user.setting;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
@@ -12,12 +13,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.example.hiveeapp.volley.VolleyMultipartRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -168,6 +174,63 @@ public class StudentApi {
         // Add the request to the Volley request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
+    private static byte[] getBytesFromUri(Context context, Uri uri) throws IOException {
+        try (InputStream inputStream = context.getContentResolver().openInputStream(uri);
+             ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream()) {
+            int bufferSize = 1024;
+            byte[] buffer = new byte[bufferSize];
+
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                byteBuffer.write(buffer, 0, len);
+            }
+            return byteBuffer.toByteArray();
+        }
+    }
+
+
+    /**
+     * Uploads a PDF resume to the server for a specific user.
+     *
+     * @param context       The application context.
+     * @param userId        ID of the student.
+     * @param pdfUri        Uri of the PDF file to upload.
+     * @param listener      Response listener for successful upload.
+     * @param errorListener Error listener for handling errors.
+     */
+    public static void uploadPdfToServer(Context context, int userId, Uri pdfUri,
+                                         Response.Listener<String> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "/" + userId + "/upload-resume";
+        Log.d(TAG, "POST Upload PDF Request URL: " + url);
+
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(
+                Request.Method.POST,
+                url,
+                response -> listener.onResponse(new String(response.data)),
+                error -> handleErrorResponse("Error uploading PDF", error, errorListener)
+        ) {
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                try {
+                    byte[] pdfData = getBytesFromUri(context, pdfUri);
+                    params.put("resume", new DataPart("resume.pdf", pdfData, "application/pdf"));
+                } catch (IOException e) {
+                    Log.e(TAG, "Error reading PDF file: " + e.getMessage());
+                }
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() {
+                return StudentApi.getHeaders(context);
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(multipartRequest);
+    }
+
 
     /**
      * Handles error responses from the server, logs the details, and invokes the error listener.
