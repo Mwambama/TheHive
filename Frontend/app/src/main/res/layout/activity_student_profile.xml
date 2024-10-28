@@ -148,9 +148,9 @@
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Address Field -->
+        <!-- Street Field -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/addressTextInputLayout"
+            android:id="@+id/streetTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:boxStrokeColor="@color/colorAccent"
@@ -160,11 +160,95 @@
             android:layout_marginTop="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileAddress"
+                android:id="@+id/profileStreet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Address"
+                android:hint="Street"
                 android:inputType="text"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Complement Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/complementTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/streetTextInputLayout"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/profileComplement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Complement"
+                android:inputType="text"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- City Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/cityTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/complementTextInputLayout"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/profileCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="City"
+                android:inputType="text"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- State Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/stateTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cityTextInputLayout"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/profileState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="State"
+                android:inputType="text"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Zip Code Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/zipCodeTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/stateTextInputLayout"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/profileZipCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Zip Code"
+                android:inputType="textPostalAddress"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -177,7 +261,7 @@
             app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/addressTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/zipCodeTextInputLayout"
             android:layout_marginTop="8dp">
 
             <com.google.android.material.textfield.TextInputEditText

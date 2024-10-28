@@ -13,7 +13,6 @@ import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.student_user.setting.StudentApi;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,7 +20,8 @@ public class StudentProfileViewActivity extends AppCompatActivity {
 
     private static final String TAG = "StudentProfileView";
     private int userId;
-    private TextView nameTextView, emailTextView, phoneTextView, universityTextView, graduationDateTextView, gpaTextView, addressTextView;
+    private TextView nameTextView, emailTextView, phoneTextView, universityTextView, graduationDateTextView, gpaTextView;
+    private TextView streetTextView, complementTextView, cityTextView, stateTextView, zipCodeTextView;
     private Button updateInfoButton;
     private ImageButton backArrowIcon;
 
@@ -43,22 +43,28 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         }
 
         // Initialize TextViews and Button with the corresponding views in XML
-        nameTextView = findViewById(R.id.profileNameView);
-        emailTextView = findViewById(R.id.profileEmailView);
-        phoneTextView = findViewById(R.id.profilePhoneView);
-        universityTextView = findViewById(R.id.profileUniversityView);
-        graduationDateTextView = findViewById(R.id.profileGraduationDateView);
-        gpaTextView = findViewById(R.id.profileGpaView);
-        addressTextView = findViewById(R.id.profileAddressView);
-        updateInfoButton = findViewById(R.id.updateInfoButton);  // Initialize update button
+        nameTextView = findViewById(R.id.profileName);
+        emailTextView = findViewById(R.id.profileEmail);
+        phoneTextView = findViewById(R.id.profilePhone);
+        universityTextView = findViewById(R.id.profileUniversity);
+        graduationDateTextView = findViewById(R.id.profileGraduationDate);
+        gpaTextView = findViewById(R.id.profileGPA);
+        streetTextView = findViewById(R.id.profileStreet);
+        complementTextView = findViewById(R.id.profileComplement);
+        cityTextView = findViewById(R.id.profileCity);
+        stateTextView = findViewById(R.id.profileState);
+        zipCodeTextView = findViewById(R.id.profileZipCode);
+        updateInfoButton = findViewById(R.id.updateInfoButton);
+
+        // Set up the back button
+        backArrowIcon = findViewById(R.id.backArrowIcon);
+        backArrowIcon.setOnClickListener(v -> finish());
 
         // Set up the update button to navigate to the update activity
         updateInfoButton.setOnClickListener(v -> {
             Log.d(TAG, "Update button clicked, navigating to StudentProfileActivity");
-
-            // Navigate to the StudentProfileActivity with userId
             Intent intent = new Intent(StudentProfileViewActivity.this, StudentProfileActivity.class);
-            intent.putExtra("USER_ID", userId);  // Pass userId if needed in next activity
+            intent.putExtra("USER_ID", userId);
             startActivity(intent);
         });
 
@@ -90,11 +96,29 @@ public class StudentProfileViewActivity extends AppCompatActivity {
     private void displayProfile(JSONObject student) throws JSONException {
         Log.d(TAG, "Displaying profile data for student: " + student.optString("name"));
 
+        // Set basic profile fields
         nameTextView.setText(student.optString("name"));
         emailTextView.setText(student.optString("email"));
         phoneTextView.setText(student.optString("phone"));
         universityTextView.setText(student.optString("university"));
         graduationDateTextView.setText(student.optString("graduationDate"));
         gpaTextView.setText(String.valueOf(student.optDouble("gpa")));
+
+        // Set address fields
+        JSONObject address = student.optJSONObject("address");
+        if (address != null) {
+            streetTextView.setText(address.optString("street"));
+            complementTextView.setText(address.optString("complement"));
+            cityTextView.setText(address.optString("city"));
+            stateTextView.setText(address.optString("state"));
+            zipCodeTextView.setText(address.optString("zipCode"));
+        } else {
+            // Clear fields if no address data is available
+            streetTextView.setText("");
+            complementTextView.setText("");
+            cityTextView.setText("");
+            stateTextView.setText("");
+            zipCodeTextView.setText("");
+        }
     }
 }
