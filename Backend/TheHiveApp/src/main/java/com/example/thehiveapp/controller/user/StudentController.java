@@ -47,7 +47,7 @@ public class StudentController {
     }
 
     @GetMapping(value = "/{id}/resume", produces = MediaType.APPLICATION_PDF_VALUE)
-    byte[] getStudentResumeById(@PathVariable Long id){
+    public byte[] getStudentResumeById(@PathVariable Long id){
         return studentService.getStudentResume(id);
     }
 
