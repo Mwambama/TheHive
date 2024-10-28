@@ -23,7 +23,6 @@ public class StudentServiceImpl implements StudentService{
     @Autowired private StudentRepository studentRepository;
     @Autowired private AddressService addressService;
     private static String directory = "../../thehive/resumes/"; // when running through server
-    // private static String directory = "C:/Users/fadah/Downloads/resume-uploads/"; // EDIT when running locally
 
     public StudentServiceImpl(){}
 
