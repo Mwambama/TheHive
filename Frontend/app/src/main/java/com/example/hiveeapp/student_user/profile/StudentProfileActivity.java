@@ -3,11 +3,16 @@ package com.example.hiveeapp.student_user.profile;
 import static com.example.hiveeapp.student_user.setting.StudentApi.uploadPdfToServer;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -32,6 +37,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     private EditText emailEditText, phoneEditText, universityEditText, gpaEditText, graduationDateEditText;
     private MaterialButton saveButton, uploadResumeButton;
     private ImageButton backArrowIcon;
+    private ImageView pdfPreview;
     private int userId;
     private Uri pdfUri;
 
@@ -55,6 +61,9 @@ public class StudentProfileActivity extends AppCompatActivity {
 
         // Load student information
         loadStudentProfile();
+
+        // Load PDF preview
+        pdfPreview = findViewById(R.id.pdfPreview);
 
         uploadResumeButton = findViewById(R.id.uploadResumeButton);
         uploadResumeButton.setOnClickListener(v -> selectPdf());
@@ -108,7 +117,10 @@ public class StudentProfileActivity extends AppCompatActivity {
         }
 
         uploadPdfToServer(this, userId, pdfUri,
-                response -> Toast.makeText(this, "Resume uploaded successfully", Toast.LENGTH_SHORT).show(),
+                response -> {
+                    Toast.makeText(this, "Resume uploaded successfully", Toast.LENGTH_SHORT).show();
+                    showPdfThumbnail(pdfUri); // Call to display PDF thumbnail
+                },
                 error -> Toast.makeText(this, "Failed to upload resume", Toast.LENGTH_SHORT).show()
         );
     }
@@ -205,6 +217,28 @@ public class StudentProfileActivity extends AppCompatActivity {
         } catch (JSONException e) {
             Log.e(TAG, "JSON Exception while creating update request", e);
             Toast.makeText(StudentProfileActivity.this, "Error creating update request", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showPdfThumbnail(Uri uri) {
+        try {
+            ParcelFileDescriptor fileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
+            if (fileDescriptor != null) {
+                PdfRenderer pdfRenderer = new PdfRenderer(fileDescriptor);
+                PdfRenderer.Page page = pdfRenderer.openPage(0);
+
+                Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
+                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+
+                pdfPreview.setImageBitmap(bitmap);
+                pdfPreview.setVisibility(View.VISIBLE);
+
+                page.close();
+                pdfRenderer.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error loading PDF preview", Toast.LENGTH_SHORT).show();
         }
     }
 
