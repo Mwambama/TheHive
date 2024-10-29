@@ -1,6 +1,5 @@
 package com.example.hiveeapp.employer_user.display;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.widget.Button;
@@ -8,12 +7,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import com.android.volley.Request;
-import com.android.volley.Response;
+
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.volley.VolleySingleton;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +35,7 @@ public class AddJobActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_employer);
+        setContentView(R.layout.activity_add_job);
 
         // Initialize the input fields and buttons
         initViews();
@@ -49,7 +46,7 @@ public class AddJobActivity extends AppCompatActivity {
         // Handle the "Add Employer" button click and validate inputs
         addEmployerButton.setOnClickListener(v -> {
             if (validateInput()) {
-                addEmployer();  // If inputs are valid, proceed to add the employer
+                addJobs();  // If inputs are valid, proceed to add the employer
             }
         });
     }
@@ -154,7 +151,7 @@ public class AddJobActivity extends AppCompatActivity {
     /**
      * Constructs a JSON object with employer details and sends a request to add a new employer.
      */
-    private void addEmployer() {
+    private void addJobs() {
         // Get the values from the input fields
         String name = nameField.getText().toString().trim();
         String email = emailField.getText().toString().trim();
@@ -166,7 +163,7 @@ public class AddJobActivity extends AppCompatActivity {
         String zipCode = zipField.getText().toString().trim();
 
         // Retrieve the companyId from SharedPreferences (or use a hardcoded value for testing)
-        int companyId = 1029;  // This is a test company ID
+        int companyId = 611;  // This is a test company ID
 
         // Construct the employer JSON object
         JSONObject employerData = new JSONObject();
@@ -192,7 +189,7 @@ public class AddJobActivity extends AppCompatActivity {
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error creating employer data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error creating Job data", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -200,13 +197,13 @@ public class AddJobActivity extends AppCompatActivity {
         EmployerApis.addEmployerWithAddress(this, employerData,
                 response -> {
                     // Handle successful response
-                    Toast.makeText(AddJobActivity.this, "Employer added successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddJobActivity.this, "Job added successfully!", Toast.LENGTH_SHORT).show();
                     finish();  // Close the activity and return to the previous screen
                 },
                 error -> {
                     // Handle error response and display user-friendly message
                     String errorMessage = getErrorMessage(error);
-                    Toast.makeText(AddJobActivity.this, "Error adding employer: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddJobActivity.this, "Error adding Job: " + errorMessage, Toast.LENGTH_SHORT).show();
                 });
     }
 
