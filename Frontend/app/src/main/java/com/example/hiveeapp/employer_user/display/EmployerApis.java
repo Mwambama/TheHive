@@ -1,6 +1,5 @@
 package com.example.hiveeapp.employer_user.display;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.util.Base64;
