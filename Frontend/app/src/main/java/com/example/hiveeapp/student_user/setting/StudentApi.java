@@ -44,8 +44,8 @@ public class StudentApi {
         headers.put("Content-Type", "application/json");
 
         // Mocked username and password for testing purposes
-        String username = "test@example.com";
-        String password = "Test@example1234";
+        String username = "employer@example.com";
+        String password = "Test@1234";
 
         String credentials = username + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
@@ -199,6 +199,15 @@ public class StudentApi {
      * @param listener      Response listener for successful upload.
      * @param errorListener Error listener for handling errors.
      */
+    /**
+     * Uploads a PDF resume to the server for a specific user.
+     *
+     * @param context       The application context.
+     * @param userId        ID of the student.
+     * @param pdfUri        Uri of the PDF file to upload.
+     * @param listener      Response listener for successful upload.
+     * @param errorListener Error listener for handling errors.
+     */
     public static void uploadPdfToServer(Context context, int userId, Uri pdfUri,
                                          Response.Listener<String> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "/" + userId + "/upload-resume";
@@ -209,27 +218,21 @@ public class StudentApi {
                 url,
                 response -> listener.onResponse(new String(response.data)),
                 error -> handleErrorResponse("Error uploading PDF", error, errorListener)
-        ) {
-            @Override
-            protected Map<String, DataPart> getByteData() {
-                Map<String, DataPart> params = new HashMap<>();
-                try {
-                    byte[] pdfData = getBytesFromUri(context, pdfUri);
-                    params.put("resume", new DataPart("resume.pdf", pdfData, "application/pdf"));
-                } catch (IOException e) {
-                    Log.e(TAG, "Error reading PDF file: " + e.getMessage());
-                }
-                return params;
-            }
+        );
 
-            @Override
-            public Map<String, String> getHeaders() {
-                return StudentApi.getHeaders(context);
-            }
-        };
+        try {
+            byte[] pdfData = getBytesFromUri(context, pdfUri);
+            Map<String, VolleyMultipartRequest.DataPart> byteData = new HashMap<>();
+            byteData.put("file", new VolleyMultipartRequest.DataPart("resume.pdf", pdfData, "application/pdf")); // Changed "resume" to "file"
+            multipartRequest.setByteData(byteData);
+        } catch (IOException e) {
+            Log.e(TAG, "Error reading PDF file: " + e.getMessage());
+        }
 
         VolleySingleton.getInstance(context).addToRequestQueue(multipartRequest);
     }
+
+
 
 
     /**

@@ -1,5 +1,7 @@
 package com.example.hiveeapp.volley;
 
+import android.util.Base64;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -8,9 +10,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,15 +32,29 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        if (headers == null) headers = new HashMap<>();
+        Map<String, String> headers = new HashMap<>();
+
+        // Set content type for multipart form data
         headers.put("Content-Type", MULTIPART_FORM_DATA);
+
+        // Add authorization header
+        String username = "employer@example.com";
+        String password = "Test@1234";
+        String credentials = username + ":" + password;
+        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        headers.put("Authorization", auth);
+
+        // Add any other headers if needed
+        if (this.headers != null) {
+            headers.putAll(this.headers);
+        }
+
         return headers;
     }
 
+
     @Override
-    public String getBodyContentType() {
-        return MULTIPART_FORM_DATA;
-    }
+    public String getBodyContentType() { return MULTIPART_FORM_DATA; }
 
     @Override
     public byte[] getBody() throws AuthFailureError {
@@ -124,4 +138,3 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
         }
     }
 }
-
