@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background">
 
-    <!-- Add Employer Button -->
+    <!-- Post Jobs Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/addEmployerButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Post Jobs"
+        android:text="Post Job"
         android:backgroundTint="@color/colorPrimaryDark"
         android:textColor="@android:color/white"
         app:cornerRadius="8dp"
@@ -42,7 +42,7 @@
         android:background="@color/colorPrimary"
         app:itemIconTint="@android:color/white"
         app:itemTextColor="@android:color/white"
-        app:menu="@menu/bottom_nav_menu"
+        app:menu="@menu/bottom_nav_job"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -4,16 +4,16 @@
     <item
         android:id="@+id/navigation_invitations"
         android:icon="@drawable/ic_manage_invitations"
-        android:title="Invitations" />
+        android:title="Applicants" />
 
     <item
         android:id="@+id/navigation_main_user_page"
         android:icon="@drawable/ic_profile"
-        android:title="Main User Page" />
+        android:title="User Page" />
 
     <item
         android:id="@+id/navigation_employers"
         android:icon="@drawable/ic_manage_employers"
-        android:title="Employers" />
+        android:title="JOBS" />
 
 </menu>
