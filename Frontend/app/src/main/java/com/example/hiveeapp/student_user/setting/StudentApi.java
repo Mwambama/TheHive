@@ -223,7 +223,7 @@ public class StudentApi {
         try {
             byte[] pdfData = getBytesFromUri(context, pdfUri);
             Map<String, VolleyMultipartRequest.DataPart> byteData = new HashMap<>();
-            byteData.put("file", new VolleyMultipartRequest.DataPart("resume.pdf", pdfData, "application/pdf")); // Changed "resume" to "file"
+            byteData.put("file", new VolleyMultipartRequest.DataPart("resume.pdf", pdfData, "application/pdf"));
             multipartRequest.setByteData(byteData);
         } catch (IOException e) {
             Log.e(TAG, "Error reading PDF file: " + e.getMessage());
@@ -266,7 +266,6 @@ public class StudentApi {
                     JSONObject jsonError = new JSONObject(errorData);
                     errorMsg = jsonError.optString("message", errorMsg);
                 } catch (JSONException jsonException) {
-                    // If parsing fails, use the raw errorData
                     errorMsg = errorData;
                 }
 

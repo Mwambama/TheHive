@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
+import com.example.hiveeapp.student_user.profile.PdfViewerDialogFragment;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Response;
@@ -24,7 +24,6 @@ import com.example.hiveeapp.student_user.setting.StudentApi;
 import com.google.android.material.button.MaterialButton;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -232,6 +231,11 @@ public class StudentProfileActivity extends AppCompatActivity {
 
                 pdfPreview.setImageBitmap(bitmap);
                 pdfPreview.setVisibility(View.VISIBLE);
+
+                // Set click listener to open full-screen viewer
+                pdfPreview.setOnClickListener(v -> {
+                    PdfViewerDialogFragment.newInstance(uri).show(getSupportFragmentManager(), "pdfViewer");
+                });
 
                 page.close();
                 pdfRenderer.close();

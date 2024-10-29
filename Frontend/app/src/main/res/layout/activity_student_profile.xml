@@ -307,7 +307,6 @@
             android:layout_marginEnd="16dp" />
 
         <!-- PDF Preview Thumbnail -->
-        <!-- PDF Preview Thumbnail -->
         <ImageView
             android:id="@+id/pdfPreview"
             android:layout_width="200dp"
