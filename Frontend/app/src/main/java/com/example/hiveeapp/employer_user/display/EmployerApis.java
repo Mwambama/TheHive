@@ -1,12 +1,9 @@
 package com.example.hiveeapp.employer_user.display;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -62,7 +59,7 @@ public class EmployerApis {
      * @param listener      Response listener for successful fetch.
      * @param errorListener Error listener for handling errors.
      */
-    public static void getEmployers(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+    public static void getJobs(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL;
         Log.d(TAG, "GET Employers Request URL: " + url);
 

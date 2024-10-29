@@ -1,6 +1,5 @@
 package com.example.hiveeapp.employer_user.display;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -11,11 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.company_user.CompanyMainActivity;
 import com.example.hiveeapp.company_user.handleEmployers.EmployerAdapter;
-import com.example.hiveeapp.company_user.handleEmployers.EmployerApi;
-import com.example.hiveeapp.company_user.handleEmployers.EmployerCreationActivity;
-import com.example.hiveeapp.company_user.invitations.InvitationManagementActivity;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.employer_user.model.CreateJobsActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -43,7 +38,7 @@ public class EditJobActivity extends AppCompatActivity {
         // Initialize views
         initViews();
 
-        // Set up "Add Employer" button to navigate to EmployerCreationActivity
+        // Set up "Add Employer" button to navigate to  CreationJobsActivity
         addEmployerButton.setOnClickListener(v -> {
             Intent intent = new Intent(com.example.hiveeapp.employer_user.display.EditJobActivity.this, CreateJobsActivity.class);
             startActivity(intent);
@@ -55,7 +50,7 @@ public class EditJobActivity extends AppCompatActivity {
         employerRecyclerView.setAdapter(employerAdapter);
 
         // Load the list of employers from the server
-        loadEmployers();
+        loadJobs();
 
         // Set up Bottom Navigation View
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -79,7 +74,7 @@ public class EditJobActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // Refresh the employer list when the activity is resumed
-        loadEmployers();
+        loadJobs();
     }
 
     /**
@@ -91,11 +86,11 @@ public class EditJobActivity extends AppCompatActivity {
     }
 
     /**
-     * Load the list of employers from the server using EmployerApi and update the adapter.
+     * Load the list of jobs from the server using EmployerApis and update the adapter.
      * The employers are reversed before being set in the adapter.
      */
-    private void loadEmployers() {
-        EmployerApi.getEmployers(this,
+    private void loadJobs() {
+        EmployerApis.getJobs(this,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
