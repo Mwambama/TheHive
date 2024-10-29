@@ -4,12 +4,12 @@
     <item
         android:id="@+id/navigation_invitations"
         android:icon="@drawable/ic_manage_invitations"
-        android:title="Jobs" />
+        android:title="Invitations" />
 
     <item
         android:id="@+id/navigation_main_user_page"
         android:icon="@drawable/ic_profile"
-        android:title="User Page" />
+        android:title="Main User Page" />
 
     <item
         android:id="@+id/navigation_employers"

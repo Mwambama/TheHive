@@ -27,7 +27,10 @@ import org.json.JSONObject;
 public class EditJobActivity extends AppCompatActivity {
 
     private RecyclerView employerRecyclerView;   // RecyclerView for displaying the list of employers
+//    private EmployerAdapter employerAdapter;     // Adapter for managing employer data in the RecyclerView
+
     private EmployerAdapter employerAdapter;     // Adapter for managing employer data in the RecyclerView
+
     private MaterialButton addEmployerButton;    // Button for adding a new employer
 
     @Override
