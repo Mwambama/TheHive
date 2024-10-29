@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.employer_user.display.EditJobActivity;
 import com.example.hiveeapp.employer_user.model.ChatActivity;
 import com.example.hiveeapp.employer_user.model.CreateJobsActivity;
 import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
@@ -120,7 +121,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
             return true;
         } else if (itemId == R.id.nav_add_job) {
             // Navigate to Add Job Page
-            startActivity(new Intent(this, CreateJobsActivity.class));
+            startActivity(new Intent(this, EditJobActivity.class));
             return true;
         } else if (itemId == R.id.nav_chat) {
             // Navigate to Chat Page
