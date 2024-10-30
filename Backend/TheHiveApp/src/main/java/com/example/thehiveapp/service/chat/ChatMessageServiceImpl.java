@@ -1,5 +1,6 @@
 package com.example.thehiveapp.service.chat;
 
+import com.example.thehiveapp.entity.chat.Chat;
 import com.example.thehiveapp.entity.chat.ChatMessage;
 import com.example.thehiveapp.repository.chat.ChatMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +49,10 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 () -> new ResourceNotFoundException("ChatMessage not found with id " + id)
         );
         chatMessageRepository.delete(chatMessage);
+    }
+
+    @Override
+    public List<ChatMessage> getChatMessagesByChat(Chat chat) {
+        return chatMessageRepository.findAllByChat(chat);
     }
 }
