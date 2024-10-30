@@ -34,7 +34,7 @@
             android:id="@+id/addEmployerTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Employer"
+            android:text="And Job"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"
@@ -150,26 +150,6 @@
                 android:hint="Salary Requirements" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Age Requirement Field -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/ageRequirementTextInputLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:boxStrokeColor="@color/colorAccent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/salaryRequirementsTextInputLayout"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ageRequirementField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Age Requirement" />
-        </com.google.android.material.textfield.TextInputLayout>
-
         <!-- Minimum GPA Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/minimumGpaTextInputLayout"
@@ -178,7 +158,7 @@
             app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ageRequirementTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/salaryRequirementsTextInputLayout"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="8dp">
@@ -230,9 +210,9 @@
                 android:hint="Application Start Date (YYYY-MM-DD)" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Application Deadline Field -->
+        <!-- Application End Date Field -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/applicationDeadlineTextInputLayout"
+            android:id="@+id/applicationEndDateTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:boxStrokeColor="@color/colorAccent"
@@ -241,30 +221,26 @@
             app:layout_constraintTop_toBottomOf="@id/applicationStartDateTextInputLayout"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginTop="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/applicationDeadlineField"
+                android:id="@+id/applicationEndDateField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Application Deadline (YYYY-MM-DD)" />
+                android:hint="Application End Date (YYYY-MM-DD)" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Submit Button -->
+        <!-- Add Job Button -->
         <Button
-            android:id="@+id/submitButton"
+            android:id="@+id/addJobButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="Post Job"
-            android:textSize="18sp"
+            android:text="Add Job"
             android:backgroundTint="@color/colorAccent"
             android:textColor="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/applicationEndDateTextInputLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/applicationDeadlineTextInputLayout" />
-
+            android:layout_marginTop="16dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
