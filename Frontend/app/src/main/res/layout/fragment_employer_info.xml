@@ -14,7 +14,7 @@
 
         <!-- Employer Name -->
         <TextView
-            android:id="@+id/companyName"
+            android:id="@+id/employerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Employer Name"
@@ -24,7 +24,7 @@
 
         <!-- Employer Description -->
         <TextView
-            android:id="@+id/companyDescription"
+            android:id="@+id/employerDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Employer Description"

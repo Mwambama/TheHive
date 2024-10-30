@@ -21,8 +21,8 @@ public class employerInfoFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_employer_info, container, false);
 
-        employerName = view.findViewById(R.id.companyName);
-        employerDescription = view.findViewById(R.id.companyDescription);
+        employerName = view.findViewById(R.id.employerName);
+        employerDescription = view.findViewById(R.id.employerDescription);
 
         // Set company information
         employerName.setText(" Employer");
