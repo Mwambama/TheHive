@@ -1,8 +1,11 @@
 package com.example.thehiveapp.entity.jobPosting;
 
 
+import com.example.thehiveapp.entity.application.Application;
 import com.example.thehiveapp.entity.user.Employer;
 import com.example.thehiveapp.enums.jobPosting.JobType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +25,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -38,6 +43,10 @@ public class JobPosting {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employer_id", nullable = false)
     private Employer employer;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "jobPosting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Application> applications;
 
     @Column(name = "title")
     private String title;
