@@ -1,8 +1,8 @@
 package com.example.thehiveapp.controller.chat;
 
+import com.example.thehiveapp.dto.chat.ChatMessageDto;
 import com.example.thehiveapp.service.chat.ChatMessageService;
-import com.example.thehiveapp.service.chat.ChatService;
-import com.example.thehiveapp.service.user.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
@@ -25,25 +25,21 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ChatSocket {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final Logger logger = LoggerFactory.getLogger(ChatController.class);
+
+    private static ChatMessageService chatMessageService;
 
     // Maps each chatId to its map of session-email pairs
     private static Map<String, Map<Session, String>> chatRooms = new ConcurrentHashMap<>();
     private static Map<String, Map<String, Session>> emailSessionMap = new ConcurrentHashMap<>();
 
-    private static ChatService chatService;
-    private static ChatMessageService chatMessageService;
-    private static UserService userService;
 
     @Autowired
     public void setServices(
-            ChatService chatService,
-            ChatMessageService chatMessageService,
-            UserService userService
+            ChatMessageService chatMessageService
     ) {
-        ChatSocket.chatService = chatService;
         ChatSocket.chatMessageService = chatMessageService;
-        ChatSocket.userService = userService;
     }
 
     @OnOpen
@@ -106,9 +102,12 @@ public class ChatSocket {
 
     @OnMessage
     public void onMessage(Session session, @PathParam("chatId") String chatId, String message) throws IOException {
+        ChatMessageDto dto = objectMapper.readValue(message, ChatMessageDto.class);
         String email = chatRooms.get(chatId).get(session);
-        logger.info("[onMessage] " + email + ": " + message);
-        broadcast(chatId, email + ": " + message);
+        logger.info("[onMessage] " + email + ": " + dto.getMessage());
+        dto = chatMessageService.createChatMessage(dto);
+        String jsonMessage = objectMapper.writeValueAsString(dto);
+        broadcast(chatId, jsonMessage);
     }
 
     @OnClose
@@ -116,8 +115,6 @@ public class ChatSocket {
         String email = chatRooms.get(chatId).remove(session);
         emailSessionMap.get(chatId).remove(email);
         logger.info("[onClose] {} disconnected from chat room {}", email, chatId);
-
-        // Notify all users in the chat room
         broadcast(chatId, email + " has left the chat room");
     }
 
