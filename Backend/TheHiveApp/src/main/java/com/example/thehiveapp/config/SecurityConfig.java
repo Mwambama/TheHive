@@ -22,7 +22,7 @@ public class SecurityConfig {
                         .requestMatchers("/account/login").authenticated()
                         .requestMatchers(HttpMethod.POST, "/otp/**").permitAll()
                         .requestMatchers("/account/**").permitAll()
-                        .requestMatchers("/chat/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(withDefaults())
