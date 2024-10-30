@@ -154,8 +154,8 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                                     .setMessage("Are you sure you want to delete this job?")
                                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                                         try {
-                                            long employerId = currentEmployer.getLong("userId");
-                                            EmployerApi.deleteEmployer(context, employerId,
+                                            long employerId = currentEmployer.getLong("jobPostingId");
+                                            EmployerApis.deleteEmployer(context, employerId,
                                                     response -> {
                                                         // Remove deleted employer and refresh RecyclerView
                                                         employers.remove(currentPosition);

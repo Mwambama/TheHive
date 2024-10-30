@@ -26,7 +26,7 @@ public class EmployerApis {
 
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
     //private static final String ADDRESS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/address";
-    private static final String TAG = "employerApis";
+    private static final String TAG = "EmployerApis";
 //    private static final int MAX_PHONE_LENGTH = 10;
 //    private static final int MIN_PHONE_LENGTH = 7;
 //    private static final int ZIP_CODE_LENGTH = 5;

@@ -76,7 +76,7 @@ public class EditJobActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh the employer list when the activity is resumed
+        // Refresh the job list when the activity is resumed
         loadJobs();
     }
 
@@ -90,7 +90,7 @@ public class EditJobActivity extends AppCompatActivity {
 
     /**
      * Load the list of jobs from the server using EmployerApis and update the adapter.
-     * The employers are reversed before being set in the adapter.
+     * The jobs are reversed before being set in the adapter.
      */
     private void loadJobs() {
         EmployerApis.getJobs(this,
