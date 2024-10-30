@@ -1,58 +1,72 @@
 package com.example.thehiveapp.service.chat;
 
-import com.example.thehiveapp.entity.chat.Chat;
+import com.example.thehiveapp.dto.chat.ChatDto;
+import com.example.thehiveapp.dto.chat.ChatMessageDto;
 import com.example.thehiveapp.entity.chat.ChatMessage;
+import com.example.thehiveapp.mapper.chat.ChatMapper;
+import com.example.thehiveapp.mapper.chat.ChatMessageMapper;
 import com.example.thehiveapp.repository.chat.ChatMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatMessageServiceImpl implements ChatMessageService {
 
-    @Autowired
-    private ChatMessageRepository chatMessageRepository;
+    @Autowired private ChatMessageRepository chatMessageRepository;
+    @Autowired private ChatMessageMapper chatMessageMapper;
+    @Autowired private ChatMapper chatMapper;
 
     public ChatMessageServiceImpl() {}
 
     @Override
-    public List<ChatMessage> getChatMessages() {
-        return chatMessageRepository.findAll();
+    public List<ChatMessageDto> getChatMessages() {
+        return chatMessageRepository.findAll().stream()
+                .map(chatMessageMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public ChatMessage createChatMessage(ChatMessage request) {
-        return chatMessageRepository.save(request);
+    public ChatMessageDto createChatMessage(ChatMessageDto dto) {
+        ChatMessage ChatMessage = chatMessageRepository.save(chatMessageMapper.toEntity(dto));
+        dto = chatMessageMapper.toDto(ChatMessage);
+        return dto;
     }
 
     @Override
-    public ChatMessage getChatMessageById(Long id) {
-        return chatMessageRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("ChatMessage not found with id " + id)
+    public ChatMessageDto getChatMessageById(Long id) {
+        return chatMessageMapper.toDto(
+                chatMessageRepository.findById(id).orElseThrow(
+                        () -> new ResourceNotFoundException("Chat Message not found with id " + id)
+                )
         );
     }
 
     @Override
-    public ChatMessage updateChatMessage(ChatMessage request) {
-        Long id = request.getMessageId();
-        if (!chatMessageRepository.existsById(id)) {
-            throw new ResourceNotFoundException("ChatMessage not found with id " + id);
-        }
-        return chatMessageRepository.save(request);
+    public ChatMessageDto updateChatMessage(ChatMessageDto dto) {
+        Long id = dto.getMessageId();
+        chatMessageRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Chat Message not found with id " + id)
+        );
+        ChatMessage ChatMessage = chatMessageMapper.toEntity(dto);
+        return chatMessageMapper.toDto(chatMessageRepository.save(ChatMessage));
     }
 
     @Override
     public void deleteChatMessage(Long id) {
-        ChatMessage chatMessage = chatMessageRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("ChatMessage not found with id " + id)
+        ChatMessage ChatMessage = chatMessageRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Chat Message not found with id " + id)
         );
-        chatMessageRepository.delete(chatMessage);
+        chatMessageRepository.delete(ChatMessage);
     }
 
     @Override
-    public List<ChatMessage> getChatMessagesByChat(Chat chat) {
-        return chatMessageRepository.findAllByChat(chat);
+    public List<ChatMessageDto> getChatMessagesByChat(ChatDto chat) {
+        return chatMessageRepository.findAllByChat(chatMapper.toEntity(chat)).stream().map(
+                chatMessageMapper::toDto).collect(Collectors.toList()
+        );
     }
 }

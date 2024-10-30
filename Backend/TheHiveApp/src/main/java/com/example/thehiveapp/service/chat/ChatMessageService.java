@@ -1,16 +1,16 @@
 package com.example.thehiveapp.service.chat;
 
 
-import com.example.thehiveapp.entity.chat.Chat;
-import com.example.thehiveapp.entity.chat.ChatMessage;
+import com.example.thehiveapp.dto.chat.ChatDto;
+import com.example.thehiveapp.dto.chat.ChatMessageDto;
 
 import java.util.List;
 
 public interface ChatMessageService {
-    List<ChatMessage> getChatMessages();
-    ChatMessage createChatMessage(ChatMessage request);
-    ChatMessage getChatMessageById(Long id);
-    ChatMessage updateChatMessage(ChatMessage request);
+    List<ChatMessageDto> getChatMessages();
+    ChatMessageDto createChatMessage(ChatMessageDto request);
+    ChatMessageDto getChatMessageById(Long id);
+    ChatMessageDto updateChatMessage(ChatMessageDto request);
     void deleteChatMessage(Long id);
-    List<ChatMessage> getChatMessagesByChat(Chat chat);
+    List<ChatMessageDto> getChatMessagesByChat(ChatDto chat);
 }
