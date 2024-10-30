@@ -53,7 +53,7 @@ public class ApplicationController {
         return ResponseEntity.ok(applicationService.updateApplicationStatus(applicationId, applicationUpdateRequest));
     }
     @DeleteMapping("/{id}")
-    public String deleteAddress(@PathVariable Long id) {
+    public String deleteApplication(@PathVariable Long id) {
         applicationService.deleteApplication(id);
         return "Application successfully deleted";
     }
