@@ -10,9 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.company_user.handleEmployers.EmployerAdapter;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
-import com.example.hiveeapp.employer_user.model.CreateJobsActivity;
+//import com.example.hiveeapp.employer_user.model.CreateJobsActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
@@ -26,10 +25,10 @@ import org.json.JSONObject;
  */
 public class EditJobActivity extends AppCompatActivity {
 
-    private RecyclerView employerRecyclerView;   // RecyclerView for displaying the list of employers
+    private RecyclerView jobRecyclerView;   // RecyclerView for displaying the list of employers
 //    private EmployerAdapter employerAdapter;     // Adapter for managing employer data in the RecyclerView
 
-    private EmployerAdapter employerAdapter;     // Adapter for managing employer data in the RecyclerView
+    private JobsAdapter jobAdapter;     // Adapter for managing employer data in the RecyclerView
 
     private MaterialButton addEmployerButton;    // Button for adding a new employer
 
@@ -48,11 +47,11 @@ public class EditJobActivity extends AppCompatActivity {
         });
 
         // Set up the RecyclerView with a linear layout and the employer adapter
-        employerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        employerAdapter = new EmployerAdapter(this, true);  // true indicates editable mode
-        employerRecyclerView.setAdapter(employerAdapter);
+        jobRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        jobAdapter = new  JobsAdapter(this, true);  // true indicates editable mode
+        jobRecyclerView.setAdapter(jobAdapter);
 
-        // Load the list of employers from the server
+        // Load the list of Jobs from the server
         loadJobs();
 
         // Set up Bottom Navigation View
@@ -60,7 +59,8 @@ public class EditJobActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_invitations) {
-                startActivity(new Intent(com.example.hiveeapp.employer_user.display.EditJobActivity.this, CreateJobsActivity.class));
+                  //for now, this inviattion will be sent to home of user, then I will direct it later when I am working on application status
+                startActivity(new Intent(com.example.hiveeapp.employer_user.display.EditJobActivity.this, EmployerMainActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_employers) {
                 return true;
@@ -84,7 +84,7 @@ public class EditJobActivity extends AppCompatActivity {
      * Initialize views in the activity.
      */
     private void initViews() {
-        employerRecyclerView = findViewById(R.id.employerRecyclerView);
+        jobRecyclerView = findViewById(R.id.jobsRecyclerView);
         addEmployerButton = findViewById(R.id.addEmployerButton);
     }
 
@@ -99,7 +99,7 @@ public class EditJobActivity extends AppCompatActivity {
                     public void onResponse(JSONArray response) {
                         // Reverse the JSONArray before setting it in the adapter
                         JSONArray reversedEmployers = reverseJSONArray(response);
-                        employerAdapter.setEmployers(reversedEmployers);
+                        jobAdapter.setEmployers(reversedEmployers);
                     }
                 },
                 new Response.ErrorListener() {

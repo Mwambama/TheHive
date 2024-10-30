@@ -187,17 +187,17 @@ public class AddJobActivity extends AppCompatActivity {
         }
 
         // Send the job data to the server using the EmployerApis
-        EmployerApis.addJob(this, jobData,
-                response -> {
-                    // Handle successful response
-                    Toast.makeText(AddJobActivity.this, "Job posted successfully!", Toast.LENGTH_SHORT).show();
-                    finish();  // Close the activity and return to the previous screen
-                },
-                error -> {
-                    // Handle error response and display user-friendly message
-                    String errorMessage = getErrorMessage(error);
-                    Toast.makeText(AddJobActivity.this, "Error posting job: " + errorMessage, Toast.LENGTH_SHORT).show();
-                });
+//        EmployerApis.addJob(this, jobData,
+//                response -> {
+//                    // Handle successful response
+//                    Toast.makeText(AddJobActivity.this, "Job posted successfully!", Toast.LENGTH_SHORT).show();
+//                    finish();  // Close the activity and return to the previous screen
+//                },
+//                error -> {
+//                    // Handle error response and display user-friendly message
+//                    String errorMessage = getErrorMessage(error);
+//                    Toast.makeText(AddJobActivity.this, "Error posting job: " + errorMessage, Toast.LENGTH_SHORT).show();
+//                });
     }
 
     /**
