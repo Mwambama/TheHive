@@ -43,7 +43,7 @@ public class EditJobActivity extends AppCompatActivity {
 
         // Set up "Add Employer" button to navigate to  CreationJobsActivity
         addEmployerButton.setOnClickListener(v -> {
-            Intent intent = new Intent(com.example.hiveeapp.employer_user.display.EditJobActivity.this, CreateJobsActivity.class);
+            Intent intent = new Intent(com.example.hiveeapp.employer_user.display.EditJobActivity.this, AddJobActivity.class);
             startActivity(intent);
         });
 

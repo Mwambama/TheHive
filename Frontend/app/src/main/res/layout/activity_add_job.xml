@@ -258,7 +258,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:text="Submit"
+            android:text="Post Job"
             android:textSize="18sp"
             android:backgroundTint="@color/colorAccent"
             android:textColor="@android:color/white"
