@@ -1,6 +1,7 @@
 package com.example.hiveeapp.student_user.setting;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
@@ -12,12 +13,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.example.hiveeapp.volley.VolleyMultipartRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,8 +44,8 @@ public class StudentApi {
         headers.put("Content-Type", "application/json");
 
         // Mocked username and password for testing purposes
-        String username = "test@example.com";
-        String password = "Test@example1234";
+        String username = "employer@example.com";
+        String password = "Test@1234";
 
         String credentials = username + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
@@ -169,6 +175,66 @@ public class StudentApi {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
+    private static byte[] getBytesFromUri(Context context, Uri uri) throws IOException {
+        try (InputStream inputStream = context.getContentResolver().openInputStream(uri);
+             ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream()) {
+            int bufferSize = 1024;
+            byte[] buffer = new byte[bufferSize];
+
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                byteBuffer.write(buffer, 0, len);
+            }
+            return byteBuffer.toByteArray();
+        }
+    }
+
+
+    /**
+     * Uploads a PDF resume to the server for a specific user.
+     *
+     * @param context       The application context.
+     * @param userId        ID of the student.
+     * @param pdfUri        Uri of the PDF file to upload.
+     * @param listener      Response listener for successful upload.
+     * @param errorListener Error listener for handling errors.
+     */
+    /**
+     * Uploads a PDF resume to the server for a specific user.
+     *
+     * @param context       The application context.
+     * @param userId        ID of the student.
+     * @param pdfUri        Uri of the PDF file to upload.
+     * @param listener      Response listener for successful upload.
+     * @param errorListener Error listener for handling errors.
+     */
+    public static void uploadPdfToServer(Context context, int userId, Uri pdfUri,
+                                         Response.Listener<String> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "/" + userId + "/upload-resume";
+        Log.d(TAG, "POST Upload PDF Request URL: " + url);
+
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(
+                Request.Method.POST,
+                url,
+                response -> listener.onResponse(new String(response.data)),
+                error -> handleErrorResponse("Error uploading PDF", error, errorListener)
+        );
+
+        try {
+            byte[] pdfData = getBytesFromUri(context, pdfUri);
+            Map<String, VolleyMultipartRequest.DataPart> byteData = new HashMap<>();
+            byteData.put("file", new VolleyMultipartRequest.DataPart("resume.pdf", pdfData, "application/pdf"));
+            multipartRequest.setByteData(byteData);
+        } catch (IOException e) {
+            Log.e(TAG, "Error reading PDF file: " + e.getMessage());
+        }
+
+        VolleySingleton.getInstance(context).addToRequestQueue(multipartRequest);
+    }
+
+
+
+
     /**
      * Handles error responses from the server, logs the details, and invokes the error listener.
      *
@@ -200,7 +266,6 @@ public class StudentApi {
                     JSONObject jsonError = new JSONObject(errorData);
                     errorMsg = jsonError.optString("message", errorMsg);
                 } catch (JSONException jsonException) {
-                    // If parsing fails, use the raw errorData
                     errorMsg = errorData;
                 }
 

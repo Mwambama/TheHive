@@ -36,6 +36,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.gridlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -46,5 +47,6 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation ("com.android.volley:volley:1.2.0")
+    implementation ("androidx.gridlayout:gridlayout:1.0.0")
 
 }
