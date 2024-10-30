@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title Field -->
+    <EditText
+        android:id="@+id/editTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Title" />
+
+    <!-- Description Field -->
+    <EditText
+        android:id="@+id/editDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description"
+        android:layout_marginTop="8dp" />
+
+    <!-- Summary Field -->
+    <EditText
+        android:id="@+id/editSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Summary"
+        android:layout_marginTop="8dp" />
+
+    <!-- Salary Field -->
+    <EditText
+        android:id="@+id/editSalary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Salary"
+        android:inputType="numberDecimal"
+        android:layout_marginTop="8dp" />
+
+    <!-- Job Type Field -->
+    <EditText
+        android:id="@+id/editJobType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Job Type"
+        android:layout_marginTop="8dp" />
+
+    <!-- Minimum GPA Field -->
+    <EditText
+        android:id="@+id/editMinimumGpa"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Minimum GPA"
+        android:inputType="numberDecimal"
+        android:layout_marginTop="8dp" />
+
+    <!-- Job Start Date Field -->
+    <EditText
+        android:id="@+id/editJobStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Job Start Date"
+        android:inputType="date"
+        android:layout_marginTop="8dp" />
+
+    <!-- Application Start Date Field -->
+    <EditText
+        android:id="@+id/editApplicationStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Application Start Date"
+        android:inputType="date"
+        android:layout_marginTop="8dp" />
+
+    <!-- Application End Date Field -->
+    <EditText
+        android:id="@+id/editApplicationEnd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Application End Date"
+        android:inputType="date"
+        android:layout_marginTop="8dp" />
+
+    <!-- Save Changes Button -->
+    <Button
+        android:id="@+id/saveChangesButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Changes"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>
