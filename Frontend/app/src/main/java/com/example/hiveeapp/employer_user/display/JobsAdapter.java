@@ -150,8 +150,8 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                         try {
                             JSONObject currentEmployer = employers.getJSONObject(currentPosition);
                             new AlertDialog.Builder(context)
-                                    .setTitle("Delete Employer")
-                                    .setMessage("Are you sure you want to delete this employer?")
+                                    .setTitle("Delete job")
+                                    .setMessage("Are you sure you want to delete this job?")
                                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                                         try {
                                             long employerId = currentEmployer.getLong("userId");
@@ -161,27 +161,27 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                                                         employers.remove(currentPosition);
                                                         notifyItemRemoved(currentPosition);
                                                         notifyItemRangeChanged(currentPosition, employers.length());
-                                                        Toast.makeText(context, "Employer deleted successfully", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(context, "job deleted successfully", Toast.LENGTH_SHORT).show();
                                                     },
-                                                    error -> Toast.makeText(context, "Error deleting employer: " + error.getMessage(), Toast.LENGTH_SHORT).show()
+                                                    error -> Toast.makeText(context, "Error deleting job: " + error.getMessage(), Toast.LENGTH_SHORT).show()
                                             );
                                         } catch (JSONException e) {
                                             e.printStackTrace();
-                                            Toast.makeText(context, "Error deleting employer", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Error deleting job", Toast.LENGTH_SHORT).show();
                                         }
                                     })
                                     .setNegativeButton(android.R.string.no, null)
                                     .show();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(context, "Error retrieving employer data", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Error retrieving job data", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(context, "Error parsing employer data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Error parsing job data", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -291,9 +291,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
 //                String updatedZip = editZipCode.getText().toString().trim();
 
 
-
-
-
                 try {
                     // Retrieve companyId from SharedPreferences
                     SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
@@ -347,13 +344,13 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                                     employers.put(position, updatedJob);
                                     notifyItemChanged(position);
                                     bottomSheetDialog.dismiss();
-                                    Toast.makeText(context, "Employer updated successfully!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "job updated successfully!", Toast.LENGTH_SHORT).show();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                    Toast.makeText(context, "Error updating employer list", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Error updating job list", Toast.LENGTH_SHORT).show();
                                 }
                             },
-                            error -> Toast.makeText(context, "Error updating employer", Toast.LENGTH_SHORT).show());
+                            error -> Toast.makeText(context, "Error updating job", Toast.LENGTH_SHORT).show());
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(context, "Error constructing update request", Toast.LENGTH_SHORT).show();
