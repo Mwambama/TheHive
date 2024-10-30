@@ -81,7 +81,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId == R.id.nav_home) {
+        if (itemId == R.id.navigation_main_user_page) {
             // Handle home navigation
             return true;
         } else if (itemId == R.id.nav_tracking) {
