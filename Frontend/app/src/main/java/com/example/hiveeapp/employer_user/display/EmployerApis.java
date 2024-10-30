@@ -3,7 +3,6 @@ package com.example.hiveeapp.employer_user.display;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
-import android.util.Patterns;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -109,77 +108,6 @@ public class EmployerApis {
 //    }
 
     /**
-     * Adds a new employer with an associated address.
-     *
-     * @param context       The application context.
-     * @param employerData  JSON object containing employer details.
-     * @param listener      Response listener for successful employer creation.
-     * @param errorListener Error listener for handling errors.
-     */
-//    public static void addEmployerWithAddress(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-//        // Validate employer data before proceeding
-//        String validationError = validateEmployerData(employerData);
-//        if (validationError != null) {
-//            errorListener.onErrorResponse(new VolleyError(validationError));
-//            return; // Validation failed, do not proceed
-//        }
-//
-//        // Extract address data from employerData
-//        JSONObject addressData;
-//        try {
-//            addressData = employerData.getJSONObject("address");
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.e(TAG, "Error extracting address data.");
-//            errorListener.onErrorResponse(new VolleyError("Error extracting address data."));
-//            return;
-//        }
-//
-//        // Remove address from employerData to avoid circular reference
-//        employerData.remove("address");
-//
-//        // Ensure addressId is set to null
-//        try {
-//            addressData.put("addressId", JSONObject.NULL);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.e(TAG, "Error setting addressId to null.");
-//            errorListener.onErrorResponse(new VolleyError("Error setting addressId to null."));
-//            return;
-//        }
-//
-//        // First, save the address
-//        addAddress(context, addressData, addressResponse -> {
-//            // Get the saved addressId from the address creation response
-//            long addressId;
-//            try {
-//                addressId = addressResponse.getLong("addressId");
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//                Log.e(TAG, "Error parsing address response.");
-//                errorListener.onErrorResponse(new VolleyError("Error parsing address response."));
-//                return;
-//            }
-//
-//            // Set the addressId in employerData
-//            JSONObject address = new JSONObject();
-//            try {
-//                address.put("addressId", addressId);
-//                employerData.put("address", address);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//                Log.e(TAG, "Error setting addressId in employerData.");
-//                errorListener.onErrorResponse(new VolleyError("Error setting addressId in employerData."));
-//                return;
-//            }
-//
-//            // Now, save the employer
-//            addEmployer(context, employerData, listener, errorListener);
-//
-//        }, error -> handleErrorResponse("Error adding address: " + getErrorMessage(error), error, errorListener));
-//    }
-
-    /**
      * Internal method to add a new employer (called after address creation).
      *
      * @param context       The application context.
@@ -216,9 +144,25 @@ public class EmployerApis {
      * @param listener      Response listener for successful employer update.
      * @param errorListener Error listener for handling errors.
      */
+
+    public static void updateJob(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        // Validate employer data before proceeding
+        String validationError = validateJobData(employerData);
+        if (validationError != null) {
+            // Show a personalized error message if validation fails
+            Toast.makeText(context, validationError, Toast.LENGTH_LONG).show();
+            errorListener.onErrorResponse(new VolleyError(validationError));
+            return; // Validation failed, do not proceed
+        }
+                 //  continues to add the job
+            performJobUpdate(context, employerData, listener, errorListener);
+    }
+
+
+
 //    public static void updateEmployer(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
 //        // Validate employer data before proceeding
-//        String validationError = validateEmployerData(employerData);
+//        String validationError = validateJobData(employerData);
 //        if (validationError != null) {
 //            // Show a personalized error message if validation fails
 //            Toast.makeText(context, validationError, Toast.LENGTH_LONG).show();
@@ -232,7 +176,7 @@ public class EmployerApis {
 //        if (addressData != null) {
 //            if (addressData.has("addressId")) {
 //                // If addressId exists, update the address
-//                updateAddress(context, addressData, addressResponse -> {
+//                //  updateAddress(context, addressData, addressResponse -> {
 //                    // Address updated successfully, proceed to update employer
 //                    performEmployerUpdate(context, employerData, listener, errorListener);
 //                }, error -> handleErrorResponse("Error updating address: " + getErrorMessage(error), error, errorListener));
@@ -247,7 +191,7 @@ public class EmployerApis {
 //                    return;
 //                }
 //
-//                addAddress(context, addressData, addressResponse -> {
+//                //addAddress(context, addressData, addressResponse -> {
 //                    // Get the saved addressId from the address creation response
 //                    long addressId;
 //                    try {
@@ -264,7 +208,7 @@ public class EmployerApis {
 //                    }
 //
 //                    // Proceed to update employer
-//                    performEmployerUpdate(context, employerData, listener, errorListener);
+//                    //performEmployerUpdate(context, employerData, listener, errorListener);
 //
 //                }, error -> handleErrorResponse("Error adding address: " + getErrorMessage(error), error, errorListener));
 //            }
@@ -275,74 +219,12 @@ public class EmployerApis {
 //    }
 
     /**
-     * Validates the employer data before sending it to the server.
+     * Validates the jobs data before sending it to the server.
      *
-     * @param employerData The employer JSON object.
+     * @param employerData The job JSON object.
      * @return A string containing the validation error message, or null if validation passes.
      */
-//    public static String validateEmployerData(JSONObject employerData) {
-//        try {
-//            // Validate name
-//            String name = employerData.optString("name", "");
-//            if (name.isEmpty()) {
-//                return "Name is required.";
-//            }
-//
-//            // Validate email
-//            String email = employerData.optString("email", "");
-//            if (email.isEmpty()) {
-//                return "Email is required.";
-//            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-//                return "Invalid email format.";
-//            }
-//
-//            // Validate phone
-//            String phone = employerData.optString("phone", "");
-//            if (phone.isEmpty()) {
-//                return "Phone number is required.";
-//            } else if (phone.length() > MAX_PHONE_LENGTH || phone.length() < MIN_PHONE_LENGTH || !phone.matches("\\d+")) {
-//                return "Phone number must be between " + MIN_PHONE_LENGTH + " and " + MAX_PHONE_LENGTH + " digits and contain only numbers.";
-//            }
-//
-//            // Validate address if present
-//            JSONObject addressData = employerData.optJSONObject("address");
-//            if (addressData != null) {
-//                // Validate street
-//                String street = addressData.optString("street", "");
-//                if (street.isEmpty()) {
-//                    return "Street address is required.";
-//                }
-//
-//                // Validate city - must contain only letters
-//                String city = addressData.optString("city", "");
-//                if (city.isEmpty()) {
-//                    return "City is required.";
-//                }
-//
-//                // Validate state - must be exactly 2 letters
-//                String state = addressData.optString("state", "");
-//                if (state.isEmpty()) {
-//                    return "State is required.";
-//                } else if (!state.matches("^[A-Z]{2}$")) {
-//                    return "State must be exactly 2 uppercase letters (e.g., IA, IL).";
-//                }
-//
-//                // Validate zip code
-//                String zipCode = addressData.optString("zipCode", "");
-//                if (zipCode.isEmpty()) {
-//                    return "Zip code is required.";
-//                } else if (zipCode.length() != ZIP_CODE_LENGTH || !zipCode.matches("\\d{" + ZIP_CODE_LENGTH + "}")) {
-//                    return "Zip code must be " + ZIP_CODE_LENGTH + " digits.";
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return "Error validating employer data.";
-//        }
-//
-//        return null; // Validation passed
-//    }
+
     public static String validateJobData(JSONObject employerData) {
         try {
             // Validate job title field
@@ -446,26 +328,26 @@ public class EmployerApis {
      * @param listener      Response listener for successful employer update.
      * @param errorListener Error listener for handling errors.
      */
-//    private static void performEmployerUpdate(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-//        String url = BASE_URL;
-//        Log.d(TAG, "PUT Employer Request URL: " + url);
-//        Log.d(TAG, "Employer Data Payload: " + employerData.toString());
-//
-//        JsonObjectRequest request = new JsonObjectRequest(
-//                Request.Method.PUT,
-//                url,
-//                employerData,
-//                listener,
-//                error -> handleErrorResponse("Error updating employer: " + getErrorMessage(error), error, errorListener)
-//        ) {
-//            @Override
-//            public Map<String, String> getHeaders() {
-//                return com.example.hiveeapp.employer_user.display.EmployerApis.getHeaders(context);
-//            }
-//        };
-//
-//        VolleySingleton.getInstance(context).addToRequestQueue(request);
-//    }
+    private static void performJobUpdate(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL;
+        Log.d(TAG, "PUT Employer Request URL: " + url);
+        Log.d(TAG, "Employer Data Payload: " + employerData.toString());
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.PUT,
+                url,
+                employerData,
+                listener,
+                error -> handleErrorResponse("Error updating employer: " + getErrorMessage(error), error, errorListener)
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return com.example.hiveeapp.employer_user.display.EmployerApis.getHeaders(context);
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
 
     /**
      * Deletes an employer from the server.

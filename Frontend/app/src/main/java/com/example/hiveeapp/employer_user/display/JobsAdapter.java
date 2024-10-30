@@ -13,7 +13,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.company_user.handleEmployers.EmployerApi;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONArray;
@@ -52,7 +51,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
         notifyDataSetChanged();  // Notify the adapter to refresh the data
     }
 
-    // this is what neends to be changed, it had troubls, i wasnt passing anything
 
     @Override
     public EmployerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -91,20 +89,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
 
 
 
-//            String name = employer.optString("name", "Unknown");
-//            String email = employer.optString("email", "N/A");
-//            String phone = employer.optString("phone", "N/A");
-//
-//            // Extract and format the address details
-//            JSONObject addressJson = employer.optJSONObject("address");
-//            String address = "Unknown address";
-//            if (addressJson != null) {
-//                String street = addressJson.optString("street", "N/A");
-//                String city = addressJson.optString("city", "N/A");
-//                String state = addressJson.optString("state", "N/A");
-//                String zipCode = addressJson.optString("zipCode", "N/A");
-//                address = street + ", " + city + ", " + state + " " + zipCode;
-//            }
 
             // Set employer details to the corresponding TextViews
 
@@ -119,11 +103,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             holder.applicationStartTextView.setText(applicationStart);
             holder.applicationEndTextView.setText(applicationEnd);
 
-
-//            holder.nameTextView.setText(name);
-//            holder.emailTextView.setText(email);
-//            holder.phoneTextView.setText(phone);
-//            holder.addressTextView.setText(address);
 
             // If the list is not editable, hide the update and delete buttons
             if (!isEditable) {
@@ -220,17 +199,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
 
 
 
-//            TextView editName = view.findViewById(R.id.editName);
-//            TextView editEmail = view.findViewById(R.id.editEmail);
-//            TextView editPhone = view.findViewById(R.id.editPhone);
-//            TextView editStreet = view.findViewById(R.id.editStreet);
-//            TextView editComplement = view.findViewById(R.id.editComplement);
-//            TextView editCity = view.findViewById(R.id.editCity);
-//            TextView editState = view.findViewById(R.id.editState);
-//            TextView editZipCode = view.findViewById(R.id.editZipCode);
-//            View saveChangesButton = view.findViewById(R.id.saveChangesButton);
-
-
 
             // Pre-fill the fields with the current employer data
 
@@ -247,21 +215,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
 
 
 
-
-
-
-//            editName.setText(employer.optString("name"));
-//            editEmail.setText(employer.optString("email"));
-//            editPhone.setText(employer.optString("phone"));
-//
-//            JSONObject address = employer.optJSONObject("address");
-//            if (address != null) {
-//                editStreet.setText(address.optString("street"));
-//                editComplement.setText(address.optString("complement"));
-//                editCity.setText(address.optString("city"));
-//                editState.setText(address.optString("state"));
-//                editZipCode.setText(address.optString("zipCode"));
-//            }
 
             // Save changes when button is clicked
             saveChangesButton.setOnClickListener(v -> {
@@ -281,16 +234,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
 
 
 
-//                String updatedName = editName.getText().toString().trim();
-//                String updatedEmail = editEmail.getText().toString().trim();
-//                String updatedPhone = editPhone.getText().toString().trim();
-//                String updatedStreet = editStreet.getText().toString().trim();
-//                String updatedComplement = editComplement.getText().toString().trim();
-//                String updatedCity = editCity.getText().toString().trim();
-//                String updatedState = editState.getText().toString().trim();
-//                String updatedZip = editZipCode.getText().toString().trim();
-
-
                 try {
                     // Retrieve companyId from SharedPreferences
                     SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
@@ -299,7 +242,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                     // Construct a new JSONObject with updated data
                     JSONObject updatedJob = new JSONObject();
 
-                    updatedJob.put("userId", job.getLong("userId")); // Assuming userId corresponds to the employer
+                    updatedJob.put("userId", job.getLong("jobPostingId")); // Assuming userId corresponds to the employer
                     updatedJob.put("title", updatedTitle);
                     updatedJob.put("description", updatedDescription);
                     updatedJob.put("summary", updatedSummary);
@@ -309,35 +252,14 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                     updatedJob.put("jobStart", updatedJobStart);
                     updatedJob.put("applicationStart", updatedApplicationStart);
                     updatedJob.put("applicationEnd", updatedApplicationEnd);
-                    updatedJob.put("companyId", companyId);
+                   // updatedJob.put("companyId", companyId);
+                   // updatedJob.put("companyId", job.optLong("companyId", companyId));
+                    updatedJob.put("companyId", job.optLong("companyId", companyId));
 
 
 
-
-//                    updatedEmployer.put("userId", employer.getLong("userId"));
-//                    updatedEmployer.put("name", updatedName);
-//                    updatedEmployer.put("email", updatedEmail);
-//                    updatedEmployer.put("phone", updatedPhone);
-//                    updatedEmployer.put("role", employer.optString("role", "EMPLOYER"));
-//                    updatedEmployer.put("companyId", employer.optLong("companyId", companyId));
-//
-//                    // Update address in the employer object
-//                    JSONObject updatedAddress = new JSONObject();
-//                    JSONObject existingAddress = employer.optJSONObject("address");
-//                    if (existingAddress != null) {
-//                        updatedAddress.put("addressId", existingAddress.optLong("addressId", 0));
-//                    } else {
-//                        updatedAddress.put("addressId", JSONObject.NULL);
-//                    }
-//                    updatedAddress.put("street", updatedStreet);
-//                    updatedAddress.put("complement", updatedComplement.isEmpty() ? JSONObject.NULL : updatedComplement);
-//                    updatedAddress.put("city", updatedCity);
-//                    updatedAddress.put("state", updatedState);
-//                    updatedAddress.put("zipCode", updatedZip);
-//                    updatedEmployer.put("address", updatedAddress);
-
-                    // Update employer via EmployerApi
-                    EmployerApi.updateEmployer(context, updatedJob,
+                    // Update employer via EmployerApis
+                    EmployerApis.updateJob(context, updatedJob,
                             response -> {
                                 try {
                                     // Update the employer in the list and refresh RecyclerView
