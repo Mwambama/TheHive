@@ -341,7 +341,6 @@ public class StudentApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                // Retrieve headers with authorization from getHeaders method
                 return StudentApi.getHeaders(context);
             }
         };
