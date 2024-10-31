@@ -233,6 +233,70 @@ public class StudentApi {
     }
 
 
+    public static void applyForJob(Context context, int studentId, int jobPostingId,
+                                   Response.Listener<String> listener,
+                                   Response.ErrorListener errorListener) {
+        String url = "http://localhost:8080/applications/apply";
+
+        // Create the request payload
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("studentId", studentId);
+            requestBody.put("jobPostingId", jobPostingId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                requestBody,
+                response -> {
+                    // Success response
+                    listener.onResponse("Application submitted successfully!");
+                },
+                error -> {
+                    // Error response
+                    if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
+                        String errorMsg = "Student has already applied for this job posting!";
+                        handleErrorResponse(errorMsg, error, errorListener);
+                    } else {
+                        handleErrorResponse("Error applying for job", error, errorListener);
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return StudentApi.getHeaders(context);
+            }
+        };
+
+        // Add the request to the queue
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
+    }
+
+    public static void getStudentApplications(Context context, int studentId,
+                                              Response.Listener<JSONArray> listener,
+                                              Response.ErrorListener errorListener) {
+        String url = "http://localhost:8080/applications/student?studentId=" + studentId;
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                listener,
+                error -> handleErrorResponse("Error fetching applications", error, errorListener)
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return StudentApi.getHeaders(context);
+            }
+        };
+
+        // Add the request to the queue
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
+    }
 
 
     /**
