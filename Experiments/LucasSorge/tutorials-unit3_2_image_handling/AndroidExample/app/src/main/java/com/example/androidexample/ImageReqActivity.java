@@ -19,7 +19,7 @@ public class ImageReqActivity extends AppCompatActivity {
     private ImageView imageView;
     private ProgressDialog progressDialog; // Add progress dialog
 
-    public static final String URL_IMAGE = "http://10.0.2.2:8080/images/1";
+    public static final String URL_IMAGE = "http://sharding.org/outgoing/temp/testimg3.jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

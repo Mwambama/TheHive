@@ -28,7 +28,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Address getAddressById(Long id) {
         return addressRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Employer Invitation not found with id " + id)
+                () -> new ResourceNotFoundException("Address not found with id " + id)
         );
     }
 
@@ -36,7 +36,7 @@ public class AddressServiceImpl implements AddressService {
     public Address updateAddress(Address request) {
         Long id = request.getAddressId();
         if (!addressRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Employer Invitation not found with id " + id);
+            throw new ResourceNotFoundException("Address not found with id " + id);
         }
         return addressRepository.save(request);
     }
@@ -44,7 +44,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void deleteAddress(Long id) {
         Address address = addressRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Employer Invitation not found with id " + id)
+                () -> new ResourceNotFoundException("Address not found with id " + id)
         );
         addressRepository.delete(address);
     }

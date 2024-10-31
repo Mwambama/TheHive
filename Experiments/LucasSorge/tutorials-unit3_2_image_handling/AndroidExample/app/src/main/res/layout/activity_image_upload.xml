@@ -2,28 +2,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:padding="20dp"
+    android:gravity="center"
+    android:background="@android:color/white">
 
+    <!-- Select Image Button -->
     <Button
         android:id="@+id/selectBtn"
-        android:layout_marginTop="10dp"
-        android:layout_width="180sp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SELECT IMAGE" />
+        android:padding="10dp"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:text="SELECT IMAGE"
+        android:elevation="4dp"
+        android:layout_marginTop="20dp" />
 
-
+    <!-- Display Selected Image -->
     <ImageView
         android:id="@+id/imageSelView"
-        android:layout_width="300sp"
-        android:layout_height="300sp"
-        android:layout_marginTop="50dp"/>
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="30dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/image_placeholder"
+        android:contentDescription="Selected Image" />
 
+    <!-- Upload Button -->
     <Button
         android:id="@+id/uploadBtn"
-        android:layout_marginTop="150dp"
-        android:layout_width="180sp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="UPLOAD" />
+        android:padding="10dp"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:text="UPLOAD"
+        android:elevation="4dp"
+        android:layout_marginTop="40dp"
+        android:layout_gravity="center" />
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/uploadProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="gone" />
 
 </LinearLayout>

@@ -23,7 +23,6 @@ public class StudentServiceImpl implements StudentService{
     @Autowired private StudentRepository studentRepository;
     @Autowired private AddressService addressService;
     private static String directory = "../../thehive/resumes/"; // when running through server
-    // private static String directory = "C:/Users/fadah/Downloads/resume-uploads/"; // EDIT when running locally
 
     public StudentServiceImpl(){}
 
@@ -45,7 +44,11 @@ public class StudentServiceImpl implements StudentService{
         if (!studentRepository.existsById(id)){
             throw new ResourceNotFoundException("Student not found with id " + id);
         }
-        addressService.updateAddress(request.getAddress());
+        if (request.getAddress().getAddressId() == null){
+            addressService.createAddress(request.getAddress());
+        } else {
+            addressService.updateAddress(request.getAddress());
+        }
         return studentRepository.save(request);
     }
 
