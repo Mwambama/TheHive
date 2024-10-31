@@ -12,5 +12,5 @@ public interface ChatMessageService {
     ChatMessageDto getChatMessageById(Long id);
     ChatMessageDto updateChatMessage(ChatMessageDto request);
     void deleteChatMessage(Long id);
-    List<ChatMessageDto> getChatMessagesByChat(ChatDto chat);
+    List<ChatMessageDto> getChatMessagesByChatId(Long chatId);
 }

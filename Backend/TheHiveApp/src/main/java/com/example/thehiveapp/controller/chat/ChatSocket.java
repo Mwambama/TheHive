@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,8 +32,8 @@ public class ChatSocket {
     private static ChatMessageService chatMessageService;
 
     // Maps each chatId to its map of session-email pairs
-    private static Map<String, Map<Session, String>> chatRooms = new ConcurrentHashMap<>();
-    private static Map<String, Map<String, Session>> emailSessionMap = new ConcurrentHashMap<>();
+    private static Map<Long, Map<Session, String>> chatRooms = new ConcurrentHashMap<>();
+    private static Map<Long, Map<String, Session>> emailSessionMap = new ConcurrentHashMap<>();
 
 
     @Autowired
@@ -43,7 +44,7 @@ public class ChatSocket {
     }
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("chatId") String chatId) throws IOException {
+    public void onOpen(Session session, @PathParam("chatId") Long chatId) throws IOException {
         URI uri = session.getRequestURI();
         String query = uri.getQuery(); // example: "email=foo&password=bar"
 
@@ -98,10 +99,12 @@ public class ChatSocket {
 
         // Notify all users in the chat room
         broadcast(chatId, "User " + email + " has joined the chat");
+
+        sendChatHistory(email, chatId);
     }
 
     @OnMessage
-    public void onMessage(Session session, @PathParam("chatId") String chatId, String message) throws IOException {
+    public void onMessage(Session session, @PathParam("chatId") Long chatId, String message) throws IOException {
         ChatMessageDto dto = objectMapper.readValue(message, ChatMessageDto.class);
         String email = chatRooms.get(chatId).get(session);
         logger.info("[onMessage] " + email + ": " + dto.getMessage());
@@ -111,7 +114,7 @@ public class ChatSocket {
     }
 
     @OnClose
-    public void onClose(Session session, @PathParam("chatId") String chatId) throws IOException {
+    public void onClose(Session session, @PathParam("chatId") Long chatId) throws IOException {
         String email = chatRooms.get(chatId).remove(session);
         emailSessionMap.get(chatId).remove(email);
         logger.info("[onClose] {} disconnected from chat room {}", email, chatId);
@@ -123,10 +126,22 @@ public class ChatSocket {
         logger.error("[onError] Session error: {}", throwable.getMessage());
     }
 
-    private void broadcast(String chatId, String message) {
+    private void broadcast(Long chatId, String message) {
         chatRooms.get(chatId).forEach((session, email) -> {
             try {
                 session.getBasicRemote().sendText(message);
+            } catch (IOException e) {
+                logger.error("[Broadcast Exception] {}", e.getMessage());
+            }
+        });
+    }
+
+    private void sendChatHistory(String email, long chatId) {
+        Session session = emailSessionMap.get(chatId).get(email);
+        chatMessageService.getChatMessagesByChatId(chatId).forEach(chatMessageDto -> {
+            try {
+                String jsonMessage = objectMapper.writeValueAsString(chatMessageDto);
+                session.getBasicRemote().sendText(jsonMessage);
             } catch (IOException e) {
                 logger.error("[Broadcast Exception] {}", e.getMessage());
             }
