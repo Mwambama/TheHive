@@ -13,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.example.hiveeapp.student_user.swipe.JobPosting;
 import com.example.hiveeapp.volley.VolleyMultipartRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
 
@@ -25,7 +26,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StudentApi {
@@ -44,8 +47,8 @@ public class StudentApi {
         headers.put("Content-Type", "application/json");
 
         // Mocked username and password for testing purposes
-        String username = "employer@example.com";
-        String password = "Test@1234";
+        String username = "teststudent1@example.com";
+        String password = "TestStudent1234@";
 
         String credentials = username + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
@@ -233,7 +236,118 @@ public class StudentApi {
     }
 
 
+    public static void applyForJob(Context context, int studentId, int jobPostingId,
+                                   Response.Listener<String> listener,
+                                   Response.ErrorListener errorListener) {
+        String url = "http://localhost:8080/applications/apply";
 
+        // Create the request payload
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("studentId", studentId);
+            requestBody.put("jobPostingId", jobPostingId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                requestBody,
+                response -> {
+                    // Success response
+                    listener.onResponse("Application submitted successfully!");
+                },
+                error -> {
+                    // Error response
+                    if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
+                        String errorMsg = "Student has already applied for this job posting!";
+                        handleErrorResponse(errorMsg, error, errorListener);
+                    } else {
+                        handleErrorResponse("Error applying for job", error, errorListener);
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return StudentApi.getHeaders(context);
+            }
+        };
+
+        // Add the request to the queue
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
+    }
+
+    public static void getStudentApplications(Context context, int studentId,
+                                              Response.Listener<JSONArray> listener,
+                                              Response.ErrorListener errorListener) {
+        String url = "http://localhost:8080/applications/student?studentId=" + studentId;
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                listener,
+                error -> handleErrorResponse("Error fetching applications", error, errorListener)
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return StudentApi.getHeaders(context);
+            }
+        };
+
+        // Add the request to the queue
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
+    }
+
+    public static void getJobPostings(Context context,
+                                      Response.Listener<List<JobPosting>> listener,
+                                      Response.ErrorListener errorListener) {
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    List<JobPosting> jobPostings = new ArrayList<>();
+                    for (int i = 0; i < response.length(); i++) {
+                        try {
+                            JSONObject jobJson = response.getJSONObject(i);
+                            JobPosting job = new JobPosting(
+                                    jobJson.getInt("jobPostingId"),
+                                    jobJson.getString("title"),
+                                    jobJson.getString("description"),
+                                    jobJson.getString("summary"),
+                                    jobJson.getDouble("salary"),
+                                    jobJson.getString("jobType"),
+                                    jobJson.getDouble("minimumGpa"),
+                                    jobJson.getString("jobStart"),
+                                    jobJson.getString("applicationStart"),
+                                    jobJson.getString("applicationEnd"),
+                                    jobJson.getInt("employerId")
+                            );
+                            jobPostings.add(job);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    listener.onResponse(jobPostings);
+                },
+                error -> {
+                    errorListener.onErrorResponse(error);
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return StudentApi.getHeaders(context);
+            }
+        };
+
+        // Add the request to the Volley request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
+    }
 
     /**
      * Handles error responses from the server, logs the details, and invokes the error listener.

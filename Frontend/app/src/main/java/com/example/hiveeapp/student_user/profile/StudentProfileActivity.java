@@ -47,7 +47,7 @@ public class StudentProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student_profile);
 
         // Retrieve userId from Intent
-        userId = 1165; //getIntent().getIntExtra("USER_ID", -1);
+        userId = getIntent().getIntExtra("USER_ID", -1);
 
         if (userId == -1) {
             Toast.makeText(this, "Invalid User ID", Toast.LENGTH_SHORT).show();

@@ -31,7 +31,7 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student_profile_view);
 
         // Retrieve userId from Intent
-        userId = 1165; //getIntent().getIntExtra("USER_ID", -1);
+        userId = getIntent().getIntExtra("USER_ID", -1);
 
         // Debug: Log userId received from Intent
         Log.d(TAG, "Received userId from Intent: " + userId);
