@@ -2,7 +2,6 @@ package com.example.hiveeapp.employer_user.display;
 
 
 import android.os.Bundle;
-import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -170,7 +169,7 @@ public class AddJobActivity extends AppCompatActivity {
             jobData.put("title", jobTitle);
             jobData.put("description", jobDescription);
             jobData.put("summary", summary);
-            jobData.put("salary", Integer.parseInt(salaryRequirements)); // Assuming salary is an integer
+            jobData.put("salary", Double.parseDouble(salaryRequirements)); // Assuming salary is an integer // change to double
             jobData.put("jobType", jobType); // Ensure jobType matches your enum or backend requirement
             jobData.put("minimumGpa", Double.parseDouble(minimumGpa)); // Assuming GPA is a double
             jobData.put("jobStart", jobStart);
@@ -188,7 +187,7 @@ public class AddJobActivity extends AppCompatActivity {
 
         // Send the job data to the server using the EmployerApis
 
-        EmployerApis.updateJob(this, jobData,
+        EmployerApis.addJob(this, jobData,
                 response -> {
                     // Handle successful response
                     Toast.makeText(AddJobActivity.this, "Job posted successfully!", Toast.LENGTH_SHORT).show();

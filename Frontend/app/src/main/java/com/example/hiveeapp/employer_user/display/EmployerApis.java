@@ -41,8 +41,8 @@ public class EmployerApis {
         headers.put("Content-Type", "application/json");
 
         // Mocked username and password for testing purposes
-        String username = "employer@example.com";
-        String password = "Test@1234";
+        String username = "iiik@gmail.com";
+        String password = "Anondwdb##444fedo";
 
         String credentials = username + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
@@ -79,35 +79,6 @@ public class EmployerApis {
     }
 
     /**
-     * Adds a new address to the server.
-     *
-     * @param context       The application context.
-     * @param addressData   JSON object containing address details.
-     * @param listener      Response listener for successful address creation.
-     * @param errorListener Error listener for handling errors.
-     */
-//    public static void addAddress(Context context, JSONObject addressData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-//        String url = ADDRESS_URL;
-//        Log.d(TAG, "POST Address Request URL: " + url);
-//        Log.d(TAG, "Request Payload: " + addressData.toString());
-//
-//        JsonObjectRequest request = new JsonObjectRequest(
-//                Request.Method.POST,
-//                url,
-//                addressData,
-//                listener,
-//                error -> handleErrorResponse("Error adding address", error, errorListener)
-//        ) {
-//            @Override
-//            public Map<String, String> getHeaders() {
-//                return com.example.hiveeapp.employer_user.display.EmployerApis.getHeaders(context);
-//            }
-//        };
-//
-//        VolleySingleton.getInstance(context).addToRequestQueue(request);
-//    }
-
-    /**
      * Internal method to add a new employer (called after address creation).
      *
      * @param context       The application context.
@@ -115,7 +86,7 @@ public class EmployerApis {
      * @param listener      Response listener for successful employer creation.
      * @param errorListener Error listener for handling errors.
      */
-    private static void addEmployer(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    static void addJob(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL;
         Log.d(TAG, "POST Employer Request URL: " + url);
         Log.d(TAG, "Employer Data Payload: " + employerData.toString());
@@ -288,37 +259,6 @@ public class EmployerApis {
 
         return null; // Validation passed
     }
-
-
-
-    /**
-     * Updates an existing address on the server.
-     *
-     * @param context       The application context.
-     * @param addressData   JSON object containing address details.
-     * @param listener      Response listener for successful address update.
-     * @param errorListener Error listener for handling errors.
-     */
-//    public static void updateAddress(Context context, JSONObject addressData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-//        String url = ADDRESS_URL;
-//        Log.d(TAG, "PUT Address Request URL: " + url);
-//        Log.d(TAG, "Request Payload: " + addressData.toString());
-//
-//        JsonObjectRequest request = new JsonObjectRequest(
-//                Request.Method.PUT,
-//                url,
-//                addressData,
-//                listener,
-//                error -> handleErrorResponse("Error updating address: " + getErrorMessage(error), error, errorListener)
-//        ) {
-//            @Override
-//            public Map<String, String> getHeaders() {
-//                return com.example.hiveeapp.employer_user.display.EmployerApis.getHeaders(context);
-//            }
-//        };
-//
-//        VolleySingleton.getInstance(context).addToRequestQueue(request);
-//    }
 
     /**
      * Internal method to perform employer update after any address updates.
