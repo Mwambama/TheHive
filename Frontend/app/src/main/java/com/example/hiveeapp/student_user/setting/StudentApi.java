@@ -13,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.example.hiveeapp.student_user.swipe.JobPosting;
 import com.example.hiveeapp.volley.VolleyMultipartRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
 
@@ -25,7 +26,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StudentApi {
@@ -298,6 +301,54 @@ public class StudentApi {
         VolleySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
     }
 
+    public static void getJobPostings(Context context,
+                                      Response.Listener<List<JobPosting>> listener,
+                                      Response.ErrorListener errorListener) {
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    List<JobPosting> jobPostings = new ArrayList<>();
+                    for (int i = 0; i < response.length(); i++) {
+                        try {
+                            JSONObject jobJson = response.getJSONObject(i);
+                            JobPosting job = new JobPosting(
+                                    jobJson.getInt("jobPostingId"),
+                                    jobJson.getString("title"),
+                                    jobJson.getString("description"),
+                                    jobJson.getString("summary"),
+                                    jobJson.getDouble("salary"),
+                                    jobJson.getString("jobType"),
+                                    jobJson.getDouble("minimumGpa"),
+                                    jobJson.getString("jobStart"),
+                                    jobJson.getString("applicationStart"),
+                                    jobJson.getString("applicationEnd"),
+                                    jobJson.getInt("employerId")
+                            );
+                            jobPostings.add(job);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    listener.onResponse(jobPostings);
+                },
+                error -> {
+                    errorListener.onErrorResponse(error);
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                // Retrieve headers with authorization from getHeaders method
+                return StudentApi.getHeaders(context);
+            }
+        };
+
+        // Add the request to the Volley request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
+    }
 
     /**
      * Handles error responses from the server, logs the details, and invokes the error listener.
