@@ -13,6 +13,8 @@ import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.student_user.setting.StudentApi;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,8 +34,6 @@ public class StudentProfileViewActivity extends AppCompatActivity {
 
         // Retrieve userId from Intent
         userId = getIntent().getIntExtra("USER_ID", -1);
-
-        // Debug: Log userId received from Intent
         Log.d(TAG, "Received userId from Intent: " + userId);
 
         if (userId == -1) {
@@ -70,6 +70,38 @@ public class StudentProfileViewActivity extends AppCompatActivity {
 
         // Load student information from the backend
         loadStudentProfile(userId);
+
+        // Set up BottomNavigationView
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_apply) {
+                startActivity(new Intent(StudentProfileViewActivity.this, StudentMainActivity.class));
+                finish();
+                return true;
+            } else if (itemId == R.id.navigation_profile) {
+                return true;
+            } else if (itemId == R.id.navigation_chat) {
+                // Logic for Chat if needed
+                return true;
+            }
+            return false;
+        });
+
+        bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
+    }
+
+    private void navigateBackToMain() {
+        Intent intent = new Intent(StudentProfileViewActivity.this, StudentMainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Redirect back to the main page instead of the previous activity
+        navigateBackToMain();
     }
 
     private void loadStudentProfile(int userId) {
