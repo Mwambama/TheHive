@@ -59,7 +59,7 @@ public class JobsFragment extends Fragment {
                     // Reverse the JSONArray to display the most recent employers first
                     JSONArray reversedEmployers = reverseJSONArray(response);
                     // Update the RecyclerView adapter with the reversed employers list
-                    jobAdapter.setEmployers(reversedEmployers);
+                    jobAdapter.setJobs(reversedEmployers);
                 },
                 error -> {
                     // Handle error from the API request

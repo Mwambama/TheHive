@@ -24,7 +24,7 @@ import java.util.Map;
 public class EmployerApis {
 
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
-    //private static final String ADDRESS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/address";
+
     private static final String TAG = "EmployerApis";
 
     /**
@@ -113,18 +113,18 @@ public class EmployerApis {
      * @param errorListener Error listener for handling errors.
      */
 
-//    public static void updateJob(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-//        // Validate employer data before proceeding
-////        String validationError = validateJobData(employerData);
-////        if (validationError != null) {
-////            // Show a personalized error message if validation fails
-////            Toast.makeText(context, validationError, Toast.LENGTH_LONG).show();
-////            errorListener.onErrorResponse(new VolleyError(validationError));
-////            return; // Validation failed, do not proceed
-////        }
-//                 //  continues to add the job
-//            performJobUpdate(context, employerData, listener, errorListener);
-//    }
+    public static void updateJob(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        // Validate employer data before proceeding
+        String validationError = validateJobData(employerData);
+        if (validationError != null) {
+            // Show a personalized error message if validation fails
+            Toast.makeText(context, validationError, Toast.LENGTH_LONG).show();
+            errorListener.onErrorResponse(new VolleyError(validationError));
+            return; // Validation failed, do not proceed
+        }
+                 //  continues to add the job
+            performJobUpdate(context, employerData, listener, errorListener);
+    }
 
 
     /**
@@ -216,7 +216,7 @@ public class EmployerApis {
                 url,
                 employerData,
                 listener,
-                error -> handleErrorResponse("Error updating employer: " + getErrorMessage(error), error, errorListener)
+                error -> handleErrorResponse("Error updating job: " + getErrorMessage(error), error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {

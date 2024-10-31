@@ -26,7 +26,7 @@ import org.json.JSONObject;
  */
 public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHolder> {
 
-    private JSONArray employers = new JSONArray();  // Holds the list of employers
+    private JSONArray jobs = new JSONArray();  // Holds the list of employers
     private final Context context;  // The context in which the adapter is used
     private final boolean isEditable;  // Indicates whether the list is editable (shows update/delete buttons)
     private static final String USER_PREFS = "UserPrefs";  // SharedPreferences key for user data
@@ -45,10 +45,10 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
     /**
      * Updates the employer list and refreshes the RecyclerView.
      *
-     * @param employers The JSONArray containing the employer data
+     * @param jobs The JSONArray containing the employer data
      */
-    public void setEmployers(JSONArray employers) {
-        this.employers = employers;
+    public void setJobs(JSONArray jobs) {
+        this.jobs = jobs;
         notifyDataSetChanged();  // Notify the adapter to refresh the data
     }
 
@@ -73,7 +73,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
     public void onBindViewHolder(EmployerViewHolder holder, int position) {
         try {
             // Get the employer object at the current position
-            JSONObject job = employers.getJSONObject(position);
+            JSONObject job = jobs.getJSONObject(position);
 
             // Extract employer details, handling null cases with default values
 
@@ -86,9 +86,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             String jobStart = job.optString("jobStart", "N/A");
             String applicationStart = job.optString("applicationStart", "N/A");
             String applicationEnd = job.optString("applicationEnd", "N/A");
-
-
-
 
 
             // Set employer details to the corresponding TextViews
@@ -104,7 +101,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             holder.applicationStartTextView.setText(applicationStart);
             holder.applicationEndTextView.setText(applicationEnd);
 
-
             // If the list is not editable, hide the update and delete buttons
             if (!isEditable) {
                 holder.updateButton.setVisibility(View.GONE);
@@ -115,7 +111,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                     int currentPosition = holder.getAdapterPosition();
                     if (currentPosition != RecyclerView.NO_POSITION) {
                         try {
-                            JSONObject currentEmployer = employers.getJSONObject(currentPosition);
+                            JSONObject currentEmployer = jobs.getJSONObject(currentPosition);
                             showEditBottomSheet(currentEmployer, currentPosition);  // Show edit dialog
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -128,7 +124,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                     int currentPosition = holder.getAdapterPosition();
                     if (currentPosition != RecyclerView.NO_POSITION) {
                         try {
-                            JSONObject currentEmployer = employers.getJSONObject(currentPosition);
+                            JSONObject currentEmployer = jobs.getJSONObject(currentPosition);
                             new AlertDialog.Builder(context)
                                     .setTitle("Delete job")
                                     .setMessage("Are you sure you want to delete this job?")
@@ -138,9 +134,9 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                                             EmployerApis.deleteEmployer(context, employerId,
                                                     response -> {
                                                         // Remove deleted employer and refresh RecyclerView
-                                                        employers.remove(currentPosition);
+                                                        jobs.remove(currentPosition);
                                                         notifyItemRemoved(currentPosition);
-                                                        notifyItemRangeChanged(currentPosition, employers.length());
+                                                        notifyItemRangeChanged(currentPosition, jobs.length());
                                                         Toast.makeText(context, "job deleted successfully", Toast.LENGTH_SHORT).show();
                                                     },
                                                     error -> Toast.makeText(context, "Error deleting job: " + error.getMessage(), Toast.LENGTH_SHORT).show()
@@ -167,7 +163,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
 
     @Override
     public int getItemCount() {
-        return employers.length();  // Return the number of employers in the list
+        return jobs.length();  // Return the number of employers in the list
     }
 
     /**
@@ -184,8 +180,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             bottomSheetDialog.setContentView(view);
 
             // Initialize the fields from the layout
-
-
             TextView editTitle = view.findViewById(R.id.editTitle);
             TextView editDescription = view.findViewById(R.id.editDescription);
             TextView editSummary = view.findViewById(R.id.editSummary);
@@ -197,8 +191,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             TextView editApplicationEnd = view.findViewById(R.id.editApplicationEnd);
             View saveChangesButton = view.findViewById(R.id.saveChangesButton);
 
-
-            // Pre-fill the fields with the current employer data
+            // Pre-fill the fields with the current job data
 
             editTitle.setText(job.optString("title"));
             editDescription.setText(job.optString("description"));
@@ -211,11 +204,9 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             editApplicationEnd.setText(job.optString("applicationEnd"));
 
 
-
             // Save changes when button is clicked
             saveChangesButton.setOnClickListener(v -> {
                 // Get updated values from the fields
-
 
                 String updatedTitle = editTitle.getText().toString().trim();
                 String updatedDescription = editDescription.getText().toString().trim();
@@ -228,30 +219,24 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                 String updatedApplicationEnd = editApplicationEnd.getText().toString().trim();
 
 
-
                 try {
                     // Retrieve companyId from SharedPreferences
                     SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
-                    //int companyId = preferences.getInt("companyId", -1);
-
-
                     // Retrieve companyId directly from the job JSONObject
-                    long companyId = job.optLong("companyId", -1);
-                    Log.d("EmployerApis", "Retrieved companyId: " + companyId);
+                    long employerId = job.optLong("employerId", -1);
+                    Log.d("EmployerApis", "Retrieved employerId: " + employerId);
 
-                    if (companyId == -1) {
-                        Toast.makeText(context, "Error: Company ID not found", Toast.LENGTH_SHORT).show();
+                    if (employerId == -1) {
+                        Toast.makeText(context, "Error: employerId not found", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
 
                     // Ensure jobPostingId is provided
                     long jobPostingId = job.optLong("jobPostingId", -1);
                     if (jobPostingId == -1) {
-                        Toast.makeText(context, "Error: Job Posting ID not found", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Error: Job PostingId not found", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
                     // Construct a new JSONObject with updated data
                     JSONObject updatedJob = new JSONObject();
                     updatedJob.put("jobPostingId", jobPostingId); // Assuming this is the correct ID
@@ -264,7 +249,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                     updatedJob.put("jobStart", updatedJobStart);
                     updatedJob.put("applicationStart", updatedApplicationStart);
                     updatedJob.put("applicationEnd", updatedApplicationEnd);
-                    updatedJob.put("companyId", companyId); // or updatedJob.put("employerId", companyId);
+                   updatedJob.put("employerId", employerId); // or updatedJob.put("employerId", companyId);
 
                     // Print the JSON payload for debugging
                     Log.d("EmployerApis", "Update Job Payload: " + updatedJob.toString());
@@ -274,7 +259,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                             response -> {
                                 try {
                                     // Update the employer in the list and refresh RecyclerView
-                                    employers.put(position, updatedJob);
+                                    jobs.put(position, updatedJob);
                                     notifyItemChanged(position);
                                     bottomSheetDialog.dismiss();
                                     Toast.makeText(context, "Job updated successfully!", Toast.LENGTH_SHORT).show();
@@ -338,14 +323,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             updateButton = itemView.findViewById(R.id.updateButton);
             deleteButton = itemView.findViewById(R.id.deleteButton);
 
-
-
-//            nameTextView = itemView.findViewById(R.id.nameTextView);
-//            emailTextView = itemView.findViewById(R.id.emailTextView);
-//            phoneTextView = itemView.findViewById(R.id.phoneTextView);
-//            addressTextView = itemView.findViewById(R.id.addressTextView);
-//            updateButton = itemView.findViewById(R.id.updateButton);
-//            deleteButton = itemView.findViewById(R.id.deleteButton);
         }
     }
 }

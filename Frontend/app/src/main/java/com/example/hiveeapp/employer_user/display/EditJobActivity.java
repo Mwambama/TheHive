@@ -99,7 +99,7 @@ public class EditJobActivity extends AppCompatActivity {
                     public void onResponse(JSONArray response) {
                         // Reverse the JSONArray before setting it in the adapter
                         JSONArray reversedEmployers = reverseJSONArray(response);
-                        jobAdapter.setEmployers(reversedEmployers);
+                        jobAdapter.setJobs(reversedEmployers);
                     }
                 },
                 new Response.ErrorListener() {
