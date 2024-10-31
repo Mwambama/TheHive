@@ -198,9 +198,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             View saveChangesButton = view.findViewById(R.id.saveChangesButton);
 
 
-
-
-
             // Pre-fill the fields with the current employer data
 
             editTitle.setText(job.optString("title"));
@@ -273,7 +270,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                     Log.d("EmployerApis", "Update Job Payload: " + updatedJob.toString());
 
                     // Update employer via EmployerApis
-                    EmployerApis.updateJob(context, updatedJob,
+                    EmployerApis.performJobUpdate(context, updatedJob,
                             response -> {
                                 try {
                                     // Update the employer in the list and refresh RecyclerView

@@ -113,18 +113,18 @@ public class EmployerApis {
      * @param errorListener Error listener for handling errors.
      */
 
-    public static void updateJob(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        // Validate employer data before proceeding
-//        String validationError = validateJobData(employerData);
-//        if (validationError != null) {
-//            // Show a personalized error message if validation fails
-//            Toast.makeText(context, validationError, Toast.LENGTH_LONG).show();
-//            errorListener.onErrorResponse(new VolleyError(validationError));
-//            return; // Validation failed, do not proceed
-//        }
-                 //  continues to add the job
-            performJobUpdate(context, employerData, listener, errorListener);
-    }
+//    public static void updateJob(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+//        // Validate employer data before proceeding
+////        String validationError = validateJobData(employerData);
+////        if (validationError != null) {
+////            // Show a personalized error message if validation fails
+////            Toast.makeText(context, validationError, Toast.LENGTH_LONG).show();
+////            errorListener.onErrorResponse(new VolleyError(validationError));
+////            return; // Validation failed, do not proceed
+////        }
+//                 //  continues to add the job
+//            performJobUpdate(context, employerData, listener, errorListener);
+//    }
 
 
     /**
@@ -206,7 +206,7 @@ public class EmployerApis {
      * @param listener      Response listener for successful employer update.
      * @param errorListener Error listener for handling errors.
      */
-    private static void performJobUpdate(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    static void performJobUpdate(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL;
         Log.d(TAG, "PUT Employer Request URL: " + url);
         Log.d(TAG, "Employer Data Payload: " + employerData.toString());
