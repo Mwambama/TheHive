@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_margin="16dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp"
@@ -11,29 +11,108 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="696dp"
         android:orientation="vertical"
         android:padding="16dp">
 
         <!-- Job Title -->
         <TextView
             android:id="@+id/jobTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Job Title"
+            android:textColor="#333333"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#333333" />
+            android:textStyle="bold" />
 
-        <!-- Company Name -->
+        <!-- Company Name or Employer ID -->
         <TextView
             android:id="@+id/company"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Company Name"
-            android:textSize="16sp"
+            android:layout_marginTop="4dp"
+            android:text="Employer ID: 123"
             android:textColor="#555555"
-            android:layout_marginTop="4dp"/>
+            android:textSize="16sp" />
 
+        <!-- Job Description -->
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Job Description"
+            android:textColor="#777777"
+            android:textSize="14sp" />
+
+        <!-- Job Summary -->
+        <TextView
+            android:id="@+id/summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Job Summary"
+            android:textColor="#777777"
+            android:textSize="14sp" />
+
+        <!-- Salary -->
+        <TextView
+            android:id="@+id/salary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Salary: $0.00"
+            android:textColor="#333333"
+            android:textSize="14sp" />
+
+        <!-- Job Type -->
+        <TextView
+            android:id="@+id/jobType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Job Type: Internship"
+            android:textColor="#333333"
+            android:textSize="14sp" />
+
+        <!-- Minimum GPA -->
+        <TextView
+            android:id="@+id/minimumGpa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Minimum GPA: 0.00"
+            android:textColor="#333333"
+            android:textSize="14sp" />
+
+        <!-- Job Start Date -->
+        <TextView
+            android:id="@+id/jobStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Job Start Date: YYYY-MM-DD"
+            android:textColor="#333333"
+            android:textSize="14sp" />
+
+        <!-- Application Start Date -->
+        <TextView
+            android:id="@+id/applicationStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Application Start: YYYY-MM-DD"
+            android:textColor="#333333"
+            android:textSize="14sp" />
+
+        <!-- Application End Date -->
+        <TextView
+            android:id="@+id/applicationEnd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Application End: YYYY-MM-DD"
+            android:textColor="#333333"
+            android:textSize="14sp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
