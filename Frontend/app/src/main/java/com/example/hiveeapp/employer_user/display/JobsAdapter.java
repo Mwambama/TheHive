@@ -2,6 +2,7 @@ package com.example.hiveeapp.employer_user.display;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -214,8 +215,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
 
 
 
-
-
             // Save changes when button is clicked
             saveChangesButton.setOnClickListener(v -> {
                 // Get updated values from the fields
@@ -233,16 +232,32 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
 
 
 
-
                 try {
                     // Retrieve companyId from SharedPreferences
                     SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
-                    int companyId = preferences.getInt("companyId", -1);
+                    //int companyId = preferences.getInt("companyId", -1);
+
+
+                    // Retrieve companyId directly from the job JSONObject
+                    long companyId = job.optLong("companyId", -1);
+                    Log.d("EmployerApis", "Retrieved companyId: " + companyId);
+
+                    if (companyId == -1) {
+                        Toast.makeText(context, "Error: Company ID not found", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+
+                    // Ensure jobPostingId is provided
+                    long jobPostingId = job.optLong("jobPostingId", -1);
+                    if (jobPostingId == -1) {
+                        Toast.makeText(context, "Error: Job Posting ID not found", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                     // Construct a new JSONObject with updated data
                     JSONObject updatedJob = new JSONObject();
-
-                    updatedJob.put("userId", job.getLong("jobPostingId")); // Assuming userId corresponds to the employer
+                    updatedJob.put("jobPostingId", jobPostingId); // Assuming this is the correct ID
                     updatedJob.put("title", updatedTitle);
                     updatedJob.put("description", updatedDescription);
                     updatedJob.put("summary", updatedSummary);
@@ -252,11 +267,10 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                     updatedJob.put("jobStart", updatedJobStart);
                     updatedJob.put("applicationStart", updatedApplicationStart);
                     updatedJob.put("applicationEnd", updatedApplicationEnd);
-                   // updatedJob.put("companyId", companyId);
-                   // updatedJob.put("companyId", job.optLong("companyId", companyId));
-                    updatedJob.put("companyId", job.optLong("companyId", companyId));
+                    updatedJob.put("companyId", companyId); // or updatedJob.put("employerId", companyId);
 
-
+                    // Print the JSON payload for debugging
+                    Log.d("EmployerApis", "Update Job Payload: " + updatedJob.toString());
 
                     // Update employer via EmployerApis
                     EmployerApis.updateJob(context, updatedJob,
@@ -266,17 +280,22 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                                     employers.put(position, updatedJob);
                                     notifyItemChanged(position);
                                     bottomSheetDialog.dismiss();
-                                    Toast.makeText(context, "job updated successfully!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Job updated successfully!", Toast.LENGTH_SHORT).show();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                     Toast.makeText(context, "Error updating job list", Toast.LENGTH_SHORT).show();
                                 }
                             },
-                            error -> Toast.makeText(context, "Error updating job", Toast.LENGTH_SHORT).show());
+                            error -> {
+                                // Log error response for debugging
+                               // Log.e("EmployerApis", "Error updating employer: " + error.toString());
+                                Toast.makeText(context, "Error updating job", Toast.LENGTH_SHORT).show();
+                            });
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(context, "Error constructing update request", Toast.LENGTH_SHORT).show();
                 }
+
             });
 
             bottomSheetDialog.show();

@@ -26,9 +26,6 @@ public class EmployerApis {
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
     //private static final String ADDRESS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/address";
     private static final String TAG = "EmployerApis";
-//    private static final int MAX_PHONE_LENGTH = 10;
-//    private static final int MIN_PHONE_LENGTH = 7;
-//    private static final int ZIP_CODE_LENGTH = 5;
 
     /**
      * Generates the headers for API requests with authorization.
@@ -118,21 +115,6 @@ public class EmployerApis {
 
     public static void updateJob(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         // Validate employer data before proceeding
-        String validationError = validateJobData(employerData);
-        if (validationError != null) {
-            // Show a personalized error message if validation fails
-            Toast.makeText(context, validationError, Toast.LENGTH_LONG).show();
-            errorListener.onErrorResponse(new VolleyError(validationError));
-            return; // Validation failed, do not proceed
-        }
-                 //  continues to add the job
-            performJobUpdate(context, employerData, listener, errorListener);
-    }
-
-
-
-//    public static void updateEmployer(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-//        // Validate employer data before proceeding
 //        String validationError = validateJobData(employerData);
 //        if (validationError != null) {
 //            // Show a personalized error message if validation fails
@@ -140,54 +122,10 @@ public class EmployerApis {
 //            errorListener.onErrorResponse(new VolleyError(validationError));
 //            return; // Validation failed, do not proceed
 //        }
-//
-//        // Extract address data from employerData if present
-//        JSONObject addressData = employerData.optJSONObject("address");
-//
-//        if (addressData != null) {
-//            if (addressData.has("addressId")) {
-//                // If addressId exists, update the address
-//                //  updateAddress(context, addressData, addressResponse -> {
-//                    // Address updated successfully, proceed to update employer
-//                    performEmployerUpdate(context, employerData, listener, errorListener);
-//                }, error -> handleErrorResponse("Error updating address: " + getErrorMessage(error), error, errorListener));
-//            } else {
-//                // Address doesn't have an ID, create new address
-//                try {
-//                    addressData.put("addressId", JSONObject.NULL);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                    Log.e(TAG, "Error setting addressId to null in addressData.");
-//                    errorListener.onErrorResponse(new VolleyError("Error setting addressId to null in addressData."));
-//                    return;
-//                }
-//
-//                //addAddress(context, addressData, addressResponse -> {
-//                    // Get the saved addressId from the address creation response
-//                    long addressId;
-//                    try {
-//                        addressId = addressResponse.getLong("addressId");
-//                        // Set the addressId in employerData
-//                        JSONObject address = new JSONObject();
-//                        address.put("addressId", addressId);
-//                        employerData.put("address", address);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                        Log.e(TAG, "Error parsing address response.");
-//                        errorListener.onErrorResponse(new VolleyError("Error parsing address response."));
-//                        return;
-//                    }
-//
-//                    // Proceed to update employer
-//                    //performEmployerUpdate(context, employerData, listener, errorListener);
-//
-//                }, error -> handleErrorResponse("Error adding address: " + getErrorMessage(error), error, errorListener));
-//            }
-//        } else {
-//            // No address to update, proceed to update employer
-//            performEmployerUpdate(context, employerData, listener, errorListener);
-//        }
-//    }
+                 //  continues to add the job
+            performJobUpdate(context, employerData, listener, errorListener);
+    }
+
 
     /**
      * Validates the jobs data before sending it to the server.
