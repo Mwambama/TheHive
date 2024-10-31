@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface JobPostingService {
     List<JobPostingDto> getJobPostings();
+    List<JobPostingDto> getJobPostingsForStudent(Long studentId);
     List<JobPostingDto> getJobPostingsByEmployerId(Long employerId);
     JobPostingDto createJobPosting(JobPostingDto request);
     JobPostingDto getJobPostingById(Long id);
