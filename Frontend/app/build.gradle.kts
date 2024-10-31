@@ -49,6 +49,7 @@ dependencies {
     implementation ("com.android.volley:volley:1.2.0")
     implementation ("androidx.gridlayout:gridlayout:1.0.0")
     implementation ("org.java-websocket:Java-WebSocket:1.5.2")
+    implementation ("androidx.viewpager2:viewpager2:1.0.0")
 
 
 }
