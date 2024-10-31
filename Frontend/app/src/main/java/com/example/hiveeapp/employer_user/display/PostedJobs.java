@@ -3,81 +3,122 @@ package com.example.hiveeapp.employer_user.display;
 import java.io.Serializable;
 
 public class PostedJobs implements Serializable {
-    private String jobId; // Unique identifier for the job
-    private String jobTitle;
-    private String jobDescription;
-    private String jobType;
-    private String salaryRequirements;
-    private String ageRequirement;
-    private String minimumGpa;
+    private String jobPostingId; // Unique identifier for the job posting
+    private String title; // Job title
+    private String description; // Job description
+    private String summary; // Job summary
+    private double salary; // Salary requirements
+    private String jobType; // Type of job (e.g., INTERNSHIP)
+    private String minimumGpa; // Minimum GPA requirement
+    private String jobStart; // Job start date
+    private String applicationStart; // Application start date
+    private String applicationEnd; // Application end date
+    private int employerId; // Employer ID
 
     // Constructor
-    public PostedJobs(String jobId, String jobTitle, String jobDescription, String jobType, String salaryRequirements, String ageRequirement, String minimumGpa) {
-        this.jobId = jobId; // Initialize jobId
-        this.jobTitle = jobTitle;
-        this.jobDescription = jobDescription;
+    public PostedJobs(String jobPostingId, String title, String description, String summary, double salary,
+                      String jobType, String minimumGpa, String jobStart, String applicationStart,
+                      String applicationEnd, int employerId) {
+        this.jobPostingId = jobPostingId;
+        this.title = title;
+        this.description = description;
+        this.summary = summary;
+        this.salary = salary;
         this.jobType = jobType;
-        this.salaryRequirements = salaryRequirements;
-        this.ageRequirement = ageRequirement;
         this.minimumGpa = minimumGpa;
+        this.jobStart = jobStart;
+        this.applicationStart = applicationStart;
+        this.applicationEnd = applicationEnd;
+        this.employerId = employerId;
     }
 
     // Getters
-    public String getJobId() {
-        return jobId; // Return the job ID
+    public String getJobPostingId() {
+        return jobPostingId; // Return the job posting ID
     }
 
-    public String getJobTitle() {
-        return jobTitle;
+    public String getTitle() {
+        return title;
     }
 
-    public String getJobDescription() {
-        return jobDescription;
+    public String getDescription() {
+        return description;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public double getSalary() {
+        return salary;
     }
 
     public String getJobType() {
         return jobType;
     }
 
-    public String getSalaryRequirements() {
-        return salaryRequirements;
-    }
-
-    public String getAgeRequirement() {
-        return ageRequirement;
-    }
-
     public String getMinimumGpa() {
         return minimumGpa;
     }
 
+    public String getJobStart() {
+        return jobStart;
+    }
+
+    public String getApplicationStart() {
+        return applicationStart;
+    }
+
+    public String getApplicationEnd() {
+        return applicationEnd;
+    }
+
+    public int getEmployerId() {
+        return employerId;
+    }
+
     // Setters
-    // For when the user/employer updates the job posting
-    public void setJobId(String jobId) {
-        this.jobId = jobId; // Add setter for jobId if needed
+    public void setJobPostingId(String jobPostingId) {
+        this.jobPostingId = jobPostingId;
     }
 
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setJobDescription(String jobDescription) {
-        this.jobDescription = jobDescription;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
     }
 
     public void setJobType(String jobType) {
         this.jobType = jobType;
     }
 
-    public void setSalaryRequirements(String salaryRequirements) {
-        this.salaryRequirements = salaryRequirements;
-    }
-
-    public void setAgeRequirement(String ageRequirement) {
-        this.ageRequirement = ageRequirement;
-    }
-
     public void setMinimumGpa(String minimumGpa) {
         this.minimumGpa = minimumGpa;
+    }
+
+    public void setJobStart(String jobStart) {
+        this.jobStart = jobStart;
+    }
+
+    public void setApplicationStart(String applicationStart) {
+        this.applicationStart = applicationStart;
+    }
+
+    public void setApplicationEnd(String applicationEnd) {
+        this.applicationEnd = applicationEnd;
+    }
+
+    public void setEmployerId(int employerId) {
+        this.employerId = employerId;
     }
 }

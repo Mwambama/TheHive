@@ -1,138 +1,246 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <Button
-            android:id="@+id/back_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Back"
+        <!-- Back Arrow Icon -->
+        <ImageButton
+            android:id="@+id/backArrowIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Back Arrow"
+            android:focusable="true"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_back_arrow"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="16dp"/>
+            app:tint="@android:color/white" />
 
-        <EditText
-            android:id="@+id/job_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Job Title"
-            app:layout_constraintTop_toBottomOf="@id/back_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <EditText
-            android:id="@+id/job_description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Job Description"
-            android:inputType="textMultiLine"
-            android:lines="4"
-            android:gravity="top"
-            app:layout_constraintTop_toBottomOf="@id/job_title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <EditText
-            android:id="@+id/summary"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Summary"
-            android:inputType="textMultiLine"
-            android:lines="3"
-            android:gravity="top"
-            app:layout_constraintTop_toBottomOf="@id/job_description"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <EditText
-            android:id="@+id/job_type"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Job Type"
-            app:layout_constraintTop_toBottomOf="@id/summary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <EditText
-            android:id="@+id/salary_requirements"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Salary Requirements"
-            app:layout_constraintTop_toBottomOf="@id/job_type"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <EditText
-            android:id="@+id/age_requirement"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Age Requirement"
-            app:layout_constraintTop_toBottomOf="@id/salary_requirements"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <EditText
-            android:id="@+id/minimum_gpa"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Minimum GPA"
-            app:layout_constraintTop_toBottomOf="@id/age_requirement"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <EditText
-            android:id="@+id/job_start"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Job Start Date (YYYY-MM-DD)"
-            app:layout_constraintTop_toBottomOf="@id/minimum_gpa"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <EditText
-            android:id="@+id/application_start"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Application Start Date (YYYY-MM-DD)"
-            app:layout_constraintTop_toBottomOf="@id/job_start"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <EditText
-            android:id="@+id/application_end"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Application End Date (YYYY-MM-DD)"
-            app:layout_constraintTop_toBottomOf="@id/application_start"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <Button
-            android:id="@+id/post_job_button"
+        <!-- Title -->
+        <TextView
+            android:id="@+id/addEmployerTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Post Job"
-            app:layout_constraintTop_toBottomOf="@id/application_end"
+            android:text="And Job"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/backArrowIcon"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp" />
+
+        <!-- Job Title Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/jobTitleTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"/>
+            app:layout_constraintTop_toBottomOf="@id/addEmployerTitle"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/jobTitleField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Job Title"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Job Description Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/jobDescriptionTextInputLayout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Job Details"
-            android:textSize="16sp"
-            android:padding="16dp"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/post_job_button"/>
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/jobTitleTextInputLayout"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/jobDescriptionField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Job Description"
+                android:inputType="textMultiLine"
+                android:lines="4"
+                android:gravity="top" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Summary Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/summaryTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/jobDescriptionTextInputLayout"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/summaryField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Summary"
+                android:inputType="textMultiLine"
+                android:lines="3"
+                android:gravity="top" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Job Type Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/jobTypeTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/summaryTextInputLayout"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/jobTypeField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Job Type" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Salary Requirements Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/salaryRequirementsTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/jobTypeTextInputLayout"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/salaryRequirementsField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Salary Requirements" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Minimum GPA Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/minimumGpaTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/salaryRequirementsTextInputLayout"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/minimumGpaField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Minimum GPA" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Job Start Date Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/jobStartDateTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/minimumGpaTextInputLayout"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/jobStartDateField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Job Start Date (YYYY-MM-DD)" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Application Start Date Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/applicationStartDateTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/jobStartDateTextInputLayout"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/applicationStartDateField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Application Start Date (YYYY-MM-DD)" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Application End Date Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/applicationEndDateTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxStrokeColor="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/applicationStartDateTextInputLayout"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/applicationEndDateField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Application End Date (YYYY-MM-DD)" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Add Job Button -->
+        <Button
+            android:id="@+id/addJobButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Add Job"
+            android:backgroundTint="@color/colorAccent"
+            android:textColor="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/applicationEndDateTextInputLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.registration.signup.signupActivity;
 import com.example.hiveeapp.registration.signup.studentsignupActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
@@ -14,11 +15,12 @@ import com.example.hiveeapp.student_user.StudentMainActivity;
 public class MainActivity extends AppCompatActivity {
     private Button mainSignupBtn;
     private Button studentmainSignupBtn;
-    private Button employermainSignupBtn;
 
     private Button goToCompanyActivityButton;
     private Button goToStudentActivityButton;
     private Button goToLoginActivityButton; // Declare the login button
+
+    private Button goToEmployerActivityButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         mainSignupBtn = findViewById(R.id.main_signup_btn);
         goToCompanyActivityButton = findViewById(R.id.goToCompanyActivityButton);
         goToStudentActivityButton = findViewById(R.id.goToStudentActivityButton);
+        goToEmployerActivityButton = findViewById(R.id.goToEmployerActivityButton);
         goToLoginActivityButton = findViewById(R.id.goToLoginActivityButton); // Initialize the login button
 
         // Set OnClickListener for Signup Button
@@ -59,6 +62,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // Navigate to employer Activity
+        goToEmployerActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, EmployerMainActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         // Navigate to LoginActivity
         goToLoginActivityButton.setOnClickListener(new View.OnClickListener() {
