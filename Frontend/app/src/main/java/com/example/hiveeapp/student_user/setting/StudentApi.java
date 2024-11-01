@@ -364,11 +364,14 @@ public class StudentApi {
                             // Extract jobPostingId from the response or set a default if not available
                             int jobPostingId = chatObject.has("jobPostingId") ? chatObject.getInt("jobPostingId") : -1;
 
+                            String jobTitle = "Unknown Title";
+
                             ChatDto chat = new ChatDto(
                                     chatObject.getInt("chatId"),
                                     chatObject.getInt("employerId"),
                                     chatObject.getInt("studentId"),
-                                    jobPostingId
+                                    jobPostingId,
+                                    jobTitle
                             );
                             chatList.add(chat);
                         }
@@ -497,8 +500,11 @@ public class StudentApi {
                         JSONObject job = response.getJSONObject(0);
                         int employerId = job.getInt("employerId");
 
+                        // Placeholder for jobTitle
+                        String jobTitle = "Unknown Title";
+
                         // Create a new ChatDto using the appropriate constructor
-                        ChatDto chat = new ChatDto(-1, employerId, studentId, jobPostingId);
+                        ChatDto chat = new ChatDto(-1, employerId, studentId, jobPostingId, jobTitle);
                         chatList.add(chat);
 
                         // Check if all chats are added
