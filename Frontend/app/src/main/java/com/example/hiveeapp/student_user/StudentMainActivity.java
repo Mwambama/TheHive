@@ -33,6 +33,35 @@ public class StudentMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_main);
 
+        // Initialize BottomNavigationView
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+
+        if (bottomNavigationView == null) {
+            Log.e(TAG, "BottomNavigationView is null. Check if the ID matches in XML.");
+            Toast.makeText(this, "Navigation view setup error", Toast.LENGTH_SHORT).show();
+            return; // Stop further execution if the view is not found
+        }
+
+        // Set up bottom navigation view listener
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_profile) {
+                navigateToProfile();
+                return true;
+            } else if (itemId == R.id.navigation_apply) {
+                return true;
+            } else if (itemId == R.id.navigation_chat) {
+                // Navigate to ChatActivity
+                Intent intent = new Intent(StudentMainActivity.this, ChatActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            return false;
+        });
+
+        // Set the initial selected item
+        bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
+
         // Retrieve userId from SharedPreferences
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
@@ -53,25 +82,6 @@ public class StudentMainActivity extends AppCompatActivity {
         viewPager.setUserInputEnabled(false); // Disable backward swipe
 
         loadJobPostings();
-
-        // Set up bottom navigation view
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.navigation_profile) {
-                navigateToProfile();
-                return true;
-            } else if (itemId == R.id.navigation_apply) {
-                return true;
-            } else if (itemId == R.id.navigation_chat) {
-                // Logic for Chat can be added here if needed
-                return true;
-            }
-            return false;
-        });
-
-        // Set the initial selected item
-        bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
 
         // Handle ViewPager swipe listener
         viewPager.setOnTouchListener((v, event) -> {
