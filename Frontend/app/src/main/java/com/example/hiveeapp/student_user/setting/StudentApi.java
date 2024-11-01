@@ -13,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.example.hiveeapp.student_user.chat.ChatDto;
 import com.example.hiveeapp.student_user.swipe.JobPosting;
 import com.example.hiveeapp.volley.VolleyMultipartRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
@@ -347,6 +348,39 @@ public class StudentApi {
 
         // Add the request to the Volley request queue
         VolleySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
+    }
+
+    public static void getChats(Context context, Response.Listener<List<ChatDto>> successListener, Response.ErrorListener errorListener) {
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/chat";
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    List<ChatDto> chatList = new ArrayList<>();
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject chatObject = response.getJSONObject(i);
+                            ChatDto chat = new ChatDto(
+                                    chatObject.getLong("chatId"),
+                                    chatObject.getLong("employerId"),
+                                    chatObject.getLong("studentId")
+                            );
+                            chatList.add(chat);
+                        }
+                        successListener.onResponse(chatList);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        errorListener.onErrorResponse(new VolleyError("JSON parsing error: " + e.getMessage()));
+                    }
+                },
+                errorListener
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return StudentApi.getHeaders(context);
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
     /**

@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.student_user.chat.ChatActivity;
+import com.example.hiveeapp.student_user.chat.ChatListActivity;
 import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
 import com.example.hiveeapp.student_user.setting.StudentApi;
 import com.example.hiveeapp.student_user.swipe.JobPosting;
@@ -52,7 +54,7 @@ public class StudentMainActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.navigation_chat) {
                 // Navigate to ChatActivity
-                Intent intent = new Intent(StudentMainActivity.this, ChatActivity.class);
+                Intent intent = new Intent(StudentMainActivity.this, ChatListActivity.class);
                 startActivity(intent);
                 return true;
             }
