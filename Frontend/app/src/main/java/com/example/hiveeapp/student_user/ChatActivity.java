@@ -23,15 +23,15 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         // Initialize UI components
-        msgTv = findViewById(R.id.msgTv); // Make sure these IDs match your XML layout
+        msgTv = findViewById(R.id.msgTv);
         msgEtx = findViewById(R.id.msgEtx);
         sendBtn = findViewById(R.id.sendBtn);
 
         // Replace with actual values
-        Long chatId = 123L; // The chatId you want to connect to
+        int chatId = 1;
         String email = "teststudent1@example.com";
         String password = "TestStudent1234@";
-        Long userId = 1L; // Replace with the actual user ID
+        int userId = 1014;
 
         // Generate WebSocket URL
         String webSocketUrl = generateWebSocketUrl(chatId, email, password);
@@ -66,7 +66,7 @@ public class ChatActivity extends AppCompatActivity {
         sendBtn.setOnClickListener(v -> {
             String messageText = msgEtx.getText().toString().trim();
             if (!messageText.isEmpty()) {
-                sendMessage(chatId, messageText, userId); // Use actual chatId and userId
+                sendMessage(chatId, messageText, userId);
                 msgEtx.setText(""); // Clear input field
             } else {
                 Toast.makeText(ChatActivity.this, "Message cannot be empty", Toast.LENGTH_SHORT).show();
@@ -74,12 +74,12 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private String generateWebSocketUrl(Long chatId, String email, String password) {
+    private String generateWebSocketUrl(int chatId, String email, String password) {
         return "ws://coms-3090-063.class.las.iastate.edu:8080/ws/chat/" + chatId +
                 "?email=" + email + "&password=" + password;
     }
 
-    private void sendMessage(Long chatId, String message, Long userId) {
+    private void sendMessage(int chatId, String message, int userId) {
         String formattedMessage = "{"
                 + "\"chatId\":" + chatId + ","
                 + "\"message\":\"" + message + "\","

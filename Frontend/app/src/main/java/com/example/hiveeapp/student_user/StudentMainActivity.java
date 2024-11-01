@@ -39,7 +39,7 @@ public class StudentMainActivity extends AppCompatActivity {
         if (bottomNavigationView == null) {
             Log.e(TAG, "BottomNavigationView is null. Check if the ID matches in XML.");
             Toast.makeText(this, "Navigation view setup error", Toast.LENGTH_SHORT).show();
-            return; // Stop further execution if the view is not found
+            return;
         }
 
         // Set up bottom navigation view listener

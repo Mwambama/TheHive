@@ -52,14 +52,6 @@
         <activity android:name=".employer_user.setting.ViewEmployerInfoActivity" android:exported="true" />
 <!--        <activity android:name=".employer_user." android:exported="true" />-->
 
-
-
-
-
-
-
-
-
         <!-- Student Activity -->
         <activity android:name=".student_user.StudentMainActivity" android:exported="true" />
 
