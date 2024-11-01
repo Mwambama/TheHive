@@ -7,9 +7,11 @@ import com.example.thehiveapp.entity.application.Application;
 import com.example.thehiveapp.entity.jobPosting.JobPosting;
 import com.example.thehiveapp.entity.user.Student;
 import com.example.thehiveapp.enums.status.Status;
+import com.example.thehiveapp.mapper.jobPosting.JobPostingMapper;
 import com.example.thehiveapp.repository.application.ApplicationRepository;
 import com.example.thehiveapp.repository.jobPosting.JobPostingRepository;
 import com.example.thehiveapp.repository.user.StudentRepository;
+import com.example.thehiveapp.service.jobPosting.JobPostingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -24,6 +26,8 @@ public class ApplicationServiceImpl implements ApplicationService{
     @Autowired private ApplicationRepository applicationRepository;
     @Autowired private JobPostingRepository jobPostingRepository;
     @Autowired private StudentRepository studentRepository;
+    @Autowired private JobPostingService jobPostingService;
+    @Autowired private JobPostingMapper jobPostingMapper;
 
     @Override
     public ApplicationDto getApplication(Long applicationId) {
@@ -33,7 +37,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 application.getApplicationId(),
                 application.getJobPosting().getJobPostingId(),
                 application.getJobPosting().getTitle(),
-                application.getStatus().toString(),
+                application.getStatus(),
                 application.getAppliedOn()
         );
     }
@@ -62,7 +66,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 app.getApplicationId(),
                 app.getJobPosting().getJobPostingId(),
                 app.getJobPosting().getTitle(),
-                app.getStatus().toString(),
+                app.getStatus(),
                 app.getAppliedOn()
         )).collect(Collectors.toList());
     }
@@ -73,7 +77,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 app.getApplicationId(),
                 app.getJobPosting().getJobPostingId(),
                 app.getJobPosting().getTitle(),
-                app.getStatus().toString(),
+                app.getStatus(),
                 app.getAppliedOn()))
                 .collect(Collectors.toList());
     }
@@ -89,7 +93,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 updatedApplication.getApplicationId(),
                 updatedApplication.getJobPosting().getJobPostingId(),
                 updatedApplication.getJobPosting().getTitle(),
-                updatedApplication.getStatus().toString(),
+                updatedApplication.getStatus(),
                 updatedApplication.getAppliedOn()
         );
     }
@@ -98,5 +102,25 @@ public class ApplicationServiceImpl implements ApplicationService{
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
         applicationRepository.delete(application);
+    }
+
+    @Override
+    public List<ApplicationDto> getApplicationsByJobPostingIdAndStatus(Long jobPostingId, Status status) {
+        JobPosting jobPosting = jobPostingMapper.dtoToEntity(jobPostingService.getJobPostingById(jobPostingId));
+        List<Application> applications;
+        if (status == null) {
+            applications = applicationRepository.findApplicationsByJobPosting(jobPosting);
+        } else {
+            applications = applicationRepository.findApplicationsByJobPostingAndStatus(jobPosting, status);
+        }
+        return applications.stream().map(
+                application -> new ApplicationDto(
+                        application.getApplicationId(),
+                        application.getJobPosting().getJobPostingId(),
+                        application.getJobPosting().getTitle(),
+                        application.getStatus(),
+                        application.getAppliedOn()
+                )
+        ).collect(Collectors.toList());
     }
 }
