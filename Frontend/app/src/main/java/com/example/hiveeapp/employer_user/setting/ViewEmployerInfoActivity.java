@@ -78,7 +78,6 @@ public class ViewEmployerInfoActivity extends AppCompatActivity {
             intent.putExtra("USER_ID", userId);
             startActivity(intent);
         });
-
         // Load student information from the backend
         loadEmployerProfile(userId);
 
@@ -133,11 +132,6 @@ public class ViewEmployerInfoActivity extends AppCompatActivity {
         }
     }
 }
-
-
-
-
-
 
 
 
@@ -284,13 +278,6 @@ public class ViewEmployerInfoActivity extends AppCompatActivity {
 //    }
 //}
 //
-
-
-
-
-
-
-
 
 
 

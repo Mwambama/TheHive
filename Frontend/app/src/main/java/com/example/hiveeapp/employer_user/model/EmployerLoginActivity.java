@@ -42,7 +42,6 @@ public class EmployerLoginActivity extends AppCompatActivity {
                     editor.putString("password", password);
                     editor.apply();
                 }
-
                 // Proceed to the employer main activity
                 Intent intent = new Intent(EmployerLoginActivity.this, EmployerMainActivity.class);
                 startActivity(intent);
@@ -55,6 +54,6 @@ public class EmployerLoginActivity extends AppCompatActivity {
 
     private boolean isValidCredentials(String username, String password) {
         // Simulate credential validation
-        return "employer@example.com".equals(username) && "Test@1234".equals(password);
+        return "iiik@gmail.com".equals(username) && "Anondwdb##444fedo".equals(password);
     }
 }

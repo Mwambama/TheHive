@@ -110,16 +110,6 @@ public class EmployerProfileActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
-
-
-
-
 //
 //import android.content.Intent;
 //import android.os.Bundle;

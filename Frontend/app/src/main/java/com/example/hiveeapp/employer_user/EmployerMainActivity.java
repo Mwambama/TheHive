@@ -1,5 +1,6 @@
 package com.example.hiveeapp.employer_user;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -41,16 +42,43 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         topAppBar.setNavigationOnClickListener(view -> onBackPressed());
 
 
-
         // Retrieve userId from SharedPreferences
-        SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
-        userId = preferences.getInt("userId", -1);
-        Log.d(TAG, "Retrieved userId from SharedPreferences: " + userId);
+//        SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
+//        userId = preferences.getInt("userId", -1);
+//
+//        //  I will remove these two for now so that I do not get this message when clicking goToemployerActivty button and these messages in there
+//        Log.d(TAG, "Retrieved userId from SharedPreferences: " + userId);
+//
+//        if (userId == -1) {
+//            Toast.makeText(this, "User ID not found. Please log in again.", Toast.LENGTH_SHORT).show();
+//            Log.e(TAG, "User ID is invalid. Redirecting to login screen.");
+//        }
 
-        if (userId == -1) {
-            Toast.makeText(this, "User ID not found. Please log in again.", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "User ID is invalid. Redirecting to login screen.");
-        }
+        // since this does not work, try yet since it not recogning who the user is and since we are not coming the
+        // from the user LOgin page, so there is no way of knowing who the user is just yet.
+        // I can use this in the future in case I get lost when trying to find user
+
+        // Retrieve companyId from SharedPreferences
+//        SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
+//        // Retrieve companyId directly from the job JSONObject
+//        long employerId = job.optLong("employerId", -1);
+//        Log.d("EmployerApis", "Retrieved employerId: " + employerId);
+//
+//        if (employerId == -1) {
+//            Toast.makeText(context, "Error: employerId not found", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        // Ensure jobPostingId is provided
+//        long jobPostingId = job.optLong("jobPostingId", -1);
+//        if (jobPostingId == -1) {
+//            Toast.makeText(context, "Error: Job PostingId not found", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+
+        // this feature on the top will be used for recogninzing and knowing who the user is and redirecting them to the their profile and load their profile with their sinformation
+
+
 
         // Initialize views
         tabLayout = findViewById(R.id.tabLayouts);
@@ -123,7 +151,6 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         return false;
     }
 
-
     private void navigateToProfile() {
         Intent intent = new Intent(EmployerMainActivity.this, EmployerProfileActivity.class);
         intent.putExtra("USER_ID", userId);
@@ -132,7 +159,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
     }
 
 
-    // this works for the long profile with address that will be fixed lated fully
+    // this works for the long profile with address that will be fixed lated fully | for the secondemployerApi that is uncommented
 //    private void navigateToProfile() {
 //        Intent intent = new Intent(EmployerMainActivity.this, EmployerProfileActivity.class);
 //        intent.putExtra("USER_ID", userId);
