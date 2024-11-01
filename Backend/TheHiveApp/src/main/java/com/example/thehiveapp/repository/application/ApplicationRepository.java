@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
     boolean existsByStudentAndJobPosting(Student student, JobPosting jobPosting);
@@ -18,4 +19,5 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     List<Application> findApplicationsByJobPosting(JobPosting jobPosting);
     List<Application> findApplicationsByJobPostingAndStatus(JobPosting jobPosting, Status status);
+    Optional<Application> findApplicationByApplicationId(Long id);
 }

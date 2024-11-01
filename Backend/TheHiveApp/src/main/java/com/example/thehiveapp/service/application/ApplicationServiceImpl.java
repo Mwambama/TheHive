@@ -4,6 +4,7 @@ import com.example.thehiveapp.dto.application.ApplicationDto;
 import com.example.thehiveapp.dto.application.ApplicationRequest;
 import com.example.thehiveapp.dto.application.ApplicationUpdateRequest;
 import com.example.thehiveapp.entity.application.Application;
+import com.example.thehiveapp.entity.chat.Chat;
 import com.example.thehiveapp.entity.jobPosting.JobPosting;
 import com.example.thehiveapp.entity.user.Student;
 import com.example.thehiveapp.enums.status.Status;
@@ -11,7 +12,9 @@ import com.example.thehiveapp.mapper.jobPosting.JobPostingMapper;
 import com.example.thehiveapp.repository.application.ApplicationRepository;
 import com.example.thehiveapp.repository.jobPosting.JobPostingRepository;
 import com.example.thehiveapp.repository.user.StudentRepository;
+import com.example.thehiveapp.service.chat.ChatService;
 import com.example.thehiveapp.service.jobPosting.JobPostingService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -28,6 +31,7 @@ public class ApplicationServiceImpl implements ApplicationService{
     @Autowired private StudentRepository studentRepository;
     @Autowired private JobPostingService jobPostingService;
     @Autowired private JobPostingMapper jobPostingMapper;
+    @Autowired private ChatService chatService;
 
     @Override
     public ApplicationDto getApplication(Long applicationId) {
@@ -122,5 +126,24 @@ public class ApplicationServiceImpl implements ApplicationService{
                         application.getAppliedOn()
                 )
         ).collect(Collectors.toList());
+    }
+
+    @Override
+    public void rejectApplication(Long applicationId) {
+        this.updateApplicationStatus(applicationId, ApplicationUpdateRequest.builder().status(Status.REJECTED).build());
+    }
+
+    @Transactional
+    @Override
+    public void acceptApplication(Long applicationId) {
+        this.updateApplicationStatus(applicationId, ApplicationUpdateRequest.builder().status(Status.ACCEPTED).build());
+        Application application = applicationRepository.findApplicationByApplicationId(applicationId).orElseThrow(
+                () -> new ResourceNotFoundException("Application not found with id: " + applicationId)
+        );
+        Chat chat = Chat.builder()
+                .studentId(application.getStudent().getUserId())
+                .employerId(application.getJobPosting().getEmployer().getUserId())
+                .build();
+        chatService.createChat(chat);
     }
 }

@@ -58,4 +58,16 @@ public class ApplicationController {
             @RequestParam(value = "status", required = false) Status status) {
         return applicationService.getApplicationsByJobPostingIdAndStatus(jobPostingId, status);
     }
+
+    @PostMapping("/{id}/reject")
+    public String rejectApplication(@PathVariable Long id) {
+        applicationService.rejectApplication(id);
+        return "Application successfully rejected";
+    }
+
+    @PostMapping("/{id}/accept")
+    public String acceptApplication(@PathVariable Long id) {
+        applicationService.acceptApplication(id);
+        return "Application successfully accepted and chat created";
+    }
 }
