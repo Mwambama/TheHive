@@ -27,7 +27,6 @@ public class ChatActivity extends AppCompatActivity {
         msgEtx = findViewById(R.id.msgEtx);
         sendBtn = findViewById(R.id.sendBtn);
 
-        // Replace with actual values
         int chatId = 1;
         String email = "teststudent1@example.com";
         String password = "TestStudent1234@";
