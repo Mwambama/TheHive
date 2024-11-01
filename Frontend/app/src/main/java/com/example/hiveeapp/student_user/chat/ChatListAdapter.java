@@ -1,5 +1,6 @@
 package com.example.hiveeapp.student_user.chat;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,31 +8,50 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.student_user.chat.ChatDto;
-
+import com.example.hiveeapp.student_user.setting.StudentApi;
+import com.example.hiveeapp.student_user.swipe.JobPosting;
 import java.util.List;
 
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatViewHolder> {
+    private final List<ChatDto> chatList;
+    private final OnChatClickListener onChatClickListener;
+    private final Context context;
 
-    private List<ChatDto> chatList;
-    private OnChatClickListener listener;
+    public interface OnChatClickListener {
+        void onChatClick(ChatDto chat);
+    }
 
-    public ChatListAdapter(List<ChatDto> chatList, OnChatClickListener listener) {
+    public ChatListAdapter(List<ChatDto> chatList, OnChatClickListener onChatClickListener, Context context) {
         this.chatList = chatList;
-        this.listener = listener;
+        this.onChatClickListener = onChatClickListener;
+        this.context = context;
     }
 
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_chat, parent, false);
         return new ChatViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         ChatDto chat = chatList.get(position);
-        holder.bind(chat);
+
+        // Assuming you have a way to get the job title based on employerId from JobPosting
+        StudentApi.getJobPostingsByEmployerId(context, chat.getEmployerId(),
+                jobPostings -> {
+                    if (!jobPostings.isEmpty()) {
+                        // Display the title of the first job found for this employer
+                        JobPosting job = jobPostings.get(0);
+                        holder.jobTitleTextView.setText(job.getTitle());
+                    }
+                },
+                error -> {
+                    holder.jobTitleTextView.setText("Job Title Not Available");
+                });
+
+        holder.itemView.setOnClickListener(v -> onChatClickListener.onChatClick(chat));
     }
 
     @Override
@@ -39,28 +59,12 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
         return chatList.size();
     }
 
-    class ChatViewHolder extends RecyclerView.ViewHolder {
-        private TextView chatTextView;
+    public static class ChatViewHolder extends RecyclerView.ViewHolder {
+        TextView jobTitleTextView;
 
-        ChatViewHolder(@NonNull View itemView) {
+        public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
-            chatTextView = itemView.findViewById(R.id.chatTextView);
-
-            itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    listener.onChatClick(chatList.get(position));
-                }
-            });
+            jobTitleTextView = itemView.findViewById(R.id.jobTitleTextView);
         }
-
-        void bind(ChatDto chat) {
-            chatTextView.setText("Chat with Employer ID: " + chat.getEmployerId());
-        }
-    }
-
-    public interface OnChatClickListener {
-        void onChatClick(ChatDto chat);
     }
 }
-

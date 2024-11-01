@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.student_user.StudentMainActivity;
+import com.example.hiveeapp.student_user.chat.ChatListActivity;
 import com.example.hiveeapp.student_user.setting.StudentApi;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -30,6 +31,7 @@ public class StudentProfileViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "StudentProfileViewActivity started");
         setContentView(R.layout.activity_student_profile_view);
 
         // Retrieve userId from Intent
@@ -82,7 +84,8 @@ public class StudentProfileViewActivity extends AppCompatActivity {
             } else if (itemId == R.id.navigation_profile) {
                 return true;
             } else if (itemId == R.id.navigation_chat) {
-                // Logic for Chat if needed
+                Intent intent = new Intent(StudentProfileViewActivity.this, ChatListActivity.class);
+                startActivity(intent);
                 return true;
             }
             return false;
@@ -98,11 +101,11 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         finish();
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        // Redirect back to the main page instead of the previous activity
-//        navigateBackToMain();
-//    }
+    @Override
+    public void onBackPressed() {
+        // Redirect back to the main page instead of the previous activity
+        navigateBackToMain();
+    }
 
     private void loadStudentProfile(int userId) {
         Log.d(TAG, "Loading student profile with userId: " + userId);

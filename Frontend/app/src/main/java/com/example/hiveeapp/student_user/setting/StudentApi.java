@@ -327,7 +327,8 @@ public class StudentApi {
                                     jobJson.getString("jobStart"),
                                     jobJson.getString("applicationStart"),
                                     jobJson.getString("applicationEnd"),
-                                    jobJson.getInt("employerId")
+                                    jobJson.getInt("employerId"),
+                                    jobJson.optString("companyName", "Unknown Company")
                             );
                             jobPostings.add(job);
                         } catch (JSONException e) {
@@ -367,6 +368,48 @@ public class StudentApi {
                             chatList.add(chat);
                         }
                         successListener.onResponse(chatList);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        errorListener.onErrorResponse(new VolleyError("JSON parsing error: " + e.getMessage()));
+                    }
+                },
+                errorListener
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return StudentApi.getHeaders(context);
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public static void getJobPostingsByEmployerId(Context context, long employerId, Response.Listener<List<JobPosting>> successListener, Response.ErrorListener errorListener) {
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting?employerId=" + employerId;
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    List<JobPosting> jobPostings = new ArrayList<>();
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject jobJson = response.getJSONObject(i);
+                            JobPosting job = new JobPosting(
+                                    jobJson.getInt("jobPostingId"),
+                                    jobJson.getString("title"),
+                                    jobJson.getString("description"),
+                                    jobJson.getString("summary"),
+                                    jobJson.getDouble("salary"),
+                                    jobJson.getString("jobType"),
+                                    jobJson.getDouble("minimumGpa"),
+                                    jobJson.getString("jobStart"),
+                                    jobJson.getString("applicationStart"),
+                                    jobJson.getString("applicationEnd"),
+                                    jobJson.getInt("employerId"),
+                                    jobJson.optString("companyName", "Unknown Company")
+                            );
+                            jobPostings.add(job);
+                        }
+                        successListener.onResponse(jobPostings);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         errorListener.onErrorResponse(new VolleyError("JSON parsing error: " + e.getMessage()));

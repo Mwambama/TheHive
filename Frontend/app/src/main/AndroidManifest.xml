@@ -63,6 +63,8 @@
         <activity android:name=".student_user.chat.ChatActivity" android:exported="true"/>
         <activity android:name=".student_user.chat.ChatListActivity" android:exported="true"/>
 
+        <activity android:name=".student_user.ApplyActivity" android:exported="true"/>
+
         <!-- Admin Activity -->
         <activity android:name=".admin_user.AdminMainActivity" android:exported="true" />
 
