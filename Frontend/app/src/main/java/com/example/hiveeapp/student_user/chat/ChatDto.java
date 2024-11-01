@@ -1,26 +1,38 @@
 package com.example.hiveeapp.student_user.chat;
 
 public class ChatDto {
-    private Long chatId;
-    private Long employerId;
-    private Long studentId;
+    private int chatId;
+    private int employerId;
+    private int studentId;
+    private int jobPostingId;
+    private String jobTitle;
 
-    public ChatDto(Long chatId, Long employerId, Long studentId) {
+    // Constructor that includes jobTitle
+    public ChatDto(int chatId, int employerId, int studentId, int jobPostingId, String jobTitle) {
         this.chatId = chatId;
         this.employerId = employerId;
         this.studentId = studentId;
+        this.jobPostingId = jobPostingId;
+        this.jobTitle = jobTitle;
     }
 
-    public Long getChatId() {
+    public int getChatId() {
         return chatId;
     }
 
-    public Long getEmployerId() {
+    public int getEmployerId() {
         return employerId;
     }
 
-    public Long getStudentId() {
+    public int getStudentId() {
         return studentId;
     }
-}
 
+    public int getJobPostingId() {
+        return jobPostingId;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+}

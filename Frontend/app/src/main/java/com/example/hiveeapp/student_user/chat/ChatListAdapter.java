@@ -10,6 +10,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.student_user.setting.StudentApi;
 import com.example.hiveeapp.student_user.swipe.JobPosting;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatViewHolder> {
@@ -37,19 +41,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         ChatDto chat = chatList.get(position);
-
-        // Assuming you have a way to get the job title based on employerId from JobPosting
-        StudentApi.getJobPostingsByEmployerId(context, chat.getEmployerId(),
-                jobPostings -> {
-                    if (!jobPostings.isEmpty()) {
-                        // Display the title of the first job found for this employer
-                        JobPosting job = jobPostings.get(0);
-                        holder.jobTitleTextView.setText(job.getTitle());
-                    }
-                },
-                error -> {
-                    holder.jobTitleTextView.setText("Job Title Not Available");
-                });
+        holder.jobTitleTextView.setText(chat.getJobTitle());
 
         holder.itemView.setOnClickListener(v -> onChatClickListener.onChatClick(chat));
     }

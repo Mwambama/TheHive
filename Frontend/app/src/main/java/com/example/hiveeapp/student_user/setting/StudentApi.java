@@ -240,7 +240,7 @@ public class StudentApi {
     public static void applyForJob(Context context, int studentId, int jobPostingId,
                                    Response.Listener<String> listener,
                                    Response.ErrorListener errorListener) {
-        String url = "http://localhost:8080/applications/apply";
+        String url = BASE_URL + "/applications/apply";
 
         // Create the request payload
         JSONObject requestBody = new JSONObject();
@@ -283,7 +283,7 @@ public class StudentApi {
     public static void getStudentApplications(Context context, int studentId,
                                               Response.Listener<JSONArray> listener,
                                               Response.ErrorListener errorListener) {
-        String url = "http://localhost:8080/applications/student?studentId=" + studentId;
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/applications/student?studentId=" + studentId;
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
@@ -360,10 +360,15 @@ public class StudentApi {
                     try {
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject chatObject = response.getJSONObject(i);
+
+                            // Extract jobPostingId from the response or set a default if not available
+                            int jobPostingId = chatObject.has("jobPostingId") ? chatObject.getInt("jobPostingId") : -1;
+
                             ChatDto chat = new ChatDto(
-                                    chatObject.getLong("chatId"),
-                                    chatObject.getLong("employerId"),
-                                    chatObject.getLong("studentId")
+                                    chatObject.getInt("chatId"),
+                                    chatObject.getInt("employerId"),
+                                    chatObject.getInt("studentId"),
+                                    jobPostingId
                             );
                             chatList.add(chat);
                         }
@@ -438,6 +443,79 @@ public class StudentApi {
         String fullErrorMessage = errorMessagePrefix + ": " + errorMsg;
         Log.e(TAG, fullErrorMessage);
         errorListener.onErrorResponse(new VolleyError(fullErrorMessage));
+    }
+
+    /**
+     * Retrieves the list of applications for the student and initializes chats with the employers.
+     */
+    public static void getChatsForStudentApplications(Context context, int studentId,
+                                                      Response.Listener<List<ChatDto>> successListener,
+                                                      Response.ErrorListener errorListener) {
+        String url = BASE_URL + "/applications/student?studentId=" + studentId;
+
+        JsonArrayRequest request = new JsonArrayRequest(
+                Request.Method.GET, url, null,
+                response -> {
+                    List<ChatDto> chatList = new ArrayList<>();
+                    for (int i = 0; i < response.length(); i++) {
+                        try {
+                            JSONObject application = response.getJSONObject(i);
+                            int jobPostingId = application.getInt("jobPostingId");
+
+                            // Initialize chat for the application
+                            initializeChatForJobPosting(context, jobPostingId, studentId, chatList,
+                                    () -> successListener.onResponse(chatList),
+                                    errorListener);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            errorListener.onErrorResponse(new VolleyError("JSON parsing error: " + e.getMessage()));
+                        }
+                    }
+                },
+                error -> {
+                    Log.e(TAG, "Error fetching applications: " + error.getMessage());
+                    errorListener.onErrorResponse(error);
+                }
+        );
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    /**
+     * Initializes a chat for each job application.
+     */
+    private static void initializeChatForJobPosting(Context context, int jobPostingId, int studentId,
+                                                    List<ChatDto> chatList, Runnable onComplete,
+                                                    Response.ErrorListener errorListener) {
+        String jobUrl = BASE_URL + "/job-posting/" + jobPostingId;
+
+        JsonArrayRequest jobRequest = new JsonArrayRequest(
+                Request.Method.GET, jobUrl, null,
+                response -> {
+                    try {
+                        JSONObject job = response.getJSONObject(0);
+                        int employerId = job.getInt("employerId");
+
+                        // Create a new ChatDto using the appropriate constructor
+                        ChatDto chat = new ChatDto(-1, employerId, studentId, jobPostingId);
+                        chatList.add(chat);
+
+                        // Check if all chats are added
+                        onComplete.run();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        errorListener.onErrorResponse(new VolleyError("JSON parsing error: " + e.getMessage()));
+                    }
+                },
+                error -> {
+                    Log.e(TAG, "Error fetching job posting: " + error.getMessage());
+                    errorListener.onErrorResponse(error);
+                }
+        );
+
+        VolleySingleton.getInstance(context).addToRequestQueue(jobRequest);
     }
 
     /**
