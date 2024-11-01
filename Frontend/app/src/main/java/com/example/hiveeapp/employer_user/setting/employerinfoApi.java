@@ -59,7 +59,7 @@ public class employerinfoApi {
      */
     public static void getStudents(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL;
-        Log.d(TAG, "GET Students Request URL: " + url);
+        Log.d(TAG, "GET Employer Request URL: " + url);
 
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
@@ -87,7 +87,7 @@ public class employerinfoApi {
      */
     public static void addStudent(Context context, JSONObject studentData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL;
-        Log.d(TAG, "POST Student Request URL: " + url);
+        Log.d(TAG, "POST Employer Request URL: " + url);
         Log.d(TAG, "Request Payload: " + studentData.toString());
 
         JsonObjectRequest request = new JsonObjectRequest(
@@ -116,7 +116,7 @@ public class employerinfoApi {
      */
     public static void updateStudent(Context context, JSONObject studentData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL;
-        Log.d(TAG, "PUT Student Request URL: " + url);
+        Log.d(TAG, "PUT Employer Request URL: " + url);
         Log.d(TAG, "Student Data Payload: " + studentData.toString());
 
         JsonObjectRequest request = new JsonObjectRequest(
@@ -144,7 +144,7 @@ public class employerinfoApi {
      */
     public static void deleteStudent(Context context, long studentId, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "/" + studentId;
-        Log.d(TAG, "DELETE Student Request URL: " + url);
+        Log.d(TAG, "DELETE Employer Request URL: " + url);
 
         // Create a StringRequest for the DELETE method
         StringRequest request = new StringRequest(
