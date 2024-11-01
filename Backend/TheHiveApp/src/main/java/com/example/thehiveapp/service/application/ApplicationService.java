@@ -3,7 +3,6 @@ package com.example.thehiveapp.service.application;
 import com.example.thehiveapp.dto.application.ApplicationDto;
 import com.example.thehiveapp.dto.application.ApplicationRequest;
 import com.example.thehiveapp.dto.application.ApplicationUpdateRequest;
-import com.example.thehiveapp.entity.application.Application;
 
 import java.util.List;
 

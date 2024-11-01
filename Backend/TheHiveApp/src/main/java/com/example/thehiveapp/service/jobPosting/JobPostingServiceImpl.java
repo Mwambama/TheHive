@@ -35,6 +35,13 @@ public class JobPostingServiceImpl implements JobPostingService{
                 .map(jobPostingMapper::entityToDto)
                 .collect(Collectors.toList());
     }
+    @Override
+    public List<JobPostingDto> getJobPostingsForStudent(Long studentId) {
+        List<JobPosting> jobPostings = jobPostingRepository.findJobPostings(studentId);
+        return jobPostings.stream()
+                .map(jobPostingMapper::entityToDto)
+                .collect(Collectors.toList());
+    }
 
     public JobPostingDto createJobPosting(JobPostingDto dto) {
         JobPosting jobPosting = jobPostingRepository.save(jobPostingMapper.dtoToEntity(dto));
