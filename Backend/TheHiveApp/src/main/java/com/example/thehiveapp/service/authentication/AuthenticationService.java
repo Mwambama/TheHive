@@ -17,4 +17,5 @@ public interface AuthenticationService extends UserDetailsService {
     Student signUpStudent(StudentSignUpRequest studentSignUpRequest);
     Employer signUpEmployer(EmployerSignUpRequest employerSignUpRequest);
     ResponseMessage changePassword(ChangePasswordRequest changePasswordRequest) throws BadRequestException;
+    Boolean existsByEmailAndPassword(String email, String password);
 }

@@ -12,7 +12,6 @@ public class ChatMessageMapper {
 
     @Autowired private UserService userService;
     @Autowired private ChatService chatService;
-    @Autowired private ChatMapper chatMapper;
 
     public ChatMessageDto toDto(ChatMessage entity) {
         if (entity == null) {
@@ -34,7 +33,7 @@ public class ChatMessageMapper {
         entity.setMessageId(dto.getMessageId());
         entity.setMessage(dto.getMessage());
         entity.setUser(userService.getUserById(dto.getUserId()));
-        entity.setChat(chatMapper.toEntity(chatService.getChatById(dto.getChatId())));
+        entity.setChat(chatService.getChatById(dto.getChatId()));
         return entity;
     }
 }
