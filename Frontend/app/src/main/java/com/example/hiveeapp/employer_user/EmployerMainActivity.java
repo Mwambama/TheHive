@@ -15,6 +15,7 @@ import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.display.EditJobActivity;
 import com.example.hiveeapp.employer_user.model.ChatActivity;
 import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
+import com.example.hiveeapp.employer_user.setting.EmployerProfileActivity;
 import com.example.hiveeapp.employer_user.setting.ViewEmployerInfoActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.student_user.StudentMainActivity;
@@ -121,7 +122,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
     }
 
     private void navigateToProfile() {
-        Intent intent = new Intent(EmployerMainActivity.this, StudentProfileViewActivity.class);
+        Intent intent = new Intent(EmployerMainActivity.this, EmployerProfileActivity.class);
         intent.putExtra("USER_ID", userId);
         Log.d(TAG, "Navigating to StudentProfileViewActivity with userId: " + userId);
         startActivity(intent);

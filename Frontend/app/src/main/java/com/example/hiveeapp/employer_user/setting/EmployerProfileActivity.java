@@ -27,16 +27,13 @@ public class EmployerProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_profile);
+        setContentView(R.layout.activity_employer_info_test);
 
         // Initialize views
         nameEditText = findViewById(R.id.profileName);
         emailEditText = findViewById(R.id.profileEmail);
         phoneEditText = findViewById(R.id.profilePhone);
-        universityEditText = findViewById(R.id.profileUniversity);
-        gpaEditText = findViewById(R.id.profileGPA);
-
-       // saveButton = findViewById(R.id.saveProfileButton);
+        saveButton = findViewById(R.id.saveProfileButton);
 
         // Load student information
         loadStudentProfile();
@@ -77,8 +74,7 @@ public class EmployerProfileActivity extends AppCompatActivity {
         nameEditText.setText(student.optString("name"));
         emailEditText.setText(student.optString("email"));
         phoneEditText.setText(student.optString("phone"));
-        universityEditText.setText(student.optString("university"));
-        gpaEditText.setText(String.valueOf(student.optDouble("gpa")));
+
     }
 
     /**
@@ -91,11 +87,9 @@ public class EmployerProfileActivity extends AppCompatActivity {
             updatedStudent.put("name", nameEditText.getText().toString());
             updatedStudent.put("email", emailEditText.getText().toString());
             updatedStudent.put("phone", phoneEditText.getText().toString());
-            updatedStudent.put("university", universityEditText.getText().toString());
-            updatedStudent.put("gpa", Double.parseDouble(gpaEditText.getText().toString()));
 
             // Call the API to update the student
-            StudentApi.updateStudent(this, updatedStudent, new Response.Listener<JSONObject>() {
+            employerinfoApi.updateStudent(this, updatedStudent, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     Toast.makeText(EmployerProfileActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
