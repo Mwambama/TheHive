@@ -27,6 +27,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -40,6 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired private UserService userService;
     @Autowired private EmployerService employerService;
     @Autowired private EmailService emailService;
+    @Autowired private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String email) {
@@ -109,6 +111,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authentication.setPassword(securityConfig.passwordEncoder().encode(changePasswordRequest.getConfirmPassword()));
         authenticationRepository.save(authentication);
         return ResponseMessage.builder().message("Password changed successfully").build();
+    }
+
+    @Override
+    public Boolean existsByEmailAndPassword(String email, String password) {
+        Authentication authentication = authenticationRepository.findByUserId(userService.getUserByEmail(email).getUserId());
+        return passwordEncoder.matches(password, authentication.getPassword());
     }
 
     private void createAuthentication(BaseSignUpRequest baseSignUpRequest, Long userId) {

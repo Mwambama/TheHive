@@ -1,7 +1,6 @@
 package com.example.thehiveapp.service.chat;
 
 
-import com.example.thehiveapp.dto.chat.ChatDto;
 import com.example.thehiveapp.dto.chat.ChatMessageDto;
 
 import java.util.List;

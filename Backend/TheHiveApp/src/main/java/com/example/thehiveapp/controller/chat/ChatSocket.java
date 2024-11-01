@@ -1,7 +1,10 @@
 package com.example.thehiveapp.controller.chat;
 
 import com.example.thehiveapp.dto.chat.ChatMessageDto;
+import com.example.thehiveapp.service.authentication.AuthenticationService;
 import com.example.thehiveapp.service.chat.ChatMessageService;
+import com.example.thehiveapp.service.chat.ChatService;
+import com.example.thehiveapp.service.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.OnClose;
@@ -14,10 +17,10 @@ import jakarta.websocket.server.ServerEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,6 +33,9 @@ public class ChatSocket {
     private final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
     private static ChatMessageService chatMessageService;
+    private static ChatService chatService;
+    private static UserService userService;
+    private static AuthenticationService authenticationService;
 
     // Maps each chatId to its map of session-email pairs
     private static Map<Long, Map<Session, String>> chatRooms = new ConcurrentHashMap<>();
@@ -38,9 +44,16 @@ public class ChatSocket {
 
     @Autowired
     public void setServices(
-            ChatMessageService chatMessageService
+            ChatMessageService chatMessageService,
+            UserService userService,
+            ChatService chatService,
+            AuthenticationService authenticationService,
+            PasswordEncoder passwordEncoder
     ) {
         ChatSocket.chatMessageService = chatMessageService;
+        ChatSocket.userService = userService;
+        ChatSocket.chatService = chatService;
+        ChatSocket.authenticationService = authenticationService;
     }
 
     @OnOpen
@@ -68,16 +81,20 @@ public class ChatSocket {
             return;
         }
 
-//        // Validate password (using userService)
-        // TODO
-//        if (!userService.validateUser(email, password)) {
-//            session.getBasicRemote().sendText("Invalid email or password");
-//            session.close();
-//            return;
-//        }
+        // Validate password
+        if (!authenticationService.existsByEmailAndPassword(email, password)) {
+            session.getBasicRemote().sendText("Invalid email or password");
+            session.close();
+            return;
+        }
 
-        // Validate chatId
-        // TODO
+        // Validate Chat ID
+        if (!chatService.getChatIdsByUser(userService.getUserByEmail(email)).contains(chatId)) {
+            logger.warn("User {} attempted to join an invalid chat ID: {}", email, chatId);
+            session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Invalid chat ID for user " + email));
+            return;
+        }
+
 
         // Handle duplicate emails in the same chat room
         chatRooms.putIfAbsent(chatId, new ConcurrentHashMap<>());
@@ -115,6 +132,9 @@ public class ChatSocket {
 
     @OnClose
     public void onClose(Session session, @PathParam("chatId") Long chatId) throws IOException {
+        if (!chatRooms.containsKey(chatId)) {
+            return;
+        }
         String email = chatRooms.get(chatId).remove(session);
         emailSessionMap.get(chatId).remove(email);
         logger.info("[onClose] {} disconnected from chat room {}", email, chatId);
