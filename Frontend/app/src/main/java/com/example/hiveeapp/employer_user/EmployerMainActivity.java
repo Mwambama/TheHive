@@ -102,6 +102,8 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.navigation_main_user_page) {
+
+            // this works for the long profile with address that will be fixed lated fully
             navigateToProfile();
             // Handle home navigation
             return true;
@@ -121,12 +123,22 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         return false;
     }
 
+
     private void navigateToProfile() {
         Intent intent = new Intent(EmployerMainActivity.this, EmployerProfileActivity.class);
         intent.putExtra("USER_ID", userId);
         Log.d(TAG, "Navigating to StudentProfileViewActivity with userId: " + userId);
         startActivity(intent);
     }
+
+
+    // this works for the long profile with address that will be fixed lated fully
+//    private void navigateToProfile() {
+//        Intent intent = new Intent(EmployerMainActivity.this, EmployerProfileActivity.class);
+//        intent.putExtra("USER_ID", userId);
+//        Log.d(TAG, "Navigating to StudentProfileViewActivity with userId: " + userId);
+//        startActivity(intent);
+//    }
 
     // Log out of the page
     private void logout() {
