@@ -2,136 +2,288 @@ package com.example.hiveeapp.employer_user.setting;
 
 
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
+import android.util.Log;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Button;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.employer_user.setting.employerinfoApi;
-import com.google.android.material.button.MaterialButton;
-
-import org.json.JSONArray;
+import com.example.hiveeapp.student_user.StudentMainActivity;
+import com.example.hiveeapp.student_user.profile.StudentProfileActivity;
+import com.example.hiveeapp.student_user.setting.StudentApi;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ViewEmployerInfoActivity extends AppCompatActivity {
 
-    private EditText nameEditText, emailEditText, phoneEditText, streetEditText, complementEditText, cityEditText, stateEditText, zipCodeEditText, fieldEditText;
-    private MaterialButton updateButton;
+    private static final String TAG = "StudentProfileView";
+    private int userId;
+    private TextView nameTextView, emailTextView, phoneTextView,fieldTextView;
+    private TextView streetTextView, complementTextView, cityTextView, stateTextView, zipCodeTextView;
+    private Button updateInfoButton;
+    private ImageButton backArrowIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employer_info);
 
-        // Initialize views
-        nameEditText = findViewById(R.id.profileName);
-        emailEditText = findViewById(R.id.profileEmail);
-        phoneEditText = findViewById(R.id.profilePhone);
-        streetEditText = findViewById(R.id.profileStreet);
-        complementEditText = findViewById(R.id.profileComplement);
-        cityEditText = findViewById(R.id.profileCity);
-        stateEditText = findViewById(R.id.profileState);
-        zipCodeEditText = findViewById(R.id.profileZipCode);
-        fieldEditText = findViewById(R.id.profileField);
-        updateButton = findViewById(R.id.updateProfileButton);
+        // Retrieve userId from Intent
+        userId = getIntent().getIntExtra("USER_ID", -1);
 
-        // Load employer information
-        loadEmployerProfile();
+        // Debug: Log userId received from Intent
+        Log.d(TAG, "Received userId from Intent: " + userId);
 
-        // Handle Update button click
-        updateButton.setOnClickListener(v -> updateEmployerProfile());
+        if (userId == -1) {
+            Toast.makeText(this, "Invalid User ID", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Invalid userId. Cannot load profile.");
+            return;
+        }
+
+        // Initialize TextViews and Button with the corresponding views in XML
+//        nameTextView = findViewById(R.id.profileNameView);
+//        emailTextView = findViewById(R.id.profileEmailView);
+//        phoneTextView = findViewById(R.id.profilePhoneView);
+//        streetTextView = findViewById(R.id.profileStreet);
+//        complementTextView = findViewById(R.id.profileComplement);
+//        cityTextView = findViewById(R.id.profileCity);
+//        stateTextView = findViewById(R.id.profileState);
+//        zipCodeTextView = findViewById(R.id.profileZipCode);
+        // Initialize TextViews and Button with the corresponding views in XML
+
+        nameTextView = findViewById(R.id.profileName);
+        emailTextView = findViewById(R.id.profileEmail);
+        phoneTextView = findViewById(R.id.profilePhone);
+        streetTextView = findViewById(R.id.profileStreet);
+        complementTextView = findViewById(R.id.profileComplement);
+        cityTextView = findViewById(R.id.profileCity);
+        stateTextView = findViewById(R.id.profileState);
+        zipCodeTextView = findViewById(R.id.profileZipCode);
+        fieldTextView =  findViewById(R.id.profileField);
+        updateInfoButton = findViewById(R.id.updateProfileButton);
+
+        // Set up the back button
+        backArrowIcon = findViewById(R.id.backArrowIcon);
+        backArrowIcon.setOnClickListener(v -> finish());
+
+        // Set up the update button to navigate to the update activity
+        updateInfoButton.setOnClickListener(v -> {
+            Log.d(TAG, "Update button clicked, navigating to ViewEmployerInfoActivity");
+            Intent intent = new Intent(com.example.hiveeapp.employer_user.setting.ViewEmployerInfoActivity.this, StudentProfileActivity.class);
+            intent.putExtra("USER_ID", userId);
+            startActivity(intent);
+        });
+
+        // Load student information from the backend
+        loadEmployerProfile(userId);
+
     }
 
-    /**
-     * Loads the employer profile data from the backend.
-     */
-    private void loadEmployerProfile() {
-        // Call the EmployerInfoApi to get employer info
-        employerinfoApi.getStudents(this, new Response.Listener<JSONArray>() {
+    private void loadEmployerProfile(int userId) {
+        Log.d(TAG, "Loading student profile with userId: " + userId);
+
+        StudentApi.getStudent(this, userId, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray response) {
+            public void onResponse(JSONObject student) {
                 try {
-                    // Assuming the first element is the employer
-                    JSONObject employer = response.getJSONObject(0);
-                    populateProfileFields(employer);
+                    displayProfile(student);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(ViewEmployerInfoActivity.this, "Error loading profile", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(com.example.hiveeapp.employer_user.setting.ViewEmployerInfoActivity.this, "Error loading profile", Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ViewEmployerInfoActivity.this, "Error fetching profile: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(com.example.hiveeapp.employer_user.setting.ViewEmployerInfoActivity.this, "Error fetching profile: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    /**
-     * Populates the UI fields with the employer data.
-     */
-    private void populateProfileFields(JSONObject employer) throws JSONException {
-        nameEditText.setText(employer.optString("name"));
-        emailEditText.setText(employer.optString("email"));
-        phoneEditText.setText(employer.optString("phone"));
+    private void displayProfile(JSONObject student) throws JSONException {
+        Log.d(TAG, "Displaying profile data for student: " + student.optString("name"));
 
-        JSONObject address = employer.optJSONObject("address");
+        // Set basic profile fields
+        nameTextView.setText(student.optString("name"));
+        emailTextView.setText(student.optString("email"));
+        phoneTextView.setText(student.optString("phone"));
+
+
+        // Set address fields
+        JSONObject address = student.optJSONObject("address");
         if (address != null) {
-            streetEditText.setText(address.optString("street"));
-            complementEditText.setText(address.optString("complement"));
-            cityEditText.setText(address.optString("city"));
-            stateEditText.setText(address.optString("state"));
-            zipCodeEditText.setText(address.optString("zipCode"));
-        }
-
-        fieldEditText.setText(employer.optString("field"));
-    }
-
-    /**
-     * Sends the updated profile information to the backend.
-     */
-    private void updateEmployerProfile() {
-        try {
-            // Create a JSONObject with the updated values
-            JSONObject updatedEmployer = new JSONObject();
-            updatedEmployer.put("name", nameEditText.getText().toString());
-            updatedEmployer.put("email", emailEditText.getText().toString());
-            updatedEmployer.put("phone", phoneEditText.getText().toString());
-
-            JSONObject updatedAddress = new JSONObject();
-            updatedAddress.put("street", streetEditText.getText().toString());
-            updatedAddress.put("complement", complementEditText.getText().toString());
-            updatedAddress.put("city", cityEditText.getText().toString());
-            updatedAddress.put("state", stateEditText.getText().toString());
-            updatedAddress.put("zipCode", zipCodeEditText.getText().toString());
-            updatedEmployer.put("address", updatedAddress);
-
-            updatedEmployer.put("field", fieldEditText.getText().toString());
-
-            // Call the API to update the employer
-            employerinfoApi.updateStudent(this, updatedEmployer, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Toast.makeText(ViewEmployerInfoActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(ViewEmployerInfoActivity.this, "Error updating profile: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(ViewEmployerInfoActivity.this, "Error creating update request", Toast.LENGTH_SHORT).show();
+            streetTextView.setText(address.optString("street"));
+            complementTextView.setText(address.optString("complement"));
+            fieldTextView.setText(student.optString("field"));
+            cityTextView.setText(address.optString("city"));
+            stateTextView.setText(address.optString("state"));
+            zipCodeTextView.setText(address.optString("zipCode"));
+        } else {
+            // Clear fields if no address data is available
+            streetTextView.setText("");
+            complementTextView.setText("");
+            cityTextView.setText("");
+            stateTextView.setText("");
+            zipCodeTextView.setText("");
         }
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//import android.os.Bundle;
+//import android.widget.EditText;
+//import android.widget.Toast;
+//
+//import androidx.appcompat.app.AppCompatActivity;
+//
+//import com.android.volley.Response;
+//import com.android.volley.VolleyError;
+//import com.example.hiveeapp.R;
+//import com.example.hiveeapp.employer_user.setting.employerinfoApi;
+//import com.google.android.material.button.MaterialButton;
+//
+//import org.json.JSONArray;
+//import org.json.JSONException;
+//import org.json.JSONObject;
+//
+//public class ViewEmployerInfoActivity extends AppCompatActivity {
+//
+//    private EditText nameEditText, emailEditText, phoneEditText, streetEditText, complementEditText, cityEditText, stateEditText, zipCodeEditText, fieldEditText;
+//    private MaterialButton updateButton;
+//    private MaterialButton saveButton;
+//
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_employer_info);
+//
+//        // Initialize views
+//        nameEditText = findViewById(R.id.profileName);
+//        emailEditText = findViewById(R.id.profileEmail);
+//        phoneEditText = findViewById(R.id.profilePhone);
+//        streetEditText = findViewById(R.id.profileStreet);
+//        complementEditText = findViewById(R.id.profileComplement);
+//        cityEditText = findViewById(R.id.profileCity);
+//        stateEditText = findViewById(R.id.profileState);
+//        zipCodeEditText = findViewById(R.id.profileZipCode);
+//        fieldEditText = findViewById(R.id.profileField);
+//        updateButton = findViewById(R.id.updateProfileButton);
+//
+//        // Load employer information
+//        loadEmployerProfile();
+//
+//        // Handle Update button click
+//        updateButton.setOnClickListener(v -> updateEmployerProfile());
+//    }
+//
+//    /**
+//     * Loads the employer profile data from the backend.
+//     */
+//    private void loadEmployerProfile() {
+//        // Call the EmployerInfoApi to get employer info
+//        employerinfoApi.getStudent(this, new Response.Listener<JSONArray>() {
+//            @Override
+//            public void onResponse(JSONArray response) {
+//                try {
+//                    // Assuming the first element is the employer
+//                    JSONObject employer = response.getJSONObject(0);
+//                    populateProfileFields(employer);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                    Toast.makeText(ViewEmployerInfoActivity.this, "Error loading profile", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Toast.makeText(ViewEmployerInfoActivity.this, "Error fetching profile: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+//
+//    /**
+//     * Populates the UI fields with the employer data.
+//     */
+//    private void populateProfileFields(JSONObject employer) throws JSONException {
+//        nameEditText.setText(employer.optString("name"));
+//        emailEditText.setText(employer.optString("email"));
+//        phoneEditText.setText(employer.optString("phone"));
+//
+//        JSONObject address = employer.optJSONObject("address");
+//        if (address != null) {
+//            streetEditText.setText(address.optString("street"));
+//            complementEditText.setText(address.optString("complement"));
+//            cityEditText.setText(address.optString("city"));
+//            stateEditText.setText(address.optString("state"));
+//            zipCodeEditText.setText(address.optString("zipCode"));
+//        }
+//
+//        fieldEditText.setText(employer.optString("field"));
+//    }
+//
+//    /**
+//     * Sends the updated profile information to the backend.
+//     */
+//    private void updateEmployerProfile() {
+//        try {
+//            // Create a JSONObject with the updated values
+//            JSONObject updatedEmployer = new JSONObject();
+//            updatedEmployer.put("name", nameEditText.getText().toString());
+//            updatedEmployer.put("email", emailEditText.getText().toString());
+//            updatedEmployer.put("phone", phoneEditText.getText().toString());
+//
+//            JSONObject updatedAddress = new JSONObject();
+//            updatedAddress.put("street", streetEditText.getText().toString());
+//            updatedAddress.put("complement", complementEditText.getText().toString());
+//            updatedAddress.put("city", cityEditText.getText().toString());
+//            updatedAddress.put("state", stateEditText.getText().toString());
+//            updatedAddress.put("zipCode", zipCodeEditText.getText().toString());
+//            updatedEmployer.put("address", updatedAddress);
+//
+//            updatedEmployer.put("field", fieldEditText.getText().toString());
+//
+//            // Call the API to update the employer
+//            employerinfoApi.updateStudent(this, updatedEmployer, new Response.Listener<JSONObject>() {
+//                @Override
+//                public void onResponse(JSONObject response) {
+//                    Toast.makeText(ViewEmployerInfoActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+//                }
+//            }, new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//                    Toast.makeText(ViewEmployerInfoActivity.this, "Error updating profile: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Toast.makeText(ViewEmployerInfoActivity.this, "Error creating update request", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//}
+//
 
 
 

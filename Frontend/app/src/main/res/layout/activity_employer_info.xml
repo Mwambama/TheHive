@@ -43,7 +43,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp" />
 
-        <!-- Name Field (Maps to: name) -->
+        <!-- Name Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nameTextInputLayout"
             android:layout_width="0dp"
@@ -64,7 +64,7 @@
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Email Field (Maps to: email) -->
+        <!-- Email Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/emailTextInputLayout"
             android:layout_width="0dp"
@@ -85,7 +85,7 @@
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Phone Field (Maps to: phone) -->
+        <!-- Phone Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/phoneTextInputLayout"
             android:layout_width="0dp"
@@ -106,7 +106,7 @@
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Street Field (Maps to: address.street) -->
+        <!-- Street Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/streetTextInputLayout"
             android:layout_width="0dp"
@@ -127,7 +127,7 @@
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Complement Field (Maps to: address.complement) -->
+        <!-- Complement Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/complementTextInputLayout"
             android:layout_width="0dp"
@@ -148,7 +148,7 @@
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- City Field (Maps to: address.city) -->
+        <!-- City Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/cityTextInputLayout"
             android:layout_width="0dp"
@@ -169,7 +169,7 @@
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- State Field (Maps to: address.state) -->
+        <!-- State Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/stateTextInputLayout"
             android:layout_width="0dp"
@@ -190,7 +190,7 @@
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Zip Code Field (Maps to: address.zipCode) -->
+        <!-- Zip Code Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/zipCodeTextInputLayout"
             android:layout_width="0dp"
@@ -211,7 +211,7 @@
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Field of Work Field (Maps to: field) -->
+        <!-- Field of Work Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/fieldTextInputLayout"
             android:layout_width="0dp"
@@ -235,17 +235,15 @@
         <!-- Update Profile Button -->
         <Button
             android:id="@+id/updateProfileButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:padding="12dp"
             android:text="Update Profile"
             android:textColor="@android:color/white"
-            android:backgroundTint="@color/colorPrimary"
-            app:cornerRadius="4dp"
+            android:backgroundTint="@color/colorAccent"
             app:layout_constraintTop_toBottomOf="@id/fieldTextInputLayout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

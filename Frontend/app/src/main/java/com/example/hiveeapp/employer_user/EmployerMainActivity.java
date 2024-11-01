@@ -12,7 +12,6 @@ import com.example.hiveeapp.employer_user.display.EditJobActivity;
 import com.example.hiveeapp.employer_user.model.ChatActivity;
 import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
 import com.example.hiveeapp.employer_user.setting.ViewEmployerInfoActivity;
-import com.example.hiveeapp.employer_user.setting.aboutInforFragment;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -49,7 +48,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
                         selectedFragment = new employerInfoFragment();
                         break;
                     default:
-                        selectedFragment = new aboutInforFragment();
+                        selectedFragment = new employerInfoFragment();    // change this to the employerInfoFragment
                 }
                 loadFragment(selectedFragment);
             }

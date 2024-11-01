@@ -12,6 +12,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.example.hiveeapp.student_user.setting.StudentApi;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONArray;
@@ -57,20 +58,20 @@ public class employerinfoApi {
      * @param listener      Response listener for successful fetch.
      * @param errorListener Error listener for handling errors.
      */
-    public static void getStudents(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL;
-        Log.d(TAG, "GET Employer Request URL: " + url);
+    public static void getStudent(Context context, int userId, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "/" + userId;
+        Log.d(TAG, "GET Student Request URL: " + url);
 
-        JsonArrayRequest request = new JsonArrayRequest(
+        JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
                 null,
                 listener,
-                error -> handleErrorResponse("Error fetching students", error, errorListener)
+                error -> handleErrorResponse("Error fetching student", error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return com.example.hiveeapp.employer_user.setting.employerinfoApi.getHeaders(context);
+                return StudentApi.getHeaders(context);
             }
         };
 
@@ -87,7 +88,7 @@ public class employerinfoApi {
      */
     public static void addStudent(Context context, JSONObject studentData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL;
-        Log.d(TAG, "POST Employer Request URL: " + url);
+        Log.d(TAG, "POST Student Request URL: " + url);
         Log.d(TAG, "Request Payload: " + studentData.toString());
 
         JsonObjectRequest request = new JsonObjectRequest(
@@ -99,7 +100,7 @@ public class employerinfoApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return com.example.hiveeapp.employer_user.setting.employerinfoApi.getHeaders(context);
+                return StudentApi.getHeaders(context);
             }
         };
 
@@ -116,7 +117,7 @@ public class employerinfoApi {
      */
     public static void updateStudent(Context context, JSONObject studentData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL;
-        Log.d(TAG, "PUT Employer Request URL: " + url);
+        Log.d(TAG, "PUT Student Request URL: " + url);
         Log.d(TAG, "Student Data Payload: " + studentData.toString());
 
         JsonObjectRequest request = new JsonObjectRequest(
@@ -128,11 +129,13 @@ public class employerinfoApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return com.example.hiveeapp.employer_user.setting.employerinfoApi.getHeaders(context);
+                return StudentApi.getHeaders(context);
             }
         };
+
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
 
     /**
      * Deletes a student from the server.
@@ -144,14 +147,14 @@ public class employerinfoApi {
      */
     public static void deleteStudent(Context context, long studentId, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "/" + studentId;
-        Log.d(TAG, "DELETE Employer Request URL: " + url);
+        Log.d(TAG, "DELETE Student Request URL: " + url);
 
         // Create a StringRequest for the DELETE method
         StringRequest request = new StringRequest(
                 Request.Method.DELETE,
                 url,
                 response -> {
-                    Log.d(TAG, "Student deleted successfully: " + response);
+                    Log.d(TAG, "Employer deleted successfully: " + response);
                     listener.onResponse(response);  // Notify the listener of success
                 },
                 error -> {
@@ -161,7 +164,7 @@ public class employerinfoApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return com.example.hiveeapp.employer_user.setting.employerinfoApi.getHeaders(context);
+                return StudentApi.getHeaders(context);
             }
         };
 
