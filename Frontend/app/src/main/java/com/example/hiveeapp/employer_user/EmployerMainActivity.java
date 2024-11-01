@@ -1,9 +1,13 @@
 package com.example.hiveeapp.employer_user;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -13,6 +17,8 @@ import com.example.hiveeapp.employer_user.model.ChatActivity;
 import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
 import com.example.hiveeapp.employer_user.setting.ViewEmployerInfoActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
+import com.example.hiveeapp.student_user.StudentMainActivity;
+import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -21,6 +27,8 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
 
     private Button logoutButton, viewInfoButton;
     private TabLayout tabLayout;
+    private int userId;
+    private static final String TAG = "EmployerMainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +38,18 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
         // Toolbar setup
         MaterialToolbar topAppBar = findViewById(R.id.topAppBar);
         topAppBar.setNavigationOnClickListener(view -> onBackPressed());
+
+
+
+        // Retrieve userId from SharedPreferences
+        SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
+        userId = preferences.getInt("userId", -1);
+        Log.d(TAG, "Retrieved userId from SharedPreferences: " + userId);
+
+        if (userId == -1) {
+            Toast.makeText(this, "User ID not found. Please log in again.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "User ID is invalid. Redirecting to login screen.");
+        }
 
         // Initialize views
         tabLayout = findViewById(R.id.tabLayouts);
@@ -81,6 +101,7 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.navigation_main_user_page) {
+            navigateToProfile();
             // Handle home navigation
             return true;
         } else if (itemId == R.id.nav_tracking) {
@@ -97,6 +118,13 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
             return true;
         }
         return false;
+    }
+
+    private void navigateToProfile() {
+        Intent intent = new Intent(EmployerMainActivity.this, StudentProfileViewActivity.class);
+        intent.putExtra("USER_ID", userId);
+        Log.d(TAG, "Navigating to StudentProfileViewActivity with userId: " + userId);
+        startActivity(intent);
     }
 
     // Log out of the page
