@@ -98,11 +98,11 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    public void onBackPressed() {
-        // Redirect back to the main page instead of the previous activity
-        navigateBackToMain();
-    }
+//    @Override
+//    public void onBackPressed() {
+//        // Redirect back to the main page instead of the previous activity
+//        navigateBackToMain();
+//    }
 
     private void loadStudentProfile(int userId) {
         Log.d(TAG, "Loading student profile with userId: " + userId);
