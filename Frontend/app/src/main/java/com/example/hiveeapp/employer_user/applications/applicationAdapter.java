@@ -1,5 +1,4 @@
 package com.example.hiveeapp.employer_user.applications;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -9,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -71,7 +69,7 @@ public class applicationAdapter extends RecyclerView.Adapter<com.example.hiveeap
      * @param position The position of the employer in the RecyclerView list.
      */
     @Override
-    public void onBindViewHolder(com.example.hiveeapp.employer_user.display.JobsAdapter.EmployerViewHolder holder, int position) {
+    public void onBindViewHolder(com.example.hiveeapp.employer_user.applications.applicationAdapter.EmployerViewHolder holder, int position) {
         try {
             // Get the employer object at the current position
             JSONObject job = jobs.getJSONObject(position);
@@ -224,7 +222,7 @@ public class applicationAdapter extends RecyclerView.Adapter<com.example.hiveeap
                     SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
                     // Retrieve companyId directly from the job JSONObject
                     long employerId = job.optLong("employerId", -1);
-                    Log.d("EmployerApis", "Retrieved employerId: " + employerId);
+                    Log.d("applicationsApi", "Retrieved employerId: " + employerId);
 
                     if (employerId == -1) {
                         Toast.makeText(context, "Error: employerId not found", Toast.LENGTH_SHORT).show();
@@ -255,7 +253,7 @@ public class applicationAdapter extends RecyclerView.Adapter<com.example.hiveeap
                     Log.d("EmployerApis", "Update Job Payload: " + updatedJob.toString());
 
                     // Update employer via EmployerApis
-                    EmployerApis.performJobUpdate(context, updatedJob,
+                    applicationsApi.AcceptApplication(context, updatedJob,
                             response -> {
                                 try {
                                     // Update the employer in the list and refresh RecyclerView

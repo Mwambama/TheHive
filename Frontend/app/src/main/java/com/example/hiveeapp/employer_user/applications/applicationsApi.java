@@ -24,9 +24,9 @@ import java.util.Map;
 
 public class applicationsApi {
 
-    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
+    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications?jobPostingId=1&status=PENDING";
 
-    private static final String TAG = "EmployerApis";
+    private static final String TAG = "applicationsApi";
 
     /**
      * Generates the headers for API requests with authorization.
@@ -75,8 +75,6 @@ public class applicationsApi {
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
-
-
 
     /**
      * Internal method to perform employer update after any address updates.
