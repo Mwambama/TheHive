@@ -392,6 +392,57 @@ public class StudentApi {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
+    public static void getChatsByJobPostingId(Context context, int jobPostingId, int studentId,
+                                              Response.Listener<List<ChatDto>> successListener,
+                                              Response.ErrorListener errorListener) {
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/chat";
+        Log.d("StudentApi", "Fetching chats from URL: " + url + " with jobPostingId: " + jobPostingId + " and studentId: " + studentId);
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    List<ChatDto> chatList = new ArrayList<>();
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject chatObject = response.getJSONObject(i);
+
+                            // Check for studentId and jobPostingId in the JSON object
+                            int parsedStudentId = chatObject.getInt("studentId");
+                            int parsedJobPostingId = chatObject.optInt("jobPostingId", -1);
+
+                            Log.d("StudentApi", "Parsed chat entry: studentId=" + parsedStudentId + ", jobPostingId=" + parsedJobPostingId);
+
+                            // Filter chats based on studentId and jobPostingId
+                            if (parsedStudentId == studentId && parsedJobPostingId == jobPostingId) {
+                                ChatDto chat = new ChatDto(
+                                        chatObject.getInt("chatId"),
+                                        chatObject.getInt("employerId"),
+                                        studentId,
+                                        parsedJobPostingId,
+                                        chatObject.optString("jobTitle", "Unknown Title")
+                                );
+                                chatList.add(chat);
+                            }
+                        }
+                        successListener.onResponse(chatList);
+                    } catch (JSONException e) {
+                        Log.e("StudentApi", "Error parsing chat JSON: " + e.getMessage());
+                        errorListener.onErrorResponse(new VolleyError("JSON parsing error: " + e.getMessage()));
+                    }
+                },
+                error -> {
+                    Log.e("StudentApi", "Error fetching chats: " + error.getMessage());
+                    errorListener.onErrorResponse(error);
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return StudentApi.getHeaders(context);
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
     public static void getJobPostingsByEmployerId(Context context, long employerId, Response.Listener<List<JobPosting>> successListener, Response.ErrorListener errorListener) {
         String url = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting?employerId=" + employerId;
 

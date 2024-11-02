@@ -1,7 +1,10 @@
 package com.example.hiveeapp.student_user.chat;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,6 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -20,28 +24,45 @@ import com.example.hiveeapp.student_user.setting.StudentApi;
 import com.example.hiveeapp.volley.VolleySingleton;
 import com.example.hiveeapp.websocket.WebSocketManager;
 import com.example.hiveeapp.websocket.WebSocketListener;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.java_websocket.handshake.ServerHandshake;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
 
+    private static final String TAG = "ChatActivity";
     private RecyclerView chatRecyclerView;
     private EditText msgEtx;
     private Button sendBtn;
     private MessageAdapter messageAdapter;
     private List<Message> messageList;
     private int chatId = -1;
-    private final int userId = 1014; // Replace this with the actual logged-in user ID
+    private int userId;
+    private String userEmail;
+    private String userPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        // Retrieve user credentials and chat information from the Intent
+        Intent intent = getIntent();
+        userId = intent.getIntExtra("userId", -1);
+        userEmail = intent.getStringExtra("email");
+        userPassword = intent.getStringExtra("password");
+        int jobPostingId = intent.getIntExtra("jobPostingId", -1);
+
+        if (userId == -1 || userEmail == null || userPassword == null) {
+            Toast.makeText(this, "User credentials not found. Please log in again.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "User credentials are missing. Redirecting to login screen.");
+            finish();
+            return;
+        }
 
         // Initialize UI components
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
@@ -54,8 +75,8 @@ public class ChatActivity extends AppCompatActivity {
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatRecyclerView.setAdapter(messageAdapter);
 
-        // Fetch the chat ID from the server
-        fetchChatId(this);
+        // Fetch the chat ID for this specific application
+        fetchChatId(this, jobPostingId, userId);
 
         // Set up send button action
         sendBtn.setOnClickListener(v -> {
@@ -70,33 +91,57 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchChatId(Context context) {
+    private Map<String, String> getAuthorizationHeaders(Context context) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        SharedPreferences preferences = context.getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+        String username = preferences.getString("email", "");
+        String password = preferences.getString("password", "");
+
+        if (!username.isEmpty() && !password.isEmpty()) {
+            String credentials = username + ":" + password;
+            String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+            headers.put("Authorization", auth);
+        } else {
+            Log.e(TAG, "User credentials are missing. Cannot set Authorization header.");
+        }
+
+        return headers;
+    }
+    //Note: This temporary solution allows to proceed without filtering by jobPostingId. However, ideally, the server should be updated to ensure jobPostingId is included in the response.
+    private void fetchChatId(Context context, int studentId, int jobPostingId) {
         StudentApi.getChats(context, new Response.Listener<List<ChatDto>>() {
             @Override
             public void onResponse(List<ChatDto> chatList) {
+                // Filter only by studentId since jobPostingId is missing in response
+                List<ChatDto> filteredChats = new ArrayList<>();
                 for (ChatDto chat : chatList) {
-                    if (chat.getStudentId() == userId) {
-                        chatId = chat.getChatId();
-                        connectWebSocket();
-                        break;
+                    if (chat.getStudentId() == studentId) {
+                        filteredChats.add(chat);
+                        Log.d(TAG, "Matched chat: chatId=" + chat.getChatId() +
+                                ", studentId=" + chat.getStudentId() +
+                                ", employerId=" + chat.getEmployerId());
                     }
                 }
-                if (chatId == -1) {
-                    Toast.makeText(ChatActivity.this, "No chat found for the user", Toast.LENGTH_SHORT).show();
+
+                if (filteredChats.isEmpty()) {
+                    Toast.makeText(ChatActivity.this, "No chat found for this student", Toast.LENGTH_SHORT).show();
+                } else {
+                    chatId = filteredChats.get(0).getChatId();
+                    Log.d(TAG, "Using chat ID: " + chatId + " for WebSocket connection.");
+                    connectWebSocket();
                 }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ChatActivity.this, "Failed to retrieve chat ID", Toast.LENGTH_SHORT).show();
-            }
+        }, error -> {
+            Toast.makeText(ChatActivity.this, "Failed to retrieve chat ID", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error fetching chat ID: " + error.getMessage());
         });
     }
 
+
     private void connectWebSocket() {
-        String email = "teststudent1@example.com"; // Update this as necessary
-        String password = "TestStudent1234@"; // Update this as necessary
-        String webSocketUrl = generateWebSocketUrl(chatId, email, password);
+        String webSocketUrl = generateWebSocketUrl(chatId, userEmail, userPassword);
 
         WebSocketManager.getInstance().setWebSocketListener(new WebSocketListener() {
             @Override
@@ -146,35 +191,26 @@ public class ChatActivity extends AppCompatActivity {
 
     private void displayReceivedMessage(String rawMessage) {
         try {
-            // Check if the message contains JSON by looking for a starting '{'
             int jsonStartIndex = rawMessage.indexOf("{");
 
             if (jsonStartIndex != -1) {
-                // If JSON is detected, trim to JSON part and parse
                 rawMessage = rawMessage.substring(jsonStartIndex);
                 JSONObject messageObject = new JSONObject(rawMessage);
 
                 String text = messageObject.getString("message");
-                int userId = messageObject.getInt("userId");
-                int currentUserId = 1014; // Replace with actual user ID dynamically if possible
+                int senderId = messageObject.getInt("userId");
 
-                // Determine if the message is sent by the user or received from the employer
-                boolean isSentByUser = (userId == currentUserId);
+                boolean isSentByUser = (senderId == userId);
 
-                // Add the message to the list with the correct sender type
                 messageList.add(new Message(text, isSentByUser));
                 messageAdapter.notifyItemInserted(messageList.size() - 1);
                 chatRecyclerView.scrollToPosition(messageList.size() - 1);
             } else {
-                // If no JSON found, it's likely a plain text message
                 Toast.makeText(ChatActivity.this, "Received non-JSON message: " + rawMessage, Toast.LENGTH_SHORT).show();
             }
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(ChatActivity.this, "Error parsing JSON message", Toast.LENGTH_SHORT).show();
-        } catch (StringIndexOutOfBoundsException e) {
-            e.printStackTrace();
-            Toast.makeText(ChatActivity.this, "Unexpected message format", Toast.LENGTH_SHORT).show();
         }
     }
 }

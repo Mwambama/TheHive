@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.student_user.chat.ChatActivity;
+import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.student_user.chat.ChatListActivity;
 import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
 import com.example.hiveeapp.student_user.setting.StudentApi;
@@ -25,6 +25,8 @@ public class StudentMainActivity extends AppCompatActivity {
 
     private static final String TAG = "StudentMainActivity";
     private int userId;
+    private String userEmail;
+    private String userPassword;
     private ViewPager2 viewPager;
     private JobSwipeAdapter jobSwipeAdapter;
     private List<JobPosting> jobPostings = new ArrayList<>();
@@ -53,7 +55,7 @@ public class StudentMainActivity extends AppCompatActivity {
             } else if (itemId == R.id.navigation_apply) {
                 return true;
             } else if (itemId == R.id.navigation_chat) {
-                // Navigate to ChatActivity
+                // Navigate to ChatListActivity
                 Intent intent = new Intent(StudentMainActivity.this, ChatListActivity.class);
                 startActivity(intent);
                 return true;
@@ -64,17 +66,21 @@ public class StudentMainActivity extends AppCompatActivity {
         // Set the initial selected item
         bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
 
-        // Retrieve userId from SharedPreferences
+        // Retrieve userId, email, and password from SharedPreferences
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
-        Log.d(TAG, "Retrieved userId from SharedPreferences: " + userId);
+        userEmail = preferences.getString("email", "");
+        userPassword = preferences.getString("password", "");
 
-        if (userId == -1) {
-            Toast.makeText(this, "User ID not found. Please log in again.", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "User ID is invalid. Redirecting to login screen.");
-            // Uncomment this to redirect to LoginActivity if needed
-            // startActivity(new Intent(this, LoginActivity.class));
-            // finish();
+        Log.d(TAG, "Retrieved userId from SharedPreferences: " + userId);
+        Log.d(TAG, "Retrieved email from SharedPreferences: " + userEmail);
+
+        if (userId == -1 || userEmail.isEmpty() || userPassword.isEmpty()) {
+            Toast.makeText(this, "User credentials not found. Please log in again.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "User credentials are missing. Redirecting to login screen.");
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
         }
 
         // Initialize ViewPager and adapter
