@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
+import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.registration.login.LoginActivity;
@@ -35,14 +36,14 @@ public class ChatListActivity extends AppCompatActivity {
     private int userId;
     private String userEmail;
     private String userPassword;
-    private Map<Integer, Integer> jobPostingMap = new HashMap<>(); // Maps employerId to jobPostingId
+    private Map<Integer, Integer> jobPostingMap = new HashMap<>();
+    private Map<Integer, String> applicationJobTitles = new HashMap<>(); // Moved to class level
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_list);
 
-        // Retrieve userId, email, and password from SharedPreferences
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
         userEmail = preferences.getString("email", "");
@@ -59,24 +60,19 @@ public class ChatListActivity extends AppCompatActivity {
             return;
         }
 
-        // Initialize RecyclerView
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Load job postings first, then load applications
         loadJobPostings();
 
-        // Initialize bottom navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_profile) {
-                Intent intent = new Intent(this, StudentMainActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, StudentMainActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_apply) {
-                Intent intent = new Intent(this, ApplyActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, ApplyActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_chat) {
                 return true;
@@ -95,12 +91,15 @@ public class ChatListActivity extends AppCompatActivity {
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject jobJson = response.getJSONObject(i);
                             int jobPostingId = jobJson.getInt("jobPostingId");
-                            int employerId = jobJson.getInt("employerId");
+                            int employerId = jobJson.optInt("employerId", -1);
 
-                            jobPostingMap.put(employerId, jobPostingId); // Store employerId-jobPostingId pair
+                            if (employerId != -1) {
+                                jobPostingMap.put(employerId, jobPostingId);
+                            } else {
+                                Log.e(TAG, "Missing employerId for jobPostingId: " + jobPostingId);
+                            }
                         }
-                        // Once job postings are loaded, proceed to load applications
-                        loadApplications();
+                        loadApplicationsAndChats();
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Toast.makeText(this, "Error parsing job postings", Toast.LENGTH_SHORT).show();
@@ -128,42 +127,46 @@ public class ChatListActivity extends AppCompatActivity {
         return headers;
     }
 
-    private void loadApplications() {
+    private void loadApplicationsAndChats() {
         StudentApi.getStudentApplications(this, userId,
                 applications -> {
-                    List<ChatDto> chatList = new ArrayList<>();
-                    try {
-                        for (int i = 0; i < applications.length(); i++) {
+                    for (int i = 0; i < applications.length(); i++) {
+                        try {
                             JSONObject application = applications.getJSONObject(i);
-                            int chatId = -1; // Placeholder if chatId is not present
                             int jobPostingId = application.getInt("jobPostingId");
-                            String jobTitle = application.getString("jobTitle");
-
-                            // Use optInt to avoid JSONException if employerId is missing
-                            int employerId = application.optInt("employerId", -1);
-
-                            ChatDto chat = new ChatDto(chatId, employerId, userId, jobPostingId, jobTitle);
-                            chatList.add(chat);
+                            String jobTitle = application.optString("jobTitle", "Unknown Title");
+                            applicationJobTitles.put(jobPostingId, jobTitle);
+                        } catch (JSONException e) {
+                            Log.e(TAG, "Error parsing application JSON: " + e.getMessage());
                         }
-                        // Pass the list with job titles to the adapter
-                        chatListAdapter = new ChatListAdapter(chatList, this::openChat, this);
-                        chatRecyclerView.setAdapter(chatListAdapter);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, "Error parsing applications data", Toast.LENGTH_SHORT).show();
                     }
+                    loadChats(); // Load chats after applications
                 },
                 error -> Toast.makeText(this, "Failed to load applications", Toast.LENGTH_SHORT).show()
         );
     }
 
+    private void loadChats() {
+        StudentApi.getChats(this, chatList -> {
+            List<ChatDto> matchedChats = new ArrayList<>();
+
+            for (ChatDto chat : chatList) {
+                int jobPostingId = chat.getJobPostingId();
+                String jobTitle = applicationJobTitles.getOrDefault(jobPostingId, "Unknown Title");
+                chat.setJobTitle(jobTitle);
+                matchedChats.add(chat);
+            }
+
+            chatListAdapter = new ChatListAdapter(matchedChats, this::openChat, this);
+            chatRecyclerView.setAdapter(chatListAdapter);
+        }, error -> Toast.makeText(this, "Failed to load chats", Toast.LENGTH_SHORT).show());
+    }
+
     private void openChat(ChatDto chat) {
         Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("userId", userId);
         intent.putExtra("chatId", chat.getChatId());
         intent.putExtra("jobPostingId", chat.getJobPostingId());
-        intent.putExtra("userId", userId);
-        intent.putExtra("email", userEmail);
-        intent.putExtra("password", userPassword);
         startActivity(intent);
     }
 }

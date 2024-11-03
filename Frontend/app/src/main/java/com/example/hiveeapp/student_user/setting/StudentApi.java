@@ -396,27 +396,30 @@ public class StudentApi {
                                               Response.Listener<List<ChatDto>> successListener,
                                               Response.ErrorListener errorListener) {
         String url = "http://coms-3090-063.class.las.iastate.edu:8080/chat";
-        Log.d("StudentApi", "Fetching chats from URL: " + url + " with jobPostingId: " + jobPostingId + " and studentId: " + studentId);
+        Log.d(TAG, "Fetching chats from URL: " + url);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
                     List<ChatDto> chatList = new ArrayList<>();
                     try {
+                        Log.d(TAG, "Full chat response: " + response.toString());
+
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject chatObject = response.getJSONObject(i);
 
-                            // Check for studentId and jobPostingId in the JSON object
                             int parsedStudentId = chatObject.getInt("studentId");
                             int parsedJobPostingId = chatObject.optInt("jobPostingId", -1);
+                            int chatId = chatObject.getInt("chatId");
 
-                            Log.d("StudentApi", "Parsed chat entry: studentId=" + parsedStudentId + ", jobPostingId=" + parsedJobPostingId);
+                            Log.d(TAG, "Parsed chat: chatId=" + chatId +
+                                    ", studentId=" + parsedStudentId +
+                                    ", jobPostingId=" + parsedJobPostingId);
 
-                            // Filter chats based on studentId and jobPostingId
-                            if (parsedStudentId == studentId && parsedJobPostingId == jobPostingId) {
+                            if (parsedStudentId == studentId) {
                                 ChatDto chat = new ChatDto(
-                                        chatObject.getInt("chatId"),
+                                        chatId,
                                         chatObject.getInt("employerId"),
-                                        studentId,
+                                        parsedStudentId,
                                         parsedJobPostingId,
                                         chatObject.optString("jobTitle", "Unknown Title")
                                 );
@@ -425,12 +428,12 @@ public class StudentApi {
                         }
                         successListener.onResponse(chatList);
                     } catch (JSONException e) {
-                        Log.e("StudentApi", "Error parsing chat JSON: " + e.getMessage());
+                        Log.e(TAG, "Error parsing chat JSON: " + e.getMessage());
                         errorListener.onErrorResponse(new VolleyError("JSON parsing error: " + e.getMessage()));
                     }
                 },
                 error -> {
-                    Log.e("StudentApi", "Error fetching chats: " + error.getMessage());
+                    Log.e(TAG, "Error fetching chats: " + error.getMessage());
                     errorListener.onErrorResponse(error);
                 }
         ) {
