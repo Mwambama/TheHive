@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.display.EmployerApis;
-import com.example.hiveeapp.employer_user.display.JobsAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,13 +55,13 @@ public class applicationsFragment extends Fragment {
      * Handles errors and displays error messages in case of failure.
      */
     private void getApplications() {
-        EmployerApis.getJobs(
+        applicationsApi.getApplications(
                 getContext(),
                 response -> {
                     // Reverse the JSONArray to display the most recent employers first
                     JSONArray reversedEmployers = reverseJSONArray(response);
                     // Update the RecyclerView adapter with the reversed employers list
-                    applicationsdapter.setJobs(reversedEmployers);
+                    applicationsdapter.setApplications(reversedEmployers);
                 },
                 error -> {
                     // Handle error from the API request
