@@ -152,8 +152,8 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
         EditText editJobTitle = bottomSheetView.findViewById(R.id.editJobTitle);
         EditText editStatus = bottomSheetView.findViewById(R.id.editStatus);
         EditText editAppliedOn = bottomSheetView.findViewById(R.id.editAppliedOn);
-        Button acceptButton = bottomSheetView.findViewById(R.id.acceptButton);
-        Button rejectButton = bottomSheetView.findViewById(R.id.rejectButton);
+        View acceptButton = bottomSheetView.findViewById(R.id.acceptButton);
+        View rejectButton = bottomSheetView.findViewById(R.id.rejectButton);
 
         // Populate the fields with existing job data
         editJobTitle.setText(job.optString("jobTitle", ""));
