@@ -21,6 +21,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -124,7 +127,9 @@ public class ChatSocket {
     public void onMessage(Session session, @PathParam("chatId") Long chatId, String message) throws IOException {
         ChatMessageDto dto = objectMapper.readValue(message, ChatMessageDto.class);
         String email = chatRooms.get(chatId).get(session);
-        logger.info("[onMessage] " + email + ": " + dto.getMessage());
+        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        logger.info("[onMessage] " + email + ": " + dto.getMessage() + " at " + time);
+        dto.setTimestamp(time);
         dto = chatMessageService.createChatMessage(dto);
         String jsonMessage = objectMapper.writeValueAsString(dto);
         broadcast(chatId, jsonMessage);
