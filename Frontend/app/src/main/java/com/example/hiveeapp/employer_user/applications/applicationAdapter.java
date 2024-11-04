@@ -181,7 +181,7 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
             long jobId = job.getLong("jobPostingId");
             JSONObject acceptedJob = new JSONObject();
             acceptedJob.put("jobTitle", jobTitleField.getText().toString());
-            acceptedJob.put("status", "Accepted");
+            acceptedJob.put("status", "ACCEPTED");
             acceptedJob.put("appliedOn", appliedOnField.getText().toString());
 
             applicationsApi.AcceptApplication(context, acceptedJob,
@@ -209,7 +209,7 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
             long applicationId = job.getLong("jobPostingId");
             JSONObject rejectedJob = new JSONObject();
             rejectedJob.put("jobTitle", jobTitleField.getText().toString());
-            rejectedJob.put("status", "Rejected");
+            rejectedJob.put("status", "REJECTED");
             rejectedJob.put("appliedOn", appliedOnField.getText().toString());
 
             applicationsApi.RejectApplication(context, rejectedJob,
