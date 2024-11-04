@@ -37,7 +37,7 @@ public class ChatListActivity extends AppCompatActivity {
     private String userEmail;
     private String userPassword;
     private Map<Integer, Integer> jobPostingMap = new HashMap<>();
-    private Map<Integer, String> applicationJobTitles = new HashMap<>(); // Moved to class level
+    private Map<Integer, String> applicationJobTitles = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

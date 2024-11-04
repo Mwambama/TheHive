@@ -32,7 +32,6 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
 
         // Set each field with job details
         holder.jobTitle.setText(job.getTitle());
-        holder.company.setText("Employer ID: " + job.getEmployerId());
         holder.description.setText(job.getDescription());
         holder.summary.setText(job.getSummary());
         holder.salary.setText("Salary: $" + job.getSalary());
@@ -43,7 +42,8 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
         holder.applicationEnd.setText("Application End: " + job.getApplicationEnd());
     }
 
-    @Override
+
+        @Override
     public int getItemCount() {
         return jobPostings.size();
     }
@@ -56,7 +56,6 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
 
             // Initialize all TextViews with corresponding IDs from item_job_card.xml
             jobTitle = itemView.findViewById(R.id.jobTitle);
-            company = itemView.findViewById(R.id.company);
             description = itemView.findViewById(R.id.description);
             summary = itemView.findViewById(R.id.summary);
             salary = itemView.findViewById(R.id.salary);
