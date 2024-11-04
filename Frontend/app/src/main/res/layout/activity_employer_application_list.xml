@@ -10,7 +10,7 @@
         android:id="@+id/addEmployerButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Add Job"
+        android:text="Applications"
         android:backgroundTint="@color/colorPrimaryDark"
         android:textColor="@android:color/white"
         app:cornerRadius="8dp"

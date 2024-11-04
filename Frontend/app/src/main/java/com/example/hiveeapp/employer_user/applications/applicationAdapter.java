@@ -244,8 +244,8 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
         TextView titleTextView;
         TextView statusTextView;
         TextView appliedOnTextView;
-        ImageButton acceptButton;
-        ImageButton rejectButton;
+        Button acceptButton;
+        Button rejectButton;
 
         ApplicationViewHolder(View itemView) {
             super(itemView);

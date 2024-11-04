@@ -34,7 +34,7 @@ public class JobsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_jobs, container, false);
 
         // Initialize RecyclerView and set its layout manager
-        jobsRecyclerView = view.findViewById(R.id.jobsRecyclerView);
+        jobsRecyclerView = view.findViewById(R.id.applicationRecyclerView);
         jobsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Initialize adapter in read-only mode (no edit/delete buttons)

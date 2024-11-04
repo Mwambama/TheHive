@@ -12,7 +12,8 @@ import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
 //import com.example.hiveeapp.employer_user.model.CreateJobsActivity;
-import com.example.hiveeapp.employer_user.applications.applicationAdapter;
+import com.example.hiveeapp.employer_user.applications.ApplicationListActivity;
+import com.example.hiveeapp.employer_user.applications.applicationsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
@@ -60,8 +61,8 @@ public class EditJobActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_invitations) {
-                  //for now, this inviattion will be sent to home of user, then I will direct it later when I am working on application status
-                startActivity(new Intent(com.example.hiveeapp.employer_user.display.EditJobActivity.this, applicationAdapter.class));
+                  //for now, this inviattion will be sent to home of user, then I will direct it later when I am working on employer application status
+                startActivity(new Intent(com.example.hiveeapp.employer_user.display.EditJobActivity.this, ApplicationListActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_employers) {
                 return true;
@@ -85,7 +86,7 @@ public class EditJobActivity extends AppCompatActivity {
      * Initialize views in the activity.
      */
     private void initViews() {
-        jobRecyclerView = findViewById(R.id.jobsRecyclerView);
+        jobRecyclerView = findViewById(R.id.applicationRecyclerView);
         addEmployerButton = findViewById(R.id.addEmployerButton);
     }
 

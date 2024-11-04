@@ -9,7 +9,7 @@
 
     <!-- RecyclerView for jobs -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/jobsRecyclerView"
+        android:id="@+id/applicationRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scrollbars="vertical"

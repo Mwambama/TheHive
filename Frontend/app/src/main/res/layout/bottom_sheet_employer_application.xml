@@ -54,7 +54,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_reject"
         android:contentDescription="Reject Application"
-        android:background="?attr/selectableItemBackground"  <!-- Add this for ripple effect -->
+        android:background="?attr/selectableItemBackground"
+
         />
     </LinearLayout>
 </LinearLayout>

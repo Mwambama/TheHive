@@ -41,6 +41,9 @@
         <activity android:name=".employer_user.EmployerMainActivity" android:exported="true" />
         <activity android:name=".employer_user.setting.EmployerProfileActivity" android:exported="true" />
         <!--        <activity android:name=".employer_user.model.CreateJobsActivity" android:exported="true" />-->
+        <activity android:name=".employer_user.applications.ApplicationListActivity" />
+
+
         <activity android:name=".employer_user.model.EmployerLoginActivity" android:exported="true" />
         <activity android:name=".employer_user.model.TrackingApplicationActivity" android:exported="true" />
 
