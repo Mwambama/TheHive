@@ -143,6 +143,7 @@ public class ApplicationServiceImpl implements ApplicationService{
         Chat chat = Chat.builder()
                 .studentId(application.getStudent().getUserId())
                 .employerId(application.getJobPosting().getEmployer().getUserId())
+                .jobPostingId(application.getJobPosting().getJobPostingId())
                 .build();
         chatService.createChat(chat);
     }
