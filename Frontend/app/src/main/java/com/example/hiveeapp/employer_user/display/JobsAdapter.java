@@ -87,7 +87,6 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             String applicationStart = job.optString("applicationStart", "N/A");
             String applicationEnd = job.optString("applicationEnd", "N/A");
 
-
             // Set employer details to the corresponding TextViews
 
 

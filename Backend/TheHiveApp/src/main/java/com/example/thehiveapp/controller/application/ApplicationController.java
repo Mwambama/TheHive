@@ -3,14 +3,8 @@ package com.example.thehiveapp.controller.application;
 import com.example.thehiveapp.dto.application.ApplicationDto;
 import com.example.thehiveapp.dto.application.ApplicationRequest;
 import com.example.thehiveapp.dto.application.ApplicationUpdateRequest;
-import com.example.thehiveapp.dto.authentication.CompanySignUpRequest;
-import com.example.thehiveapp.entity.application.Application;
-import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.enums.status.Status;
 import com.example.thehiveapp.service.application.ApplicationService;
-import com.example.thehiveapp.service.authentication.AuthenticationService;
-import com.example.thehiveapp.service.user.UserService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,5 +50,24 @@ public class ApplicationController {
     public String deleteApplication(@PathVariable Long id) {
         applicationService.deleteApplication(id);
         return "Application successfully deleted";
+    }
+
+    @GetMapping
+    public List<ApplicationDto> getApplicationsByJobPostingAndStatus(
+            @RequestParam(value = "jobPostingId", required = false) Long jobPostingId,
+            @RequestParam(value = "status", required = false) Status status) {
+        return applicationService.getApplicationsByJobPostingIdAndStatus(jobPostingId, status);
+    }
+
+    @PostMapping("/{id}/reject")
+    public String rejectApplication(@PathVariable Long id) {
+        applicationService.rejectApplication(id);
+        return "Application successfully rejected";
+    }
+
+    @PostMapping("/{id}/accept")
+    public String acceptApplication(@PathVariable Long id) {
+        applicationService.acceptApplication(id);
+        return "Application successfully accepted and chat created";
     }
 }

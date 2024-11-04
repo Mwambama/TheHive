@@ -1,5 +1,6 @@
 package com.example.thehiveapp.dto.application;
 
+import com.example.thehiveapp.enums.status.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +16,6 @@ public class ApplicationDto {
     private Long applicationId;
     private Long jobPostingId;
     private String jobTitle;
-    private String status;
+    private Status status;
     private LocalDateTime appliedOn;
 }

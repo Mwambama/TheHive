@@ -31,6 +31,11 @@ public class JobPostingController {
         return jobPostingService.getJobPostings();
     }
 
+    @GetMapping("/student/{studentId}")
+    public List<JobPostingDto> getJobPostingsForStudent(@PathVariable Long studentId) {
+        return jobPostingService.getJobPostingsForStudent(studentId);
+    }
+
     @PostMapping
     public JobPostingDto createJobPosting(@RequestBody JobPostingDto dto) {
         return jobPostingService.createJobPosting(dto);

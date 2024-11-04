@@ -22,7 +22,7 @@ public class StudentServiceImpl implements StudentService{
 
     @Autowired private StudentRepository studentRepository;
     @Autowired private AddressService addressService;
-    private static String directory = "../../thehive/resumes/"; // when running through server
+    private static String directory = "/var/www/thehive/resumes/"; // when running through server
 
     public StudentServiceImpl(){}
 

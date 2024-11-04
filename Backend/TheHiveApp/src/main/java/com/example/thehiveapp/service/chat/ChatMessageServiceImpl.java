@@ -1,9 +1,8 @@
 package com.example.thehiveapp.service.chat;
 
-import com.example.thehiveapp.dto.chat.ChatDto;
 import com.example.thehiveapp.dto.chat.ChatMessageDto;
+import com.example.thehiveapp.entity.chat.Chat;
 import com.example.thehiveapp.entity.chat.ChatMessage;
-import com.example.thehiveapp.mapper.chat.ChatMapper;
 import com.example.thehiveapp.mapper.chat.ChatMessageMapper;
 import com.example.thehiveapp.repository.chat.ChatMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +16,8 @@ import java.util.stream.Collectors;
 public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Autowired private ChatMessageRepository chatMessageRepository;
+    @Autowired private ChatService chatService;
     @Autowired private ChatMessageMapper chatMessageMapper;
-    @Autowired private ChatMapper chatMapper;
 
     public ChatMessageServiceImpl() {}
 
@@ -64,8 +63,9 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
-    public List<ChatMessageDto> getChatMessagesByChat(ChatDto chat) {
-        return chatMessageRepository.findAllByChat(chatMapper.toEntity(chat)).stream().map(
+    public List<ChatMessageDto> getChatMessagesByChatId(Long chatId) {
+        Chat chat = chatService.getChatById(chatId);
+        return chatMessageRepository.findAllByChat(chat).stream().map(
                 chatMessageMapper::toDto).collect(Collectors.toList()
         );
     }
