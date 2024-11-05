@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.hiveeapp.JobApplicationFragment;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.student_user.chat.ChatListActivity;
@@ -61,6 +63,11 @@ public class StudentMainActivity extends AppCompatActivity {
             return false;
         });
 
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, new JobApplicationFragment())
+                .commit();
+
+
         bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
 
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
@@ -77,7 +84,7 @@ public class StudentMainActivity extends AppCompatActivity {
 
         // Initialize RecyclerView and adapter
         recyclerView = findViewById(R.id.recyclerView);
-        jobSwipeAdapter = new JobSwipeAdapter(jobPostings, this, userId);
+        jobSwipeAdapter = new JobSwipeAdapter(this, userId);
         recyclerView.setAdapter(jobSwipeAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
