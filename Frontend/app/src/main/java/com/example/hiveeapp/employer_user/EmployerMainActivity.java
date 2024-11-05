@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.chat.EmployerChatListActivity;
+import com.example.hiveeapp.employer_user.display.AddJobActivity;
+import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
 import com.example.hiveeapp.employer_user.setting.EmployerProfileActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -60,11 +62,11 @@ public class EmployerMainActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.nav_add_job) {
                 Log.d(TAG, "Navigating to Add Job");
-                // Add functionality to navigate to Add Job activity
+                navigateToAddJob();
                 return true;
             } else if (itemId == R.id.nav_tracking) {
                 Log.d(TAG, "Navigating to Tracking");
-                // Add functionality to navigate to Tracking activity
+                navigateToTracking();
                 return true;
             } else {
                 return false;
@@ -98,6 +100,20 @@ public class EmployerMainActivity extends AppCompatActivity {
         intent.putExtra("userId", userId);
         intent.putExtra("email", userEmail);
         intent.putExtra("password", userPassword);
+        startActivity(intent);
+    }
+
+    private void navigateToAddJob(){
+        Log.d(TAG, "Navigating to AddJobActivity");
+        Intent intent = new Intent(EmployerMainActivity.this, AddJobActivity.class);
+        intent.putExtra("USER_ID", userId);
+        startActivity(intent);
+    }
+
+    private void navigateToTracking(){
+        Log.d(TAG, "Navigating to TrackingActivity");
+        Intent intent = new Intent(EmployerMainActivity.this, TrackingApplicationActivity.class);
+        intent.putExtra("USER_ID", userId);
         startActivity(intent);
     }
 
