@@ -48,8 +48,8 @@ public class StudentApi {
         headers.put("Content-Type", "application/json");
 
         // Mocked username and password for testing purposes
-        String username = "iiik@gmail.com";
-        String password = "Anondwdb##444fedo";
+        String username = "teststudent1@example.com";
+        String password = "TestStudent1234@";
 
         String credentials = username + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
