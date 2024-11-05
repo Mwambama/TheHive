@@ -9,9 +9,16 @@
     <color name="medium">#FFA500</color>
     <color name="strong">#008000</color>
     <color name="gray">#808080</color>
-    <!-- for signup buttons -->
     <color name="light_blue">#ADD8E6</color>
-    <!-- Purple 700 color definition -->
-    <color name="purple_700">#D32F2F</color> <!-- This is a red color -->
+    <color name="purple_700">#D32F2F</color>
+    <color name="your_primary_color">#6200EE</color>
+    <color name="your_primary_dark_color">#3700B3</color>
+    <color name="your_accent_color">#03DAC5</color>
+    <color name="accentColor">#03DAC5</color>
+    <color name="primaryColor">#6200EE</color>
+    <color name="primaryDarkColor">#3700B3</color>
+    <color name="secondaryColor">#03DAC5</color>
+    <color name="secondaryDarkColor">#018786</color>
+    <color name="backgroundColor">#FFFFFF</color>
 </resources>
 
