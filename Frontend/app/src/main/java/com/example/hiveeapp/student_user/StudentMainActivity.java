@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager2.widget.ViewPager2;
-
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.student_user.chat.ChatListActivity;
@@ -27,7 +27,7 @@ public class StudentMainActivity extends AppCompatActivity {
     private int userId;
     private String userEmail;
     private String userPassword;
-    private ViewPager2 viewPager;
+    private RecyclerView recyclerView;
     private JobSwipeAdapter jobSwipeAdapter;
     private List<JobPosting> jobPostings = new ArrayList<>();
     private BottomNavigationView bottomNavigationView;
@@ -46,7 +46,6 @@ public class StudentMainActivity extends AppCompatActivity {
             return;
         }
 
-        // Set up bottom navigation view listener
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_profile) {
@@ -55,7 +54,6 @@ public class StudentMainActivity extends AppCompatActivity {
             } else if (itemId == R.id.navigation_apply) {
                 return true;
             } else if (itemId == R.id.navigation_chat) {
-                // Navigate to ChatListActivity
                 Intent intent = new Intent(StudentMainActivity.this, ChatListActivity.class);
                 startActivity(intent);
                 return true;
@@ -63,60 +61,36 @@ public class StudentMainActivity extends AppCompatActivity {
             return false;
         });
 
-        // Set the initial selected item
         bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
 
-        // Retrieve userId, email, and password from SharedPreferences
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
         userEmail = preferences.getString("email", "");
         userPassword = preferences.getString("password", "");
 
-        Log.d(TAG, "Retrieved userId from SharedPreferences: " + userId);
-        Log.d(TAG, "Retrieved email from SharedPreferences: " + userEmail);
-
         if (userId == -1 || userEmail.isEmpty() || userPassword.isEmpty()) {
             Toast.makeText(this, "User credentials not found. Please log in again.", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "User credentials are missing. Redirecting to login screen.");
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
 
-        // Initialize ViewPager and adapter
-        viewPager = findViewById(R.id.viewPager);
-        jobSwipeAdapter = new JobSwipeAdapter(jobPostings, this);
-        viewPager.setAdapter(jobSwipeAdapter);
-        viewPager.setUserInputEnabled(false); // Disable backward swipe
+        // Initialize RecyclerView and adapter
+        recyclerView = findViewById(R.id.recyclerView);
+        jobSwipeAdapter = new JobSwipeAdapter(jobPostings, this, userId);
+        recyclerView.setAdapter(jobSwipeAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         loadJobPostings();
 
-        // Handle ViewPager swipe listener
-        viewPager.setOnTouchListener((v, event) -> {
-            float startX = 0, endX;
-
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    startX = event.getX();
-                    break;
-                case MotionEvent.ACTION_UP:
-                    endX = event.getX();
-                    int position = viewPager.getCurrentItem();
-
-                    if (startX < endX) {  // Swipe Right to apply for job
-                        applyForJob(position);
-                    }
-                    viewPager.setCurrentItem(position + 1); // Move to the next job
-                    break;
-            }
-            return true;
-        });
+        // Attach ItemTouchHelper for swipe functionality
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(jobSwipeAdapter.getSwipeCallback());
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Ensure that "Apply" is selected when returning to this activity
         bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
     }
 
@@ -131,20 +105,9 @@ public class StudentMainActivity extends AppCompatActivity {
         );
     }
 
-    private void applyForJob(int position) {
-        if (position < jobPostings.size()) {
-            JobPosting job = jobPostings.get(position);
-            StudentApi.applyForJob(this, userId, job.getJobPostingId(),
-                    response -> Toast.makeText(this, response, Toast.LENGTH_SHORT).show(),
-                    error -> Toast.makeText(this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show()
-            );
-        }
-    }
-
     private void navigateToProfile() {
         Intent intent = new Intent(StudentMainActivity.this, StudentProfileViewActivity.class);
         intent.putExtra("USER_ID", userId);
-        Log.d(TAG, "Navigating to StudentProfileViewActivity with userId: " + userId);
         startActivity(intent);
     }
 }

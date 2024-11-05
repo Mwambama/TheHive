@@ -114,5 +114,6 @@
             android:text="Application End: YYYY-MM-DD"
             android:textColor="#333333"
             android:textSize="14sp" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>
