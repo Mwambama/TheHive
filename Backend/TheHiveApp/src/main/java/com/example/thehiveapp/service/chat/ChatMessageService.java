@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ChatMessageService {
     List<ChatMessageDto> getChatMessages();
+    List<ChatMessageDto> getUnreadChatMessagesByUserId(Long userId);
     ChatMessageDto createChatMessage(ChatMessageDto request);
     ChatMessageDto getChatMessageById(Long id);
     ChatMessageDto updateChatMessage(ChatMessageDto request);

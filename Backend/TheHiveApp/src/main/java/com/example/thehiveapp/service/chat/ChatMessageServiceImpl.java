@@ -3,8 +3,10 @@ package com.example.thehiveapp.service.chat;
 import com.example.thehiveapp.dto.chat.ChatMessageDto;
 import com.example.thehiveapp.entity.chat.Chat;
 import com.example.thehiveapp.entity.chat.ChatMessage;
+import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.mapper.chat.ChatMessageMapper;
 import com.example.thehiveapp.repository.chat.ChatMessageRepository;
+import com.example.thehiveapp.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Autowired private ChatMessageRepository chatMessageRepository;
+    @Autowired private UserRepository userRepository;
     @Autowired private ChatService chatService;
     @Autowired private ChatMessageMapper chatMessageMapper;
 
@@ -24,6 +27,16 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public List<ChatMessageDto> getChatMessages() {
         return chatMessageRepository.findAll().stream()
+                .map(chatMessageMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ChatMessageDto> getUnreadChatMessagesByUserId(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException("User not found with id " + userId));
+        List<ChatMessage> unreadMessages = chatMessageRepository.findByUserAndReadFalse(user);
+        return unreadMessages.stream()
                 .map(chatMessageMapper::toDto)
                 .collect(Collectors.toList());
     }

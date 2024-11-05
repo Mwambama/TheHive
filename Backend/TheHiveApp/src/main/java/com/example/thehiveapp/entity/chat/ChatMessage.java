@@ -39,4 +39,7 @@ public class ChatMessage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reply_to_id")
     private ChatMessage replyTo;
+
+    @Column(name = "read")
+    private Boolean read;
 }

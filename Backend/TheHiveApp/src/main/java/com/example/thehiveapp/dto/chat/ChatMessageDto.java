@@ -29,4 +29,7 @@ public class ChatMessageDto {
 
     @NotNull
     private Long replyToId;
+
+    @NotNull
+    private Boolean read;
 }
