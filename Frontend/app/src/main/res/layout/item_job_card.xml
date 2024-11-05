@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="696dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -24,16 +24,6 @@
             android:textColor="#333333"
             android:textSize="18sp"
             android:textStyle="bold" />
-
-        <!-- Company Name or Employer ID -->
-        <TextView
-            android:id="@+id/company"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Employer ID: 123"
-            android:textColor="#555555"
-            android:textSize="16sp" />
 
         <!-- Job Description -->
         <TextView

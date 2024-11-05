@@ -63,6 +63,11 @@
         <activity android:name=".student_user.chat.ChatActivity" android:exported="true"/>
         <activity android:name=".student_user.chat.ChatListActivity" android:exported="true"/>
 
+        <!-- Employer Chat Activity -->
+        <activity android:name=".employer_user.chat.EmployerChatActivity" android:exported="true"/>
+        <activity android:name=".employer_user.chat.EmployerChatListActivity" />
+
+
         <activity android:name=".student_user.swipe.ApplyActivity" android:exported="true"/>
 
         <!-- Admin Activity -->

@@ -20,6 +20,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.company_user.CompanyMainActivity;
+import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.registration.forgotPassword.ForgotPasswordActivity;
 import com.example.hiveeapp.registration.signup.signupActivity;
 import com.example.hiveeapp.student_user.StudentMainActivity;
@@ -56,8 +57,12 @@ public class LoginActivity extends AppCompatActivity {
         setListeners();
 
         // Test purpose
-        emailField.setText("teststudent1@example.com");
-        passwordField.setText("TestStudent1234@");
+//        emailField.setText("teststudent1@example.com");
+//        passwordField.setText("TestStudent1234@");
+
+        //Test purpose
+        emailField.setText("employerTest@aol.com");
+        passwordField.setText("Test1234@");
     }
 
     private void initializeViews() {
@@ -178,8 +183,9 @@ public class LoginActivity extends AppCompatActivity {
 
         switch (role) {
             case "COMPANY":
-                Intent companyIntent = new Intent(LoginActivity.this, CompanyMainActivity.class);
-                startActivity(companyIntent);
+            case "EMPLOYER":
+                Intent employerIntent = new Intent(LoginActivity.this, EmployerMainActivity.class);
+                startActivity(employerIntent);
                 overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
                 finish();
                 break;
