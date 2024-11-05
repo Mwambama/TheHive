@@ -55,7 +55,6 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
         return jobPostings.size();
     }
 
-    // Load job postings and exclude already applied jobs
     private void loadJobPostings() {
         String jobUrl = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
         String appliedUrl = "http://coms-3090-063.class.las.iastate.edu:8080/applications/student?studentId=" + studentId;

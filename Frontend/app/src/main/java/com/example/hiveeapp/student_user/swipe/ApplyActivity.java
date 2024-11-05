@@ -16,8 +16,8 @@ import org.json.JSONObject;
 public class ApplyActivity extends AppCompatActivity {
 
     private static final String TAG = "ApplyActivity";
-    private int studentId;  // Set this from intent or shared preferences
-    private int jobPostingId;  // Set this from intent
+    private int studentId;
+    private int jobPostingId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

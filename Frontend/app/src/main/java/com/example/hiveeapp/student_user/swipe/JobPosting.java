@@ -12,7 +12,7 @@ public class JobPosting {
     private String applicationStart;
     private String applicationEnd;
     private int employerId;
-    private String companyName; // New field for the company name
+    private String companyName;
 
     public JobPosting(int jobPostingId, String title, String description, String summary, double salary,
                       String jobType, double minimumGpa, String jobStart, String applicationStart, String applicationEnd, int employerId, String companyName) {
@@ -48,5 +48,5 @@ public class JobPosting {
     public String getApplicationStart() { return applicationStart; }
     public String getApplicationEnd() { return applicationEnd; }
     public int getEmployerId() { return employerId; }
-    public String getCompanyName() { return companyName; } // Getter for companyName
+    public String getCompanyName() { return companyName; }
 }
