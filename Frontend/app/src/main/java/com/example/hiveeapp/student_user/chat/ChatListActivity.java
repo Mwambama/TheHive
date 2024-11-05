@@ -89,7 +89,6 @@ public class ChatListActivity extends AppCompatActivity {
             return false;
         });
 
-        // Set the current selected item to "Chat"
         bottomNavigationView.setSelectedItemId(R.id.navigation_chat);
     }
 
@@ -151,7 +150,7 @@ public class ChatListActivity extends AppCompatActivity {
                             Log.e(TAG, "Error parsing application JSON: " + e.getMessage());
                         }
                     }
-                    loadChats(); // Load chats after applications
+                    loadChats();
                 },
                 error -> Toast.makeText(this, "Failed to load applications", Toast.LENGTH_SHORT).show()
         );

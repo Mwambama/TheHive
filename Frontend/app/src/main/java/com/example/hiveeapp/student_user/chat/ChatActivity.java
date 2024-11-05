@@ -145,7 +145,7 @@ public class ChatActivity extends AppCompatActivity {
             // Only send if WebSocket is connected
             if (WebSocketManager.getInstance().isConnected()) {
                 WebSocketManager.getInstance().sendMessage(formattedMessage);
-                displaySentMessage(message); // Display the message instantly
+                displaySentMessage(message);
             } else {
                 Log.d(TAG, "WebSocket not connected. Cannot send message.");
                 Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
@@ -158,7 +158,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
     private void displaySentMessage(String message) {
-        messageList.add(new Message(message, true)); // 'true' indicates it's sent by the user
+        messageList.add(new Message(message, true));
         messageAdapter.notifyItemInserted(messageList.size() - 1);
         chatRecyclerView.scrollToPosition(messageList.size() - 1);
     }
@@ -178,14 +178,13 @@ public class ChatActivity extends AppCompatActivity {
         } else {
             // Non-JSON message, treat as plain text
             Log.d(TAG, "Non-JSON message received: " + rawMessage);
-            messageList.add(new Message(rawMessage, false));  // 'false' indicates it's not sent by the user
+            messageList.add(new Message(rawMessage, false));
         }
 
         messageAdapter.notifyItemInserted(messageList.size() - 1);
         chatRecyclerView.scrollToPosition(messageList.size() - 1);
     }
 
-    // Helper method to check if a message is in JSON format
     private boolean isJsonMessage(String message) {
         try {
             new JSONObject(message);
