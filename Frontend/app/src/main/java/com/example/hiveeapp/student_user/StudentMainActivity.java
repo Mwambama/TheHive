@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.hiveeapp.JobApplicationFragment;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.registration.login.LoginActivity;
+import com.example.hiveeapp.student_user.application.JobApplicationFragment;
 import com.example.hiveeapp.student_user.chat.ChatListActivity;
 import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
 import com.example.hiveeapp.student_user.setting.StudentApi;
@@ -116,5 +116,9 @@ public class StudentMainActivity extends AppCompatActivity {
         Intent intent = new Intent(StudentMainActivity.this, StudentProfileViewActivity.class);
         intent.putExtra("USER_ID", userId);
         startActivity(intent);
+    }
+
+    public int getUserId() {
+        return userId;
     }
 }
