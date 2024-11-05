@@ -36,7 +36,6 @@ public class ChatListActivity extends AppCompatActivity {
     private int userId;
     private String userEmail;
     private String userPassword;
-    private Map<Integer, Integer> jobPostingMap = new HashMap<>();
     private Map<Integer, String> applicationJobTitles = new HashMap<>();
 
     @Override
@@ -49,12 +48,8 @@ public class ChatListActivity extends AppCompatActivity {
         userEmail = preferences.getString("email", "");
         userPassword = preferences.getString("password", "");
 
-        Log.d(TAG, "Retrieved userId from SharedPreferences: " + userId);
-        Log.d(TAG, "Retrieved email from SharedPreferences: " + userEmail);
-
         if (userId == -1 || userEmail.isEmpty() || userPassword.isEmpty()) {
             Toast.makeText(this, "User credentials not found. Please log in again.", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "User credentials are missing. Redirecting to login screen.");
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
@@ -63,8 +58,7 @@ public class ChatListActivity extends AppCompatActivity {
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        loadJobPostings();
-
+        loadApplicationsAndChats();
         setupBottomNavigationView();
     }
 
@@ -77,7 +71,6 @@ public class ChatListActivity extends AppCompatActivity {
                 finish();
                 return true;
             } else if (itemId == R.id.navigation_profile) {
-                // Navigate to StudentProfileViewActivity with user information
                 Intent intent = new Intent(ChatListActivity.this, StudentProfileViewActivity.class);
                 intent.putExtra("USER_ID", userId);
                 startActivity(intent);
@@ -90,51 +83,6 @@ public class ChatListActivity extends AppCompatActivity {
         });
 
         bottomNavigationView.setSelectedItemId(R.id.navigation_chat);
-    }
-
-    private void loadJobPostings() {
-        String url = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
-
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
-                response -> {
-                    try {
-                        for (int i = 0; i < response.length(); i++) {
-                            JSONObject jobJson = response.getJSONObject(i);
-                            int jobPostingId = jobJson.getInt("jobPostingId");
-                            int employerId = jobJson.optInt("employerId", -1);
-
-                            if (employerId != -1) {
-                                jobPostingMap.put(employerId, jobPostingId);
-                            } else {
-                                Log.e(TAG, "Missing employerId for jobPostingId: " + jobPostingId);
-                            }
-                        }
-                        loadApplicationsAndChats();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, "Error parsing job postings", Toast.LENGTH_SHORT).show();
-                    }
-                },
-                error -> Toast.makeText(this, "Failed to load job postings", Toast.LENGTH_SHORT).show()
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                return getAuthorizationHeaders();
-            }
-        };
-
-        VolleySingleton.getInstance(this).addToRequestQueue(request);
-    }
-
-    private Map<String, String> getAuthorizationHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-
-        String credentials = userEmail + ":" + userPassword;
-        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        headers.put("Authorization", auth);
-
-        return headers;
     }
 
     private void loadApplicationsAndChats() {
@@ -157,19 +105,55 @@ public class ChatListActivity extends AppCompatActivity {
     }
 
     private void loadChats() {
-        StudentApi.getChats(this, chatList -> {
-            List<ChatDto> matchedChats = new ArrayList<>();
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/chat";
 
-            for (ChatDto chat : chatList) {
-                int jobPostingId = chat.getJobPostingId();
-                String jobTitle = applicationJobTitles.getOrDefault(jobPostingId, "Unknown Title");
-                chat.setJobTitle(jobTitle);
-                matchedChats.add(chat);
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    List<ChatDto> matchedChats = new ArrayList<>();
+
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject chatJson = response.getJSONObject(i);
+                            int chatId = chatJson.getInt("chatId");
+                            int employerId = chatJson.getInt("employerId");
+                            int studentId = chatJson.getInt("studentId");
+                            int jobPostingId = chatJson.optInt("jobPostingId", -1);
+
+                            // Filter chats by studentId (current user's ID)
+                            if (studentId == userId) {
+                                String jobTitle = applicationJobTitles.getOrDefault(jobPostingId, "Unknown Title");
+                                ChatDto chat = new ChatDto(chatId, employerId, studentId, jobPostingId, jobTitle);
+                                matchedChats.add(chat);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing chat JSON: " + e.getMessage());
+                        Toast.makeText(this, "Error loading chats", Toast.LENGTH_SHORT).show();
+                    }
+
+                    chatListAdapter = new ChatListAdapter(matchedChats, this::openChat, this);
+                    chatRecyclerView.setAdapter(chatListAdapter);
+                },
+                error -> Toast.makeText(this, "Failed to load chats", Toast.LENGTH_SHORT).show()
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return getAuthorizationHeaders();
             }
+        };
 
-            chatListAdapter = new ChatListAdapter(matchedChats, this::openChat, this);
-            chatRecyclerView.setAdapter(chatListAdapter);
-        }, error -> Toast.makeText(this, "Failed to load chats", Toast.LENGTH_SHORT).show());
+        VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    private Map<String, String> getAuthorizationHeaders() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        String credentials = userEmail + ":" + userPassword;
+        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        headers.put("Authorization", auth);
+
+        return headers;
     }
 
     private void openChat(ChatDto chat) {
