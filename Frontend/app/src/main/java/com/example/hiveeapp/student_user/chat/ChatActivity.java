@@ -1,7 +1,6 @@
 package com.example.hiveeapp.student_user.chat;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Base64;
@@ -13,21 +12,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.student_user.chat.message.Message;
 import com.example.hiveeapp.student_user.chat.message.MessageAdapter;
-import com.example.hiveeapp.student_user.setting.StudentApi;
-import com.example.hiveeapp.volley.VolleySingleton;
 import com.example.hiveeapp.websocket.WebSocketManager;
 import com.example.hiveeapp.websocket.WebSocketListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.java_websocket.handshake.ServerHandshake;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,8 +60,8 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
 
-        setupUI();  // Initialize UI
-        connectWebSocket();  // Set up WebSocket
+        setupUI();
+        connectWebSocket();
     }
 
     private void setupUI() {
@@ -88,7 +81,6 @@ public class ChatActivity extends AppCompatActivity {
             String messageText = msgEtx.getText().toString().trim();
             if (!messageText.isEmpty() && chatId != -1) {
                 sendMessage(chatId, messageText, userId);
-                displaySentMessage(messageText); // Display the sent message
                 msgEtx.setText(""); // Clear input field
             } else {
                 Toast.makeText(ChatActivity.this, "Message cannot be empty or invalid chat ID", Toast.LENGTH_SHORT).show();
@@ -96,52 +88,12 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private Map<String, String> getAuthorizationHeaders(Context context) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-
-        SharedPreferences preferences = context.getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
-        String username = preferences.getString("email", "");
-        String password = preferences.getString("password", "");
-
-        if (!username.isEmpty() && !password.isEmpty()) {
-            String credentials = username + ":" + password;
-            String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-            headers.put("Authorization", auth);
-        } else {
-            Log.e(TAG, "User credentials are missing. Cannot set Authorization header.");
+    private void connectWebSocket() {
+        if (WebSocketManager.getInstance().isConnected()) {
+            Log.d(TAG, "WebSocket already connected.");
+            return;
         }
 
-        return headers;
-    }
-
-    private void fetchChatId(Context context, int studentId, int jobPostingId) {
-        StudentApi.getChats(context, new Response.Listener<List<ChatDto>>() {
-            @Override
-            public void onResponse(List<ChatDto> chatList) {
-                boolean found = false;
-                for (ChatDto chat : chatList) {
-                    Log.d(TAG, "Processing chat: chatId=" + chat.getChatId() + ", studentId=" + chat.getStudentId() + ", employerId=" + chat.getEmployerId());
-                    if (chat.getStudentId() == studentId && chat.getJobPostingId() == jobPostingId) {
-                        chatId = chat.getChatId();
-                        found = true;
-                        Log.d(TAG, "Found matching chat with chatId=" + chatId);
-                        connectWebSocket();  // Connect using the found chat ID
-                        break;
-                    }
-                }
-                if (!found) {
-                    Log.e(TAG, "No chats matched for studentId=" + studentId + " and jobPostingId=" + jobPostingId);
-                    Toast.makeText(ChatActivity.this, "No chat found for this student and job posting", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, error -> {
-            Log.e(TAG, "Error fetching chat ID: " + error.getMessage());
-            Toast.makeText(ChatActivity.this, "Failed to retrieve chat ID", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    private void connectWebSocket() {
         String webSocketUrl = generateWebSocketUrl(chatId, userEmail, userPassword);
         Log.d(TAG, "Connecting to WebSocket with URL: " + webSocketUrl);
 
@@ -180,43 +132,65 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendMessage(int chatId, String message, int userId) {
-        String formattedMessage = "{"
-                + "\"chatId\":" + chatId + ","
-                + "\"message\":\"" + message + "\","
-                + "\"userId\":" + userId
-                + "}";
+        try {
+            // Create a JSON object with the required fields
+            JSONObject messageObject = new JSONObject();
+            messageObject.put("chatId", chatId);
+            messageObject.put("message", message);
+            messageObject.put("userId", userId);
 
-        WebSocketManager.getInstance().sendMessage(formattedMessage);
+            String formattedMessage = messageObject.toString();
+            Log.d(TAG, "Sending message: " + formattedMessage);
+
+            // Only send if WebSocket is connected
+            if (WebSocketManager.getInstance().isConnected()) {
+                WebSocketManager.getInstance().sendMessage(formattedMessage);
+                displaySentMessage(message);
+            } else {
+                Log.d(TAG, "WebSocket not connected. Cannot send message.");
+                Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Error creating JSON message", e);
+            Toast.makeText(this, "Failed to send message. Please try again.", Toast.LENGTH_SHORT).show();
+        }
     }
 
+
     private void displaySentMessage(String message) {
-        messageList.add(new Message(message, true)); // 'true' indicates it's sent by the user
+        messageList.add(new Message(message, true));
         messageAdapter.notifyItemInserted(messageList.size() - 1);
         chatRecyclerView.scrollToPosition(messageList.size() - 1);
     }
 
     private void displayReceivedMessage(String rawMessage) {
-        try {
-            int jsonStartIndex = rawMessage.indexOf("{");
-
-            if (jsonStartIndex != -1) {
-                rawMessage = rawMessage.substring(jsonStartIndex);
+        if (isJsonMessage(rawMessage)) {
+            try {
                 JSONObject messageObject = new JSONObject(rawMessage);
-
                 String text = messageObject.getString("message");
                 int senderId = messageObject.getInt("userId");
-
                 boolean isSentByUser = (senderId == userId);
 
                 messageList.add(new Message(text, isSentByUser));
-                messageAdapter.notifyItemInserted(messageList.size() - 1);
-                chatRecyclerView.scrollToPosition(messageList.size() - 1);
-            } else {
-                Toast.makeText(ChatActivity.this, "Received non-JSON message: " + rawMessage, Toast.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing JSON message: " + rawMessage, e);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(ChatActivity.this, "Error parsing JSON message", Toast.LENGTH_SHORT).show();
+        } else {
+            // Non-JSON message, treat as plain text
+            Log.d(TAG, "Non-JSON message received: " + rawMessage);
+            messageList.add(new Message(rawMessage, false));
+        }
+
+        messageAdapter.notifyItemInserted(messageList.size() - 1);
+        chatRecyclerView.scrollToPosition(messageList.size() - 1);
+    }
+
+    private boolean isJsonMessage(String message) {
+        try {
+            new JSONObject(message);
+            return true;
+        } catch (JSONException ex) {
+            return false;
         }
     }
 }

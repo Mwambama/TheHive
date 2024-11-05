@@ -50,7 +50,8 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
         holder.bind(job);
     }
 
-    @Override
+
+        @Override
     public int getItemCount() {
         return jobPostings.size();
     }
@@ -136,7 +137,6 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
         public JobViewHolder(@NonNull View itemView) {
             super(itemView);
             jobTitle = itemView.findViewById(R.id.jobTitle);
-            company = itemView.findViewById(R.id.company);
             description = itemView.findViewById(R.id.description);
             summary = itemView.findViewById(R.id.summary);
             salary = itemView.findViewById(R.id.salary);
@@ -149,7 +149,6 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
 
         public void bind(JobPosting job) {
             jobTitle.setText(job.getTitle());
-            company.setText("Company: " + job.getCompanyName());
             description.setText(job.getDescription());
             summary.setText(job.getSummary());
             salary.setText("Salary: $" + job.getSalary());
