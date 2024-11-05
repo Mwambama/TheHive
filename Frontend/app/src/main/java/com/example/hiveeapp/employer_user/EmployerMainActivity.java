@@ -1,105 +1,127 @@
 package com.example.hiveeapp.employer_user;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.employer_user.display.EditJobActivity;
-import com.example.hiveeapp.employer_user.model.ChatActivity;
+import com.example.hiveeapp.employer_user.chat.EmployerChatListActivity;
+import com.example.hiveeapp.employer_user.display.AddJobActivity;
 import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
 import com.example.hiveeapp.employer_user.setting.EmployerProfileActivity;
-import com.example.hiveeapp.employer_user.setting.ViewEmployerInfoActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
-import com.example.hiveeapp.student_user.StudentMainActivity;
-import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
-public class EmployerMainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class EmployerMainActivity extends AppCompatActivity {
 
-    private Button logoutButton, viewInfoButton;
-    private TabLayout tabLayout;
-    private int userId;
     private static final String TAG = "EmployerMainActivity";
+    private int userId;
+    private String userEmail;
+    private String userPassword;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_employer_profile);
 
-        // Toolbar setup
-        MaterialToolbar topAppBar = findViewById(R.id.topAppBar);
-        topAppBar.setNavigationOnClickListener(view -> onBackPressed());
+        // Initialize BottomNavigationView
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        setupBottomNavigationView();
 
+        // Retrieve user details from SharedPreferences
+        retrieveUserDetails();
 
-        // Retrieve userId from SharedPreferences
-//        SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
-//        userId = preferences.getInt("userId", -1);
-//
-//        //  I will remove these two for now so that I do not get this message when clicking goToemployerActivty button and these messages in there
-//        Log.d(TAG, "Retrieved userId from SharedPreferences: " + userId);
-//
-//        if (userId == -1) {
-//            Toast.makeText(this, "User ID not found. Please log in again.", Toast.LENGTH_SHORT).show();
-//            Log.e(TAG, "User ID is invalid. Redirecting to login screen.");
-//        }
+        // Initialize TabLayout if necessary
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        setupTabLayout(tabLayout);
+    }
 
-        // since this does not work, try yet since it not recogning who the user is and since we are not coming the
-        // from the user LOgin page, so there is no way of knowing who the user is just yet.
-        // I can use this in the future in case I get lost when trying to find user
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
+    }
 
-        // Retrieve companyId from SharedPreferences
-//        SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
-//        // Retrieve companyId directly from the job JSONObject
-//        long employerId = job.optLong("employerId", -1);
-//        Log.d("EmployerApis", "Retrieved employerId: " + employerId);
-//
-//        if (employerId == -1) {
-//            Toast.makeText(context, "Error: employerId not found", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
-//        // Ensure jobPostingId is provided
-//        long jobPostingId = job.optLong("jobPostingId", -1);
-//        if (jobPostingId == -1) {
-//            Toast.makeText(context, "Error: Job PostingId not found", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
+    private void setupBottomNavigationView() {
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
 
-        // this feature on the top will be used for recogninzing and knowing who the user is and redirecting them to the their profile and load their profile with their sinformation
+            if (itemId == R.id.navigation_main_user_page) {
+                Log.d(TAG, "Navigating to User Page");
+                navigateToProfile();
+                return true;
+            } else if (itemId == R.id.nav_chat) {
+                Log.d(TAG, "Navigating to Chat");
+                navigateToChatList();
+                return true;
+            } else if (itemId == R.id.nav_add_job) {
+                Log.d(TAG, "Navigating to Add Job");
+                navigateToAddJob();
+                return true;
+            } else if (itemId == R.id.nav_tracking) {
+                Log.d(TAG, "Navigating to Tracking");
+                navigateToTracking();
+                return true;
+            } else {
+                return false;
+            }
+        });
+    }
 
+    private void retrieveUserDetails() {
+        SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
+        userId = preferences.getInt("userId", -1);
+        userEmail = preferences.getString("email", "");
+        userPassword = preferences.getString("password", "");
 
+        if (userId == -1 || userEmail.isEmpty() || userPassword.isEmpty()) {
+            Toast.makeText(this, "User credentials not found. Please log in again.", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        }
+    }
 
-        // Initialize views
-        tabLayout = findViewById(R.id.tabLayouts);
+    private void navigateToProfile() {
+        Log.d(TAG, "Navigating to EmployerProfileActivity");
+        Intent intent = new Intent(EmployerMainActivity.this, EmployerProfileActivity.class);
+        intent.putExtra("USER_ID", userId);
+        startActivity(intent);
+    }
 
-        // Add tabs programmatically for "Employer Info"
-        tabLayout.addTab(tabLayout.newTab().setText("Main Page"));
-        tabLayout.addTab(tabLayout.newTab().setText("About"));
+    private void navigateToChatList() {
+        Log.d(TAG, "Navigating to EmployerChatListActivity");
+        Intent intent = new Intent(EmployerMainActivity.this, EmployerChatListActivity.class);
+        intent.putExtra("userId", userId);
+        intent.putExtra("email", userEmail);
+        intent.putExtra("password", userPassword);
+        startActivity(intent);
+    }
 
-        // Set up the tab layout listener for fragment switching
+    private void navigateToAddJob(){
+        Log.d(TAG, "Navigating to AddJobActivity");
+        Intent intent = new Intent(EmployerMainActivity.this, AddJobActivity.class);
+        intent.putExtra("USER_ID", userId);
+        startActivity(intent);
+    }
+
+    private void navigateToTracking(){
+        Log.d(TAG, "Navigating to TrackingActivity");
+        Intent intent = new Intent(EmployerMainActivity.this, TrackingApplicationActivity.class);
+        intent.putExtra("USER_ID", userId);
+        startActivity(intent);
+    }
+
+    private void setupTabLayout(TabLayout tabLayout) {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                Fragment selectedFragment;
-                switch (tab.getPosition()) {
-                    case 0:
-                        selectedFragment = new employerInfoFragment();
-                        break;
-                    default:
-                        selectedFragment = new employerInfoFragment();    // change this to the employerInfoFragment
-                }
-                loadFragment(selectedFragment);
+            public void onTabSelected(@NonNull TabLayout.Tab tab) {
+                // Handle fragment switching if needed
             }
 
             @Override
@@ -108,78 +130,5 @@ public class EmployerMainActivity extends AppCompatActivity implements BottomNav
             @Override
             public void onTabReselected(TabLayout.Tab tab) { }
         });
-
-        // Load default fragment (Employer Info) when the activity is opened
-        loadFragment(new employerInfoFragment());
-
-        logoutButton = findViewById(R.id.logout_button);
-        logoutButton.setOnClickListener(view -> logout());
-
-        viewInfoButton = findViewById(R.id.view_employer_info_button);
-        viewInfoButton.setOnClickListener(view -> {
-            Intent intent = new Intent(EmployerMainActivity.this, ViewEmployerInfoActivity.class);
-            startActivity(intent);
-        });
-
-        // Set up bottom navigation
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int itemId = item.getItemId();
-        if (itemId == R.id.navigation_main_user_page) {
-
-            // this works for the long profile with address that will be fixed lated fully
-            navigateToProfile();
-            // Handle home navigation
-            return true;
-        } else if (itemId == R.id.nav_tracking) {
-            // Navigate to Tracking Page
-            startActivity(new Intent(this, TrackingApplicationActivity.class));
-            return true;
-        } else if (itemId == R.id.nav_add_job) {
-            // Navigate to Add Job Page
-            startActivity(new Intent(this, EditJobActivity.class));
-            return true;
-        } else if (itemId == R.id.nav_chat) {
-            // Navigate to Chat Page
-            startActivity(new Intent(this, ChatActivity.class));
-            return true;
-        }
-        return false;
-    }
-
-    private void navigateToProfile() {
-        Intent intent = new Intent(EmployerMainActivity.this, EmployerProfileActivity.class);
-        intent.putExtra("USER_ID", userId);
-        Log.d(TAG, "Navigating to StudentProfileViewActivity with userId: " + userId);
-        startActivity(intent);
-    }
-
-
-    // this works for the long profile with address that will be fixed lated fully | for the secondemployerApi that is uncommented
-//    private void navigateToProfile() {
-//        Intent intent = new Intent(EmployerMainActivity.this, EmployerProfileActivity.class);
-//        intent.putExtra("USER_ID", userId);
-//        Log.d(TAG, "Navigating to StudentProfileViewActivity with userId: " + userId);
-//        startActivity(intent);
-//    }
-
-    // Log out of the page
-    private void logout() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
-    }
-
-    // Helper method to load fragments into the frame layout
-    private void loadFragment(Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frameLayout, fragment)
-                .commit();
     }
 }

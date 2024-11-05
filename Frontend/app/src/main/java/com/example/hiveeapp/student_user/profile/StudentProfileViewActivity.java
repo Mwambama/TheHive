@@ -103,7 +103,6 @@ public class StudentProfileViewActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Redirect back to the main page instead of the previous activity
         navigateBackToMain();
     }
 
@@ -148,7 +147,6 @@ public class StudentProfileViewActivity extends AppCompatActivity {
             stateTextView.setText(address.optString("state"));
             zipCodeTextView.setText(address.optString("zipCode"));
         } else {
-            // Clear fields if no address data is available
             streetTextView.setText("");
             complementTextView.setText("");
             cityTextView.setText("");
