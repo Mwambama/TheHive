@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class ApplicationDto {
     private Long applicationId;
     private Long jobPostingId;
+    private Long studentId;
     private String jobTitle;
     private Status status;
     private LocalDateTime appliedOn;

@@ -29,6 +29,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -202,14 +204,19 @@ public class LoginActivity extends AppCompatActivity {
 
         if (error instanceof TimeoutError) {
             showToast("The request timed out. Please try again.");
+        } else if (error instanceof com.android.volley.NoConnectionError ||
+                error.getCause() instanceof UnknownHostException) {
+            showToast("No internet connection. Please check your network.");
         } else if (error.networkResponse != null) {
             handleServerError(error.networkResponse.statusCode);
         } else {
             showToast("Login failed. Please check your network connection.");
         }
 
-        // Debug: Log error details
-        Log.e(TAG, "Login error: ", error);
+        if (error.getMessage() != null) {
+            Log.e(TAG, "Error message: " + error.getMessage());
+        }
+        Log.e(TAG, "Login error details: ", error);
     }
 
     private void handleServerError(int statusCode) {
