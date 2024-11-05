@@ -40,6 +40,7 @@ public class ApplicationServiceImpl implements ApplicationService{
         return new ApplicationDto(
                 application.getApplicationId(),
                 application.getJobPosting().getJobPostingId(),
+                application.getStudent().getUserId(),
                 application.getJobPosting().getTitle(),
                 application.getStatus(),
                 application.getAppliedOn()
@@ -69,6 +70,7 @@ public class ApplicationServiceImpl implements ApplicationService{
         return applications.stream().map(app -> new ApplicationDto(
                 app.getApplicationId(),
                 app.getJobPosting().getJobPostingId(),
+                app.getStudent().getUserId(),
                 app.getJobPosting().getTitle(),
                 app.getStatus(),
                 app.getAppliedOn()
@@ -80,6 +82,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 .map(app -> new ApplicationDto(
                 app.getApplicationId(),
                 app.getJobPosting().getJobPostingId(),
+                app.getStudent().getUserId(),
                 app.getJobPosting().getTitle(),
                 app.getStatus(),
                 app.getAppliedOn()))
@@ -96,6 +99,7 @@ public class ApplicationServiceImpl implements ApplicationService{
         return new ApplicationDto(
                 updatedApplication.getApplicationId(),
                 updatedApplication.getJobPosting().getJobPostingId(),
+                updatedApplication.getStudent().getUserId(),
                 updatedApplication.getJobPosting().getTitle(),
                 updatedApplication.getStatus(),
                 updatedApplication.getAppliedOn()
@@ -121,6 +125,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 application -> new ApplicationDto(
                         application.getApplicationId(),
                         application.getJobPosting().getJobPostingId(),
+                        application.getStudent().getUserId(),
                         application.getJobPosting().getTitle(),
                         application.getStatus(),
                         application.getAppliedOn()
@@ -143,6 +148,7 @@ public class ApplicationServiceImpl implements ApplicationService{
         Chat chat = Chat.builder()
                 .studentId(application.getStudent().getUserId())
                 .employerId(application.getJobPosting().getEmployer().getUserId())
+                .jobPostingId(application.getJobPosting().getJobPostingId())
                 .build();
         chatService.createChat(chat);
     }
