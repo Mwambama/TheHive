@@ -35,4 +35,8 @@ public class ChatMessage {
 
     @Column(name = "timestamp")
     private String timestamp;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_to_id")
+    private ChatMessage replyTo;
 }

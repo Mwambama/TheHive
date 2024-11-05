@@ -26,4 +26,7 @@ public class ChatMessageDto {
 
     @NotNull
     private String timestamp;
+
+    @NotNull
+    private Long replyToId;
 }

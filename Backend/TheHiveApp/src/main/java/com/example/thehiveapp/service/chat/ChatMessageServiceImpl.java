@@ -30,9 +30,14 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     public ChatMessageDto createChatMessage(ChatMessageDto dto) {
-        ChatMessage ChatMessage = chatMessageRepository.save(chatMessageMapper.toEntity(dto));
-        dto = chatMessageMapper.toDto(ChatMessage);
-        return dto;
+        ChatMessage chatMessage = chatMessageMapper.toEntity(dto);
+        if (dto.getReplyToId() != null){
+            ChatMessage repliedMessage = chatMessageRepository.findById(dto.getReplyToId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Message being replied to not found"));
+            chatMessage.setReplyTo(repliedMessage);
+        }
+        ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
+        return chatMessageMapper.toDto(savedMessage);
     }
 
     @Override
