@@ -20,14 +20,14 @@ public class ChatMessage {
     @Column(name = "message_id")
     private Long messageId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 
     @Column(name = "message", columnDefinition = "TEXT")
     private String message;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

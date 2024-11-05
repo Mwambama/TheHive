@@ -124,6 +124,16 @@ public class ChatSocket {
     public void onMessage(Session session, @PathParam("chatId") Long chatId, String message) throws IOException {
         ChatMessageDto dto = objectMapper.readValue(message, ChatMessageDto.class);
         String email = chatRooms.get(chatId).get(session);
+        if (!dto.getChatId().equals(chatId)) {
+            session.getBasicRemote().sendText("Invalid Chat ID");
+            session.close();
+            return;
+        }
+        if (!dto.getUserId().equals(userService.getUserByEmail(email).getUserId())) {
+            session.getBasicRemote().sendText("Invalid User ID");
+            session.close();
+            return;
+        }
         logger.info("[onMessage] " + email + ": " + dto.getMessage());
         dto = chatMessageService.createChatMessage(dto);
         String jsonMessage = objectMapper.writeValueAsString(dto);
@@ -158,13 +168,11 @@ public class ChatSocket {
 
     private void sendChatHistory(String email, long chatId) {
         Session session = emailSessionMap.get(chatId).get(email);
-        chatMessageService.getChatMessagesByChatId(chatId).forEach(chatMessageDto -> {
-            try {
-                String jsonMessage = objectMapper.writeValueAsString(chatMessageDto);
-                session.getBasicRemote().sendText(jsonMessage);
-            } catch (IOException e) {
-                logger.error("[Broadcast Exception] {}", e.getMessage());
-            }
-        });
+        try {
+            String jsonMessage = objectMapper.writeValueAsString(chatMessageService.getChatMessagesByChatId(chatId));
+            session.getBasicRemote().sendText(jsonMessage);
+        } catch (IOException e) {
+            logger.error("[ChatHistory Exception] {}", e.getMessage());
+        }
     }
 }
