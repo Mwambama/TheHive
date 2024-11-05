@@ -1,6 +1,4 @@
 package com.example.hiveeapp.employer_user.applications;
-
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,6 +24,8 @@ import org.json.JSONObject;
 
 
 
+
+
 public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.ApplicationViewHolder> {
     private JSONArray applications = new JSONArray();  // Holds the list of applications
     private final Context context;  // The context in which the adapter is used
@@ -33,41 +33,48 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
     private static final String USER_PREFS = "UserPrefs";  // SharedPreferences key for user data
     private static final String ERROR_MESSAGE = "Error";  // Generic error message for Toasts
 
+    // Constructor to initialize context and editability flag
     public applicationAdapter(Context context, boolean isEditable) {
         this.context = context;
         this.isEditable = isEditable;
     }
 
+    // Sets the list of applications and refreshes the RecyclerView
     public void setApplications(JSONArray applications) {
         this.applications = applications;
         notifyDataSetChanged();
     }
 
+    // Inflates the item layout and creates a ViewHolder object
     @Override
     public ApplicationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_employer_applications, parent, false);
         return new ApplicationViewHolder(view);
     }
 
+    // Binds data to the ViewHolder for each application item
     @Override
     public void onBindViewHolder(ApplicationViewHolder holder, int position) {
         try {
-            JSONObject applications = this.applications.getJSONObject(position);
+            JSONObject application = applications.getJSONObject(position);
 
-            String jobTitle = applications.optString("jobTitle", "N/A");  // Use "N/A" directly
-            String status = applications.optString("status", "N/A");  // Use "N/A" directly
-            String appliedOn = applications.optString("appliedOn", "N/A");  // Use "N/A" directly
+            // Extract job title, status, and applied date from JSON object
+            String jobTitle = application.optString("jobTitle", "N/A");
+            String status = application.optString("status", "N/A");
+            String appliedOn = application.optString("appliedOn", "N/A");
 
+            // Set text views with extracted data
             holder.titleTextView.setText(jobTitle);
             holder.statusTextView.setText(status);
             holder.appliedOnTextView.setText(appliedOn);
 
+            // Hide or show buttons based on editability
             if (!isEditable) {
                 holder.acceptButton.setVisibility(View.GONE);
                 holder.rejectButton.setVisibility(View.GONE);
             } else {
-                setupAcceptButton(holder, applications, position);
-                setupRejectButton(holder, applications, position);
+                setupAcceptButton(holder, application, position);
+                setupRejectButton(holder, application, position);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -75,123 +82,45 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
         }
     }
 
-
-    private void setupRejectButton(ApplicationViewHolder holder, JSONObject job, int position) {
+    // Sets up the reject button with an onClick listener to reject the application
+    private void setupRejectButton(ApplicationViewHolder holder, JSONObject application, int position) {
         holder.rejectButton.setOnClickListener(v -> {
             new AlertDialog.Builder(context)
                     .setTitle("Reject Application")
                     .setMessage("Are you sure you want to reject this application?")
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        try {
-                            // Create a new JSONObject for the rejection
-                            JSONObject rejectionData = new JSONObject();
-                            rejectionData.put("jobPostingId", job.getLong("jobPostingId"));
-
-                            applicationsApi.RejectApplication(context, rejectionData,
-                                    response -> {
-                                        // Update the applications list and refresh RecyclerView
-                                        applications.remove(position);
-                                        notifyItemRemoved(position);
-                                        notifyItemRangeChanged(position, applications.length()); // Correct usage
-                                        Toast.makeText(context, "Application rejected successfully!", Toast.LENGTH_SHORT).show();
-                                    },
-                                    error -> {
-                                        // Show error message to the user
-                                        Toast.makeText(context, "Error rejecting application", Toast.LENGTH_SHORT).show();
-                                    });
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(context, "Error constructing rejection request", Toast.LENGTH_SHORT).show();
-                        }
+                        rejectApplication(application, position);
                     })
                     .setNegativeButton(android.R.string.no, null)
                     .show();
         });
     }
 
-
-
-
-    private void setupAcceptButton(ApplicationViewHolder holder, JSONObject job, int position) {
+    // Sets up the accept button with an onClick listener to accept the application
+    private void setupAcceptButton(ApplicationViewHolder holder, JSONObject application, int position) {
         holder.acceptButton.setOnClickListener(v -> {
-            showEditBottomSheet(job, position, "Accepted");
+            new AlertDialog.Builder(context)
+                    .setTitle("Accept Application")
+                    .setMessage("Are you sure you want to accept this application?")
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                        acceptApplication(application, position);
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .show();
         });
     }
 
-//    private void setupRejectButton(ApplicationViewHolder holder, JSONObject job, int position) {
-//        holder.rejectButton.setOnClickListener(v -> {
-//            new AlertDialog.Builder(context)
-//                    .setTitle("Reject Application")
-//                    .setMessage("Are you sure you want to reject this application?")
-//                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-//                        try {
-//                            long jobId = job.getLong("jobPostingId");
-//                            applicationsApi.RejectApplication(context, jobId,
-//                                    response -> {
-//                                        applications.remove(position);
-//                                        notifyItemRemoved(position);
-//                                        notifyItemRangeChanged(position, applications.length());
-//                                        showToast("Application rejected successfully");
-//                                    },
-//                                    error -> showToast("Error rejecting application: " + error.getMessage()));
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            showToast(ERROR_MESSAGE + ": " + e.getMessage());
-//                        }
-//                    })
-//                    .setNegativeButton(android.R.string.no, null)
-//                    .show();
-//        });
-//    }
-
-    private void showEditBottomSheet(JSONObject job, int position, String action) {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
-        View bottomSheetView = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_employer_application, null);
-
-        // Declare the EditText fields and Buttons
-        EditText editJobTitle = bottomSheetView.findViewById(R.id.editJobTitle);
-        EditText editStatus = bottomSheetView.findViewById(R.id.editStatus);
-        EditText editAppliedOn = bottomSheetView.findViewById(R.id.editAppliedOn);
-        View acceptButton = bottomSheetView.findViewById(R.id.acceptButton);
-        View rejectButton = bottomSheetView.findViewById(R.id.rejectButton);
-
-        // Populate the fields with existing job data
-        editJobTitle.setText(job.optString("jobTitle", ""));
-        editStatus.setText(action); // Set the status based on the action (Accepted or Rejected)
-        editAppliedOn.setText(job.optString("appliedOn", ""));
-
-        acceptButton.setOnClickListener(v -> {
-            // Use the acceptApplication method
-            acceptApplication(job, position, editJobTitle, editAppliedOn);
-            bottomSheetDialog.dismiss();
-        });
-
-        rejectButton.setOnClickListener(v -> {
-            // Use the rejectApplication method
-            rejectApplication(job, position, editJobTitle, editAppliedOn);
-            bottomSheetDialog.dismiss();
-        });
-
-        bottomSheetDialog.setContentView(bottomSheetView);
-        bottomSheetDialog.show();  // Show the dialog
-    }
-
-    private void acceptApplication(JSONObject job, int position, EditText jobTitleField, EditText appliedOnField) {
+    // Handles accepting an application by sending a request to the backend
+    private void acceptApplication(JSONObject application, int position) {
         try {
-            long jobId = job.getLong("jobPostingId");
-            JSONObject acceptedJob = new JSONObject();
-            acceptedJob.put("jobTitle", jobTitleField.getText().toString());
-            acceptedJob.put("status", "ACCEPTED");
-            acceptedJob.put("appliedOn", appliedOnField.getText().toString());
+            long applicationId = application.getLong("applicationId");
 
-            applicationsApi.AcceptApplication(context, acceptedJob,
+            com.example.hiveeapp.employer_user.applications.applicationsApi.AcceptApplication(context, applicationId,
                     response -> {
-                        try {
-                            applications.put(position, acceptedJob); // Update the local applications array
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                        notifyItemChanged(position);
+                        // Remove the application from the list and refresh the adapter
+                        applications.remove(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, applications.length());
                         Toast.makeText(context, "Application accepted successfully!", Toast.LENGTH_SHORT).show();
                     },
                     error -> {
@@ -204,19 +133,18 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
             Toast.makeText(context, "Error constructing acceptance request", Toast.LENGTH_SHORT).show();
         }
     }
-    private void rejectApplication(JSONObject job, int position, EditText jobTitleField, EditText appliedOnField) {
-        try {
-            long applicationId = job.getLong("jobPostingId");
-            JSONObject rejectedJob = new JSONObject();
-            rejectedJob.put("jobTitle", jobTitleField.getText().toString());
-            rejectedJob.put("status", "REJECTED");
-            rejectedJob.put("appliedOn", appliedOnField.getText().toString());
 
-            applicationsApi.RejectApplication(context, rejectedJob,
+    // Handles rejecting an application by sending a request to the backend
+    private void rejectApplication(JSONObject application, int position) {
+        try {
+            long applicationId = application.getLong("applicationId");
+
+            com.example.hiveeapp.employer_user.applications.applicationsApi.RejectApplication(context, applicationId,
                     response -> {
+                        // Remove the application from the list and refresh the adapter
                         applications.remove(position);
                         notifyItemRemoved(position);
-                        notifyItemRangeChanged(position, applications.length()); // Correct usage
+                        notifyItemRangeChanged(position, applications.length());
                         Toast.makeText(context, "Application rejected successfully!", Toast.LENGTH_SHORT).show();
                     },
                     error -> {
@@ -230,16 +158,18 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
         }
     }
 
-
+    // Returns the total number of application items
     @Override
     public int getItemCount() {
         return applications.length();
     }
 
+    // Displays a toast message with the provided text
     private void showToast(String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
+    // ViewHolder class to hold and recycle views as they are scrolled off screen
     static class ApplicationViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
         TextView statusTextView;
@@ -247,6 +177,7 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
         Button acceptButton;
         Button rejectButton;
 
+        // Constructor to initialize the view components
         ApplicationViewHolder(View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.jobTitleTextView);
@@ -257,6 +188,186 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
         }
     }
 }
+
+
+
+
+
+// this works
+
+//
+//
+//public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.ApplicationViewHolder> {
+//    private JSONArray applications = new JSONArray();  // Holds the list of applications
+//    private final Context context;  // The context in which the adapter is used
+//    private final boolean isEditable;  // Indicates whether the list is editable
+//    private static final String USER_PREFS = "UserPrefs";  // SharedPreferences key for user data
+//    private static final String ERROR_MESSAGE = "Error";  // Generic error message for Toasts
+//
+//    // Constructor to initialize context and editability flag
+//    public applicationAdapter(Context context, boolean isEditable) {
+//        this.context = context;
+//        this.isEditable = isEditable;
+//    }
+//
+//    // Sets the list of applications and refreshes the RecyclerView
+//    public void setApplications(JSONArray applications) {
+//        this.applications = applications;
+//        notifyDataSetChanged();
+//    }
+//
+//    // Inflates the item layout and creates a ViewHolder object
+//    @Override
+//    public ApplicationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+//        View view = LayoutInflater.from(context).inflate(R.layout.item_employer_applications, parent, false);
+//        return new ApplicationViewHolder(view);
+//    }
+//
+//    // Binds data to the ViewHolder for each application item
+//    @Override
+//    public void onBindViewHolder(ApplicationViewHolder holder, int position) {
+//        try {
+//            JSONObject application = applications.getJSONObject(position);
+//
+//            // Extract job title, status, and applied date from JSON object
+//            String jobTitle = application.optString("jobTitle", "N/A");
+//            String status = application.optString("status", "N/A");
+//            String appliedOn = application.optString("appliedOn", "N/A");
+//
+//            // Set text views with extracted data
+//            holder.titleTextView.setText(jobTitle);
+//            holder.statusTextView.setText(status);
+//            holder.appliedOnTextView.setText(appliedOn);
+//
+//            // Hide or show buttons based on editability
+//            if (!isEditable) {
+//                holder.acceptButton.setVisibility(View.GONE);
+//                holder.rejectButton.setVisibility(View.GONE);
+//            } else {
+//                setupAcceptButton(holder, application, position);
+//                setupRejectButton(holder, application, position);
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            showToast(ERROR_MESSAGE + ": " + e.getMessage());
+//        }
+//    }
+//
+//    // Sets up the reject button with an onClick listener to reject the application
+//    private void setupRejectButton(ApplicationViewHolder holder, JSONObject application, int position) {
+//        holder.rejectButton.setOnClickListener(v -> {
+//            new AlertDialog.Builder(context)
+//                    .setTitle("Reject Application")
+//                    .setMessage("Are you sure you want to reject this application?")
+//                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+//                        rejectApplication(application, position);
+//                    })
+//                    .setNegativeButton(android.R.string.no, null)
+//                    .show();
+//        });
+//    }
+//
+//    // Sets up the accept button with an onClick listener to accept the application
+//    private void setupAcceptButton(ApplicationViewHolder holder, JSONObject application, int position) {
+//        holder.acceptButton.setOnClickListener(v -> {
+//            new AlertDialog.Builder(context)
+//                    .setTitle("Accept Application")
+//                    .setMessage("Are you sure you want to accept this application?")
+//                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+//                        acceptApplication(application, position);
+//                    })
+//                    .setNegativeButton(android.R.string.no, null)
+//                    .show();
+//        });
+//    }
+//
+//    // Handles accepting an application by sending a request to the backend
+//    private void acceptApplication(JSONObject application, int position) {
+//        try {
+//            long applicationId = application.getLong("applicationId");
+//
+//            com.example.hiveeapp.employer_user.applications.applicationsApi.AcceptApplication(context, applicationId,
+//                    response -> {
+//                        // Remove the application from the list and refresh the adapter
+//                        applications.remove(position);
+//                        notifyItemRemoved(position);
+//                        notifyItemRangeChanged(position, applications.length());
+//                        Toast.makeText(context, "Application accepted successfully!", Toast.LENGTH_SHORT).show();
+//                    },
+//                    error -> {
+//                        // Show error message to the user
+//                        Toast.makeText(context, "Error accepting application", Toast.LENGTH_SHORT).show();
+//                    }
+//            );
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Toast.makeText(context, "Error constructing acceptance request", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//
+//    // Handles rejecting an application by sending a request to the backend
+//    private void rejectApplication(JSONObject application, int position) {
+//        try {
+//            long applicationId = application.getLong("applicationId");
+//
+//            com.example.hiveeapp.employer_user.applications.applicationsApi.RejectApplication(context, applicationId,
+//                    response -> {
+//                        // Remove the application from the list and refresh the adapter
+//                        applications.remove(position);
+//                        notifyItemRemoved(position);
+//                        notifyItemRangeChanged(position, applications.length());
+//                        Toast.makeText(context, "Application rejected successfully!", Toast.LENGTH_SHORT).show();
+//                    },
+//                    error -> {
+//                        // Show error message to the user
+//                        Toast.makeText(context, "Error rejecting application", Toast.LENGTH_SHORT).show();
+//                    }
+//            );
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Toast.makeText(context, "Error constructing rejection request", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//
+//    // Returns the total number of application items
+//    @Override
+//    public int getItemCount() {
+//        return applications.length();
+//    }
+//
+//    // Displays a toast message with the provided text
+//    private void showToast(String message) {
+//        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+//    }
+//
+//    // ViewHolder class to hold and recycle views as they are scrolled off screen
+//    static class ApplicationViewHolder extends RecyclerView.ViewHolder {
+//        TextView titleTextView;
+//        TextView statusTextView;
+//        TextView appliedOnTextView;
+//        Button acceptButton;
+//        Button rejectButton;
+//
+//        // Constructor to initialize the view components
+//        ApplicationViewHolder(View itemView) {
+//            super(itemView);
+//            titleTextView = itemView.findViewById(R.id.jobTitleTextView);
+//            statusTextView = itemView.findViewById(R.id.statusTextView);
+//            appliedOnTextView = itemView.findViewById(R.id.appliedOnTextView);
+//            acceptButton = itemView.findViewById(R.id.acceptButton);
+//            rejectButton = itemView.findViewById(R.id.rejectButton);
+//        }
+//    }
+//}
+
+
+
+
+
+
+
+
+
 
 
 
