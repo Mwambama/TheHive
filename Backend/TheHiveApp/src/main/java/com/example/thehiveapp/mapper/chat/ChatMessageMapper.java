@@ -23,6 +23,7 @@ public class ChatMessageMapper {
         dto.setUserId(entity.getUser().getUserId());
         dto.setChatId(entity.getChat().getChatId());
         dto.setTimestamp(entity.getTimestamp());
+        dto.setReplyToId(entity.getReplyTo().getMessageId());
         return dto;
     }
 

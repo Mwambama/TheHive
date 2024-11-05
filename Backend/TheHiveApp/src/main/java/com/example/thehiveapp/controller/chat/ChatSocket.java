@@ -137,7 +137,6 @@ public class ChatSocket {
             session.close();
             return;
         }
-        logger.info("[onMessage] " + email + ": " + dto.getMessage());
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         logger.info("[onMessage] " + email + ": " + dto.getMessage() + " at " + time);
         dto.setTimestamp(time);
