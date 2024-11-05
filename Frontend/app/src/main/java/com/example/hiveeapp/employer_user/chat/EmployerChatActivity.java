@@ -17,12 +17,15 @@ import com.example.hiveeapp.employer_user.chat.message.MessageAdapter;
 import com.example.hiveeapp.websocket.WebSocketManager;
 import com.example.hiveeapp.websocket.WebSocketListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class EmployerChatActivity extends AppCompatActivity {
 
@@ -32,6 +35,7 @@ public class EmployerChatActivity extends AppCompatActivity {
     private Button sendBtn;
     private MessageAdapter messageAdapter;
     private List<Message> messageList;
+    private Set<Integer> receivedMessageIds; // To store received message IDs and prevent duplicates
     private int chatId = -1;
     private int userId;
     private String userEmail;
@@ -55,6 +59,7 @@ public class EmployerChatActivity extends AppCompatActivity {
             return;
         }
 
+        receivedMessageIds = new HashSet<>();
         setupUI();
         connectWebSocket();
     }
@@ -65,7 +70,7 @@ public class EmployerChatActivity extends AppCompatActivity {
         sendBtn = findViewById(R.id.sendBtn);
 
         messageList = new ArrayList<>();
-        messageAdapter = new MessageAdapter(messageList);
+        messageAdapter = new MessageAdapter(messageList, userId);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatRecyclerView.setAdapter(messageAdapter);
 
@@ -125,7 +130,8 @@ public class EmployerChatActivity extends AppCompatActivity {
 
             if (WebSocketManager.getInstance().isConnected()) {
                 WebSocketManager.getInstance().sendMessage(messageObject.toString());
-                displaySentMessage(message);
+
+                // Do not add the message locally here; wait for the server's response
             } else {
                 Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
             }
@@ -134,28 +140,50 @@ public class EmployerChatActivity extends AppCompatActivity {
         }
     }
 
-    private void displaySentMessage(String message) {
-        messageList.add(new Message(message, true));
-        messageAdapter.notifyItemInserted(messageList.size() - 1);
-        chatRecyclerView.scrollToPosition(messageList.size() - 1);
-    }
 
     private void displayReceivedMessage(String rawMessage) {
-        if (isJsonMessage(rawMessage)) {
-            try {
+        try {
+            if (rawMessage.trim().startsWith("[")) {
+                // Parse JSON array of messages
+                JSONArray messageArray = new JSONArray(rawMessage);
+                for (int i = 0; i < messageArray.length(); i++) {
+                    JSONObject messageObject = messageArray.getJSONObject(i);
+                    processIndividualMessage(messageObject);
+                }
+            } else if (rawMessage.trim().startsWith("{")) {
+                // Parse single JSON object
                 JSONObject messageObject = new JSONObject(rawMessage);
-                String text = messageObject.getString("message");
-                int senderId = messageObject.getInt("userId");
-                boolean isSentByUser = (senderId == userId);
-
-                messageList.add(new Message(text, isSentByUser));
-            } catch (JSONException e) {
-                Log.e(TAG, "Error parsing JSON message: " + rawMessage, e);
+                processIndividualMessage(messageObject);
+            } else {
+                // Handle non-JSON system message (e.g., "User joined" messages)
+                displaySystemMessage(rawMessage);
             }
-        } else {
-            messageList.add(new Message(rawMessage, false));
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing received message JSON: " + rawMessage, e);
         }
+    }
 
+    // Helper method to process each individual message JSON object
+    private void processIndividualMessage(JSONObject messageObject) throws JSONException {
+        String text = messageObject.getString("message");
+        int senderId = messageObject.getInt("userId");
+        int messageId = messageObject.getInt("messageId");
+
+        // Check if message ID is already in the set to prevent duplicates
+        if (!receivedMessageIds.contains(messageId)) {
+            boolean isSentByUser = (senderId == userId);
+            Message message = new Message(text, isSentByUser, senderId, messageId);
+            messageList.add(message);
+            receivedMessageIds.add(messageId); // Add message ID to the set
+            messageAdapter.notifyItemInserted(messageList.size() - 1);
+            chatRecyclerView.scrollToPosition(messageList.size() - 1);
+        }
+    }
+
+    // Method to display system messages (e.g., user joined)
+    private void displaySystemMessage(String systemMessage) {
+        Message message = new Message(systemMessage, false, -1, -1);
+        messageList.add(message);
         messageAdapter.notifyItemInserted(messageList.size() - 1);
         chatRecyclerView.scrollToPosition(messageList.size() - 1);
     }

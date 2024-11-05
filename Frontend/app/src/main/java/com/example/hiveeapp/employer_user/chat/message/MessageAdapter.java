@@ -15,9 +15,12 @@ import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
     private final List<Message> messages;
+    private final int currentUserId;
 
-    public MessageAdapter(List<Message> messages) {
+    // Updated constructor to accept `userId`
+    public MessageAdapter(List<Message> messages, int currentUserId) {
         this.messages = messages;
+        this.currentUserId = currentUserId;
     }
 
     @NonNull
@@ -33,15 +36,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         Message message = messages.get(position);
         holder.messageTextView.setText(message.getText());
 
-        // Align message to the left or right based on sender
+        // Align message based on sender
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.messageTextView.getLayoutParams();
-        if (message.isSentByUser()) {
+        if (message.getSenderId() == currentUserId) {
             params.addRule(RelativeLayout.ALIGN_PARENT_END);
-            holder.messageTextView.setBackgroundResource(R.drawable.background_sent_message);
+            holder.messageTextView.setBackgroundResource(R.drawable.bg_message_employer);
         } else {
             params.addRule(RelativeLayout.ALIGN_PARENT_START);
-            holder.messageTextView.setBackgroundResource(R.drawable.background_received_message);
+            holder.messageTextView.setBackgroundResource(R.drawable.bg_message_student);
         }
+
+        holder.messageTextView.setLayoutParams(params); // Apply the layout parameters
     }
 
     @Override
