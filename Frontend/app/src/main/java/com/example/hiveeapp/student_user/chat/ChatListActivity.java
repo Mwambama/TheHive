@@ -13,6 +13,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.registration.login.LoginActivity;
+import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
 import com.example.hiveeapp.student_user.swipe.ApplyActivity;
 import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.student_user.setting.StudentApi;
@@ -64,20 +65,31 @@ public class ChatListActivity extends AppCompatActivity {
 
         loadJobPostings();
 
+        setupBottomNavigationView();
+    }
+
+    private void setupBottomNavigationView() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.navigation_profile) {
-                startActivity(new Intent(this, StudentMainActivity.class));
+            if (itemId == R.id.navigation_apply) {
+                startActivity(new Intent(ChatListActivity.this, StudentMainActivity.class));
+                finish();
                 return true;
-            } else if (itemId == R.id.navigation_apply) {
-                startActivity(new Intent(this, ApplyActivity.class));
+            } else if (itemId == R.id.navigation_profile) {
+                // Navigate to StudentProfileViewActivity with user information
+                Intent intent = new Intent(ChatListActivity.this, StudentProfileViewActivity.class);
+                intent.putExtra("USER_ID", userId);
+                startActivity(intent);
+                finish();
                 return true;
             } else if (itemId == R.id.navigation_chat) {
-                return true;
+                return true; // Already in Chat screen
             }
             return false;
         });
+
+        // Set the current selected item to "Chat"
         bottomNavigationView.setSelectedItemId(R.id.navigation_chat);
     }
 

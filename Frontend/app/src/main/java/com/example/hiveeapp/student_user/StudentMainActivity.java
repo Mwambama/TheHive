@@ -65,7 +65,6 @@ public class StudentMainActivity extends AppCompatActivity {
                 startActivity(new Intent(StudentMainActivity.this, ChatListActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_apply) {
-                // Handle the apply navigation if needed
                 return true;
             }
             return false;

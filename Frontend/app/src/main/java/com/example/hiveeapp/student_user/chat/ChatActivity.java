@@ -60,8 +60,8 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
 
-        setupUI();  // Initialize UI components
-        connectWebSocket();  // Set up WebSocket for real-time messages
+        setupUI();
+        connectWebSocket();
     }
 
     private void setupUI() {
