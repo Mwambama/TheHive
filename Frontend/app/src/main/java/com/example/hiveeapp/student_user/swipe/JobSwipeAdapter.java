@@ -149,7 +149,6 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
 
         public void bind(JobPosting job) {
             jobTitle.setText(job.getTitle());
-            company.setText("Company: " + job.getCompanyName());
             description.setText(job.getDescription());
             summary.setText(job.getSummary());
             salary.setText("Salary: $" + job.getSalary());
