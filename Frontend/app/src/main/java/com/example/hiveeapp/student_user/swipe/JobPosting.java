@@ -11,10 +11,11 @@ public class JobPosting {
     private String jobStart;
     private String applicationStart;
     private String applicationEnd;
-    private int employerId; // Use -1 as default if unavailable
+    private int employerId;
+    private String companyName;
 
     public JobPosting(int jobPostingId, String title, String description, String summary, double salary,
-                      String jobType, double minimumGpa, String jobStart, String applicationStart, String applicationEnd, int employerId) {
+                      String jobType, double minimumGpa, String jobStart, String applicationStart, String applicationEnd, int employerId, String companyName) {
         this.jobPostingId = jobPostingId;
         this.title = title;
         this.description = description;
@@ -26,12 +27,13 @@ public class JobPosting {
         this.applicationStart = applicationStart;
         this.applicationEnd = applicationEnd;
         this.employerId = employerId;
+        this.companyName = companyName;
     }
 
-    // Constructor for cases without employerId
+    // Constructor for cases without employerId and companyName
     public JobPosting(int jobPostingId, String title, String description, String summary, double salary,
                       String jobType, double minimumGpa, String jobStart, String applicationStart, String applicationEnd) {
-        this(jobPostingId, title, description, summary, salary, jobType, minimumGpa, jobStart, applicationStart, applicationEnd, -1);
+        this(jobPostingId, title, description, summary, salary, jobType, minimumGpa, jobStart, applicationStart, applicationEnd, -1, "Unknown Company");
     }
 
     // Getters for each field
@@ -45,5 +47,6 @@ public class JobPosting {
     public String getJobStart() { return jobStart; }
     public String getApplicationStart() { return applicationStart; }
     public String getApplicationEnd() { return applicationEnd; }
-    public int getEmployerId() { return employerId; } // Getter for employerId
+    public int getEmployerId() { return employerId; }
+    public String getCompanyName() { return companyName; }
 }

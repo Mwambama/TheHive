@@ -52,20 +52,18 @@
         <activity android:name=".employer_user.setting.ViewEmployerInfoActivity" android:exported="true" />
 <!--        <activity android:name=".employer_user." android:exported="true" />-->
 
-
-
-
-
-
-
-
-
         <!-- Student Activity -->
         <activity android:name=".student_user.StudentMainActivity" android:exported="true" />
 
         <!-- Add the StudentProfileActivity -->
         <activity android:name=".student_user.profile.StudentProfileActivity" android:exported="true" />
         <activity android:name=".student_user.profile.StudentProfileViewActivity" android:exported="true" />
+
+        <!-- Student Chat Activity -->
+        <activity android:name=".student_user.chat.ChatActivity" android:exported="true"/>
+        <activity android:name=".student_user.chat.ChatListActivity" android:exported="true"/>
+
+        <activity android:name=".student_user.swipe.ApplyActivity" android:exported="true"/>
 
         <!-- Admin Activity -->
         <activity android:name=".admin_user.AdminMainActivity" android:exported="true" />

@@ -22,7 +22,6 @@ import com.example.hiveeapp.R;
 import com.example.hiveeapp.company_user.CompanyMainActivity;
 import com.example.hiveeapp.registration.forgotPassword.ForgotPasswordActivity;
 import com.example.hiveeapp.registration.signup.signupActivity;
-import com.example.hiveeapp.registration.signup.studentsignupActivity;
 import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
 import com.google.android.material.button.MaterialButton;
@@ -30,6 +29,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         // Set event listeners for buttons
         setListeners();
 
-        // test purpose
+        // Test purpose
         emailField.setText("teststudent1@example.com");
         passwordField.setText("TestStudent1234@");
     }
@@ -103,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                 Request.Method.POST,
                 loginUrl,
                 null,
-                this::handleLoginSuccess,
+                response -> handleLoginSuccess(response, email, password),
                 this::handleError
         ) {
             @Override
@@ -131,7 +132,7 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    private void handleLoginSuccess(JSONObject response) {
+    private void handleLoginSuccess(JSONObject response, String email, String password) {
         try {
             int userId = response.getInt("userId");
             String role = extractUserRole(response);
@@ -142,10 +143,14 @@ public class LoginActivity extends AppCompatActivity {
             SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putInt("userId", userId);
+            editor.putString("email", email); // Save email
+            editor.putString("password", password); // Save password
             editor.apply();
 
-            // Debug: Confirm userId saved to SharedPreferences
+            // Debug: Confirm userId, email, and password saved to SharedPreferences
             Log.d(TAG, "UserId saved in SharedPreferences: " + preferences.getInt("userId", -1));
+            Log.d(TAG, "Email saved in SharedPreferences: " + preferences.getString("email", ""));
+            Log.d(TAG, "Password saved in SharedPreferences: " + preferences.getString("password", ""));
 
             navigateToUserActivity(role);
         } catch (JSONException e) {
@@ -199,14 +204,19 @@ public class LoginActivity extends AppCompatActivity {
 
         if (error instanceof TimeoutError) {
             showToast("The request timed out. Please try again.");
+        } else if (error instanceof com.android.volley.NoConnectionError ||
+                error.getCause() instanceof UnknownHostException) {
+            showToast("No internet connection. Please check your network.");
         } else if (error.networkResponse != null) {
             handleServerError(error.networkResponse.statusCode);
         } else {
             showToast("Login failed. Please check your network connection.");
         }
 
-        // Debug: Log error details
-        Log.e(TAG, "Login error: ", error);
+        if (error.getMessage() != null) {
+            Log.e(TAG, "Error message: " + error.getMessage());
+        }
+        Log.e(TAG, "Login error details: ", error);
     }
 
     private void handleServerError(int statusCode) {

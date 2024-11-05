@@ -40,7 +40,7 @@ public class WebSocketManager {
         sendMessage(formattedMessage);
     }
 
-    private void sendMessage(String message) {
+    public void sendMessage(String message) {
         if (webSocketClient != null && webSocketClient.isOpen()) {
             webSocketClient.send(message);
         } else {

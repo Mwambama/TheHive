@@ -38,8 +38,8 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
         headers.put("Content-Type", MULTIPART_FORM_DATA);
 
         // Add authorization header
-        String username = "employer@example.com";
-        String password = "Test@1234";
+        String username = "teststudent1@example.com";
+        String password = "TestStudent1234@";
         String credentials = username + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
         headers.put("Authorization", auth);
