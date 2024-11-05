@@ -5,16 +5,23 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.hiveeapp.R;
+import com.example.hiveeapp.employer_user.EmployerMainActivity;
+import com.example.hiveeapp.employer_user.display.AddJobActivity;
+import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.setting.NetworkUtils;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -30,7 +37,7 @@ public class EmployerChatListActivity extends AppCompatActivity {
     private int userId;
     private String userEmail;
     private String userPassword;
-    private Map<Integer, String> studentNamesMap = new HashMap<>(); // Stores studentId to studentName
+    private Map<Integer, String> studentNamesMap = new HashMap<>();
     private List<EmployerChatDto> chatList = new ArrayList<>();
 
     @Override
@@ -51,6 +58,7 @@ public class EmployerChatListActivity extends AppCompatActivity {
         }
 
         setupUI();
+        setupBottomNavigationView();
     }
 
     private void setupUI() {
@@ -58,6 +66,54 @@ public class EmployerChatListActivity extends AppCompatActivity {
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         loadChats();
+    }
+
+    private void setupBottomNavigationView() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);  // Ensure this matches your layout ID
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.navigation_main_user_page) {
+                Log.d(TAG, "Navigating to User Page");
+                navigateToProfile();
+                return true;
+            } else if (itemId == R.id.nav_chat) {
+                Log.d(TAG, "Navigating to Chat");
+                // Already on Chat screen, do nothing
+                return true;
+            } else if (itemId == R.id.nav_add_job) {
+                Log.d(TAG, "Navigating to Add Job");
+                navigateToAddJob();
+                return true;
+            } else if (itemId == R.id.nav_tracking) {
+                Log.d(TAG, "Navigating to Tracking");
+                navigateToTracking();
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        // Set the current item to "Chat" so it highlights by default
+        bottomNavigationView.setSelectedItemId(R.id.nav_chat);
+    }
+
+    private void navigateToProfile() {
+        Intent intent = new Intent(this, EmployerMainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void navigateToAddJob() {
+        Intent intent = new Intent(this, AddJobActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void navigateToTracking() {
+        Intent intent = new Intent(this, TrackingApplicationActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void loadChats() {
@@ -74,11 +130,8 @@ public class EmployerChatListActivity extends AppCompatActivity {
                             int jobPostingId = chatJson.optInt("jobPostingId", -1);
 
                             if (employerId == userId) {
-                                // Placeholder for the chat title, will be updated with student name
                                 EmployerChatDto chat = new EmployerChatDto(chatId, employerId, studentId, "Loading...");
                                 chatList.add(chat);
-
-                                // Load the student's name for each chat
                                 loadStudentName(studentId);
                             }
                         }
@@ -86,7 +139,6 @@ public class EmployerChatListActivity extends AppCompatActivity {
                         Log.e(TAG, "Error parsing chat JSON", e);
                     }
 
-                    // Set up the adapter with the chat list
                     chatListAdapter = new EmployerChatListAdapter(chatList, this::openChat, this);
                     chatRecyclerView.setAdapter(chatListAdapter);
                 },
@@ -102,7 +154,6 @@ public class EmployerChatListActivity extends AppCompatActivity {
     }
 
     private void loadStudentName(int studentId) {
-        // Check if the student name is already loaded to avoid duplicate requests
         if (studentNamesMap.containsKey(studentId)) {
             updateChatTitle(studentId, studentNamesMap.get(studentId));
             return;
@@ -112,10 +163,8 @@ public class EmployerChatListActivity extends AppCompatActivity {
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
-                    String studentName = response.optString("name", "Unknown Student"); // No exception is thrown here
+                    String studentName = response.optString("name", "Unknown Student");
                     studentNamesMap.put(studentId, studentName);
-
-                    // Update the chat title in the chat list with the student name
                     updateChatTitle(studentId, studentName);
                 },
                 error -> Log.e(TAG, "Failed to load student name for ID: " + studentId, error)
@@ -132,7 +181,7 @@ public class EmployerChatListActivity extends AppCompatActivity {
     private void updateChatTitle(int studentId, String studentName) {
         for (EmployerChatDto chat : chatList) {
             if (chat.getStudentId() == studentId) {
-                chat.setJobTitle(studentName);  // Update jobTitle with student's name
+                chat.setJobTitle(studentName);
             }
         }
         chatListAdapter.notifyDataSetChanged();
