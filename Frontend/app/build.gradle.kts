@@ -50,5 +50,4 @@ dependencies {
     implementation ("androidx.gridlayout:gridlayout:1.0.0")
     implementation ("org.java-websocket:Java-WebSocket:1.5.7")
     implementation ("androidx.viewpager2:viewpager2:1.1.0")
-    implementation ("com.yuyakaido.android:card-stack-view:2.3.4")
 }
