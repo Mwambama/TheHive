@@ -10,6 +10,7 @@ public class WebSocketManager {
     private static WebSocketManager instance;
     private MyWebSocketClient webSocketClient;
     private WebSocketListener webSocketListener;
+    private String lastUrl;  // Store the last WebSocket URL for reconnection
 
     private WebSocketManager() {}
 
@@ -20,12 +21,12 @@ public class WebSocketManager {
         return instance;
     }
 
-    // Set CustomWebSocketListener for handling events
     public void setWebSocketListener(WebSocketListener listener) {
         this.webSocketListener = listener;
     }
 
     public void connectWebSocket(String serverUrl) {
+        this.lastUrl = serverUrl;  // Store the URL for potential reconnection
         try {
             URI serverUri = URI.create(serverUrl);
             webSocketClient = new MyWebSocketClient(serverUri);
@@ -35,22 +36,28 @@ public class WebSocketManager {
         }
     }
 
-    public void sendMessageAsUser(String message, String userRole) {
-        String formattedMessage = userRole + ": " + message;
-        sendMessage(formattedMessage);
+    public boolean isConnected() {
+        return webSocketClient != null && webSocketClient.isOpen();
     }
 
     public void sendMessage(String message) {
-        if (webSocketClient != null && webSocketClient.isOpen()) {
+        if (isConnected()) {
             webSocketClient.send(message);
         } else {
-            Log.d("WebSocketManager", "WebSocket not connected");
+            Log.d("WebSocketManager", "WebSocket not connected, attempting to reconnect...");
+            reconnectWebSocket();
         }
     }
 
     public void disconnectWebSocket() {
         if (webSocketClient != null) {
             webSocketClient.close();
+        }
+    }
+
+    private void reconnectWebSocket() {
+        if (lastUrl != null) {
+            connectWebSocket(lastUrl);
         }
     }
 
@@ -80,6 +87,11 @@ public class WebSocketManager {
             Log.d("WebSocket", "Closed: " + reason);
             if (webSocketListener != null) {
                 webSocketListener.onWebSocketClose(code, reason, remote);
+            }
+
+            // Attempt to reconnect if disconnected unexpectedly
+            if (!remote) {  // Only reconnect if the disconnection was not triggered by the client
+                reconnectWebSocket();
             }
         }
 
