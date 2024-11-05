@@ -15,7 +15,6 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
@@ -35,7 +34,7 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
     public JobSwipeAdapter(Context context, int studentId) {
         this.context = context;
         this.studentId = studentId;
-        loadJobPostings();  // Load jobs when the adapter is initialized
+        loadJobPostings();
     }
 
     @NonNull
@@ -56,81 +55,82 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
         return jobPostings.size();
     }
 
-    // Fetch all job postings and filter out those already applied
-    public void loadJobPostings() {
+    // Load job postings and exclude already applied jobs
+    private void loadJobPostings() {
         String jobUrl = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
         String appliedUrl = "http://coms-3090-063.class.las.iastate.edu:8080/applications/student?studentId=" + studentId;
 
         JsonArrayRequest jobRequest = new JsonArrayRequest(Request.Method.GET, jobUrl, null,
-                jobsResponse -> {
-                    List<Integer> appliedJobIds = new ArrayList<>();
-
-                    JsonArrayRequest appliedRequest = new JsonArrayRequest(Request.Method.GET, appliedUrl, null,
-                            appliedResponse -> {
-                                // Add applied job IDs to the list
-                                for (int i = 0; i < appliedResponse.length(); i++) {
-                                    try {
-                                        JSONObject appliedJob = appliedResponse.getJSONObject(i);
-                                        appliedJobIds.add(appliedJob.getInt("jobPostingId"));
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                // Filter out applied jobs
-                                jobPostings.clear();
-                                for (int i = 0; i < jobsResponse.length(); i++) {
-                                    try {
-                                        JSONObject jobObject = jobsResponse.getJSONObject(i);
-                                        int jobId = jobObject.getInt("jobPostingId");
-
-                                        // Only add jobs not in the applied list
-                                        if (!appliedJobIds.contains(jobId)) {
-                                            String companyName = jobObject.has("companyName")
-                                                    ? jobObject.getString("companyName")
-                                                    : "N/A";  // Default to "N/A" if companyName is missing
-                                            JobPosting job = new JobPosting(
-                                                    jobId,
-                                                    jobObject.getString("title"),
-                                                    jobObject.getString("description"),
-                                                    jobObject.getString("summary"),
-                                                    jobObject.getDouble("salary"),
-                                                    jobObject.getString("jobType"),
-                                                    jobObject.getDouble("minimumGpa"),
-                                                    jobObject.getString("jobStart"),
-                                                    jobObject.getString("applicationStart"),
-                                                    jobObject.getString("applicationEnd"),
-                                                    jobObject.getInt("employerId"),
-                                                    companyName
-                                            );
-                                            jobPostings.add(job);
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                notifyDataSetChanged();
-                            },
-                            this::handleError) {
-                        @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
-                            return getAuthorizationHeaders();
-                        }
-                    };
-
-                    VolleySingleton.getInstance(context).addToRequestQueue(appliedRequest);
-                },
+                jobsResponse -> fetchAppliedJobs(appliedUrl, jobsResponse),
                 this::handleError) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 return getAuthorizationHeaders();
             }
         };
-
         VolleySingleton.getInstance(context).addToRequestQueue(jobRequest);
     }
 
+    // Fetch applied jobs to filter out from job postings
+    private void fetchAppliedJobs(String url, JSONArray jobsResponse) {
+        JsonArrayRequest appliedRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                appliedResponse -> filterJobs(jobsResponse, appliedResponse),
+                this::handleError) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return getAuthorizationHeaders();
+            }
+        };
+        VolleySingleton.getInstance(context).addToRequestQueue(appliedRequest);
+    }
 
+    // Filter out applied jobs from the main job list
+    private void filterJobs(JSONArray jobsResponse, JSONArray appliedResponse) {
+        List<Integer> appliedJobIds = new ArrayList<>();
+        for (int i = 0; i < appliedResponse.length(); i++) {
+            try {
+                JSONObject appliedJob = appliedResponse.getJSONObject(i);
+                appliedJobIds.add(appliedJob.getInt("jobPostingId"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        jobPostings.clear();
+        for (int i = 0; i < jobsResponse.length(); i++) {
+            try {
+                JSONObject jobObject = jobsResponse.getJSONObject(i);
+                int jobId = jobObject.getInt("jobPostingId");
+                if (!appliedJobIds.contains(jobId)) {
+                    jobPostings.add(parseJob(jobObject));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    // Parse job posting details into JobPosting object
+    private JobPosting parseJob(JSONObject jobObject) throws JSONException {
+        String companyName = jobObject.optString("companyName", "N/A");
+        return new JobPosting(
+                jobObject.getInt("jobPostingId"),
+                jobObject.getString("title"),
+                jobObject.getString("description"),
+                jobObject.getString("summary"),
+                jobObject.getDouble("salary"),
+                jobObject.getString("jobType"),
+                jobObject.getDouble("minimumGpa"),
+                jobObject.getString("jobStart"),
+                jobObject.getString("applicationStart"),
+                jobObject.getString("applicationEnd"),
+                jobObject.getInt("employerId"),
+                companyName
+        );
+    }
+
+    // ViewHolder to bind job posting data to views
     public class JobViewHolder extends RecyclerView.ViewHolder {
         TextView jobTitle, company, description, summary, salary, jobType, minimumGpa, jobStart, applicationStart, applicationEnd;
 
@@ -162,6 +162,7 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
         }
     }
 
+    // Apply for job when swiped
     private void applyForJob(int jobPostingId) {
         String url = "http://coms-3090-063.class.las.iastate.edu:8080/applications/apply";
         JSONObject jsonObject = new JSONObject();
@@ -195,19 +196,7 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    private Map<String, String> getAuthorizationHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-
-        String username = "teststudent1@example.com";
-        String password = "TestStudent1234@";
-        String credentials = username + ":" + password;
-        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        headers.put("Authorization", auth);
-
-        return headers;
-    }
-
+    // Set up swipe actions
     public ItemTouchHelper.SimpleCallback getSwipeCallback() {
         return new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -233,14 +222,32 @@ public class JobSwipeAdapter extends RecyclerView.Adapter<JobSwipeAdapter.JobVie
         };
     }
 
+    // Authorization headers
+    private Map<String, String> getAuthorizationHeaders() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        String username = "teststudent1@example.com";
+        String password = "TestStudent1234@";
+        String credentials = username + ":" + password;
+        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        headers.put("Authorization", auth);
+
+        return headers;
+    }
+
+    // Handle errors for Volley requests
     private void handleError(VolleyError error) {
-        if (error.networkResponse != null && error.networkResponse.statusCode == 401) {
-            Toast.makeText(context, "Authorization failed. Please check your credentials.", Toast.LENGTH_SHORT).show();
-        } else if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
-            Toast.makeText(context, "You have already applied for this job.", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(context, "Failed to apply. Please try again.", Toast.LENGTH_SHORT).show();
+        String errorMessage = "Failed to apply. Please try again.";
+        if (error.networkResponse != null) {
+            int statusCode = error.networkResponse.statusCode;
+            if (statusCode == 401) {
+                errorMessage = "Authorization failed. Please check your credentials.";
+            } else if (statusCode == 500) {
+                errorMessage = "You have already applied for this job.";
+            }
         }
-        Log.e("JobSwipeAdapter", "Error applying for job: ", error);
+        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+        Log.e("JobSwipeAdapter", "Error: ", error);
     }
 }

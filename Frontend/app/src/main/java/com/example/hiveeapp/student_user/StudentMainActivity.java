@@ -5,23 +5,21 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.student_user.application.JobApplicationFragment;
 import com.example.hiveeapp.student_user.chat.ChatListActivity;
 import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
-import com.example.hiveeapp.student_user.setting.StudentApi;
-import com.example.hiveeapp.student_user.swipe.JobPosting;
-import com.example.hiveeapp.student_user.swipe.JobSwipeAdapter;
+import com.example.hiveeapp.student_user.swipe.JobSwipeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.android.material.tabs.TabLayout;
 
 public class StudentMainActivity extends AppCompatActivity {
 
@@ -29,9 +27,6 @@ public class StudentMainActivity extends AppCompatActivity {
     private int userId;
     private String userEmail;
     private String userPassword;
-    private RecyclerView recyclerView;
-    private JobSwipeAdapter jobSwipeAdapter;
-    private List<JobPosting> jobPostings = new ArrayList<>();
     private BottomNavigationView bottomNavigationView;
 
     @Override
@@ -41,35 +36,43 @@ public class StudentMainActivity extends AppCompatActivity {
 
         // Initialize BottomNavigationView
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        setupBottomNavigationView();
 
-        if (bottomNavigationView == null) {
-            Log.e(TAG, "BottomNavigationView is null. Check if the ID matches in XML.");
-            Toast.makeText(this, "Navigation view setup error", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Retrieve user details from SharedPreferences
+        retrieveUserDetails();
 
+        // Initialize TabLayout and set default fragment
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        setupTabLayout(tabLayout);
+
+        // Set default fragment to JobSwipeFragment (swiping jobs)
+        replaceFragment(new JobSwipeFragment());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
+    }
+
+    private void setupBottomNavigationView() {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_profile) {
                 navigateToProfile();
                 return true;
-            } else if (itemId == R.id.navigation_apply) {
-                return true;
             } else if (itemId == R.id.navigation_chat) {
-                Intent intent = new Intent(StudentMainActivity.this, ChatListActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(StudentMainActivity.this, ChatListActivity.class));
+                return true;
+            } else if (itemId == R.id.navigation_apply) {
+                // Handle the apply navigation if needed
                 return true;
             }
             return false;
         });
+    }
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, new JobApplicationFragment())
-                .commit();
-
-
-        bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
-
+    private void retrieveUserDetails() {
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
         userEmail = preferences.getString("email", "");
@@ -79,37 +82,36 @@ public class StudentMainActivity extends AppCompatActivity {
             Toast.makeText(this, "User credentials not found. Please log in again.", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
-            return;
         }
-
-        // Initialize RecyclerView and adapter
-        recyclerView = findViewById(R.id.recyclerView);
-        jobSwipeAdapter = new JobSwipeAdapter(this, userId);
-        recyclerView.setAdapter(jobSwipeAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        loadJobPostings();
-
-        // Attach ItemTouchHelper for swipe functionality
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(jobSwipeAdapter.getSwipeCallback());
-        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
+    private void setupTabLayout(TabLayout tabLayout) {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(@NonNull TabLayout.Tab tab) {
+                Fragment selectedFragment;
+                if (tab.getPosition() == 0) {
+                    selectedFragment = new JobSwipeFragment();
+                } else {
+                    selectedFragment = new JobApplicationFragment();
+                }
+                replaceFragment(selectedFragment);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) { }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) { }
+        });
     }
 
-    private void loadJobPostings() {
-        StudentApi.getJobPostings(this,
-                jobPostings -> {
-                    this.jobPostings.clear();
-                    this.jobPostings.addAll(jobPostings);
-                    jobSwipeAdapter.notifyDataSetChanged();
-                },
-                error -> Toast.makeText(this, "Error fetching job postings", Toast.LENGTH_SHORT).show()
-        );
+    // Helper method to replace fragments
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        fragmentTransaction.commit();
     }
 
     private void navigateToProfile() {
