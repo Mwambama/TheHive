@@ -24,8 +24,6 @@ import org.json.JSONObject;
 
 
 
-
-
 public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.ApplicationViewHolder> {
     private JSONArray applications = new JSONArray();  // Holds the list of applications
     private final Context context;  // The context in which the adapter is used

@@ -47,13 +47,22 @@
             android:textColor="@android:color/secondary_text_light"
             android:layout_marginTop="4dp"/>
 
-        <!-- Buttons for accept and reject -->
+        <!-- Buttons for accept, reject, and view student information -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="12dp"
             android:gravity="end">
+
+            <Button
+                android:id="@+id/viewStudentButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View"
+                android:layout_marginEnd="16dp"
+                android:backgroundTint="@android:color/holo_blue_dark"
+                android:textColor="@android:color/white"/>
 
             <Button
                 android:id="@+id/acceptButton"
