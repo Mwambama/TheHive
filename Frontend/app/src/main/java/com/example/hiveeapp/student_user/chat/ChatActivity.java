@@ -47,18 +47,14 @@ public class ChatActivity extends AppCompatActivity {
     private String userPassword;
     private boolean shouldReconnect = true;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // Set up Toolbar with back arrow and title
         Toolbar toolbar = findViewById(R.id.chatToolbar);
-//        setSupportActionBar(toolbar); // Initialize the Toolbar as ActionBar
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Enable back arrow
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         toolbar.setTitle("Chat");
 
@@ -128,11 +124,21 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onWebSocketClose(int code, String reason, boolean remote) {
                 runOnUiThread(() -> Toast.makeText(ChatActivity.this, "Disconnected: " + reason, Toast.LENGTH_SHORT).show());
+                Log.d(TAG, "WebSocket closed with reason: " + reason);
+                if (!remote && shouldReconnect) {
+                    new android.os.Handler().postDelayed(() -> connectWebSocket(), 5000); // Retry after 5 seconds
+                }
             }
 
             @Override
             public void onWebSocketError(Exception ex) {
                 runOnUiThread(() -> Toast.makeText(ChatActivity.this, "Error: " + ex.getMessage(), Toast.LENGTH_SHORT).show());
+                Log.e(TAG, "WebSocket error: " + ex.getMessage(), ex);
+            }
+
+            @Override
+            public int getCurrentUserId() {
+                return userId;
             }
         });
 
@@ -158,68 +164,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
             Toast.makeText(this, "Failed to send message. Please try again.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void displayReceivedMessage(String rawMessage) {
-        try {
-            if (rawMessage.trim().startsWith("[")) {
-                JSONArray messageArray = new JSONArray(rawMessage);
-                for (int i = 0; i < messageArray.length(); i++) {
-                    JSONObject messageObject = messageArray.getJSONObject(i);
-                    processIndividualMessage(messageObject);
-                }
-            } else if (rawMessage.trim().startsWith("{")) {
-                JSONObject messageObject = new JSONObject(rawMessage);
-                processIndividualMessage(messageObject);
-            } else {
-                displaySystemMessage(rawMessage);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "Error parsing received message JSON: " + rawMessage, e);
-        }
-    }
-
-    private void processIndividualMessage(JSONObject messageObject) throws JSONException {
-        String text = messageObject.getString("message");
-        int senderId = messageObject.getInt("userId");
-        int messageId = messageObject.getInt("messageId");
-        String timestampStr = messageObject.getString("timestamp");
-
-        long timestampMillis;
-        try {
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault());
-            Date date = inputFormat.parse(timestampStr);
-            timestampMillis = (date != null) ? date.getTime() : System.currentTimeMillis();
-        } catch (ParseException e) {
-            Log.e(TAG, "Timestamp parsing failed for: " + timestampStr, e);
-            timestampMillis = System.currentTimeMillis();
-        }
-
-        if (!receivedMessageIds.contains(messageId)) {
-            boolean isSentByUser = (senderId == userId);
-            Message message = new Message(text, isSentByUser, senderId, messageId, timestampMillis);
-            messageList.add(message);
-            receivedMessageIds.add(messageId);
-            messageAdapter.notifyItemInserted(messageList.size() - 1);
-            chatRecyclerView.scrollToPosition(messageList.size() - 1);
-        }
-    }
-
-    private void displaySystemMessage(String systemMessage) {
-        long currentTimestamp = System.currentTimeMillis();
-        Message message = new Message(systemMessage, false, -1, -1, currentTimestamp);
-        messageList.add(message);
-        messageAdapter.notifyItemInserted(messageList.size() - 1);
-        chatRecyclerView.scrollToPosition(messageList.size() - 1);
-    }
-
-    private boolean isJsonMessage(String message) {
-        try {
-            new JSONObject(message);
-            return true;
-        } catch (JSONException ex) {
-            return false;
+            e.printStackTrace();
         }
     }
 

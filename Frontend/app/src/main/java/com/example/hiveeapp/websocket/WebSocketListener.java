@@ -8,4 +8,6 @@ public interface WebSocketListener {
     void onWebSocketMessage(Message message); // Accepts Message object
     void onWebSocketClose(int code, String reason, boolean remote);
     void onWebSocketError(Exception ex);
+
+    int getCurrentUserId();
 }

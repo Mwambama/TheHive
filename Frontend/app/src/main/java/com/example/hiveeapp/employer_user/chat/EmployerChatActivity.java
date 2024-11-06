@@ -48,7 +48,7 @@ public class EmployerChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         Toolbar toolbar = findViewById(R.id.chatToolbar);
-        toolbar.setTitle("Chat");
+        toolbar.setTitle("Employer Chat");
 
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
@@ -104,26 +104,47 @@ public class EmployerChatActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onWebSocketMessage(Message message) { // Accepts Message object now
+            public void onWebSocketMessage(Message message) {
                 runOnUiThread(() -> {
-                    messageList.add(message);
-                    messageAdapter.notifyItemInserted(messageList.size() - 1);
-                    chatRecyclerView.scrollToPosition(messageList.size() - 1);
+                    if (!receivedMessageIds.contains(message.getMessageId())) {
+                        messageList.add(message);
+                        receivedMessageIds.add(message.getMessageId());
+                        messageAdapter.notifyItemInserted(messageList.size() - 1);
+                        chatRecyclerView.scrollToPosition(messageList.size() - 1);
+                    }
                 });
             }
 
             @Override
             public void onWebSocketClose(int code, String reason, boolean remote) {
                 runOnUiThread(() -> Toast.makeText(EmployerChatActivity.this, "Disconnected: " + reason, Toast.LENGTH_SHORT).show());
+                if (!remote && shouldReconnect) {
+                    reconnectWebSocket();
+                }
             }
 
             @Override
             public void onWebSocketError(Exception ex) {
                 runOnUiThread(() -> Toast.makeText(EmployerChatActivity.this, "Error: " + ex.getMessage(), Toast.LENGTH_SHORT).show());
+                Log.e(TAG, "WebSocket error: " + ex.getMessage(), ex);
+            }
+
+            @Override
+            public int getCurrentUserId() {
+                return userId;
             }
         });
 
         WebSocketManager.getInstance().connectWebSocket(webSocketUrl);
+    }
+
+    private void reconnectWebSocket() {
+        new android.os.Handler().postDelayed(() -> connectWebSocket(), 5000); // Retry after 5 seconds
+    }
+
+    private String generateWebSocketUrl(int chatId, String email, String password) {
+        return "ws://coms-3090-063.class.las.iastate.edu:8080/ws/chat/" + chatId +
+                "?email=" + email + "&password=" + password;
     }
 
     private void sendMessage(int chatId, String message, int userId) {
@@ -144,11 +165,6 @@ public class EmployerChatActivity extends AppCompatActivity {
         } catch (JSONException e) {
             Toast.makeText(this, "Failed to send message. Please try again.", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private String generateWebSocketUrl(int chatId, String email, String password) {
-        return "ws://coms-3090-063.class.las.iastate.edu:8080/ws/chat/" + chatId +
-                "?email=" + email + "&password=" + password;
     }
 
     @Override

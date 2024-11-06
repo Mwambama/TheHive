@@ -4,8 +4,11 @@ import android.util.Log;
 import com.example.hiveeapp.websocket.message.Message;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.net.URI;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -40,7 +43,7 @@ public class WebSocketManager {
             webSocketClient = new MyWebSocketClient(serverUri);
             webSocketClient.connect();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("WebSocketManager", "Failed to connect WebSocket", e);
         }
     }
 
@@ -54,12 +57,13 @@ public class WebSocketManager {
                 JSONObject messageJson = new JSONObject();
                 messageJson.put("message", message);
 
-                String timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault()).format(new Date());
+                // Format current timestamp as string for consistency
+                String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
                 messageJson.put("timestamp", timestamp);
 
                 webSocketClient.send(messageJson.toString());
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (JSONException e) {
+                Log.e("WebSocketManager", "Failed to send message JSON", e);
             }
         } else {
             Log.d("WebSocketManager", "WebSocket not connected, attempting to reconnect...");
@@ -98,21 +102,66 @@ public class WebSocketManager {
             Log.d("WebSocket", "Received message: " + message);
 
             try {
-                JSONObject messageJson = new JSONObject(message);
-                String messageText = messageJson.getString("message");
-                String timestamp = messageJson.getString("timestamp");
+                if (message.trim().startsWith("[")) {
+                    JSONArray messageArray = new JSONArray(message);
+                    for (int i = 0; i < messageArray.length(); i++) {
+                        JSONObject messageObject = messageArray.getJSONObject(i);
+                        processJsonMessage(messageObject);
+                    }
+                } else if (message.trim().startsWith("{")) {
+                    JSONObject messageJson = new JSONObject(message);
+                    processJsonMessage(messageJson);
+                } else {
+                    // Process as a system message if it’s plain text
+                    if (webSocketListener != null) {
+                        Message systemMessage = new Message(message, false, -1, -1, -1, System.currentTimeMillis(), null, false);
+                        webSocketListener.onWebSocketMessage(systemMessage);
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e("WebSocket", "Error processing message: " + message, e);
+            }
+        }
 
-                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault());
-                Date date = inputFormat.parse(timestamp);
-                long timestampMillis = date != null ? date.getTime() : System.currentTimeMillis();
+        private void processJsonMessage(JSONObject messageJson) {
+            try {
+                String messageText = messageJson.getString("message");
+                int chatId = messageJson.getInt("chatId");
+                int messageId = messageJson.getInt("messageId");
+                int senderId = messageJson.getInt("userId");
+                String timestampStr = messageJson.getString("timestamp");
+                Integer replyToId = messageJson.isNull("replyToId") ? null : messageJson.getInt("replyToId");
+                boolean seen = messageJson.getBoolean("seen");
+
+                // Parse timestamp string to milliseconds
+                long timestampMillis = parseTimestamp(timestampStr);
 
                 if (webSocketListener != null) {
-                    // Create a Message object and pass it to the listener
-                    Message receivedMessage = new Message(messageText, false, 0, 0, timestampMillis);
+                    Message receivedMessage = new Message(
+                            messageText,
+                            senderId == webSocketListener.getCurrentUserId(),
+                            senderId,
+                            messageId,
+                            chatId,
+                            timestampMillis,
+                            replyToId,
+                            seen
+                    );
                     webSocketListener.onWebSocketMessage(receivedMessage);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (JSONException e) {
+                Log.e("WebSocket", "Error parsing JSON message", e);
+            }
+        }
+
+        private long parseTimestamp(String timestampStr) {
+            try {
+                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                Date date = inputFormat.parse(timestampStr);
+                return (date != null) ? date.getTime() : System.currentTimeMillis();
+            } catch (ParseException e) {
+                Log.e("WebSocket", "Timestamp parsing failed: " + timestampStr, e);
+                return System.currentTimeMillis();
             }
         }
 
@@ -130,7 +179,7 @@ public class WebSocketManager {
 
         @Override
         public void onError(Exception ex) {
-            Log.d("WebSocket", "Error: " + ex.getMessage());
+            Log.e("WebSocket", "Error: " + ex.getMessage(), ex);
             if (webSocketListener != null) {
                 webSocketListener.onWebSocketError(ex);
             }

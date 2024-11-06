@@ -42,9 +42,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         String formattedTime = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(new Date(message.getTimestamp()));
         holder.timestampTextView.setText(formattedTime);
 
-        // Align message based on sender
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.messageTextView.getLayoutParams();
-        if (message.getSenderId() == currentUserId) {
+        if (message.isSentByUser()) {
             params.addRule(RelativeLayout.ALIGN_PARENT_END);
             holder.messageTextView.setBackgroundResource(R.drawable.background_sent_message);
         } else {
