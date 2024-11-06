@@ -162,10 +162,6 @@ public class applicationsApi {
 
 
 
-
-
-
-
 // wrong Object used to make the POST the data the date for accepting and rejectting
 //public class applicationsApi {
 //
