@@ -7,6 +7,7 @@ import android.widget.ImageButton;
 import com.android.volley.DefaultRetryPolicy;
 import com.example.hiveeapp.R;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -29,11 +30,12 @@ public class studentsignupActivity extends AppCompatActivity {
     private EditText universityEditText;
     private ImageButton togglePasswordVisibilityButton;
     private boolean isPasswordVisible = false;
+    private final String URL = "http://coms-3090-063.class.las.iastate.edu:8080/account/signup/student";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_signup);  // Update to the correct XML layout
+        setContentView(R.layout.activity_student_signup);
 
         // Initialize EditText fields
         nameEditText = findViewById(R.id.signup_name_edt);
@@ -46,11 +48,15 @@ public class studentsignupActivity extends AppCompatActivity {
         View passwordLayout = inflater.inflate(R.layout.activity_show_passwords, null);
         togglePasswordVisibilityButton = passwordLayout.findViewById(R.id.toggle_password_visibility_btn);
 
-        // Set click listener for the toggle button
         togglePasswordVisibilityButton.setOnClickListener(view -> togglePasswordVisibility());
 
         // Signup button click listener
         findViewById(R.id.signup_signup_btn).setOnClickListener(view -> {
+            if (nameEditText == null || passwordEditText == null || emailEditText == null || universityEditText == null) {
+                Toast.makeText(studentsignupActivity.this, "Error initializing fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             String name = nameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
             String email = emailEditText.getText().toString();
@@ -79,13 +85,10 @@ public class studentsignupActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            // URL for the Postman mock server
-            String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/signup/student"; // Updated URL
-
             // Create JSON request
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.POST,
-                    url,
+                    URL,
                     signupData,
                     new Response.Listener<JSONObject>() {
                         @Override
@@ -94,7 +97,6 @@ public class studentsignupActivity extends AppCompatActivity {
                             Toast.makeText(studentsignupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
                             // Navigate to LoginActivity
                             Intent intent = new Intent(studentsignupActivity.this, LoginActivity.class);
-                            // Ensure the back stack is cleared
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                         }
@@ -108,13 +110,12 @@ public class studentsignupActivity extends AppCompatActivity {
                     }
             );
 
-              // Set a retry policy with a timeout of 10 seconds (10000 ms)
+            // Set a retry policy with a timeout of 10 seconds (10000 ms)
             jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
                     10000, // Timeout in milliseconds (10 seconds)
                     DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-            // Add request to the Volley request queue
             VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
         });
     }
@@ -130,17 +131,14 @@ public class studentsignupActivity extends AppCompatActivity {
 
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
-            // Hide password
             passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             togglePasswordVisibilityButton.setImageResource(R.drawable.ic_visibility_off);
             isPasswordVisible = false;
         } else {
-            // Show password
             passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT);
             togglePasswordVisibilityButton.setImageResource(R.drawable.ic_visibility_off);
             isPasswordVisible = true;
         }
-        // Move cursor to the end of the text
         passwordEditText.setSelection(passwordEditText.getText().length());
     }
 }
