@@ -117,7 +117,7 @@ public class EmployerChatActivity extends AppCompatActivity {
 
             @Override
             public void onWebSocketClose(int code, String reason, boolean remote) {
-                runOnUiThread(() -> Toast.makeText(EmployerChatActivity.this, "Disconnected: " + reason, Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(EmployerChatActivity.this, "Disconnected" + reason, Toast.LENGTH_SHORT).show());
             }
 
             @Override

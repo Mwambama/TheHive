@@ -54,7 +54,7 @@ public class ChatActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Enable back arrow
         }
-        toolbar.setTitle("Chat"); // Set the title directly on the Toolbar
+        toolbar.setTitle("Chat");
 
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
@@ -117,7 +117,7 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onWebSocketClose(int code, String reason, boolean remote) {
-                runOnUiThread(() -> Toast.makeText(ChatActivity.this, "Disconnected: " + reason, Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(ChatActivity.this, "Disconnected" + reason, Toast.LENGTH_SHORT).show());
             }
 
             @Override
