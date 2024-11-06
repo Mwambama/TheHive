@@ -13,7 +13,5 @@ import java.util.List;
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
     List<ChatMessage> findAllByChat(Chat chat);
     List<ChatMessage> findByUserAndSeenFalse(User user);
-    @Modifying
-    @Query("UPDATE ChatMessage m SET m.seen = true WHERE m.chat.chatId = :chatId AND m.user.userId = :userId")
-    void markMessagesAsSeen(@Param("chatId") Long chatId, @Param("userId") Long userId);
+    List<ChatMessage> findByChatAndUserNotAndSeenFalse(Chat chat, User user);
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ChatService {
     List<Chat> getChats();
+    String getOtherUserEmail(Long chatId, Long userId);
     Chat createChat(Chat request);
     Chat getChatById(Long id);
     Chat updateChat(Chat request);

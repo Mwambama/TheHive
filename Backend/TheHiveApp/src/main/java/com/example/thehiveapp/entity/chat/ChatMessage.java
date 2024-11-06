@@ -41,5 +41,5 @@ public class ChatMessage {
     private ChatMessage replyTo;
 
     @Column(name = "seen")
-    private Boolean seen;
+    private Boolean seen = false;
 }
