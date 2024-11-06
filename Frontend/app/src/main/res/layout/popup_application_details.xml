@@ -11,38 +11,6 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Back Arrow Icon -->
-        <ImageButton
-            android:id="@+id/backArrowIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:contentDescription="Back Arrow"
-            android:focusable="true"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_back_arrow"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@android:color/white" />
-
-        <!-- Title -->
-        <TextView
-            android:id="@+id/profileTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Profile Information"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            app:layout_constraintTop_toBottomOf="@id/backArrowIcon"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp" />
-
         <!-- Name Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nameTextInputLayout"
@@ -52,17 +20,18 @@
             app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profileTitle">
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileNameView"
+                android:id="@+id/nameView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Name"
                 android:inputType="text"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"/>
+                android:enabled="false"
+                android:text="Eula De Winton"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Email Field -->
@@ -77,14 +46,15 @@
             app:layout_constraintTop_toBottomOf="@id/nameTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileEmailView"
+                android:id="@+id/emailView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"/>
+                android:enabled="false"
+                android:text="edeb@msu.edu"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Phone Field -->
@@ -99,14 +69,15 @@
             app:layout_constraintTop_toBottomOf="@id/emailTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profilePhoneView"
+                android:id="@+id/phoneView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Phone"
                 android:inputType="phone"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"/>
+                android:enabled="false"
+                android:text="8673793697"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- University Field -->
@@ -121,14 +92,15 @@
             app:layout_constraintTop_toBottomOf="@id/phoneTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileUniversityView"
+                android:id="@+id/universityView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="University"
                 android:inputType="text"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"/>
+                android:enabled="false"
+                android:text="Florida Gulf Coast University"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Graduation Date Field -->
@@ -143,119 +115,15 @@
             app:layout_constraintTop_toBottomOf="@id/universityTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileGraduationDateView"
+                android:id="@+id/graduationDateView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Graduation Date"
                 android:inputType="date"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Street Field -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/streetTextInputLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:boxStrokeColor="@color/colorAccent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/graduationDateTextInputLayout"
-            android:layout_marginTop="8dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileStreet"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Street"
-                android:inputType="text"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Complement Field -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/complementTextInputLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:boxStrokeColor="@color/colorAccent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/streetTextInputLayout"
-            android:layout_marginTop="8dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileComplement"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Complement"
-                android:inputType="text"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- City Field -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/cityTextInputLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:boxStrokeColor="@color/colorAccent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/complementTextInputLayout"
-            android:layout_marginTop="8dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileCity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="City"
-                android:inputType="text"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- State Field -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/stateTextInputLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:boxStrokeColor="@color/colorAccent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cityTextInputLayout"
-            android:layout_marginTop="8dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileState"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="State"
-                android:inputType="text"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Zip Code Field -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/zipCodeTextInputLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:boxStrokeColor="@color/colorAccent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/stateTextInputLayout"
-            android:layout_marginTop="8dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileZipCode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Zip Code"
-                android:inputType="textPostalAddress"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                android:enabled="false"
+                android:text="2026-04-09"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- GPA Field -->
@@ -267,34 +135,42 @@
             app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/zipCodeTextInputLayout">
+            app:layout_constraintTop_toBottomOf="@id/graduationDateTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/profileGpaView"
+                android:id="@+id/gpaView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="GPA"
                 android:inputType="numberDecimal"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"/>
+                android:enabled="false"
+                android:text="2.7"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Update Information Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/updateInfoButton"
+        <!-- Resume Path Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/resumePathTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Update Information"
-            android:textColor="@android:color/white"
-            android:backgroundTint="@color/colorPrimaryDark"
-            app:cornerRadius="8dp"
-            app:layout_constraintTop_toBottomOf="@id/gpaTextInputLayout"
+            android:layout_marginTop="8dp"
+            app:boxStrokeColor="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="24dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp" />
+            app:layout_constraintTop_toBottomOf="@id/gpaTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/resumePathView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Resume Path"
+                android:inputType="text"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:enabled="false"
+                android:text="Nunc.mp3"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

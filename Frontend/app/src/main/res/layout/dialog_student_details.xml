@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Name Field -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/nameView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Eula De Winton"
+        android:paddingBottom="8dp"/>
+
+    <!-- Email Field -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Email"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/emailView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="edeb@msu.edu"
+        android:paddingBottom="8dp"/>
+
+    <!-- Phone Field -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Phone"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/phoneView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="8673793697"
+        android:paddingBottom="8dp"/>
+
+    <!-- University Field -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="University"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/universityView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Florida Gulf Coast University"
+        android:paddingBottom="8dp"/>
+
+    <!-- Graduation Date Field -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Graduation Date"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/graduationDateView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2026-04-09"
+        android:paddingBottom="8dp"/>
+
+    <!-- GPA Field -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="GPA"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/gpaView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2.7"
+        android:paddingBottom="8dp"/>
+
+    <!-- Resume Path Field -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Resume Path"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/resumePathView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nunc.mp3"
+        android:paddingBottom="8dp"/>
+
+    <!-- Close Button -->
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Close"/>
+</LinearLayout>
