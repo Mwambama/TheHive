@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hiveeapp.R;
@@ -13,33 +14,39 @@ import com.example.hiveeapp.R;
 import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
-    private List<Message> messages;
+    private final List<Message> messages;
+    private final int currentUserId;  // The ID of the current user
 
-    public MessageAdapter(List<Message> messages) {
+    // Updated constructor to accept `userId`
+    public MessageAdapter(List<Message> messages, int currentUserId) {
         this.messages = messages;
+        this.currentUserId = currentUserId;
     }
 
+    @NonNull
     @Override
-    public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_message, parent, false);
         return new MessageViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MessageViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messages.get(position);
         holder.messageTextView.setText(message.getText());
 
-        // Align message to the left or right based on sender
+        // Align message based on sender
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.messageTextView.getLayoutParams();
-        if (message.isSentByUser()) {
+        if (message.getSenderId() == currentUserId) {
             params.addRule(RelativeLayout.ALIGN_PARENT_END);
             holder.messageTextView.setBackgroundResource(R.drawable.background_sent_message);
         } else {
             params.addRule(RelativeLayout.ALIGN_PARENT_START);
             holder.messageTextView.setBackgroundResource(R.drawable.background_received_message);
         }
+
+        holder.messageTextView.setLayoutParams(params); // Apply the layout parameters
     }
 
     @Override
