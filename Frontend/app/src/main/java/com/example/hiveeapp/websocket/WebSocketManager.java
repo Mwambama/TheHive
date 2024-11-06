@@ -10,7 +10,8 @@ public class WebSocketManager {
     private static WebSocketManager instance;
     private MyWebSocketClient webSocketClient;
     private WebSocketListener webSocketListener;
-    private String lastUrl;  // Store the last WebSocket URL for reconnection
+    private String lastUrl;
+    private boolean shouldReconnect = true;
 
     private WebSocketManager() {}
 
@@ -26,7 +27,9 @@ public class WebSocketManager {
     }
 
     public void connectWebSocket(String serverUrl) {
-        this.lastUrl = serverUrl;  // Store the URL for potential reconnection
+        this.lastUrl = serverUrl;
+        shouldReconnect = true;
+
         try {
             URI serverUri = URI.create(serverUrl);
             webSocketClient = new MyWebSocketClient(serverUri);
@@ -50,13 +53,14 @@ public class WebSocketManager {
     }
 
     public void disconnectWebSocket() {
+        shouldReconnect = false;
         if (webSocketClient != null) {
             webSocketClient.close();
         }
     }
 
     private void reconnectWebSocket() {
-        if (lastUrl != null) {
+        if (shouldReconnect && lastUrl != null) {
             connectWebSocket(lastUrl);
         }
     }
@@ -89,8 +93,8 @@ public class WebSocketManager {
                 webSocketListener.onWebSocketClose(code, reason, remote);
             }
 
-            // Attempt to reconnect if disconnected unexpectedly
-            if (!remote) {  // Only reconnect if the disconnection was not triggered by the client
+            // Attempt to reconnect only if shouldReconnect is true and disconnection wasn't manual
+            if (!remote && shouldReconnect) {
                 reconnectWebSocket();
             }
         }

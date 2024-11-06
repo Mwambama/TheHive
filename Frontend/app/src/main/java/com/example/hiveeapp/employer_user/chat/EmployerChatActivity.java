@@ -2,12 +2,13 @@ package com.example.hiveeapp.employer_user.chat;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,16 +36,25 @@ public class EmployerChatActivity extends AppCompatActivity {
     private Button sendBtn;
     private MessageAdapter messageAdapter;
     private List<Message> messageList;
-    private Set<Integer> receivedMessageIds; // To store received message IDs and prevent duplicates
+    private Set<Integer> receivedMessageIds;
     private int chatId = -1;
     private int userId;
     private String userEmail;
     private String userPassword;
+    private boolean shouldReconnect = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        // Set up Toolbar with back arrow and dynamic title
+        Toolbar toolbar = findViewById(R.id.chatToolbar);
+//        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Enable back arrow
+        }
+        toolbar.setTitle("Chat");
 
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
@@ -86,12 +96,14 @@ public class EmployerChatActivity extends AppCompatActivity {
     }
 
     private void connectWebSocket() {
-        if (WebSocketManager.getInstance().isConnected()) {
-            Log.d(TAG, "WebSocket already connected.");
+        if (!shouldReconnect || WebSocketManager.getInstance().isConnected()) {
+            Log.d(TAG, "WebSocket already connected or reconnection is disabled.");
             return;
         }
 
         String webSocketUrl = generateWebSocketUrl(chatId, userEmail, userPassword);
+        Log.d(TAG, "Connecting to WebSocket with URL: " + webSocketUrl);
+
         WebSocketManager.getInstance().setWebSocketListener(new WebSocketListener() {
             @Override
             public void onWebSocketOpen(ServerHandshake handshakedata) {
@@ -118,7 +130,8 @@ public class EmployerChatActivity extends AppCompatActivity {
     }
 
     private String generateWebSocketUrl(int chatId, String email, String password) {
-        return "ws://coms-3090-063.class.las.iastate.edu:8080/ws/chat/" + chatId + "?email=" + email + "&password=" + password;
+        return "ws://coms-3090-063.class.las.iastate.edu:8080/ws/chat/" + chatId +
+                "?email=" + email + "&password=" + password;
     }
 
     private void sendMessage(int chatId, String message, int userId) {
@@ -130,8 +143,6 @@ public class EmployerChatActivity extends AppCompatActivity {
 
             if (WebSocketManager.getInstance().isConnected()) {
                 WebSocketManager.getInstance().sendMessage(messageObject.toString());
-
-                // Do not add the message locally here; wait for the server's response
             } else {
                 Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
             }
@@ -140,22 +151,18 @@ public class EmployerChatActivity extends AppCompatActivity {
         }
     }
 
-
     private void displayReceivedMessage(String rawMessage) {
         try {
             if (rawMessage.trim().startsWith("[")) {
-                // Parse JSON array of messages
                 JSONArray messageArray = new JSONArray(rawMessage);
                 for (int i = 0; i < messageArray.length(); i++) {
                     JSONObject messageObject = messageArray.getJSONObject(i);
                     processIndividualMessage(messageObject);
                 }
             } else if (rawMessage.trim().startsWith("{")) {
-                // Parse single JSON object
                 JSONObject messageObject = new JSONObject(rawMessage);
                 processIndividualMessage(messageObject);
             } else {
-                // Handle non-JSON system message (e.g., "User joined" messages)
                 displaySystemMessage(rawMessage);
             }
         } catch (JSONException e) {
@@ -163,24 +170,21 @@ public class EmployerChatActivity extends AppCompatActivity {
         }
     }
 
-    // Helper method to process each individual message JSON object
     private void processIndividualMessage(JSONObject messageObject) throws JSONException {
         String text = messageObject.getString("message");
         int senderId = messageObject.getInt("userId");
         int messageId = messageObject.getInt("messageId");
 
-        // Check if message ID is already in the set to prevent duplicates
         if (!receivedMessageIds.contains(messageId)) {
             boolean isSentByUser = (senderId == userId);
             Message message = new Message(text, isSentByUser, senderId, messageId);
             messageList.add(message);
-            receivedMessageIds.add(messageId); // Add message ID to the set
+            receivedMessageIds.add(messageId);
             messageAdapter.notifyItemInserted(messageList.size() - 1);
             chatRecyclerView.scrollToPosition(messageList.size() - 1);
         }
     }
 
-    // Method to display system messages (e.g., user joined)
     private void displaySystemMessage(String systemMessage) {
         Message message = new Message(systemMessage, false, -1, -1);
         messageList.add(message);
@@ -194,6 +198,29 @@ public class EmployerChatActivity extends AppCompatActivity {
             return true;
         } catch (JSONException ex) {
             return false;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disconnectWebSocket();
+    }
+
+    private void disconnectWebSocket() {
+        shouldReconnect = false; // Disable reconnection
+        if (WebSocketManager.getInstance().isConnected()) {
+            WebSocketManager.getInstance().disconnectWebSocket();
+            Log.d(TAG, "WebSocket disconnected.");
         }
     }
 }

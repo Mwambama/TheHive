@@ -2,12 +2,13 @@ package com.example.hiveeapp.student_user.chat;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,19 +41,26 @@ public class ChatActivity extends AppCompatActivity {
     private int userId;
     private String userEmail;
     private String userPassword;
+    private boolean shouldReconnect = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // Retrieve SharedPreferences
+        // Set up Toolbar with back arrow and title
+        Toolbar toolbar = findViewById(R.id.chatToolbar);
+//        setSupportActionBar(toolbar); // Initialize the Toolbar as ActionBar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Enable back arrow
+        }
+        toolbar.setTitle("Chat"); // Set the title directly on the Toolbar
+
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
         userEmail = preferences.getString("email", null);
         userPassword = preferences.getString("password", null);
 
-        // Retrieve chatId from Intent
         chatId = getIntent().getIntExtra("chatId", -1);
 
         if (userId == -1 || userEmail == null || userPassword == null || chatId == -1) {
@@ -67,23 +75,20 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void setupUI() {
-        // Initialize UI components
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         msgEtx = findViewById(R.id.msgEtx);
         sendBtn = findViewById(R.id.sendBtn);
 
-        // Initialize message list and adapter
         messageList = new ArrayList<>();
         messageAdapter = new MessageAdapter(messageList, userId);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatRecyclerView.setAdapter(messageAdapter);
 
-        // Set up send button action
         sendBtn.setOnClickListener(v -> {
             String messageText = msgEtx.getText().toString().trim();
             if (!messageText.isEmpty() && chatId != -1) {
                 sendMessage(chatId, messageText, userId);
-                msgEtx.setText(""); // Clear input field
+                msgEtx.setText("");
             } else {
                 Toast.makeText(ChatActivity.this, "Message cannot be empty or invalid chat ID", Toast.LENGTH_SHORT).show();
             }
@@ -91,8 +96,8 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void connectWebSocket() {
-        if (WebSocketManager.getInstance().isConnected()) {
-            Log.d(TAG, "WebSocket already connected.");
+        if (!shouldReconnect || WebSocketManager.getInstance().isConnected()) {
+            Log.d(TAG, "WebSocket already connected or reconnection is disabled.");
             return;
         }
 
@@ -131,17 +136,13 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendMessage(int chatId, String message, int userId) {
         try {
-            // Create a JSON object with the required fields
             JSONObject messageObject = new JSONObject();
             messageObject.put("chatId", chatId);
             messageObject.put("message", message);
             messageObject.put("userId", userId);
 
-            // Only send if WebSocket is connected
             if (WebSocketManager.getInstance().isConnected()) {
                 WebSocketManager.getInstance().sendMessage(messageObject.toString());
-
-                // Wait for the server to echo the message back before displaying
             } else {
                 Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
             }
@@ -153,18 +154,15 @@ public class ChatActivity extends AppCompatActivity {
     private void displayReceivedMessage(String rawMessage) {
         try {
             if (rawMessage.trim().startsWith("[")) {
-                // Parse JSON array of messages (historic)
                 JSONArray messageArray = new JSONArray(rawMessage);
                 for (int i = 0; i < messageArray.length(); i++) {
                     JSONObject messageObject = messageArray.getJSONObject(i);
                     processIndividualMessage(messageObject);
                 }
             } else if (rawMessage.trim().startsWith("{")) {
-                // Parse single JSON object (new message)
                 JSONObject messageObject = new JSONObject(rawMessage);
                 processIndividualMessage(messageObject);
             } else {
-                // Handle non-JSON system message (e.g., "User joined" messages)
                 displaySystemMessage(rawMessage);
             }
         } catch (JSONException e) {
@@ -172,24 +170,21 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    // Helper method to process each individual message JSON object
     private void processIndividualMessage(JSONObject messageObject) throws JSONException {
         String text = messageObject.getString("message");
         int senderId = messageObject.getInt("userId");
         int messageId = messageObject.getInt("messageId");
 
-        // Check if message ID is already in the set to prevent duplicates
         if (!receivedMessageIds.contains(messageId)) {
             boolean isSentByUser = (senderId == userId);
             Message message = new Message(text, isSentByUser, senderId, messageId);
             messageList.add(message);
-            receivedMessageIds.add(messageId); // Add message ID to the set
+            receivedMessageIds.add(messageId);
             messageAdapter.notifyItemInserted(messageList.size() - 1);
             chatRecyclerView.scrollToPosition(messageList.size() - 1);
         }
     }
 
-    // Method to display system messages (e.g., user joined)
     private void displaySystemMessage(String systemMessage) {
         Message message = new Message(systemMessage, false, -1, -1);
         messageList.add(message);
@@ -203,6 +198,29 @@ public class ChatActivity extends AppCompatActivity {
             return true;
         } catch (JSONException ex) {
             return false;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disconnectWebSocket();
+    }
+
+    private void disconnectWebSocket() {
+        shouldReconnect = false;
+        if (WebSocketManager.getInstance().isConnected()) {
+            WebSocketManager.getInstance().disconnectWebSocket();
+            Log.d(TAG, "WebSocket disconnected.");
         }
     }
 }
