@@ -11,25 +11,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.employer_user.chat.message.Message;
-import com.example.hiveeapp.employer_user.chat.message.MessageAdapter;
+import com.example.hiveeapp.websocket.message.Message;
+import com.example.hiveeapp.websocket.message.MessageAdapter;
 import com.example.hiveeapp.websocket.WebSocketManager;
 import com.example.hiveeapp.websocket.WebSocketListener;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.java_websocket.handshake.ServerHandshake;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class EmployerChatActivity extends AppCompatActivity {
-
     private static final String TAG = "EmployerChatActivity";
     private RecyclerView chatRecyclerView;
     private EditText msgEtx;
@@ -48,19 +47,13 @@ public class EmployerChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // Set up Toolbar with back arrow and dynamic title
         Toolbar toolbar = findViewById(R.id.chatToolbar);
-//        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Enable back arrow
-        }
         toolbar.setTitle("Chat");
 
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
         userEmail = preferences.getString("email", null);
         userPassword = preferences.getString("password", null);
-
         chatId = getIntent().getIntExtra("chatId", -1);
 
         if (userId == -1 || userEmail == null || userPassword == null || chatId == -1) {
@@ -90,7 +83,7 @@ public class EmployerChatActivity extends AppCompatActivity {
                 sendMessage(chatId, messageText, userId);
                 msgEtx.setText("");
             } else {
-                Toast.makeText(EmployerChatActivity.this, "Message cannot be empty or invalid chat ID", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Message cannot be empty or invalid chat ID", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -111,13 +104,17 @@ public class EmployerChatActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onWebSocketMessage(String message) {
-                runOnUiThread(() -> displayReceivedMessage(message));
+            public void onWebSocketMessage(Message message) { // Accepts Message object now
+                runOnUiThread(() -> {
+                    messageList.add(message);
+                    messageAdapter.notifyItemInserted(messageList.size() - 1);
+                    chatRecyclerView.scrollToPosition(messageList.size() - 1);
+                });
             }
 
             @Override
             public void onWebSocketClose(int code, String reason, boolean remote) {
-                runOnUiThread(() -> Toast.makeText(EmployerChatActivity.this, "Disconnected" + reason, Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(EmployerChatActivity.this, "Disconnected: " + reason, Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -129,17 +126,15 @@ public class EmployerChatActivity extends AppCompatActivity {
         WebSocketManager.getInstance().connectWebSocket(webSocketUrl);
     }
 
-    private String generateWebSocketUrl(int chatId, String email, String password) {
-        return "ws://coms-3090-063.class.las.iastate.edu:8080/ws/chat/" + chatId +
-                "?email=" + email + "&password=" + password;
-    }
-
     private void sendMessage(int chatId, String message, int userId) {
         try {
             JSONObject messageObject = new JSONObject();
             messageObject.put("chatId", chatId);
             messageObject.put("message", message);
             messageObject.put("userId", userId);
+
+            String timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault()).format(new Date());
+            messageObject.put("timestamp", timestamp);
 
             if (WebSocketManager.getInstance().isConnected()) {
                 WebSocketManager.getInstance().sendMessage(messageObject.toString());
@@ -151,54 +146,9 @@ public class EmployerChatActivity extends AppCompatActivity {
         }
     }
 
-    private void displayReceivedMessage(String rawMessage) {
-        try {
-            if (rawMessage.trim().startsWith("[")) {
-                JSONArray messageArray = new JSONArray(rawMessage);
-                for (int i = 0; i < messageArray.length(); i++) {
-                    JSONObject messageObject = messageArray.getJSONObject(i);
-                    processIndividualMessage(messageObject);
-                }
-            } else if (rawMessage.trim().startsWith("{")) {
-                JSONObject messageObject = new JSONObject(rawMessage);
-                processIndividualMessage(messageObject);
-            } else {
-                displaySystemMessage(rawMessage);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "Error parsing received message JSON: " + rawMessage, e);
-        }
-    }
-
-    private void processIndividualMessage(JSONObject messageObject) throws JSONException {
-        String text = messageObject.getString("message");
-        int senderId = messageObject.getInt("userId");
-        int messageId = messageObject.getInt("messageId");
-
-        if (!receivedMessageIds.contains(messageId)) {
-            boolean isSentByUser = (senderId == userId);
-            Message message = new Message(text, isSentByUser, senderId, messageId);
-            messageList.add(message);
-            receivedMessageIds.add(messageId);
-            messageAdapter.notifyItemInserted(messageList.size() - 1);
-            chatRecyclerView.scrollToPosition(messageList.size() - 1);
-        }
-    }
-
-    private void displaySystemMessage(String systemMessage) {
-        Message message = new Message(systemMessage, false, -1, -1);
-        messageList.add(message);
-        messageAdapter.notifyItemInserted(messageList.size() - 1);
-        chatRecyclerView.scrollToPosition(messageList.size() - 1);
-    }
-
-    private boolean isJsonMessage(String message) {
-        try {
-            new JSONObject(message);
-            return true;
-        } catch (JSONException ex) {
-            return false;
-        }
+    private String generateWebSocketUrl(int chatId, String email, String password) {
+        return "ws://coms-3090-063.class.las.iastate.edu:8080/ws/chat/" + chatId +
+                "?email=" + email + "&password=" + password;
     }
 
     @Override
@@ -217,7 +167,7 @@ public class EmployerChatActivity extends AppCompatActivity {
     }
 
     private void disconnectWebSocket() {
-        shouldReconnect = false; // Disable reconnection
+        shouldReconnect = false;
         if (WebSocketManager.getInstance().isConnected()) {
             WebSocketManager.getInstance().disconnectWebSocket();
             Log.d(TAG, "WebSocket disconnected.");

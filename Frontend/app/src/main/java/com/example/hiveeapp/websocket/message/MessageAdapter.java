@@ -1,4 +1,4 @@
-package com.example.hiveeapp.employer_user.chat.message;
+package com.example.hiveeapp.websocket.message;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hiveeapp.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
     private final List<Message> messages;
     private final int currentUserId;
 
-    // Updated constructor to accept `userId`
     public MessageAdapter(List<Message> messages, int currentUserId) {
         this.messages = messages;
         this.currentUserId = currentUserId;
@@ -36,17 +38,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         Message message = messages.get(position);
         holder.messageTextView.setText(message.getText());
 
+        // Format and set the timestamp
+        String formattedTime = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(new Date(message.getTimestamp()));
+        holder.timestampTextView.setText(formattedTime);
+
         // Align message based on sender
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.messageTextView.getLayoutParams();
         if (message.getSenderId() == currentUserId) {
             params.addRule(RelativeLayout.ALIGN_PARENT_END);
-            holder.messageTextView.setBackgroundResource(R.drawable.bg_message_employer);
+            holder.messageTextView.setBackgroundResource(R.drawable.background_sent_message);
         } else {
             params.addRule(RelativeLayout.ALIGN_PARENT_START);
-            holder.messageTextView.setBackgroundResource(R.drawable.bg_message_student);
+            holder.messageTextView.setBackgroundResource(R.drawable.background_received_message);
         }
 
-        holder.messageTextView.setLayoutParams(params); // Apply the layout parameters
+        holder.messageTextView.setLayoutParams(params);
     }
 
     @Override
@@ -56,10 +62,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     static class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView messageTextView;
+        TextView timestampTextView;
 
         MessageViewHolder(View itemView) {
             super(itemView);
             messageTextView = itemView.findViewById(R.id.messageTextView);
+            timestampTextView = itemView.findViewById(R.id.timestampTextView);
         }
     }
 }
