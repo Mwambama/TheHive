@@ -23,7 +23,7 @@ public class ChatMessageMapper {
         dto.setUserId(entity.getUser().getUserId());
         dto.setChatId(entity.getChat().getChatId());
         dto.setTimestamp(entity.getTimestamp());
-        dto.setRead(entity.getRead());
+        dto.setSeen(entity.getSeen());
         if (entity.getReplyTo() != null) {
             dto.setReplyToId(entity.getReplyTo().getMessageId());
         }
@@ -40,7 +40,7 @@ public class ChatMessageMapper {
         entity.setUser(userService.getUserById(dto.getUserId()));
         entity.setChat(chatService.getChatById(dto.getChatId()));
         entity.setTimestamp(dto.getTimestamp());
-        entity.setRead(dto.getRead());
+        entity.setSeen(dto.getSeen());
         return entity;
     }
 }

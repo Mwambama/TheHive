@@ -35,10 +35,15 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     public List<ChatMessageDto> getUnreadChatMessagesByUserId(Long userId){
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User not found with id " + userId));
-        List<ChatMessage> unreadMessages = chatMessageRepository.findByUserAndReadFalse(user);
+        List<ChatMessage> unreadMessages = chatMessageRepository.findByUserAndSeenFalse(user);
         return unreadMessages.stream()
                 .map(chatMessageMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void markMessagesAsSeen(Long chatId, Long userId){
+        chatMessageRepository.markMessagesAsSeen(chatId, userId);
     }
 
     @Override

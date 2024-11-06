@@ -91,7 +91,8 @@ public class ChatSocket {
 
         // Notify all users in the chat room
         broadcast(chatId, "User " + email + " has joined the chat");
-
+        Long userId = userService.getUserByEmail(email).getUserId();
+       // chatMessageService.markMessagesAsSeen(chatId, userId);
         sendChatHistory(email, chatId);
     }
 

@@ -31,5 +31,5 @@ public class ChatMessageDto {
     private Long replyToId;
 
     @NotNull
-    private Boolean read;
+    private Boolean seen;
 }

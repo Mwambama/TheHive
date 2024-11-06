@@ -6,6 +6,7 @@ import com.example.thehiveapp.dto.chat.ChatMessageDto;
 import java.util.List;
 
 public interface ChatMessageService {
+    void markMessagesAsSeen(Long chatId, Long userId);
     List<ChatMessageDto> getChatMessages();
     List<ChatMessageDto> getUnreadChatMessagesByUserId(Long userId);
     ChatMessageDto createChatMessage(ChatMessageDto request);

@@ -40,6 +40,6 @@ public class ChatMessage {
     @JoinColumn(name = "reply_to_id")
     private ChatMessage replyTo;
 
-    @Column(name = "read")
-    private Boolean read;
+    @Column(name = "seen")
+    private Boolean seen;
 }
