@@ -3,7 +3,12 @@ package com.example.hiveeapp.websocket;
 import android.util.Log;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONObject;
+
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class WebSocketManager {
 
@@ -45,7 +50,20 @@ public class WebSocketManager {
 
     public void sendMessage(String message) {
         if (isConnected()) {
-            webSocketClient.send(message);
+            try {
+                // Create a JSON object to hold the message and timestamp
+                JSONObject messageJson = new JSONObject();
+                messageJson.put("message", message);
+
+                // Generate the current timestamp in the required format (without seconds)
+                String timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault()).format(new Date());
+                messageJson.put("timestamp", timestamp);
+
+                // Convert the JSON object to a string and send
+                webSocketClient.send(messageJson.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             Log.d("WebSocketManager", "WebSocket not connected, attempting to reconnect...");
             reconnectWebSocket();
@@ -81,10 +99,29 @@ public class WebSocketManager {
         @Override
         public void onMessage(String message) {
             Log.d("WebSocket", "Received message: " + message);
-            if (webSocketListener != null) {
-                webSocketListener.onWebSocketMessage(message);
+
+            try {
+                // Parse the JSON message to extract the text and timestamp
+                JSONObject messageJson = new JSONObject(message);
+                String messageText = messageJson.getString("message");
+                String timestamp = messageJson.getString("timestamp");
+
+                // Format timestamp for display (only hour:minute, no seconds)
+                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault());
+                SimpleDateFormat outputFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+                Date date = inputFormat.parse(timestamp);
+                String formattedTime = outputFormat.format(date);
+
+                // Pass both the message text and formatted timestamp to the listener
+                if (webSocketListener != null) {
+                    webSocketListener.onWebSocketMessage(messageText + " (" + formattedTime + ")");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
+
 
         @Override
         public void onClose(int code, String reason, boolean remote) {
