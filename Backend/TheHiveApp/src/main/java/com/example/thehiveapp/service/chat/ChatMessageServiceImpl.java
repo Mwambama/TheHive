@@ -3,8 +3,10 @@ package com.example.thehiveapp.service.chat;
 import com.example.thehiveapp.dto.chat.ChatMessageDto;
 import com.example.thehiveapp.entity.chat.Chat;
 import com.example.thehiveapp.entity.chat.ChatMessage;
+import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.mapper.chat.ChatMessageMapper;
 import com.example.thehiveapp.repository.chat.ChatMessageRepository;
+import com.example.thehiveapp.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Autowired private ChatMessageRepository chatMessageRepository;
+    @Autowired private UserRepository userRepository;
     @Autowired private ChatService chatService;
     @Autowired private ChatMessageMapper chatMessageMapper;
 
@@ -29,10 +32,30 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
+    public List<ChatMessageDto> getUnreadChatMessagesByUserId(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException("User not found with id " + userId));
+        List<ChatMessage> unreadMessages = chatMessageRepository.findByUserAndSeenFalse(user);
+        return unreadMessages.stream()
+                .map(chatMessageMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void markMessagesAsSeen(Long chatId, Long userId){
+        chatMessageRepository.markMessagesAsSeen(chatId, userId);
+    }
+
+    @Override
     public ChatMessageDto createChatMessage(ChatMessageDto dto) {
-        ChatMessage ChatMessage = chatMessageRepository.save(chatMessageMapper.toEntity(dto));
-        dto = chatMessageMapper.toDto(ChatMessage);
-        return dto;
+        ChatMessage chatMessage = chatMessageMapper.toEntity(dto);
+        if (dto.getReplyToId() != null){
+            ChatMessage repliedMessage = chatMessageRepository.findById(dto.getReplyToId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Message being replied to not found"));
+            chatMessage.setReplyTo(repliedMessage);
+        }
+        ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
+        return chatMessageMapper.toDto(savedMessage);
     }
 
     @Override

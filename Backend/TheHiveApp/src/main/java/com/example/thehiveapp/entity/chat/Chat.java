@@ -19,13 +19,12 @@ public class Chat {
     @Column(name = "chat_id")
     private Long chatId;
 
-    @Column(name = "employer_id", nullable = false)
+    @JoinColumn(name = "employer_id", nullable = false)
     private Long employerId;
 
-    @Column(name = "student_id", nullable = false)
+    @JoinColumn(name = "student_id", nullable = false)
     private Long studentId;
 
-    @Column(name= "job_posting_id", nullable = false)
+    @JoinColumn(name = "job_posting_id", nullable = false)
     private Long jobPostingId;
-
 }
