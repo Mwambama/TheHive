@@ -1,6 +1,7 @@
 package com.example.thehiveapp.controller.chat;
 
 import com.example.thehiveapp.dto.chat.ChatMessageDto;
+import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.service.authentication.AuthenticationService;
 import com.example.thehiveapp.service.chat.ChatMessageService;
 import com.example.thehiveapp.service.chat.ChatService;
@@ -20,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
-import java.net.URI;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -92,7 +91,7 @@ public class ChatSocket {
         // Notify all users in the chat room
         broadcast(chatId, "User " + email + " has joined the chat");
         Long userId = userService.getUserByEmail(email).getUserId();
-       // chatMessageService.markMessagesAsSeen(chatId, userId);
+        chatMessageService.markMessagesAsSeen(chatId, userId);
         sendChatHistory(email, chatId);
     }
 
@@ -109,13 +108,20 @@ public class ChatSocket {
         // Notify all users in the chat room
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         dto.setTimestamp(time);
+        // check both users are in the chat
+        if (chatRooms.get(chatId).size() == 2){
+            dto.setSeen(true);
+        }
         dto = chatMessageService.createChatMessage(dto);
         String jsonMessage = objectMapper.writeValueAsString(dto);
         broadcast(chatId, jsonMessage);
         logger.info("[onMessage] {}: {} at {}", email, dto.getMessage(), time);
-
-        // Notify user's unread message
-        UnreadMessagesSocket.notifyUnreadMessage(email, dto);
+        if (chatRooms.get(chatId).size() == 1){
+            User user = userService.getUserByEmail(email);
+            String otherEmail = chatService.getOtherUserEmail(chatId, user.getUserId());
+            // Notify user's unread message
+            UnreadMessagesSocket.notifyUnreadMessage(otherEmail, dto);
+        }
     }
 
     @OnClose

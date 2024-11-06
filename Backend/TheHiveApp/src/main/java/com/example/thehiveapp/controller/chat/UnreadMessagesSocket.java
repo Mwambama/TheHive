@@ -5,7 +5,6 @@ import com.example.thehiveapp.service.authentication.AuthenticationService;
 import com.example.thehiveapp.service.chat.ChatMessageService;
 import com.example.thehiveapp.service.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.websocket.CloseReason;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
 import jakarta.websocket.OnOpen;
@@ -15,12 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 

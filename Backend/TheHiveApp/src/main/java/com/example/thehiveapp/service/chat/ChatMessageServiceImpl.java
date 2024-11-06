@@ -6,7 +6,9 @@ import com.example.thehiveapp.entity.chat.ChatMessage;
 import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.mapper.chat.ChatMessageMapper;
 import com.example.thehiveapp.repository.chat.ChatMessageRepository;
+import com.example.thehiveapp.repository.chat.ChatRepository;
 import com.example.thehiveapp.repository.user.UserRepository;
+import com.example.thehiveapp.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -18,8 +20,8 @@ import java.util.stream.Collectors;
 public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Autowired private ChatMessageRepository chatMessageRepository;
-    @Autowired private UserRepository userRepository;
     @Autowired private ChatService chatService;
+    @Autowired private UserService userService;
     @Autowired private ChatMessageMapper chatMessageMapper;
 
     public ChatMessageServiceImpl() {}
@@ -33,8 +35,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     public List<ChatMessageDto> getUnreadChatMessagesByUserId(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException("User not found with id " + userId));
+        User user = userService.getUserById(userId);
         List<ChatMessage> unreadMessages = chatMessageRepository.findByUserAndSeenFalse(user);
         return unreadMessages.stream()
                 .map(chatMessageMapper::toDto)
@@ -43,7 +44,13 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     public void markMessagesAsSeen(Long chatId, Long userId){
-        chatMessageRepository.markMessagesAsSeen(chatId, userId);
+        Chat chat = chatService.getChatById(chatId);
+        User user = userService.getUserById(userId);
+        List<ChatMessage> unreadMessages = chatMessageRepository.findByChatAndUserNotAndSeenFalse(chat, user);
+        for (ChatMessage message : unreadMessages) {
+            message.setSeen(true);
+        }
+        chatMessageRepository.saveAll(unreadMessages);
     }
 
     @Override
