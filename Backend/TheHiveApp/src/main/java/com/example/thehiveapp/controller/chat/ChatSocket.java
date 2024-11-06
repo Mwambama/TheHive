@@ -24,6 +24,7 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -61,43 +62,14 @@ public class ChatSocket {
 
     @OnOpen
     public void onOpen(Session session, @PathParam("chatId") Long chatId) throws IOException {
-        URI uri = session.getRequestURI();
-        String query = uri.getQuery(); // example: "email=foo&password=bar"
+        Map<String, String> queryParams = parseQueryParams(session.getRequestURI().getQuery());
+        String email = queryParams.get("email");
+        String password = queryParams.get("password");
 
-        String email = null;
-        String password = null;
-
-        if (query != null) {
-            for (String param : query.split("&")) {
-                String[] keyValue = param.split("=");
-                if (keyValue[0].equals("email")) {
-                    email = keyValue[1];
-                } else if (keyValue[0].equals("password")) {
-                    password = keyValue[1];
-                }
-            }
-        }
-
-        if (email == null || password == null) {
-            session.getBasicRemote().sendText("Missing email or password");
-            session.close();
+        // Validate credentials
+        if (!this.validOpen(session, chatId, email, password)) {
             return;
         }
-
-        // Validate password
-        if (!authenticationService.existsByEmailAndPassword(email, password)) {
-            session.getBasicRemote().sendText("Invalid email or password");
-            session.close();
-            return;
-        }
-
-        // Validate Chat ID
-        if (!chatService.getChatIdsByUser(userService.getUserByEmail(email)).contains(chatId)) {
-            logger.warn("User {} attempted to join an invalid chat ID: {}", email, chatId);
-            session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Invalid chat ID for user " + email));
-            return;
-        }
-
 
         // Handle duplicate emails in the same chat room
         chatRooms.putIfAbsent(chatId, new ConcurrentHashMap<>());
@@ -127,22 +99,22 @@ public class ChatSocket {
     public void onMessage(Session session, @PathParam("chatId") Long chatId, String message) throws IOException {
         ChatMessageDto dto = objectMapper.readValue(message, ChatMessageDto.class);
         String email = chatRooms.get(chatId).get(session);
-        if (!dto.getChatId().equals(chatId)) {
-            session.getBasicRemote().sendText("Invalid Chat ID");
-            session.close();
+
+        // Validate message
+        if (!this.validMessage(session, chatId, email, dto)) {
             return;
         }
-        if (!dto.getUserId().equals(userService.getUserByEmail(email).getUserId())) {
-            session.getBasicRemote().sendText("Invalid User ID");
-            session.close();
-            return;
-        }
+
+        // Notify all users in the chat room
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        logger.info("[onMessage] " + email + ": " + dto.getMessage() + " at " + time);
         dto.setTimestamp(time);
         dto = chatMessageService.createChatMessage(dto);
         String jsonMessage = objectMapper.writeValueAsString(dto);
         broadcast(chatId, jsonMessage);
+        logger.info("[onMessage] {}: {} at {}", email, dto.getMessage(), time);
+
+        // Notify user's unread message
+        UnreadMessagesSocket.notifyUnreadMessage(email, dto);
     }
 
     @OnClose
@@ -179,5 +151,61 @@ public class ChatSocket {
         } catch (IOException e) {
             logger.error("[ChatHistory Exception] {}", e.getMessage());
         }
+    }
+    private Map<String, String> parseQueryParams(String query) {
+        Map<String, String> queryParams = new HashMap<>();
+
+        if (query != null) {
+            for (String param : query.split("&")) {
+                String[] keyValue = param.split("=");
+                if (keyValue.length == 2) {
+                    queryParams.put(keyValue[0], keyValue[1]);
+                }
+            }
+        }
+        return queryParams;
+    }
+
+    private Boolean validOpen(Session session, Long chatId, String email, String password) throws IOException {
+        // Validate parameters
+        if (email == null || password == null) {
+            session.getBasicRemote().sendText("Missing email or password");
+            session.close();
+            return false;
+        }
+
+        // Validate password
+        if (!authenticationService.existsByEmailAndPassword(email, password)) {
+            session.getBasicRemote().sendText("Invalid email or password");
+            session.close();
+            return false;
+        }
+
+        // Validate Chat ID
+        if (!chatService.getChatIdsByUser(userService.getUserByEmail(email)).contains(chatId)) {
+            logger.warn("User {} attempted to join an invalid chat ID: {}", email, chatId);
+            session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Invalid chat ID for user " + email));
+            return false;
+        }
+
+        return true;
+    }
+
+    private Boolean validMessage(Session session, Long chatId, String email, ChatMessageDto dto) throws IOException {
+        // Validate Chat Id
+        if (!dto.getChatId().equals(chatId)) {
+            session.getBasicRemote().sendText("Invalid Chat ID");
+            session.close();
+            return false;
+        }
+
+        // Validate User Id
+        else if (!dto.getUserId().equals(userService.getUserByEmail(email).getUserId())) {
+            session.getBasicRemote().sendText("Invalid User ID");
+            session.close();
+            return false;
+        }
+
+        return true;
     }
 }
