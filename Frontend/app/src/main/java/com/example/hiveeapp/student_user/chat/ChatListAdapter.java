@@ -8,6 +8,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.student_user.setting.StudentApi;
+import com.example.hiveeapp.student_user.swipe.JobPosting;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatViewHolder> {
@@ -28,8 +34,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the correct layout
-        View view = LayoutInflater.from(context).inflate(R.layout.item_chat_list, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_chat, parent, false);
         return new ChatViewHolder(view);
     }
 
@@ -37,14 +42,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         ChatDto chat = chatList.get(position);
         holder.jobTitleTextView.setText(chat.getJobTitle());
-
-        // Optional: Display last message preview
-        if (chat.getLastMessage() != null && !chat.getLastMessage().isEmpty()) {
-            holder.lastMessageTextView.setText(chat.getLastMessage());
-            holder.lastMessageTextView.setVisibility(View.VISIBLE);
-        } else {
-            holder.lastMessageTextView.setVisibility(View.GONE);
-        }
 
         holder.itemView.setOnClickListener(v -> onChatClickListener.onChatClick(chat));
     }
@@ -56,12 +53,10 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
 
     public static class ChatViewHolder extends RecyclerView.ViewHolder {
         TextView jobTitleTextView;
-        TextView lastMessageTextView;
 
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
             jobTitleTextView = itemView.findViewById(R.id.jobTitleTextView);
-            lastMessageTextView = itemView.findViewById(R.id.lastMessageTextView);
         }
     }
 }

@@ -24,10 +24,16 @@ import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class EmployerChatListActivity extends AppCompatActivity {
 
@@ -175,12 +181,24 @@ public class EmployerChatListActivity extends AppCompatActivity {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
                     try {
-                        String firstName = response.getString("firstName");
-                        String lastName = response.getString("lastName");
-                        String fullName = firstName + " " + lastName;
+                        Log.d(TAG, "User JSON Response: " + response.toString());
 
-                        // Update the jobTitle in the chat object
-                        chat.setJobTitle(fullName);
+                        String fullName;
+
+                        // Check if the "name" key exists
+                        if (response.has("name")) {
+                            fullName = response.getString("name");
+                        } else if (response.has("firstName") && response.has("lastName")) {
+                            // Fallback in case "firstName" and "lastName" are present
+                            String firstName = response.getString("firstName");
+                            String lastName = response.getString("lastName");
+                            fullName = firstName + " " + lastName;
+                        } else {
+                            fullName = "Unknown User";
+                        }
+
+                        // Update the studentName in the chat object
+                        chat.setStudentName(fullName);
 
                         // Notify the adapter that the data has changed
                         chatListAdapter.notifyDataSetChanged();
@@ -199,6 +217,7 @@ public class EmployerChatListActivity extends AppCompatActivity {
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
+
 
     private void updateChatTitle(int studentId, String studentName) {
         for (EmployerChatDto chat : chatList) {
