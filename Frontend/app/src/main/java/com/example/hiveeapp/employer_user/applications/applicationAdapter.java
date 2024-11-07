@@ -108,7 +108,7 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
 
                         // Create a bundle with the student data from the response
                         Bundle args = new Bundle();
-                        args.putString("name", response.optString("name", "N/A"));
+                        args.putString("name", response.optString("name", "re"));
                         args.putString("email", response.optString("email", "N/A"));
                         args.putString("phone", response.optString("phone", "N/A"));
                         args.putString("university", response.optString("university", "N/A"));

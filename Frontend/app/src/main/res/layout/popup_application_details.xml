@@ -30,8 +30,7 @@
                 android:inputType="text"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"
-                android:text="Eula De Winton"/>
+                android:enabled="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Email Field -->
@@ -53,8 +52,7 @@
                 android:inputType="textEmailAddress"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"
-                android:text="edeb@msu.edu"/>
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Phone Field -->
@@ -76,8 +74,7 @@
                 android:inputType="phone"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"
-                android:text="8673793697"/>
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- University Field -->
@@ -99,8 +96,7 @@
                 android:inputType="text"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"
-                android:text="Florida Gulf Coast University"/>
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Graduation Date Field -->
@@ -122,8 +118,7 @@
                 android:inputType="date"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"
-                android:text="2026-04-09"/>
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- GPA Field -->
@@ -145,8 +140,7 @@
                 android:inputType="numberDecimal"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"
-                android:text="2.7"/>
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Resume Path Field -->
@@ -168,8 +162,7 @@
                 android:inputType="text"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:enabled="false"
-                android:text="Nunc.mp3"/>
+                android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
