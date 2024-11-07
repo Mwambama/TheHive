@@ -72,6 +72,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
         TextView lastMessageTextView;
         TextView lastMessageTimeTextView;
 
+
+
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
             jobTitleTextView = itemView.findViewById(R.id.jobTitleTextView);
