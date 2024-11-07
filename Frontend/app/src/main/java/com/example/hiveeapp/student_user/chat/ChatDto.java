@@ -8,6 +8,7 @@ public class ChatDto {
     private String jobTitle;
     private String lastMessage;
     private String lastMessageTime;
+    private String studentName;
 
     // Constructor with all parameters
     public ChatDto(int chatId, int employerId, int studentId, int jobPostingId, String jobTitle, String lastMessage, String lastMessageTime) {
@@ -34,10 +35,12 @@ public class ChatDto {
 
     public String getLastMessage() { return lastMessage; }
     public String getLastMessageTime() { return lastMessageTime; }
+    public String getStudentName() {return studentName; }
 
     public void setJobTitle(String jobTitle) { this.jobTitle = jobTitle; }
     public void setJobPostingId(int jobPostingId) { this.jobPostingId = jobPostingId; }
 
     public void setLastMessage(String lastMessage) { this.lastMessage = lastMessage; }
     public void setLastMessageTime(String lastMessageTime) { this.lastMessageTime = lastMessageTime; }
+    public void setStudentName(String studentName) { this.studentName = studentName; }
 }
