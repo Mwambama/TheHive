@@ -44,15 +44,38 @@ public class applicationsApi {
     }
 
     // Method to fetch all pending applications
+//    public static void getApplications(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+//        String url = BASE_URL;
+//        Log.d(TAG, "GET Applications Request URL: " + url);
+//
+//        JsonArrayRequest request = new JsonArrayRequest(
+//                Request.Method.GET,
+//                url,
+//                null,
+//                listener,
+//                error -> handleErrorResponse("Error fetching applications", error, errorListener)
+//        ) {
+//            @Override
+//            public Map<String, String> getHeaders() {
+//                return applicationsApi.getHeaders(context);
+//            }
+//        };
+//
+//        VolleySingleton.getInstance(context).addToRequestQueue(request);
+//    }
+
     public static void getApplications(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL;
+        String url = BASE_URL;  // The URL for fetching applications
         Log.d(TAG, "GET Applications Request URL: " + url);
 
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
                 null,
-                listener,
+                response -> {
+                    // Process each application and return the response with only application details (without student info)
+                    listener.onResponse(response);
+                },
                 error -> handleErrorResponse("Error fetching applications", error, errorListener)
         ) {
             @Override
@@ -61,8 +84,67 @@ public class applicationsApi {
             }
         };
 
+        // Add the request to the Volley request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
+
+
+    // Method to fetch all pending applications
+//    public static void getApplications(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+//        String url = BASE_URL;
+//        Log.d(TAG, "GET Applications Request URL: " + url);
+//
+//        JsonArrayRequest request = new JsonArrayRequest(
+//                Request.Method.GET,
+//                url,
+//                null,
+//                response -> {
+//                    // Process each application and fetch student details
+//                    for (int i = 0; i < response.length(); i++) {
+//                        try {
+//                            JSONObject application = response.getJSONObject(i);
+//                            long studentId = application.getLong("studentId");
+//                            int finalI = i;
+//                            getStudentDetails(context, studentId, studentResponse -> {
+//                                try {
+//                                    // Combine application and student details
+//                                    application.put("name", studentResponse.optString("name", "N/A"));
+//                                    application.put("email", studentResponse.optString("email", "N/A"));
+//                                    application.put("phone", studentResponse.optString("phone", "N/A"));
+//                                    application.put("university", studentResponse.optString("university", "N/A"));
+//                                    application.put("graduationDate", studentResponse.optString("graduationDate", "N/A"));
+//                                    application.put("gpa", studentResponse.optString("gpa", "N/A"));
+//                                    application.put("resumePath", studentResponse.optString("resumePath", "N/A"));
+//                                } catch (JSONException e) {
+//                                    e.printStackTrace();
+//                                }
+//
+//                                // Once all student details are fetched, return the response
+//                                if (finalI == response.length() - 1) {
+//                                    listener.onResponse(response);
+//                                }
+//                            }, error -> {
+//                                // Handle error while fetching student details
+//                                handleErrorResponse("Error fetching student details", error, errorListener);
+//                            });
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                },
+//                error -> handleErrorResponse("Error fetching applications", error, errorListener)
+//        ) {
+//            @Override
+//            public Map<String, String> getHeaders() {
+//                return applicationsApi.getHeaders(context);
+//            }
+//        };
+//
+//        VolleySingleton.getInstance(context).addToRequestQueue(request);
+//    }
+
+    // Method to fetch student details
     public static void getStudentDetails(Context context, long studentId, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = "http://coms-3090-063.class.las.iastate.edu:8080/student/" + studentId;
         Log.d(TAG, "GET Student Details Request URL: " + url);
@@ -75,13 +157,33 @@ public class applicationsApi {
                 error -> handleErrorResponse("Error fetching student details", error, errorListener)
         ) {
             @Override
-            public Map<String, String> getHeaders() {
-                return applicationsApi.getHeaders(context);
+            public Map<String, String> getHeaders() {return applicationsApi.getHeaders(context);
             }
         };
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
+
+//    public static void getStudentDetails(Context context, long studentId, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+//        String url = "http://coms-3090-063.class.las.iastate.edu:8080/student/" + studentId;
+//        Log.d(TAG, "GET Student Details Request URL: " + url);
+//
+//        JsonObjectRequest request = new JsonObjectRequest(
+//                Request.Method.GET,
+//                url,
+//                null,
+//                listener,
+//                error -> handleErrorResponse("Error fetching student details", error, errorListener)
+//        ) {
+//            @Override
+//            public Map<String, String> getHeaders() {
+//                return applicationsApi.getHeaders(context);
+//            }
+//        };
+//
+//        VolleySingleton.getInstance(context).addToRequestQueue(request);
+//    }
 
 
     // Method to accept an application
