@@ -63,14 +63,12 @@ public class WebSocketManager {
                     messageJson.put("replyToId", replyToId);
                 }
 
-                // Send JSON message
                 webSocketClient.send(messageJson.toString());
-                Log.d("WebSocketManager", "Sent message: " + messageJson.toString());
+                Log.d("WebSocketManager", "Sent message JSON: " + messageJson);
             } catch (JSONException e) {
-                Log.e("WebSocketManager", "Failed to send message JSON", e);
+                Log.e("WebSocketManager", "Failed to send JSON", e);
             }
         } else {
-            Log.d("WebSocketManager", "WebSocket not connected, attempting to reconnect...");
             reconnectWebSocket();
         }
     }
@@ -139,29 +137,19 @@ public class WebSocketManager {
                 int chatId = messageJson.getInt("chatId");
                 int messageId = messageJson.getInt("messageId");
                 int senderId = messageJson.getInt("userId");
-                String timestampStr = messageJson.getString("timestamp");
                 Integer replyToId = messageJson.isNull("replyToId") ? null : messageJson.getInt("replyToId");
+
+                long timestampMillis = parseTimestamp(messageJson.getString("timestamp"));
                 boolean seen = messageJson.getBoolean("seen");
 
-                // Parse timestamp string to milliseconds
-                long timestampMillis = parseTimestamp(timestampStr);
+                Message receivedMessage = new Message(
+                        messageText, senderId == webSocketListener.getCurrentUserId(),
+                        senderId, messageId, chatId, timestampMillis, replyToId, seen
+                );
 
-                if (webSocketListener != null) {
-                    // Here, make sure to pass all the data correctly to create the Message object
-                    Message receivedMessage = new Message(
-                            messageText,
-                            senderId == webSocketListener.getCurrentUserId(),
-                            senderId,
-                            messageId,
-                            chatId,
-                            timestampMillis,
-                            replyToId,
-                            seen
-                    );
-                    webSocketListener.onWebSocketMessage(receivedMessage);
-                }
+                webSocketListener.onWebSocketMessage(receivedMessage);
             } catch (JSONException e) {
-                Log.e("WebSocket", "Error parsing JSON message", e);
+                Log.e("WebSocket", "Error processing message JSON", e);
             }
         }
 

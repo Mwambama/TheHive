@@ -12,7 +12,9 @@
         android:padding="8dp"
         android:background="@drawable/bg_message_received"
         android:layout_gravity="start"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
 
         <!-- Received Reply TextView -->
         <TextView
@@ -54,7 +56,9 @@
         android:padding="8dp"
         android:background="@drawable/bg_message_sent"
         android:layout_gravity="end"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
 
         <!-- Sent Reply TextView -->
         <TextView

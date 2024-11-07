@@ -21,9 +21,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     private OnMessageClickListener onMessageClickListener;
 
+    // Variable to track the selected message ID
+    private int selectedMessageId = -1; // -1 means no message is selected
+
     // Interface for click events
     public interface OnMessageClickListener {
         void onMessageClick(Message message);
+        void onMessageUnselected();
     }
 
     // Setter for the click listener
@@ -34,6 +38,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public MessageAdapter(List<Message> messages, int currentUserId) {
         this.messages = messages;
         this.currentUserId = currentUserId;
+    }
+
+    // Method to set the selected message ID
+    public void setSelectedMessageId(int messageId) {
+        this.selectedMessageId = messageId;
+        notifyDataSetChanged(); // Refresh the list to apply visual changes
     }
 
     @NonNull
@@ -51,6 +61,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         String formattedTime = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(new Date(message.getTimestamp()));
 
+        // Check if the current message is selected
+        boolean isSelected = message.getMessageId() == selectedMessageId;
+
         if (message.isSentByUser()) {
             // Show sent message container and hide received container
             holder.sentMessageContainer.setVisibility(View.VISIBLE);
@@ -58,6 +71,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
             holder.sentMessageTextView.setText(message.getText());
             holder.sentTimestampTextView.setText(formattedTime);
+
+            // Apply visual indication if selected
+            holder.sentMessageContainer.setBackgroundResource(isSelected ?
+                    R.drawable.bg_message_sent_selected : R.drawable.bg_message_sent);
 
             // Display replied message if exists
             if (message.getReplyToId() != null) {
@@ -72,12 +89,20 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.sentReplyTextView.setVisibility(View.GONE);
             }
 
-            // Set click listener on the sent message container
+            // Set click listener
             holder.sentMessageContainer.setOnClickListener(v -> {
                 if (onMessageClickListener != null) {
-                    onMessageClickListener.onMessageClick(message);
+                    if (selectedMessageId == message.getMessageId()) {
+                        // Message is already selected, unselect it
+                        onMessageClickListener.onMessageUnselected();
+                        setSelectedMessageId(-1);
+                    } else {
+                        onMessageClickListener.onMessageClick(message);
+                        setSelectedMessageId(message.getMessageId());
+                    }
                 }
             });
+
         } else {
             // Show received message container and hide sent container
             holder.receivedMessageContainer.setVisibility(View.VISIBLE);
@@ -85,6 +110,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
             holder.receivedMessageTextView.setText(message.getText());
             holder.receivedTimestampTextView.setText(formattedTime);
+
+            // Apply visual indication if selected
+            holder.receivedMessageContainer.setBackgroundResource(isSelected ?
+                    R.drawable.bg_message_received_selected : R.drawable.bg_message_received);
 
             // Display replied message if exists
             if (message.getReplyToId() != null) {
@@ -99,10 +128,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.receivedReplyTextView.setVisibility(View.GONE);
             }
 
-            // Set click listener on the received message container
+            // Set click listener
             holder.receivedMessageContainer.setOnClickListener(v -> {
                 if (onMessageClickListener != null) {
-                    onMessageClickListener.onMessageClick(message);
+                    if (selectedMessageId == message.getMessageId()) {
+                        // Message is already selected, unselect it
+                        onMessageClickListener.onMessageUnselected();
+                        setSelectedMessageId(-1);
+                    } else {
+                        onMessageClickListener.onMessageClick(message);
+                        setSelectedMessageId(message.getMessageId());
+                    }
                 }
             });
         }
@@ -141,6 +177,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             receivedTimestampTextView = itemView.findViewById(R.id.receivedTimestampTextView);
             sentReplyTextView = itemView.findViewById(R.id.sentReplyTextView);
             receivedReplyTextView = itemView.findViewById(R.id.receivedReplyTextView);
+
+            // No need to set click listeners here since we set them in onBindViewHolder
         }
     }
 }

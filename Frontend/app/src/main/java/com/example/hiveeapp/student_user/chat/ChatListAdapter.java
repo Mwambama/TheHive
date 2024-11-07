@@ -43,7 +43,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
         ChatDto chat = chatList.get(position);
         holder.jobTitleTextView.setText(chat.getJobTitle());
 
-        // Optional: Display last message preview
+        //Display last message preview
         if (chat.getLastMessage() != null && !chat.getLastMessage().isEmpty()) {
             holder.lastMessageTextView.setText(chat.getLastMessage());
             holder.lastMessageTextView.setVisibility(View.VISIBLE);
@@ -51,7 +51,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
             holder.lastMessageTextView.setVisibility(View.GONE);
         }
 
-        // Optional: Display last message time
+        //Display last message time
         if (chat.getLastMessageTime() != null && !chat.getLastMessageTime().isEmpty()) {
             holder.lastMessageTimeTextView.setText(formatTimestamp(chat.getLastMessageTime()));
             holder.lastMessageTimeTextView.setVisibility(View.VISIBLE);

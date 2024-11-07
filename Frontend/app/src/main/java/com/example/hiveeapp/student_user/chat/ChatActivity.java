@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout; // Import for LinearLayout
 import android.widget.TextView; // Import TextView
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +26,6 @@ import org.java_websocket.handshake.ServerHandshake;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 public class ChatActivity extends AppCompatActivity implements MessageAdapter.OnMessageClickListener {
@@ -44,7 +44,9 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
     private boolean shouldReconnect = true;
 
     private Integer replyToMessageId = null;
+    private LinearLayout replyPreviewContainer;
     private TextView replyingToTextView;
+    private TextView replyMessageTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +87,12 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         msgEtx = findViewById(R.id.msgEtx);
         sendBtn = findViewById(R.id.sendBtn);
 
-        // Initialize the replyingToTextView
+        // Initialize the reply preview container and TextViews
+        replyPreviewContainer = findViewById(R.id.replyPreviewContainer);
+        replyPreviewContainer.setVisibility(View.GONE); // Initially hidden
+
         replyingToTextView = findViewById(R.id.replyingToTextView);
-        replyingToTextView.setVisibility(View.GONE); // Initially hidden
+        replyMessageTextView = findViewById(R.id.replyMessageTextView);
 
         messageList = new ArrayList<>();
         messageAdapter = new MessageAdapter(messageList, userId);
@@ -97,9 +102,11 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         // Set the click listener on the adapter
         messageAdapter.setOnMessageClickListener(this);
 
-        replyingToTextView.setOnClickListener(v -> {
+        // Allow users to cancel a reply by clicking on the reply preview container
+        replyPreviewContainer.setOnClickListener(v -> {
             replyToMessageId = null;
-            replyingToTextView.setVisibility(View.GONE);
+            replyPreviewContainer.setVisibility(View.GONE);
+            messageAdapter.setSelectedMessageId(-1); // Reset selected message
         });
 
         // Send button click listener
@@ -109,24 +116,37 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
                 sendMessage(chatId, messageText, userId, replyToMessageId);
                 msgEtx.setText("");
                 replyToMessageId = null;
-                replyingToTextView.setVisibility(View.GONE);
+                replyPreviewContainer.setVisibility(View.GONE);
+                messageAdapter.setSelectedMessageId(-1); // Reset selected message
             } else {
                 Toast.makeText(ChatActivity.this, "Message cannot be empty or invalid chat ID", Toast.LENGTH_SHORT).show();
             }
-        });
-
-        // Allow users to cancel a reply by clicking on the replyingToTextView
-        replyingToTextView.setOnClickListener(v -> {
-            replyToMessageId = null;
-            replyingToTextView.setVisibility(View.GONE);
         });
     }
 
     @Override
     public void onMessageClick(Message message) {
-        replyToMessageId = message.getMessageId();
-        replyingToTextView.setText("Replying to: " + message.getText());
-        replyingToTextView.setVisibility(View.VISIBLE);
+        // Set replyToMessageId when a message is clicked to reply
+        if (replyToMessageId != null && replyToMessageId.equals(message.getMessageId())) {
+            // If the same message is clicked again, unselect it
+            replyToMessageId = null;
+            replyPreviewContainer.setVisibility(View.GONE);
+            messageAdapter.setSelectedMessageId(-1);
+        } else {
+            replyToMessageId = message.getMessageId();
+            replyMessageTextView.setText(message.getText());
+            replyPreviewContainer.setVisibility(View.VISIBLE);
+
+            // Update the selected message in the adapter
+            messageAdapter.setSelectedMessageId(message.getMessageId());
+        }
+    }
+
+    @Override
+    public void onMessageUnselected() {
+        replyToMessageId = null;
+        replyPreviewContainer.setVisibility(View.GONE);
+        messageAdapter.setSelectedMessageId(-1);
     }
 
     private void connectWebSocket() {
@@ -185,11 +205,16 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         return url;
     }
 
-    // Updated sendMessage method to include replyToId
     private void sendMessage(int chatId, String message, int userId, Integer replyToId) {
         if (WebSocketManager.getInstance().isConnected()) {
+            // Only include replyToId if not null
             WebSocketManager.getInstance().sendMessage(chatId, message, userId, replyToId);
-            Log.d(TAG, "Sent message with details: chatId=" + chatId + ", userId=" + userId + ", message=" + message + ", replyToId=" + replyToId);
+            Log.d(TAG, "Sent message: " + message + " with replyToId: " + replyToId);
+
+            // Reset reply after sending
+            replyToMessageId = null;
+            replyPreviewContainer.setVisibility(View.GONE);
+            messageAdapter.setSelectedMessageId(-1); // Reset selected message
         } else {
             Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
         }
@@ -208,8 +233,6 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 
     @Override
     protected void onDestroy() {
