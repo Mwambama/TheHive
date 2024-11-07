@@ -23,6 +23,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.java_websocket.handshake.ServerHandshake;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,12 +60,17 @@ public class ChatActivity extends AppCompatActivity {
         }
         toolbar.setTitle("Chat");
 
+        // Retrieve and log SharedPreferences data
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
         userEmail = preferences.getString("email", null);
         userPassword = preferences.getString("password", null);
-
         chatId = getIntent().getIntExtra("chatId", -1);
+
+        Log.d(TAG, "Retrieved userId: " + userId);
+        Log.d(TAG, "Retrieved userEmail: " + userEmail);
+        Log.d(TAG, "Retrieved userPassword: " + userPassword);
+        Log.d(TAG, "Retrieved chatId: " + chatId);
 
         if (userId == -1 || userEmail == null || userPassword == null || chatId == -1) {
             Toast.makeText(this, "Chat information missing. Please try again.", Toast.LENGTH_SHORT).show();
@@ -75,6 +82,7 @@ public class ChatActivity extends AppCompatActivity {
         setupUI();
         connectWebSocket();
     }
+
 
     private void setupUI() {
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
@@ -146,25 +154,19 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private String generateWebSocketUrl(int chatId, String email, String password) {
-        return "ws://coms-3090-063.class.las.iastate.edu:8080/ws/chat/" + chatId +
+        String url = "ws://coms-3090-063.class.las.iastate.edu:8080/ws/chat/" + chatId +
                 "?email=" + email + "&password=" + password;
+
+        Log.d(TAG, "Generated WebSocket URL: " + url);
+        return url;
     }
 
     private void sendMessage(int chatId, String message, int userId) {
-        try {
-            JSONObject messageObject = new JSONObject();
-            messageObject.put("chatId", chatId);
-            messageObject.put("message", message);
-            messageObject.put("userId", userId);
-
-            if (WebSocketManager.getInstance().isConnected()) {
-                WebSocketManager.getInstance().sendMessage(messageObject.toString());
-            } else {
-                Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
-            }
-        } catch (JSONException e) {
-            Toast.makeText(this, "Failed to send message. Please try again.", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+        if (WebSocketManager.getInstance().isConnected()) {
+            WebSocketManager.getInstance().sendMessage(chatId, message, userId);
+            Log.d(TAG, "Sent message with details: chatId=" + chatId + ", userId=" + userId + ", message=" + message);
+        } else {
+            Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
         }
     }
 

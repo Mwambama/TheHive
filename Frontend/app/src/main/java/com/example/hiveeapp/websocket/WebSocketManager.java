@@ -42,6 +42,7 @@ public class WebSocketManager {
             URI serverUri = URI.create(serverUrl);
             webSocketClient = new MyWebSocketClient(serverUri);
             webSocketClient.connect();
+            Log.d("WebSocketManager", "Connecting to WebSocket at URL: " + serverUrl);
         } catch (Exception e) {
             Log.e("WebSocketManager", "Failed to connect WebSocket", e);
         }
@@ -51,17 +52,17 @@ public class WebSocketManager {
         return webSocketClient != null && webSocketClient.isOpen();
     }
 
-    public void sendMessage(String message) {
+    public void sendMessage(int chatId, String message, int userId) {
         if (isConnected()) {
             try {
                 JSONObject messageJson = new JSONObject();
+                messageJson.put("chatId", chatId);
                 messageJson.put("message", message);
+                messageJson.put("userId", userId);
 
-                // Format current timestamp as string for consistency
-                String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-                messageJson.put("timestamp", timestamp);
-
+                // Send JSON message
                 webSocketClient.send(messageJson.toString());
+                Log.d("WebSocketManager", "Sent message: " + messageJson.toString());
             } catch (JSONException e) {
                 Log.e("WebSocketManager", "Failed to send message JSON", e);
             }
@@ -91,7 +92,7 @@ public class WebSocketManager {
 
         @Override
         public void onOpen(ServerHandshake handshakedata) {
-            Log.d("WebSocket", "Connected");
+            Log.d("WebSocket", "Connected to server successfully");
             if (webSocketListener != null) {
                 webSocketListener.onWebSocketOpen(handshakedata);
             }
@@ -137,6 +138,7 @@ public class WebSocketManager {
                 long timestampMillis = parseTimestamp(timestampStr);
 
                 if (webSocketListener != null) {
+                    // Here, make sure to pass all the data correctly to create the Message object
                     Message receivedMessage = new Message(
                             messageText,
                             senderId == webSocketListener.getCurrentUserId(),
@@ -154,6 +156,7 @@ public class WebSocketManager {
             }
         }
 
+
         private long parseTimestamp(String timestampStr) {
             try {
                 SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -167,11 +170,10 @@ public class WebSocketManager {
 
         @Override
         public void onClose(int code, String reason, boolean remote) {
-            Log.d("WebSocket", "Closed: " + reason);
+            Log.d("WebSocket", "Closed with code: " + code + ", reason: " + reason + ", remote: " + remote);
             if (webSocketListener != null) {
                 webSocketListener.onWebSocketClose(code, reason, remote);
             }
-
             if (!remote && shouldReconnect) {
                 reconnectWebSocket();
             }
@@ -184,5 +186,6 @@ public class WebSocketManager {
                 webSocketListener.onWebSocketError(ex);
             }
         }
+
     }
 }

@@ -148,22 +148,11 @@ public class EmployerChatActivity extends AppCompatActivity {
     }
 
     private void sendMessage(int chatId, String message, int userId) {
-        try {
-            JSONObject messageObject = new JSONObject();
-            messageObject.put("chatId", chatId);
-            messageObject.put("message", message);
-            messageObject.put("userId", userId);
-
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault()).format(new Date());
-            messageObject.put("timestamp", timestamp);
-
-            if (WebSocketManager.getInstance().isConnected()) {
-                WebSocketManager.getInstance().sendMessage(messageObject.toString());
-            } else {
-                Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
-            }
-        } catch (JSONException e) {
-            Toast.makeText(this, "Failed to send message. Please try again.", Toast.LENGTH_SHORT).show();
+        if (WebSocketManager.getInstance().isConnected()) {
+            WebSocketManager.getInstance().sendMessage(chatId, message, userId);
+            Log.d(TAG, "Sent message with details: chatId=" + chatId + ", userId=" + userId + ", message=" + message);
+        } else {
+            Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
         }
     }
 

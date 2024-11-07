@@ -53,7 +53,7 @@ public class Message {
             }
         } catch (ParseException e) {
             e.printStackTrace();
-            this.timestamp = System.currentTimeMillis(); // Default to current time if parsing fails
+            this.timestamp = System.currentTimeMillis();
         }
     }
 }
