@@ -1,8 +1,10 @@
 package com.example.hiveeapp.websocket.message;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,23 +38,28 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messages.get(position);
-        holder.messageTextView.setText(message.getText());
 
-        // Format and set the timestamp
         String formattedTime = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(new Date(message.getTimestamp()));
-        holder.timestampTextView.setText(formattedTime);
 
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.messageTextView.getLayoutParams();
         if (message.isSentByUser()) {
-            params.addRule(RelativeLayout.ALIGN_PARENT_END);
-            holder.messageTextView.setBackgroundResource(R.drawable.background_sent_message);
-        } else {
-            params.addRule(RelativeLayout.ALIGN_PARENT_START);
-            holder.messageTextView.setBackgroundResource(R.drawable.background_received_message);
-        }
+            // Show sent message container and hide received container
+            holder.sentMessageContainer.setVisibility(View.VISIBLE);
+            holder.receivedMessageContainer.setVisibility(View.GONE);
 
-        holder.messageTextView.setLayoutParams(params);
+            holder.sentMessageTextView.setText(message.getText());
+            holder.sentTimestampTextView.setText(formattedTime);
+        } else {
+            // Show received message container and hide sent container
+            holder.receivedMessageContainer.setVisibility(View.VISIBLE);
+            holder.sentMessageContainer.setVisibility(View.GONE);
+
+            holder.receivedMessageTextView.setText(message.getText());
+            holder.receivedTimestampTextView.setText(formattedTime);
+        }
     }
+
+
+
 
     @Override
     public int getItemCount() {
@@ -60,13 +67,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
     static class MessageViewHolder extends RecyclerView.ViewHolder {
-        TextView messageTextView;
-        TextView timestampTextView;
+        LinearLayout sentMessageContainer, receivedMessageContainer;
+        TextView sentMessageTextView, receivedMessageTextView;
+        TextView sentTimestampTextView, receivedTimestampTextView;
 
         MessageViewHolder(View itemView) {
             super(itemView);
-            messageTextView = itemView.findViewById(R.id.messageTextView);
-            timestampTextView = itemView.findViewById(R.id.timestampTextView);
+            sentMessageContainer = itemView.findViewById(R.id.sentMessageContainer);
+            receivedMessageContainer = itemView.findViewById(R.id.receivedMessageContainer);
+            sentMessageTextView = itemView.findViewById(R.id.sentMessageTextView);
+            receivedMessageTextView = itemView.findViewById(R.id.receivedMessageTextView);
+            sentTimestampTextView = itemView.findViewById(R.id.sentTimestampTextView);
+            receivedTimestampTextView = itemView.findViewById(R.id.receivedTimestampTextView);
         }
     }
 }
