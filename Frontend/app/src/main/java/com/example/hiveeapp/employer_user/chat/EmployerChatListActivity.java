@@ -129,18 +129,34 @@ public class EmployerChatListActivity extends AppCompatActivity {
                             int studentId = chatJson.getInt("studentId");
                             int jobPostingId = chatJson.optInt("jobPostingId", -1);
 
+                            // Extract lastMessage and lastMessageTime from the JSON response
+                            String lastMessage = chatJson.optString("lastMessage", null);
+                            String lastMessageTime = chatJson.optString("lastMessageTime", null);
+
                             if (employerId == userId) {
-                                EmployerChatDto chat = new EmployerChatDto(chatId, employerId, studentId, "Loading...");
+                                // Create EmployerChatDto instance with all parameters
+                                EmployerChatDto chat = new EmployerChatDto(
+                                        chatId,
+                                        employerId,
+                                        studentId,
+                                        "Loading...",
+                                        lastMessage,
+                                        lastMessageTime
+                                );
                                 chatList.add(chat);
-                                loadStudentName(studentId);
+
+                                // Load student name and update jobTitle in the chat object
+                                loadStudentName(studentId, chat);
                             }
                         }
+
+                        // Initialize the adapter and set it to the RecyclerView
+                        chatListAdapter = new EmployerChatListAdapter(chatList, this::openChat, this);
+                        chatRecyclerView.setAdapter(chatListAdapter);
+
                     } catch (JSONException e) {
                         Log.e(TAG, "Error parsing chat JSON", e);
                     }
-
-                    chatListAdapter = new EmployerChatListAdapter(chatList, this::openChat, this);
-                    chatRecyclerView.setAdapter(chatListAdapter);
                 },
                 error -> Toast.makeText(this, "Failed to load chats", Toast.LENGTH_SHORT).show()
         ) {
@@ -153,21 +169,27 @@ public class EmployerChatListActivity extends AppCompatActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
-    private void loadStudentName(int studentId) {
-        if (studentNamesMap.containsKey(studentId)) {
-            updateChatTitle(studentId, studentNamesMap.get(studentId));
-            return;
-        }
-
-        String url = "http://coms-3090-063.class.las.iastate.edu:8080/student/" + studentId;
+    private void loadStudentName(int studentId, EmployerChatDto chat) {
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/users/" + studentId;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
-                    String studentName = response.optString("name", "Unknown Student");
-                    studentNamesMap.put(studentId, studentName);
-                    updateChatTitle(studentId, studentName);
+                    try {
+                        String firstName = response.getString("firstName");
+                        String lastName = response.getString("lastName");
+                        String fullName = firstName + " " + lastName;
+
+                        // Update the jobTitle in the chat object
+                        chat.setJobTitle(fullName);
+
+                        // Notify the adapter that the data has changed
+                        chatListAdapter.notifyDataSetChanged();
+
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing user JSON", e);
+                    }
                 },
-                error -> Log.e(TAG, "Failed to load student name for ID: " + studentId, error)
+                error -> Toast.makeText(this, "Failed to load student name", Toast.LENGTH_SHORT).show()
         ) {
             @Override
             public Map<String, String> getHeaders() {

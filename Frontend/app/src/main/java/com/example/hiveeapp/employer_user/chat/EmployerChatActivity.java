@@ -77,6 +77,7 @@ public class EmployerChatActivity extends AppCompatActivity {
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatRecyclerView.setAdapter(messageAdapter);
 
+
         sendBtn.setOnClickListener(v -> {
             String messageText = msgEtx.getText().toString().trim();
             if (!messageText.isEmpty() && chatId != -1) {
@@ -147,13 +148,18 @@ public class EmployerChatActivity extends AppCompatActivity {
                 "?email=" + email + "&password=" + password;
     }
 
-    private void sendMessage(int chatId, String message, int userId) {
+    private void sendMessage(int chatId, String message, int userId, Integer replyToId) {
         if (WebSocketManager.getInstance().isConnected()) {
-            WebSocketManager.getInstance().sendMessage(chatId, message, userId);
-            Log.d(TAG, "Sent message with details: chatId=" + chatId + ", userId=" + userId + ", message=" + message);
+            WebSocketManager.getInstance().sendMessage(chatId, message, userId, replyToId);
+            Log.d(TAG, "Sent message with details: chatId=" + chatId + ", userId=" + userId + ", message=" + message + ", replyToId=" + replyToId);
         } else {
             Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // Overloaded method for backward compatibility
+    private void sendMessage(int chatId, String message, int userId) {
+        sendMessage(chatId, message, userId, null);
     }
 
     @Override

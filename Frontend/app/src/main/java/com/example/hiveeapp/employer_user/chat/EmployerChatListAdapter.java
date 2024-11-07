@@ -8,7 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
-
 import java.util.List;
 
 public class EmployerChatListAdapter extends RecyclerView.Adapter<EmployerChatListAdapter.ChatViewHolder> {
@@ -30,7 +29,7 @@ public class EmployerChatListAdapter extends RecyclerView.Adapter<EmployerChatLi
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_chat, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_chat_list, parent, false);
         return new ChatViewHolder(view);
     }
 
@@ -38,6 +37,15 @@ public class EmployerChatListAdapter extends RecyclerView.Adapter<EmployerChatLi
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         EmployerChatDto chat = chatList.get(position);
         holder.jobTitleTextView.setText(chat.getJobTitle());
+
+        // Optional: Display last message preview
+        if (chat.getLastMessage() != null && !chat.getLastMessage().isEmpty()) {
+            holder.lastMessageTextView.setText(chat.getLastMessage());
+            holder.lastMessageTextView.setVisibility(View.VISIBLE);
+        } else {
+            holder.lastMessageTextView.setVisibility(View.GONE);
+        }
+
         holder.itemView.setOnClickListener(v -> onChatClickListener.onChatClick(chat));
     }
 
@@ -48,10 +56,12 @@ public class EmployerChatListAdapter extends RecyclerView.Adapter<EmployerChatLi
 
     public static class ChatViewHolder extends RecyclerView.ViewHolder {
         TextView jobTitleTextView;
+        TextView lastMessageTextView;
 
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
             jobTitleTextView = itemView.findViewById(R.id.jobTitleTextView);
+            lastMessageTextView = itemView.findViewById(R.id.lastMessageTextView);
         }
     }
 }

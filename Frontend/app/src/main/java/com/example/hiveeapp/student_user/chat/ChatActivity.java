@@ -4,8 +4,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView; // Import TextView
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,23 +20,15 @@ import com.example.hiveeapp.websocket.message.MessageAdapter;
 import com.example.hiveeapp.websocket.WebSocketManager;
 import com.example.hiveeapp.websocket.WebSocketListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.java_websocket.handshake.ServerHandshake;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity implements MessageAdapter.OnMessageClickListener {
 
     private static final String TAG = "ChatActivity";
     private RecyclerView chatRecyclerView;
@@ -48,6 +42,9 @@ public class ChatActivity extends AppCompatActivity {
     private String userEmail;
     private String userPassword;
     private boolean shouldReconnect = true;
+
+    private Integer replyToMessageId = null;
+    private TextView replyingToTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,26 +80,53 @@ public class ChatActivity extends AppCompatActivity {
         connectWebSocket();
     }
 
-
     private void setupUI() {
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         msgEtx = findViewById(R.id.msgEtx);
         sendBtn = findViewById(R.id.sendBtn);
+
+        // Initialize the replyingToTextView
+        replyingToTextView = findViewById(R.id.replyingToTextView);
+        replyingToTextView.setVisibility(View.GONE); // Initially hidden
 
         messageList = new ArrayList<>();
         messageAdapter = new MessageAdapter(messageList, userId);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatRecyclerView.setAdapter(messageAdapter);
 
+        // Set the click listener on the adapter
+        messageAdapter.setOnMessageClickListener(this);
+
+        replyingToTextView.setOnClickListener(v -> {
+            replyToMessageId = null;
+            replyingToTextView.setVisibility(View.GONE);
+        });
+
+        // Send button click listener
         sendBtn.setOnClickListener(v -> {
             String messageText = msgEtx.getText().toString().trim();
             if (!messageText.isEmpty() && chatId != -1) {
-                sendMessage(chatId, messageText, userId);
+                sendMessage(chatId, messageText, userId, replyToMessageId);
                 msgEtx.setText("");
+                replyToMessageId = null;
+                replyingToTextView.setVisibility(View.GONE);
             } else {
                 Toast.makeText(ChatActivity.this, "Message cannot be empty or invalid chat ID", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Allow users to cancel a reply by clicking on the replyingToTextView
+        replyingToTextView.setOnClickListener(v -> {
+            replyToMessageId = null;
+            replyingToTextView.setVisibility(View.GONE);
+        });
+    }
+
+    @Override
+    public void onMessageClick(Message message) {
+        replyToMessageId = message.getMessageId();
+        replyingToTextView.setText("Replying to: " + message.getText());
+        replyingToTextView.setVisibility(View.VISIBLE);
     }
 
     private void connectWebSocket() {
@@ -134,7 +158,7 @@ public class ChatActivity extends AppCompatActivity {
                 runOnUiThread(() -> Toast.makeText(ChatActivity.this, "Disconnected: " + reason, Toast.LENGTH_SHORT).show());
                 Log.d(TAG, "WebSocket closed with reason: " + reason);
                 if (!remote && shouldReconnect) {
-                    new android.os.Handler().postDelayed(() -> connectWebSocket(), 5000); // Retry after 5 seconds
+                    new android.os.Handler().postDelayed(() -> connectWebSocket(), 5000);
                 }
             }
 
@@ -161,13 +185,19 @@ public class ChatActivity extends AppCompatActivity {
         return url;
     }
 
-    private void sendMessage(int chatId, String message, int userId) {
+    // Updated sendMessage method to include replyToId
+    private void sendMessage(int chatId, String message, int userId, Integer replyToId) {
         if (WebSocketManager.getInstance().isConnected()) {
-            WebSocketManager.getInstance().sendMessage(chatId, message, userId);
-            Log.d(TAG, "Sent message with details: chatId=" + chatId + ", userId=" + userId + ", message=" + message);
+            WebSocketManager.getInstance().sendMessage(chatId, message, userId, replyToId);
+            Log.d(TAG, "Sent message with details: chatId=" + chatId + ", userId=" + userId + ", message=" + message + ", replyToId=" + replyToId);
         } else {
             Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // Overloaded method for backward compatibility
+    private void sendMessage(int chatId, String message, int userId) {
+        sendMessage(chatId, message, userId, null);
     }
 
     @Override
@@ -178,6 +208,8 @@ public class ChatActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     @Override
     protected void onDestroy() {

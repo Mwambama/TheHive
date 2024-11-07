@@ -52,13 +52,16 @@ public class WebSocketManager {
         return webSocketClient != null && webSocketClient.isOpen();
     }
 
-    public void sendMessage(int chatId, String message, int userId) {
+    public void sendMessage(int chatId, String message, int userId, Integer replyToId) {
         if (isConnected()) {
             try {
                 JSONObject messageJson = new JSONObject();
                 messageJson.put("chatId", chatId);
                 messageJson.put("message", message);
                 messageJson.put("userId", userId);
+                if (replyToId != null) {
+                    messageJson.put("replyToId", replyToId);
+                }
 
                 // Send JSON message
                 webSocketClient.send(messageJson.toString());
@@ -71,6 +74,12 @@ public class WebSocketManager {
             reconnectWebSocket();
         }
     }
+
+    // Overloaded method for backward compatibility
+    public void sendMessage(int chatId, String message, int userId) {
+        sendMessage(chatId, message, userId, null);
+    }
+
 
     public void disconnectWebSocket() {
         shouldReconnect = false;
