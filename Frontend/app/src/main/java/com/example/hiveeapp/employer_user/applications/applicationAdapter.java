@@ -98,35 +98,39 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
             // Extract the studentId to fetch student details
             long studentId = application.getLong("studentId");
 
-            // Now fetch student details using the studentId
-            getStudentDetails(studentId, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject studentResponse) {
-                    // Create the student details fragment and pass the data
-                    studentDetailsFragment detailsFragment = new studentDetailsFragment();
+            // Now fetch student details using the studentId through applicationsApi
+            applicationsApi.getStudentDetails(
+                    context,
+                    studentId,
+                    response -> {
+                        // Create the student details fragment and pass the data
+                        studentDetailsFragment detailsFragment = new studentDetailsFragment();
 
-                    // Create a bundle with the application data
-                    Bundle args = new Bundle();
-                    args.putString("name", studentResponse.optString("name", "N/A"));
-                    args.putString("email", studentResponse.optString("email", "N/A"));
-                    args.putString("phone", studentResponse.optString("phone", "N/A"));
-                    args.putString("university", studentResponse.optString("university", "N/A"));
-                    args.putString("graduationDate", studentResponse.optString("graduationDate", "N/A"));
-                    args.putString("gpa", studentResponse.optString("gpa", "N/A"));
-                    args.putString("resumePath", studentResponse.optString("resumePath", "N/A"));
-                    detailsFragment.setArguments(args);
+                        // Create a bundle with the student data from the response
+                        Bundle args = new Bundle();
+                        args.putString("name", response.optString("name", "N/A"));
+                        args.putString("email", response.optString("email", "N/A"));
+                        args.putString("phone", response.optString("phone", "N/A"));
+                        args.putString("university", response.optString("university", "N/A"));
+                        args.putString("graduationDate", response.optString("graduationDate", "N/A"));
+                        args.putString("gpa", response.optString("gpa", "N/A"));
+                        args.putString("resumePath", response.optString("resumePath", "N/A"));
+                        detailsFragment.setArguments(args);
 
-                    // Show the dialog fragment
-                    detailsFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "studentDetails");
-                }
-            }, error -> {
-                showToast("Error fetching student details");
-            });
+                        // Show the dialog fragment
+                        detailsFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "studentDetails");
+                    },
+                    error -> {
+                        // Handle error from the API request
+                        Toast.makeText(context, "Error fetching student details", Toast.LENGTH_SHORT).show();
+                    }
+            );
         } catch (JSONException e) {
             e.printStackTrace();
-            showToast("Error fetching student ID: " + e.getMessage());
+            Toast.makeText(context, "Error fetching student ID: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
+
 
     // Fetch student details based on studentId
     private void getStudentDetails(long studentId, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
