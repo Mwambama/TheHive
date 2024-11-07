@@ -63,6 +63,26 @@ public class applicationsApi {
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+    public static void getStudentDetails(Context context, long studentId, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/student/" + studentId;
+        Log.d(TAG, "GET Student Details Request URL: " + url);
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                listener,
+                error -> handleErrorResponse("Error fetching student details", error, errorListener)
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return applicationsApi.getHeaders(context);
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
 
     // Method to accept an application
     public static void AcceptApplication(Context context, long applicationId, Response.Listener<String> listener, Response.ErrorListener errorListener) {

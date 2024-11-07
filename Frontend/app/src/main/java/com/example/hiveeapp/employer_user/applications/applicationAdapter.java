@@ -26,11 +26,11 @@ import org.json.JSONObject;
 
 
 
+
 public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.ApplicationViewHolder> {
     private JSONArray applications = new JSONArray();  // Holds the list of applications
     private final Context context;  // The context in which the adapter is used
     private final boolean isEditable;  // Indicates whether the list is editable
-    private static final String USER_PREFS = "UserPrefs";  // SharedPreferences key for user data
     private static final String ERROR_MESSAGE = "Error";  // Generic error message for Toasts
 
     // Constructor to initialize context and editability flag
@@ -69,7 +69,7 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
             holder.statusTextView.setText(status);
             holder.appliedOnTextView.setText(appliedOn);
 
-            // Set up view button
+            // Set up view button to open student details popup
             holder.viewButton.setOnClickListener(v -> openStudentDetailsPopup(application));
 
             // Hide or show buttons based on editability
@@ -86,9 +86,8 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
         }
     }
 
-    // Opens the student details popup
+    // Opens the student details popup by passing student data to the student details fragment
     private void openStudentDetailsPopup(JSONObject application) {
-        // Pass student data to a new Fragment
         studentDetailsFragment detailsFragment = new studentDetailsFragment();
 
         // Create a bundle with the application data
@@ -135,6 +134,7 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
         try {
             long applicationId = application.getLong("applicationId");
 
+            // Assuming applicationApi accepts an application
             com.example.hiveeapp.employer_user.applications.applicationsApi.AcceptApplication(context, applicationId,
                     response -> {
                         // Remove the application from the list and refresh the adapter
@@ -144,7 +144,6 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
                         Toast.makeText(context, "Application accepted successfully!", Toast.LENGTH_SHORT).show();
                     },
                     error -> {
-                        // Show error message to the user
                         Toast.makeText(context, "Error accepting application", Toast.LENGTH_SHORT).show();
                     }
             );
@@ -159,6 +158,7 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
         try {
             long applicationId = application.getLong("applicationId");
 
+            // Assuming applicationApi rejects an application
             com.example.hiveeapp.employer_user.applications.applicationsApi.RejectApplication(context, applicationId,
                     response -> {
                         // Remove the application from the list and refresh the adapter
@@ -168,7 +168,6 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
                         Toast.makeText(context, "Application rejected successfully!", Toast.LENGTH_SHORT).show();
                     },
                     error -> {
-                        // Show error message to the user
                         Toast.makeText(context, "Error rejecting application", Toast.LENGTH_SHORT).show();
                     }
             );
@@ -210,6 +209,200 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
         }
     }
 }
+
+
+
+
+
+
+
+
+//works just fine
+
+//public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.ApplicationViewHolder> {
+//    private JSONArray applications = new JSONArray();  // Holds the list of applications
+//    private final Context context;  // The context in which the adapter is used
+//    private final boolean isEditable;  // Indicates whether the list is editable
+//    private static final String USER_PREFS = "UserPrefs";  // SharedPreferences key for user data
+//    private static final String ERROR_MESSAGE = "Error";  // Generic error message for Toasts
+//
+//    // Constructor to initialize context and editability flag
+//    public applicationAdapter(Context context, boolean isEditable) {
+//        this.context = context;
+//        this.isEditable = isEditable;
+//    }
+//
+//    // Sets the list of applications and refreshes the RecyclerView
+//    public void setApplications(JSONArray applications) {
+//        this.applications = applications;
+//        notifyDataSetChanged();
+//    }
+//
+//    // Inflates the item layout and creates a ViewHolder object
+//    @NonNull
+//    @Override
+//    public ApplicationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//        View view = LayoutInflater.from(context).inflate(R.layout.item_employer_applications, parent, false);
+//        return new ApplicationViewHolder(view);
+//    }
+//
+//    // Binds data to the ViewHolder for each application item
+//    @Override
+//    public void onBindViewHolder(@NonNull ApplicationViewHolder holder, int position) {
+//        try {
+//            JSONObject application = applications.getJSONObject(position);
+//
+//            // Extract job title, status, and applied date from JSON object
+//            String jobTitle = application.optString("jobTitle", "N/A");
+//            String status = application.optString("status", "N/A");
+//            String appliedOn = application.optString("appliedOn", "N/A");
+//
+//            // Set text views with extracted data
+//            holder.titleTextView.setText(jobTitle);
+//            holder.statusTextView.setText(status);
+//            holder.appliedOnTextView.setText(appliedOn);
+//
+//            // Set up view button
+//            holder.viewButton.setOnClickListener(v -> openStudentDetailsPopup(application));
+//
+//            // Hide or show buttons based on editability
+//            if (!isEditable) {
+//                holder.acceptButton.setVisibility(View.GONE);
+//                holder.rejectButton.setVisibility(View.GONE);
+//            } else {
+//                setupAcceptButton(holder, application, position);
+//                setupRejectButton(holder, application, position);
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            showToast(ERROR_MESSAGE + ": " + e.getMessage());
+//        }
+//    }
+//
+//    // Opens the student details popup
+//    private void openStudentDetailsPopup(JSONObject application) {
+//        // Pass student data to a new Fragment
+//        studentDetailsFragment detailsFragment = new studentDetailsFragment();
+//
+//        // Create a bundle with the application data
+//        Bundle args = new Bundle();
+//        args.putString("name", application.optString("name", "N/A"));
+//        args.putString("email", application.optString("email", "N/A"));
+//        args.putString("phone", application.optString("phone", "N/A"));
+//        args.putString("university", application.optString("university", "N/A"));
+//        args.putString("graduationDate", application.optString("graduationDate", "N/A"));
+//        args.putString("gpa", application.optString("gpa", "N/A"));
+//        args.putString("resumePath", application.optString("resumePath", "N/A"));
+//        detailsFragment.setArguments(args);
+//
+//        // Show the dialog fragment
+//        detailsFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "studentDetails");
+//    }
+//
+//    // Sets up the reject button with an onClick listener to reject the application
+//    private void setupRejectButton(ApplicationViewHolder holder, JSONObject application, int position) {
+//        holder.rejectButton.setOnClickListener(v -> {
+//            new AlertDialog.Builder(context)
+//                    .setTitle("Reject Application")
+//                    .setMessage("Are you sure you want to reject this application?")
+//                    .setPositiveButton(android.R.string.yes, (dialog, which) -> rejectApplication(application, position))
+//                    .setNegativeButton(android.R.string.no, null)
+//                    .show();
+//        });
+//    }
+//
+//    // Sets up the accept button with an onClick listener to accept the application
+//    private void setupAcceptButton(ApplicationViewHolder holder, JSONObject application, int position) {
+//        holder.acceptButton.setOnClickListener(v -> {
+//            new AlertDialog.Builder(context)
+//                    .setTitle("Accept Application")
+//                    .setMessage("Are you sure you want to accept this application?")
+//                    .setPositiveButton(android.R.string.yes, (dialog, which) -> acceptApplication(application, position))
+//                    .setNegativeButton(android.R.string.no, null)
+//                    .show();
+//        });
+//    }
+//
+//    // Handles accepting an application by sending a request to the backend
+//    private void acceptApplication(JSONObject application, int position) {
+//        try {
+//            long applicationId = application.getLong("applicationId");
+//
+//            com.example.hiveeapp.employer_user.applications.applicationsApi.AcceptApplication(context, applicationId,
+//                    response -> {
+//                        // Remove the application from the list and refresh the adapter
+//                        applications.remove(position);
+//                        notifyItemRemoved(position);
+//                        notifyItemRangeChanged(position, applications.length());
+//                        Toast.makeText(context, "Application accepted successfully!", Toast.LENGTH_SHORT).show();
+//                    },
+//                    error -> {
+//                        // Show error message to the user
+//                        Toast.makeText(context, "Error accepting application", Toast.LENGTH_SHORT).show();
+//                    }
+//            );
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Toast.makeText(context, "Error constructing acceptance request", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//
+//    // Handles rejecting an application by sending a request to the backend
+//    private void rejectApplication(JSONObject application, int position) {
+//        try {
+//            long applicationId = application.getLong("applicationId");
+//
+//            com.example.hiveeapp.employer_user.applications.applicationsApi.RejectApplication(context, applicationId,
+//                    response -> {
+//                        // Remove the application from the list and refresh the adapter
+//                        applications.remove(position);
+//                        notifyItemRemoved(position);
+//                        notifyItemRangeChanged(position, applications.length());
+//                        Toast.makeText(context, "Application rejected successfully!", Toast.LENGTH_SHORT).show();
+//                    },
+//                    error -> {
+//                        // Show error message to the user
+//                        Toast.makeText(context, "Error rejecting application", Toast.LENGTH_SHORT).show();
+//                    }
+//            );
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Toast.makeText(context, "Error constructing rejection request", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//
+//    // Returns the total number of application items
+//    @Override
+//    public int getItemCount() {
+//        return applications.length();
+//    }
+//
+//    // Displays a toast message with the provided text
+//    private void showToast(String message) {
+//        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+//    }
+//
+//    // ViewHolder class to hold and recycle views as they are scrolled off screen
+//    static class ApplicationViewHolder extends RecyclerView.ViewHolder {
+//        TextView titleTextView;
+//        TextView statusTextView;
+//        TextView appliedOnTextView;
+//        Button acceptButton;
+//        Button rejectButton;
+//        Button viewButton;  // Add this line
+//
+//        // Constructor to initialize the view components
+//        ApplicationViewHolder(View itemView) {
+//            super(itemView);
+//            titleTextView = itemView.findViewById(R.id.jobTitleTextView);
+//            statusTextView = itemView.findViewById(R.id.statusTextView);
+//            appliedOnTextView = itemView.findViewById(R.id.appliedOnTextView);
+//            acceptButton = itemView.findViewById(R.id.acceptButton);
+//            rejectButton = itemView.findViewById(R.id.rejectButton);
+//            viewButton = itemView.findViewById(R.id.viewButton);  // Add this line
+//        }
+//    }
+//}
 
 
 
