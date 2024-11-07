@@ -153,11 +153,18 @@ public class applicationsApi {
                 Request.Method.GET,
                 url,
                 null,
-                listener,
-                error -> handleErrorResponse("Error fetching student details", error, errorListener)
+                response -> {
+                    Log.d(TAG, "Student Details Response: " + response.toString());
+                    listener.onResponse(response);
+                },
+                error -> {
+                    Log.e(TAG, "Error in getStudentDetails request", error);
+                    handleErrorResponse("Error fetching student details", error, errorListener);
+                }
         ) {
             @Override
-            public Map<String, String> getHeaders() {return applicationsApi.getHeaders(context);
+            public Map<String, String> getHeaders() {
+                return applicationsApi.getHeaders(context);
             }
         };
 

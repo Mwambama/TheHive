@@ -1,4 +1,6 @@
 package com.example.hiveeapp.employer_user.applications;
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -97,39 +99,43 @@ public class applicationAdapter extends RecyclerView.Adapter<applicationAdapter.
         try {
             // Extract the studentId to fetch student details
             long studentId = application.getLong("studentId");
+            Log.d(TAG, "Fetching details for student ID: " + studentId);
 
-            // Now fetch student details using the studentId through applicationsApi
+            // Fetch student details using the studentId
             applicationsApi.getStudentDetails(
                     context,
                     studentId,
                     response -> {
-                        // Create the student details fragment and pass the data
+                        Log.d(TAG, "Received Student Details: " + response.toString());
+
+                        // Create the student details fragment
                         studentDetailsFragment detailsFragment = new studentDetailsFragment();
 
                         // Create a bundle with the student data from the response
                         Bundle args = new Bundle();
-                        args.putString("name", response.optString("name", "re"));
+                        args.putString("name", response.optString("name", "N/A"));
                         args.putString("email", response.optString("email", "N/A"));
                         args.putString("phone", response.optString("phone", "N/A"));
                         args.putString("university", response.optString("university", "N/A"));
                         args.putString("graduationDate", response.optString("graduationDate", "N/A"));
-                        args.putString("gpa", response.optString("gpa", "N/A"));
+                        args.putString("gpa", String.valueOf(response.optDouble("gpa", 0.0))); // Ensuring GPA is passed as a string
                         args.putString("resumePath", response.optString("resumePath", "N/A"));
-                        detailsFragment.setArguments(args);
+                        detailsFragment.setArguments(args); // Pass arguments to fragment
 
                         // Show the dialog fragment
                         detailsFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "studentDetails");
                     },
                     error -> {
-                        // Handle error from the API request
+                        Log.e(TAG, "Error fetching student details", error);
                         Toast.makeText(context, "Error fetching student details", Toast.LENGTH_SHORT).show();
                     }
             );
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error extracting student ID", e);
             Toast.makeText(context, "Error fetching student ID: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
+
 
 
     // Fetch student details based on studentId
