@@ -1,12 +1,11 @@
 <resources>
     <!-- Base application theme without default action bar -->
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="windowActionBar">false</item> <!-- Disable the default action bar -->
-        <item name="windowNoTitle">true</item>
+        <!-- Removed windowActionBar and windowNoTitle as they are redundant -->
     </style>
 
     <!-- Define a custom style for EditText -->

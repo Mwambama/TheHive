@@ -64,7 +64,15 @@
         <activity android:name=".student_user.chat.ChatListActivity" android:exported="true"/>
 
         <!-- Employer Chat Activity -->
-        <activity android:name=".employer_user.chat.EmployerChatActivity" android:exported="true"/>
+        <activity
+            android:name=".employer_user.chat.EmployerChatActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
         <activity android:name=".employer_user.chat.EmployerChatListActivity" />
 
 
