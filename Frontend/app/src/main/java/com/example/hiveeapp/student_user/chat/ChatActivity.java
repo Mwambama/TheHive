@@ -128,7 +128,6 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
     public void onMessageClick(Message message) {
         // Set replyToMessageId when a message is clicked to reply
         if (replyToMessageId != null && replyToMessageId.equals(message.getMessageId())) {
-            // If the same message is clicked again, unselect it
             replyToMessageId = null;
             replyPreviewContainer.setVisibility(View.GONE);
             messageAdapter.setSelectedMessageId(-1);
@@ -137,7 +136,6 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
             replyMessageTextView.setText(message.getText());
             replyPreviewContainer.setVisibility(View.VISIBLE);
 
-            // Update the selected message in the adapter
             messageAdapter.setSelectedMessageId(message.getMessageId());
         }
     }

@@ -27,7 +27,6 @@ public class Message {
         this.seen = seen;
     }
 
-    // Constructor for sending messages without optional fields
     public Message(String text, boolean isSentByUser, int senderId, int messageId, int chatId) {
         this(text, isSentByUser, senderId, messageId, chatId, System.currentTimeMillis(), null, false);
     }

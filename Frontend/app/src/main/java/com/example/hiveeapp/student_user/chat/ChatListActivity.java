@@ -77,7 +77,7 @@ public class ChatListActivity extends AppCompatActivity {
                 finish();
                 return true;
             } else if (itemId == R.id.navigation_chat) {
-                return true; // Already in Chat screen
+                return true;
             }
             return false;
         });

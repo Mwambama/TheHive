@@ -22,7 +22,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private OnMessageClickListener onMessageClickListener;
 
     // Variable to track the selected message ID
-    private int selectedMessageId = -1; // -1 means no message is selected
+    private int selectedMessageId = -1;
 
     // Interface for click events
     public interface OnMessageClickListener {
@@ -177,8 +177,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             receivedTimestampTextView = itemView.findViewById(R.id.receivedTimestampTextView);
             sentReplyTextView = itemView.findViewById(R.id.sentReplyTextView);
             receivedReplyTextView = itemView.findViewById(R.id.receivedReplyTextView);
-
-            // No need to set click listeners here since we set them in onBindViewHolder
         }
     }
 }

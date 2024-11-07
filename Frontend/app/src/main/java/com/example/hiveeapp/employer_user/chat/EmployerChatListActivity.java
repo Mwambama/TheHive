@@ -75,7 +75,7 @@ public class EmployerChatListActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigationView() {
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);  // Ensure this matches your layout ID
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
@@ -85,7 +85,6 @@ public class EmployerChatListActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.nav_chat) {
                 Log.d(TAG, "Navigating to Chat");
-                // Already on Chat screen, do nothing
                 return true;
             } else if (itemId == R.id.nav_add_job) {
                 Log.d(TAG, "Navigating to Add Job");

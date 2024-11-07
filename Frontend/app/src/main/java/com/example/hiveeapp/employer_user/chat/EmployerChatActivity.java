@@ -59,7 +59,6 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
-            // Enable the Up button
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -130,7 +129,6 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
 
     @Override
     public void onMessageClick(Message message) {
-        // Toggle selection: if the same message is clicked again, unselect it
         if (replyToMessageId != null && replyToMessageId.equals(message.getMessageId())) {
             // Unselect the message
             replyToMessageId = null;
@@ -149,7 +147,6 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
 
     @Override
     public void onMessageUnselected() {
-        // This method can be used if you have a separate mechanism to unselect messages
         replyToMessageId = null;
         replyPreviewContainer.setVisibility(View.GONE);
         messageAdapter.setSelectedMessageId(-1);
@@ -224,7 +221,6 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
         }
     }
 
-    // Overloaded method for backward compatibility
     private void sendMessage(int chatId, String message, int userId) {
         sendMessage(chatId, message, userId, null);
     }

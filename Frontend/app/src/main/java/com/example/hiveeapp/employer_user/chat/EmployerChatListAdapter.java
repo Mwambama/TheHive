@@ -52,7 +52,6 @@ public class EmployerChatListAdapter extends RecyclerView.Adapter<EmployerChatLi
             holder.lastMessageTextView.setVisibility(View.GONE);
         }
 
-        // Optional: Display last message time
         if (chat.getLastMessageTime() != null && !chat.getLastMessageTime().isEmpty()) {
             holder.lastMessageTimeTextView.setText(formatTimestamp(chat.getLastMessageTime()));
             holder.lastMessageTimeTextView.setVisibility(View.VISIBLE);
