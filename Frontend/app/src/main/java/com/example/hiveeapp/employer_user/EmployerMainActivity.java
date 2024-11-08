@@ -21,7 +21,7 @@ import com.google.android.material.tabs.TabLayout;
 public class EmployerMainActivity extends AppCompatActivity {
 
     private static final String TAG = "EmployerMainActivity";
-    private int userId;
+    private int userId, companyId;
     private String userEmail;
     private String userPassword;
     private BottomNavigationView bottomNavigationView;
@@ -91,7 +91,10 @@ public class EmployerMainActivity extends AppCompatActivity {
     private void navigateToProfile() {
         Log.d(TAG, "Navigating to EmployerProfileActivity");
         Intent intent = new Intent(EmployerMainActivity.this, EmployerProfileActivity.class);
+        Log.d(TAG,"this user id is" + userId);
+        Log.d(TAG,"this company id is" + companyId);
         intent.putExtra("USER_ID", userId);
+        intent.putExtra("COMPANY_ID", companyId);
         startActivity(intent);
     }
 
