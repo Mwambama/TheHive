@@ -78,22 +78,6 @@ public class WebSocketManager {
         sendMessage(chatId, message, userId, null);
     }
 
-    public void sendSeenMessage(int messageId) {
-        if (isConnected()) {
-            try {
-                JSONObject seenMessageJson = new JSONObject();
-                seenMessageJson.put("messageId", messageId);
-                seenMessageJson.put("seen", true);
-
-                webSocketClient.send(seenMessageJson.toString());
-                Log.d("WebSocketManager", "Sent seen message JSON: " + seenMessageJson);
-            } catch (JSONException e) {
-                Log.e("WebSocketManager", "Failed to send seen message JSON", e);
-            }
-        } else {
-            reconnectWebSocket();
-        }
-    }
 
     public void disconnectWebSocket() {
         shouldReconnect = false;
@@ -169,6 +153,7 @@ public class WebSocketManager {
             }
         }
 
+
         private long parseTimestamp(String timestampStr) {
             try {
                 SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -198,5 +183,6 @@ public class WebSocketManager {
                 webSocketListener.onWebSocketError(ex);
             }
         }
+
     }
 }

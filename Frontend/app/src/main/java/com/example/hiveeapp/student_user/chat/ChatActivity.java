@@ -7,8 +7,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.LinearLayout; // Import for LinearLayout
+import android.widget.TextView; // Import TextView
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -54,14 +54,12 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         setContentView(R.layout.activity_chat);
 
         Toolbar toolbar = findViewById(R.id.chatToolbar);
-        if (getSupportActionBar() == null) {
-            setSupportActionBar(toolbar);
-        }
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         toolbar.setTitle("Chat");
 
+        // Retrieve and log SharedPreferences data
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
         userEmail = preferences.getString("email", null);
@@ -89,8 +87,9 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         msgEtx = findViewById(R.id.msgEtx);
         sendBtn = findViewById(R.id.sendBtn);
 
+        // Initialize the reply preview container and TextViews
         replyPreviewContainer = findViewById(R.id.replyPreviewContainer);
-        replyPreviewContainer.setVisibility(View.GONE);
+        replyPreviewContainer.setVisibility(View.GONE); // Initially hidden
 
         replyingToTextView = findViewById(R.id.replyingToTextView);
         replyMessageTextView = findViewById(R.id.replyMessageTextView);
@@ -100,14 +99,17 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatRecyclerView.setAdapter(messageAdapter);
 
+        // Set the click listener on the adapter
         messageAdapter.setOnMessageClickListener(this);
 
+        // Allow users to cancel a reply by clicking on the reply preview container
         replyPreviewContainer.setOnClickListener(v -> {
             replyToMessageId = null;
             replyPreviewContainer.setVisibility(View.GONE);
-            messageAdapter.setSelectedMessageId(-1);
+            messageAdapter.setSelectedMessageId(-1); // Reset selected message
         });
 
+        // Send button click listener
         sendBtn.setOnClickListener(v -> {
             String messageText = msgEtx.getText().toString().trim();
             if (!messageText.isEmpty() && chatId != -1) {
@@ -115,7 +117,7 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
                 msgEtx.setText("");
                 replyToMessageId = null;
                 replyPreviewContainer.setVisibility(View.GONE);
-                messageAdapter.setSelectedMessageId(-1);
+                messageAdapter.setSelectedMessageId(-1); // Reset selected message
             } else {
                 Toast.makeText(ChatActivity.this, "Message cannot be empty or invalid chat ID", Toast.LENGTH_SHORT).show();
             }
@@ -124,6 +126,7 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
 
     @Override
     public void onMessageClick(Message message) {
+        // Set replyToMessageId when a message is clicked to reply
         if (replyToMessageId != null && replyToMessageId.equals(message.getMessageId())) {
             replyToMessageId = null;
             replyPreviewContainer.setVisibility(View.GONE);
@@ -162,16 +165,9 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
             @Override
             public void onWebSocketMessage(Message message) {
                 runOnUiThread(() -> {
-                    if (!receivedMessageIds.contains(message.getMessageId())) {
-                        receivedMessageIds.add(message.getMessageId());
-                        messageList.add(message);
-                        messageAdapter.notifyItemInserted(messageList.size() - 1);
-                        chatRecyclerView.scrollToPosition(messageList.size() - 1);
-
-                        if (!message.isSeen()) {
-                            markMessageAsSeen(message.getMessageId());
-                        }
-                    }
+                    messageList.add(message);
+                    messageAdapter.notifyItemInserted(messageList.size() - 1);
+                    chatRecyclerView.scrollToPosition(messageList.size() - 1);
                 });
             }
 
@@ -209,33 +205,22 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
 
     private void sendMessage(int chatId, String message, int userId, Integer replyToId) {
         if (WebSocketManager.getInstance().isConnected()) {
+            // Only include replyToId if not null
             WebSocketManager.getInstance().sendMessage(chatId, message, userId, replyToId);
             Log.d(TAG, "Sent message: " + message + " with replyToId: " + replyToId);
 
+            // Reset reply after sending
             replyToMessageId = null;
             replyPreviewContainer.setVisibility(View.GONE);
-            messageAdapter.setSelectedMessageId(-1);
+            messageAdapter.setSelectedMessageId(-1); // Reset selected message
         } else {
-            Toast.makeText(this, "WebSocket is not connected", Toast.LENGTH_SHORT).show();
-            Log.w(TAG, "Attempted to send message while WebSocket is not connected");
+            Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void markMessageAsSeen(int messageId) {
-        if (WebSocketManager.getInstance().isConnected()) {
-            WebSocketManager.getInstance().sendSeenMessage(messageId);
-            Log.d(TAG, "Marked message as seen with messageId: " + messageId);
-        } else {
-            Toast.makeText(this, "WebSocket is not connected", Toast.LENGTH_SHORT).show();
-            Log.w(TAG, "Attempted to mark message as seen while WebSocket is not connected");
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        shouldReconnect = false;
-        WebSocketManager.getInstance().disconnectWebSocket();
+    // Overloaded method for backward compatibility
+    private void sendMessage(int chatId, String message, int userId) {
+        sendMessage(chatId, message, userId, null);
     }
 
     @Override
@@ -245,5 +230,19 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disconnectWebSocket();
+    }
+
+    private void disconnectWebSocket() {
+        shouldReconnect = false;
+        if (WebSocketManager.getInstance().isConnected()) {
+            WebSocketManager.getInstance().disconnectWebSocket();
+            Log.d(TAG, "WebSocket disconnected.");
+        }
     }
 }

@@ -60,12 +60,8 @@
         <activity android:name=".student_user.profile.StudentProfileViewActivity" android:exported="true" />
 
         <!-- Student Chat Activity -->
-<!--        <activity android:name=".student_user.chat.ChatActivity" android:exported="true"/>-->
+        <activity android:name=".student_user.chat.ChatActivity" android:exported="true"/>
         <activity android:name=".student_user.chat.ChatListActivity" android:exported="true"/>
-        <activity
-            android:name=".student_user.chat.ChatActivity" android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
 
 
         <!-- Employer Chat Activity -->

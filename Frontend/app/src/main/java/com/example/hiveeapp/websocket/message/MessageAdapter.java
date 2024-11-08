@@ -89,9 +89,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.sentReplyTextView.setVisibility(View.GONE);
             }
 
-            // Set "seen" status
-            holder.sentSeenStatusTextView.setVisibility(message.isSeen() ? View.VISIBLE : View.GONE);
-
             // Set click listener
             holder.sentMessageContainer.setOnClickListener(v -> {
                 if (onMessageClickListener != null) {
@@ -131,9 +128,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.receivedReplyTextView.setVisibility(View.GONE);
             }
 
-            // Set "seen" status (for received messages, typically this would be set to gone)
-            holder.receivedSeenStatusTextView.setVisibility(View.GONE);
-
             // Set click listener
             holder.receivedMessageContainer.setOnClickListener(v -> {
                 if (onMessageClickListener != null) {
@@ -170,7 +164,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         TextView sentMessageTextView, receivedMessageTextView;
         TextView sentTimestampTextView, receivedTimestampTextView;
         TextView sentReplyTextView, receivedReplyTextView;
-        TextView sentSeenStatusTextView, receivedSeenStatusTextView;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -184,8 +177,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             receivedTimestampTextView = itemView.findViewById(R.id.receivedTimestampTextView);
             sentReplyTextView = itemView.findViewById(R.id.sentReplyTextView);
             receivedReplyTextView = itemView.findViewById(R.id.receivedReplyTextView);
-            sentSeenStatusTextView = itemView.findViewById(R.id.sentSeenStatusTextView);
-            receivedSeenStatusTextView = itemView.findViewById(R.id.receivedSeenStatusTextView);
         }
     }
 }
