@@ -1,4 +1,5 @@
-package com.example.hiveeapp.employer_user.display;
+package com.example.hiveeapp.employer_user.applications;
+
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.employer_user.display.EmployerApis;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,10 +22,10 @@ import org.json.JSONObject;
  * Fragment that displays a list of Jobs in a RecyclerView.
  * The list is fetched from the server using the EmployerApis.
  */
-public class JobsFragment extends Fragment {
+public class applicationsFragment extends Fragment {
 
-    private RecyclerView jobsRecyclerView;  // RecyclerView to display Jobs
-    private JobsAdapter  jobAdapter;    // Adapter for the RecyclerView
+    private RecyclerView applicationsRecyclerView;  // RecyclerView to display Jobs
+    private applicationAdapter applicationsdapter;    // Adapter for the RecyclerView
 
     @Nullable
     @Override
@@ -31,18 +33,18 @@ public class JobsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_jobs, container, false);
+        View view = inflater.inflate(R.layout.fragment_applications, container, false);
 
         // Initialize RecyclerView and set its layout manager
-        jobsRecyclerView = view.findViewById(R.id.applicationRecyclerView);
-        jobsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        applicationsRecyclerView = view.findViewById(R.id.applicationsRecyclerView);
+        applicationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Initialize adapter in read-only mode (no edit/delete buttons)
-        jobAdapter = new JobsAdapter(getContext(), false); // 'false' indicates read-only
-        jobsRecyclerView.setAdapter(jobAdapter);
+        applicationsdapter = new applicationAdapter(getContext(), false); // 'false' indicates read-only
+        applicationsRecyclerView.setAdapter(applicationsdapter);
 
         // Fetch employers from the server
-        getJob();
+        getApplications();
 
         return view;
     }
@@ -52,19 +54,19 @@ public class JobsFragment extends Fragment {
      * Populates the RecyclerView with the data.
      * Handles errors and displays error messages in case of failure.
      */
-    private void getJob() {
-        EmployerApis.getJobs(
+    private void getApplications() {
+        applicationsApi.getApplications(
                 getContext(),
                 response -> {
                     // Reverse the JSONArray to display the most recent employers first
                     JSONArray reversedEmployers = reverseJSONArray(response);
                     // Update the RecyclerView adapter with the reversed employers list
-                    jobAdapter.setJobs(reversedEmployers);
+                    applicationsdapter.setApplications(reversedEmployers);
                 },
                 error -> {
                     // Handle error from the API request
                     error.printStackTrace();
-                    Toast.makeText(getContext(), "Failed to load jobs. Please try again.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to load applications. Please try again.", Toast.LENGTH_SHORT).show();
                 }
         );
     }

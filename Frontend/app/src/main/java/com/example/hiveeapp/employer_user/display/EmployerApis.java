@@ -56,7 +56,7 @@ public class EmployerApis {
      * @param errorListener Error listener for handling errors.
      */
     public static void getJobs(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL;
+        String url = BASE_URL + "?employerId=521";
         Log.d(TAG, "GET Employers Request URL: " + url);
 
         JsonArrayRequest request = new JsonArrayRequest(
