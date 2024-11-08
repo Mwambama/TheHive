@@ -234,7 +234,7 @@
 
         <!-- Update Profile Button -->
         <Button
-            android:id="@+id/updateProfileButton"
+            android:id="@+id/updateInfoButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Update Profile"
