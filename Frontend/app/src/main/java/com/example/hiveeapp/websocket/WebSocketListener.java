@@ -1,10 +1,15 @@
 package com.example.hiveeapp.websocket;
 
+import com.example.hiveeapp.websocket.message.Message;
 import org.java_websocket.handshake.ServerHandshake;
 
 public interface WebSocketListener {
     void onWebSocketOpen(ServerHandshake handshakedata);
-    void onWebSocketMessage(String message);
+    void onWebSocketMessage(Message message); // Accepts Message object
     void onWebSocketClose(int code, String reason, boolean remote);
     void onWebSocketError(Exception ex);
+ // to handle seen messages
+ //void onMessageSeen(int messageId);
+
+    int getCurrentUserId();
 }

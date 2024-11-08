@@ -24,10 +24,16 @@ import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class EmployerChatListActivity extends AppCompatActivity {
 
@@ -69,7 +75,7 @@ public class EmployerChatListActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigationView() {
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);  // Ensure this matches your layout ID
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
@@ -79,7 +85,6 @@ public class EmployerChatListActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.nav_chat) {
                 Log.d(TAG, "Navigating to Chat");
-                // Already on Chat screen, do nothing
                 return true;
             } else if (itemId == R.id.nav_add_job) {
                 Log.d(TAG, "Navigating to Add Job");
@@ -129,18 +134,34 @@ public class EmployerChatListActivity extends AppCompatActivity {
                             int studentId = chatJson.getInt("studentId");
                             int jobPostingId = chatJson.optInt("jobPostingId", -1);
 
+                            // Extract lastMessage and lastMessageTime from the JSON response
+                            String lastMessage = chatJson.optString("lastMessage", null);
+                            String lastMessageTime = chatJson.optString("lastMessageTime", null);
+
                             if (employerId == userId) {
-                                EmployerChatDto chat = new EmployerChatDto(chatId, employerId, studentId, "Loading...");
+                                // Create EmployerChatDto instance with all parameters
+                                EmployerChatDto chat = new EmployerChatDto(
+                                        chatId,
+                                        employerId,
+                                        studentId,
+                                        "Loading...",
+                                        lastMessage,
+                                        lastMessageTime
+                                );
                                 chatList.add(chat);
-                                loadStudentName(studentId);
+
+                                // Load student name and update jobTitle in the chat object
+                                loadStudentName(studentId, chat);
                             }
                         }
+
+                        // Initialize the adapter and set it to the RecyclerView
+                        chatListAdapter = new EmployerChatListAdapter(chatList, this::openChat, this);
+                        chatRecyclerView.setAdapter(chatListAdapter);
+
                     } catch (JSONException e) {
                         Log.e(TAG, "Error parsing chat JSON", e);
                     }
-
-                    chatListAdapter = new EmployerChatListAdapter(chatList, this::openChat, this);
-                    chatRecyclerView.setAdapter(chatListAdapter);
                 },
                 error -> Toast.makeText(this, "Failed to load chats", Toast.LENGTH_SHORT).show()
         ) {
@@ -153,21 +174,39 @@ public class EmployerChatListActivity extends AppCompatActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
-    private void loadStudentName(int studentId) {
-        if (studentNamesMap.containsKey(studentId)) {
-            updateChatTitle(studentId, studentNamesMap.get(studentId));
-            return;
-        }
-
-        String url = "http://coms-3090-063.class.las.iastate.edu:8080/student/" + studentId;
+    private void loadStudentName(int studentId, EmployerChatDto chat) {
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/users/" + studentId;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
-                    String studentName = response.optString("name", "Unknown Student");
-                    studentNamesMap.put(studentId, studentName);
-                    updateChatTitle(studentId, studentName);
+                    try {
+                        Log.d(TAG, "User JSON Response: " + response.toString());
+
+                        String fullName;
+
+                        // Check if the "name" key exists
+                        if (response.has("name")) {
+                            fullName = response.getString("name");
+                        } else if (response.has("firstName") && response.has("lastName")) {
+                            // Fallback in case "firstName" and "lastName" are present
+                            String firstName = response.getString("firstName");
+                            String lastName = response.getString("lastName");
+                            fullName = firstName + " " + lastName;
+                        } else {
+                            fullName = "Unknown User";
+                        }
+
+                        // Update the studentName in the chat object
+                        chat.setStudentName(fullName);
+
+                        // Notify the adapter that the data has changed
+                        chatListAdapter.notifyDataSetChanged();
+
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing user JSON", e);
+                    }
                 },
-                error -> Log.e(TAG, "Failed to load student name for ID: " + studentId, error)
+                error -> Toast.makeText(this, "Failed to load student name", Toast.LENGTH_SHORT).show()
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -177,6 +216,7 @@ public class EmployerChatListActivity extends AppCompatActivity {
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
+
 
     private void updateChatTitle(int studentId, String studentName) {
         for (EmployerChatDto chat : chatList) {

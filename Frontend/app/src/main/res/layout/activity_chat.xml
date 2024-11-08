@@ -1,27 +1,57 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chatLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <!-- Toolbar with back arrow and title -->
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/chatToolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
+    <!-- RecyclerView for messages -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@id/chatToolbar"
-        android:layout_above="@+id/messageInputLayout" />
+        android:layout_weight="1"
+        android:padding="8dp" />
 
+    <!-- Reply Preview Container -->
+    <LinearLayout
+        android:id="@+id/replyPreviewContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:visibility="gone"
+        android:background="#f0f0f0">
+
+        <TextView
+            android:id="@+id/replyingToTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Replying to:"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/replyMessageTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="Message text" />
+    </LinearLayout>
+
+    <!-- Message input and send button -->
     <LinearLayout
         android:id="@+id/messageInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:padding="8dp">
 
@@ -30,12 +60,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Type a message" />
+            android:hint="Type a message"
+            style="@style/EditTextStyle" />
 
         <Button
             android:id="@+id/sendBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SEND" />
+            android:text="Send" />
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

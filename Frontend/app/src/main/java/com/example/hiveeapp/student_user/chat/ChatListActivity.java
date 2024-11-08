@@ -77,7 +77,7 @@ public class ChatListActivity extends AppCompatActivity {
                 finish();
                 return true;
             } else if (itemId == R.id.navigation_chat) {
-                return true; // Already in Chat screen
+                return true;
             }
             return false;
         });
@@ -119,10 +119,24 @@ public class ChatListActivity extends AppCompatActivity {
                             int studentId = chatJson.getInt("studentId");
                             int jobPostingId = chatJson.optInt("jobPostingId", -1);
 
+                            // Extract lastMessage and lastMessageTime from the JSON response
+                            String lastMessage = chatJson.optString("lastMessage", null);
+                            String lastMessageTime = chatJson.optString("lastMessageTime", null);
+
                             // Filter chats by studentId (current user's ID)
                             if (studentId == userId) {
                                 String jobTitle = applicationJobTitles.getOrDefault(jobPostingId, "Unknown Title");
-                                ChatDto chat = new ChatDto(chatId, employerId, studentId, jobPostingId, jobTitle);
+
+                                // Create ChatDto instance with all parameters
+                                ChatDto chat = new ChatDto(
+                                        chatId,
+                                        employerId,
+                                        studentId,
+                                        jobPostingId,
+                                        jobTitle,
+                                        lastMessage,
+                                        lastMessageTime
+                                );
                                 matchedChats.add(chat);
                             }
                         }
