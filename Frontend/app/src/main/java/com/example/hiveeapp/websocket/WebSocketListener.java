@@ -9,7 +9,7 @@ public interface WebSocketListener {
     void onWebSocketClose(int code, String reason, boolean remote);
     void onWebSocketError(Exception ex);
  // to handle seen messages
-    void onMessageSeen(int chatId, int messageId, int userId);
+ //void onMessageSeen(int messageId);
 
     int getCurrentUserId();
 }

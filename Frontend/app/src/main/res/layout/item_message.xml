@@ -45,6 +45,16 @@
             android:textSize="12sp"
             android:textColor="#888888"
             android:layout_marginTop="4dp" />
+        <!-- Received Seen Status TextView -->
+        <TextView
+            android:id="@+id/receivedSeenStatusTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Seen"
+            android:textSize="12sp"
+            android:textColor="#888888"
+            android:layout_marginTop="4dp"
+            android:visibility="gone" />
     </LinearLayout>
 
     <!-- Sent message container -->
@@ -89,5 +99,14 @@
             android:textSize="12sp"
             android:textColor="#888888"
             android:layout_marginTop="4dp" />
+        <TextView
+            android:id="@+id/sentSeenStatusTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Seen"
+            android:textSize="12sp"
+            android:textColor="#888888"
+            android:layout_marginTop="4dp"
+            android:visibility="gone" />
     </LinearLayout>
 </FrameLayout>

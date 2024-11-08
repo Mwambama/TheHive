@@ -7,8 +7,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout; // Import for LinearLayout
-import android.widget.TextView; // Import TextView
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -175,6 +175,9 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
                         receivedMessageIds.add(message.getMessageId());
                         messageAdapter.notifyItemInserted(messageList.size() - 1);
                         chatRecyclerView.scrollToPosition(messageList.size() - 1);
+
+                        // Mark the message as seen
+                        markMessageAsSeen(message.getMessageId());
                     }
                 });
             }
@@ -219,6 +222,12 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
         } else {
             Toast.makeText(this, "WebSocket not connected. Please try again.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void markMessageAsSeen(int messageId) {
+        // Send a message to the server to mark the message as seen
+        WebSocketManager.getInstance().sendMessage(chatId, "seen", userId, messageId);
+        Log.d(TAG, "Marked message as seen: " + messageId);
     }
 
     private void sendMessage(int chatId, String message, int userId) {
