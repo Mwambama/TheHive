@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.chat.EmployerChatListActivity;
 import com.example.hiveeapp.employer_user.display.AddJobActivity;
+import com.example.hiveeapp.employer_user.display.EditJobActivity;
 import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
 import com.example.hiveeapp.employer_user.setting.EmployerProfileActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
@@ -105,7 +106,7 @@ public class EmployerMainActivity extends AppCompatActivity {
 
     private void navigateToAddJob(){
         Log.d(TAG, "Navigating to AddJobActivity");
-        Intent intent = new Intent(EmployerMainActivity.this, AddJobActivity.class);
+        Intent intent = new Intent(EmployerMainActivity.this, EditJobActivity.class);
         intent.putExtra("USER_ID", userId);
         startActivity(intent);
     }
