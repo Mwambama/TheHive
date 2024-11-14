@@ -13,6 +13,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Manages the WebSocket connection for real-time messaging.
+ * Provides methods to connect, disconnect, send messages, and handle message events.
+ */
 public class WebSocketManager {
 
     private static WebSocketManager instance;
@@ -21,8 +25,14 @@ public class WebSocketManager {
     private String lastUrl;
     private boolean shouldReconnect = true;
 
+    // Private constructor to enforce singleton pattern
     private WebSocketManager() {}
 
+    /**
+     * Returns the singleton instance of WebSocketManager.
+     *
+     * @return The singleton instance.
+     */
     public static synchronized WebSocketManager getInstance() {
         if (instance == null) {
             instance = new WebSocketManager();
@@ -30,10 +40,20 @@ public class WebSocketManager {
         return instance;
     }
 
+    /**
+     * Sets the listener for WebSocket events.
+     *
+     * @param listener The WebSocketListener to set.
+     */
     public void setWebSocketListener(WebSocketListener listener) {
         this.webSocketListener = listener;
     }
 
+    /**
+     * Connects to the WebSocket server with the given URL.
+     *
+     * @param serverUrl The WebSocket server URL.
+     */
     public void connectWebSocket(String serverUrl) {
         this.lastUrl = serverUrl;
         shouldReconnect = true;
@@ -48,10 +68,23 @@ public class WebSocketManager {
         }
     }
 
+    /**
+     * Checks if the WebSocket is currently connected.
+     *
+     * @return True if connected, otherwise false.
+     */
     public boolean isConnected() {
         return webSocketClient != null && webSocketClient.isOpen();
     }
 
+    /**
+     * Sends a message through the WebSocket.
+     *
+     * @param chatId    The chat ID.
+     * @param message   The message text.
+     * @param userId    The ID of the user sending the message.
+     * @param replyToId The ID of the message being replied to (optional).
+     */
     public void sendMessage(int chatId, String message, int userId, Integer replyToId) {
         if (isConnected()) {
             try {
@@ -73,12 +106,20 @@ public class WebSocketManager {
         }
     }
 
-    // Overloaded method for backward compatibility
+    /**
+     * Overloaded method to send a message without a reply ID.
+     *
+     * @param chatId  The chat ID.
+     * @param message The message text.
+     * @param userId  The ID of the user sending the message.
+     */
     public void sendMessage(int chatId, String message, int userId) {
         sendMessage(chatId, message, userId, null);
     }
 
-
+    /**
+     * Disconnects the WebSocket and prevents reconnection.
+     */
     public void disconnectWebSocket() {
         shouldReconnect = false;
         if (webSocketClient != null) {
@@ -86,12 +127,18 @@ public class WebSocketManager {
         }
     }
 
+    /**
+     * Attempts to reconnect the WebSocket if reconnection is allowed.
+     */
     private void reconnectWebSocket() {
         if (shouldReconnect && lastUrl != null) {
             connectWebSocket(lastUrl);
         }
     }
 
+    /**
+     * Custom WebSocketClient implementation for handling WebSocket events.
+     */
     private class MyWebSocketClient extends WebSocketClient {
         private MyWebSocketClient(URI serverUri) {
             super(serverUri);
@@ -131,6 +178,11 @@ public class WebSocketManager {
             }
         }
 
+        /**
+         * Processes a JSON message received from the WebSocket.
+         *
+         * @param messageJson The JSON object representing the message.
+         */
         private void processJsonMessage(JSONObject messageJson) {
             try {
                 String messageText = messageJson.getString("message");
@@ -153,7 +205,12 @@ public class WebSocketManager {
             }
         }
 
-
+        /**
+         * Parses a timestamp string into milliseconds.
+         *
+         * @param timestampStr The timestamp string in "yyyy-MM-dd HH:mm:ss" format.
+         * @return The timestamp in milliseconds.
+         */
         private long parseTimestamp(String timestampStr) {
             try {
                 SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());

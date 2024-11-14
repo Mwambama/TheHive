@@ -15,12 +15,22 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
+/**
+ * CompanyMainActivity handles the main UI for the company user, including top app bar,
+ * tab layout for fragment switching, and bottom navigation for accessing different activities.
+ */
 public class CompanyMainActivity extends AppCompatActivity {
 
     private MaterialToolbar topAppBar;
     private BottomNavigationView bottomNavigationView;
     private TabLayout tabLayout;
 
+    /**
+     * Called when the activity is first created. Sets up the UI components and navigation listeners.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the most recent data supplied in onSaveInstanceState.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +101,11 @@ public class CompanyMainActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.navigation_main_user_page);
     }
 
-    // Helper method to load fragments into the frame layout
+    /**
+     * Helper method to load fragments into the frame layout.
+     *
+     * @param fragment The fragment to be loaded.
+     */
     private void loadFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()

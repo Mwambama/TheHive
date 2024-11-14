@@ -23,10 +23,10 @@ import org.json.JSONObject;
  */
 public class InvitationAdapter extends RecyclerView.Adapter<InvitationAdapter.InvitationViewHolder> {
 
-    private JSONArray invitations = new JSONArray();  // List of invitations
-    private final Context context;                     // Activity/Fragment context
-    private final boolean isEditable;                  // Editable flag for showing update/delete buttons
-    private static final String TAG = "InvitationAdapter"; // Tag for logging
+    private JSONArray invitations = new JSONArray();
+    private final Context context;
+    private final boolean isEditable;
+    private static final String TAG = "InvitationAdapter";
 
     /**
      * Constructor for the InvitationAdapter.

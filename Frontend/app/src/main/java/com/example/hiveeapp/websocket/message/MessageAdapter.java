@@ -15,6 +15,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Adapter class for handling the display of chat messages in a RecyclerView.
+ * It supports sent and received messages with click events for selecting and replying.
+ */
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
     private final List<Message> messages;
     private final int currentUserId;
@@ -24,23 +28,39 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     // Variable to track the selected message ID
     private int selectedMessageId = -1;
 
-    // Interface for click events
+    /**
+     * Interface for handling click events on messages.
+     */
     public interface OnMessageClickListener {
         void onMessageClick(Message message);
         void onMessageUnselected();
     }
 
-    // Setter for the click listener
+    /**
+     * Sets the click listener for message items.
+     *
+     * @param listener The click listener to set.
+     */
     public void setOnMessageClickListener(OnMessageClickListener listener) {
         this.onMessageClickListener = listener;
     }
 
+    /**
+     * Constructs a MessageAdapter.
+     *
+     * @param messages      List of messages to display.
+     * @param currentUserId The ID of the current user.
+     */
     public MessageAdapter(List<Message> messages, int currentUserId) {
         this.messages = messages;
         this.currentUserId = currentUserId;
     }
 
-    // Method to set the selected message ID
+    /**
+     * Sets the selected message ID and refreshes the list.
+     *
+     * @param messageId The ID of the selected message.
+     */
     public void setSelectedMessageId(int messageId) {
         this.selectedMessageId = messageId;
         notifyDataSetChanged(); // Refresh the list to apply visual changes
@@ -144,7 +164,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
     }
 
-    // Helper method to find a message by its ID
+    /**
+     * Helper method to find a message by its ID.
+     *
+     * @param messageId The ID of the message to find.
+     * @return The Message object, or null if not found.
+     */
     private Message findMessageById(int messageId) {
         for (Message msg : messages) {
             if (msg.getMessageId() == messageId) {
@@ -154,11 +179,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return null;
     }
 
+    /**
+     * ViewHolder class for message items.
+     */
     @Override
     public int getItemCount() {
         return messages.size();
     }
 
+    /**
+     * Constructs a MessageViewHolder and initializes views.
+     *
+     * @param itemView The view for an individual message item.
+     */
     public class MessageViewHolder extends RecyclerView.ViewHolder {
         LinearLayout sentMessageContainer, receivedMessageContainer;
         TextView sentMessageTextView, receivedMessageTextView;

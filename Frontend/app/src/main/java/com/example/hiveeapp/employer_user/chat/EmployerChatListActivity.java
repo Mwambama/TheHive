@@ -35,6 +35,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+/**
+ * EmployerChatListActivity displays a list of chats for the employer user,
+ * handles navigation, and loads chat data from the server.
+ */
 public class EmployerChatListActivity extends AppCompatActivity {
 
     private static final String TAG = "EmployerChatListActivity";
@@ -46,6 +50,11 @@ public class EmployerChatListActivity extends AppCompatActivity {
     private Map<Integer, String> studentNamesMap = new HashMap<>();
     private List<EmployerChatDto> chatList = new ArrayList<>();
 
+    /**
+     * Initializes the activity and sets up the UI and navigation.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +76,9 @@ public class EmployerChatListActivity extends AppCompatActivity {
         setupBottomNavigationView();
     }
 
+    /**
+     * Sets up the RecyclerView for displaying chats.
+     */
     private void setupUI() {
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -74,6 +86,9 @@ public class EmployerChatListActivity extends AppCompatActivity {
         loadChats();
     }
 
+    /**
+     * Configures the bottom navigation view for navigation between different activities.
+     */
     private void setupBottomNavigationView() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -103,24 +118,36 @@ public class EmployerChatListActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.nav_chat);
     }
 
+    /**
+     * Navigates to the Employer Main Profile activity.
+     */
     private void navigateToProfile() {
         Intent intent = new Intent(this, EmployerMainActivity.class);
         startActivity(intent);
         finish();
     }
 
+    /**
+     * Navigates to the Add Job activity.
+     */
     private void navigateToAddJob() {
         Intent intent = new Intent(this, AddJobActivity.class);
         startActivity(intent);
         finish();
     }
 
+    /**
+     * Navigates to the Tracking Application activity.
+     */
     private void navigateToTracking() {
         Intent intent = new Intent(this, TrackingApplicationActivity.class);
         startActivity(intent);
         finish();
     }
 
+    /**
+     * Loads the list of chats from the server and updates the RecyclerView.
+     */
     private void loadChats() {
         String url = "http://coms-3090-063.class.las.iastate.edu:8080/chat";
 
@@ -174,6 +201,12 @@ public class EmployerChatListActivity extends AppCompatActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
+    /**
+     * Loads the student's name from the server and updates the chat object.
+     *
+     * @param studentId The ID of the student.
+     * @param chat      The chat object to update.
+     */
     private void loadStudentName(int studentId, EmployerChatDto chat) {
         String url = "http://coms-3090-063.class.las.iastate.edu:8080/users/" + studentId;
 
@@ -217,7 +250,12 @@ public class EmployerChatListActivity extends AppCompatActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
-
+    /**
+     * Updates the chat title with the student's name.
+     *
+     * @param studentId   The ID of the student.
+     * @param studentName The name of the student.
+     */
     private void updateChatTitle(int studentId, String studentName) {
         for (EmployerChatDto chat : chatList) {
             if (chat.getStudentId() == studentId) {
@@ -227,6 +265,11 @@ public class EmployerChatListActivity extends AppCompatActivity {
         chatListAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Opens the chat activity for the selected chat.
+     *
+     * @param chat The selected chat object.
+     */
     private void openChat(EmployerChatDto chat) {
         Intent intent = new Intent(this, EmployerChatActivity.class);
         intent.putExtra("chatId", chat.getChatId());

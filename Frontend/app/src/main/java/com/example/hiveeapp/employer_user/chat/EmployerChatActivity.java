@@ -28,6 +28,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * EmployerChatActivity handles the chat functionality for the employer user,
+ * including sending and receiving messages via WebSocket.
+ */
 public class EmployerChatActivity extends AppCompatActivity implements MessageAdapter.OnMessageClickListener {
 
     private static final String TAG = "EmployerChatActivity";
@@ -48,6 +52,11 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
     private TextView replyingToTextView;
     private TextView replyMessageTextView;
 
+    /**
+     * Initializes the activity and sets up the UI and WebSocket connection.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +94,10 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
         connectWebSocket();
     }
 
+
+    /**
+     * Sets up the UI components and message click listeners.
+     */
     private void setupUI() {
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         msgEtx = findViewById(R.id.msgEtx);
@@ -127,6 +140,11 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
         });
     }
 
+    /**
+     * Handles message click events for replying to messages.
+     *
+     * @param message The clicked message.
+     */
     @Override
     public void onMessageClick(Message message) {
         if (replyToMessageId != null && replyToMessageId.equals(message.getMessageId())) {
@@ -145,6 +163,9 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
         }
     }
 
+    /**
+     * Handles the unselection of a message reply.
+     */
     @Override
     public void onMessageUnselected() {
         replyToMessageId = null;
@@ -152,6 +173,9 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
         messageAdapter.setSelectedMessageId(-1);
     }
 
+    /**
+     * Connects to the WebSocket server and sets up listeners for WebSocket events.
+     */
     private void connectWebSocket() {
         if (!shouldReconnect || WebSocketManager.getInstance().isConnected()) {
             Log.d(TAG, "WebSocket already connected or reconnection is disabled.");
@@ -203,10 +227,21 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
         WebSocketManager.getInstance().connectWebSocket(webSocketUrl);
     }
 
+    /**
+     * Reconnects to the WebSocket server after a delay.
+     */
     private void reconnectWebSocket() {
         new android.os.Handler().postDelayed(() -> connectWebSocket(), 5000); // Retry after 5 seconds
     }
 
+    /**
+     * Generates the WebSocket URL.
+     *
+     * @param chatId   The chat ID.
+     * @param email    The user's email.
+     * @param password The user's password.
+     * @return The generated WebSocket URL.
+     */
     private String generateWebSocketUrl(int chatId, String email, String password) {
         return "ws://coms-3090-063.class.las.iastate.edu:8080/ws/chat/" + chatId +
                 "?email=" + email + "&password=" + password;
@@ -221,6 +256,13 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
         }
     }
 
+    /**
+     * Sends a message via WebSocket.
+     *
+     * @param chatId    The chat ID.
+     * @param message   The message content.
+     * @param userId    The user ID.
+     */
     private void sendMessage(int chatId, String message, int userId) {
         sendMessage(chatId, message, userId, null);
     }
@@ -240,6 +282,9 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
         disconnectWebSocket();
     }
 
+    /**
+     * Disconnects from the WebSocket server.
+     */
     private void disconnectWebSocket() {
         shouldReconnect = false;
         if (WebSocketManager.getInstance().isConnected()) {

@@ -28,6 +28,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * ChatActivity handles the chat interface for the student user,
+ * including sending and receiving messages via WebSocket.
+ */
 public class ChatActivity extends AppCompatActivity implements MessageAdapter.OnMessageClickListener {
 
     private static final String TAG = "ChatActivity";
@@ -48,6 +52,11 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
     private TextView replyingToTextView;
     private TextView replyMessageTextView;
 
+    /**
+     * Initializes the activity and sets up the UI and WebSocket connection.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +91,9 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         connectWebSocket();
     }
 
+    /**
+     * Sets up the UI components and message click listeners.
+     */
     private void setupUI() {
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         msgEtx = findViewById(R.id.msgEtx);
@@ -124,6 +136,11 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         });
     }
 
+    /**
+     * Handles message click events for replying to messages.
+     *
+     * @param message The clicked message.
+     */
     @Override
     public void onMessageClick(Message message) {
         // Set replyToMessageId when a message is clicked to reply
@@ -140,6 +157,9 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         }
     }
 
+    /**
+     * Handles the unselection of a message reply.
+     */
     @Override
     public void onMessageUnselected() {
         replyToMessageId = null;
@@ -147,6 +167,9 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         messageAdapter.setSelectedMessageId(-1);
     }
 
+    /**
+     * Connects to the WebSocket server and sets up listeners for WebSocket events.
+     */
     private void connectWebSocket() {
         if (!shouldReconnect || WebSocketManager.getInstance().isConnected()) {
             Log.d(TAG, "WebSocket already connected or reconnection is disabled.");
@@ -195,6 +218,14 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         WebSocketManager.getInstance().connectWebSocket(webSocketUrl);
     }
 
+    /**
+     * Generates the WebSocket URL.
+     *
+     * @param chatId   The chat ID.
+     * @param email    The user's email.
+     * @param password The user's password.
+     * @return The generated WebSocket URL.
+     */
     private String generateWebSocketUrl(int chatId, String email, String password) {
         String url = "ws://coms-3090-063.class.las.iastate.edu:8080/ws/chat/" + chatId +
                 "?email=" + email + "&password=" + password;
@@ -203,6 +234,14 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         return url;
     }
 
+    /**
+     * Sends a message via WebSocket.
+     *
+     * @param chatId    The chat ID.
+     * @param message   The message content.
+     * @param userId    The user ID.
+     * @param replyToId The ID of the message being replied to (optional).
+     */
     private void sendMessage(int chatId, String message, int userId, Integer replyToId) {
         if (WebSocketManager.getInstance().isConnected()) {
             // Only include replyToId if not null
@@ -238,6 +277,9 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         disconnectWebSocket();
     }
 
+    /**
+     * Disconnects from the WebSocket server.
+     */
     private void disconnectWebSocket() {
         shouldReconnect = false;
         if (WebSocketManager.getInstance().isConnected()) {

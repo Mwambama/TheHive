@@ -20,7 +20,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * The applicationsApi class provides methods for managing job applications,
+ * including fetching applications, student details, accepting, rejecting, and deleting applications.
+ */
 public class applicationsApi {
 
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications?jobPostingId=16&status=PENDING";
@@ -28,7 +31,12 @@ public class applicationsApi {
     private static final String REJECT_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications/";
     private static final String TAG = "applicationsApi";
 
-    // Method to set up headers including authorization
+    /**
+     * Sets up headers including authorization for API requests.
+     *
+     * @param context The application context.
+     * @return A map of headers including content type and authorization credentials.
+     */
     public static Map<String, String> getHeaders(Context context) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
@@ -43,6 +51,13 @@ public class applicationsApi {
         return headers;
     }
 
+    /**
+     * Retrieves a list of applications from the server.
+     *
+     * @param context       The application context.
+     * @param listener      Response listener for successful fetch.
+     * @param errorListener Error listener for handling errors.
+     */
     public static void getApplications(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL;  // The URL for fetching applications
         Log.d(TAG, "GET Applications Request URL: " + url);
@@ -67,7 +82,14 @@ public class applicationsApi {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    // Method to fetch student details
+    /**
+     * Fetches student details for a given student ID.
+     *
+     * @param context       The application context.
+     * @param studentId     The ID of the student.
+     * @param listener      Response listener for successful fetch.
+     * @param errorListener Error listener for handling errors.
+     */
     public static void getStudentDetails(Context context, long studentId, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         String url = "http://coms-3090-063.class.las.iastate.edu:8080/student/" + studentId;
         Log.d(TAG, "GET Student Details Request URL: " + url);
@@ -94,7 +116,14 @@ public class applicationsApi {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-
+    /**
+     * Accepts a job application.
+     *
+     * @param context       The application context.
+     * @param applicationId The ID of the application to accept.
+     * @param listener      Response listener for successful acceptance.
+     * @param errorListener Error listener for handling errors.
+     */
     // Method to accept an application
     public static void AcceptApplication(Context context, long applicationId, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         String url = ACCEPT_URL + applicationId + "/accept";
@@ -115,7 +144,14 @@ public class applicationsApi {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    // Method to reject an application
+    /**
+     * Rejects a job application.
+     *
+     * @param context       The application context.
+     * @param applicationId The ID of the application to reject.
+     * @param listener      Response listener for successful rejection.
+     * @param errorListener Error listener for handling errors.
+     */
     public static void RejectApplication(Context context, long applicationId, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         String url = REJECT_URL + applicationId + "/reject";
         Log.d(TAG, "POST Application Reject Request URL: " + url);
@@ -135,7 +171,14 @@ public class applicationsApi {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    // Method to delete an employer (if needed)
+    /**
+     * Deletes an employer based on the provided employer ID.
+     *
+     * @param context       The application context.
+     * @param employerId    The ID of the employer to delete.
+     * @param listener      Response listener for successful deletion.
+     * @param errorListener Error listener for handling errors.
+     */
     public static void deleteEmployer(Context context, long employerId, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + "/" + employerId;
         Log.d(TAG, "DELETE Employer Request URL: " + url);
@@ -158,7 +201,13 @@ public class applicationsApi {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    // Helper method to handle error responses
+    /**
+     * Handles error responses from the server, logs the details, and invokes the error listener.
+     *
+     * @param errorMessagePrefix Prefix for the error message to log.
+     * @param error              The VolleyError object.
+     * @param errorListener      Error listener to handle the error response.
+     */
     private static void handleErrorResponse(String errorMessagePrefix, VolleyError error, Response.ErrorListener errorListener) {
         String errorMsg = getErrorMessage(error);
         String fullErrorMessage = errorMessagePrefix + ": " + errorMsg;
@@ -166,7 +215,12 @@ public class applicationsApi {
         errorListener.onErrorResponse(new VolleyError(fullErrorMessage));
     }
 
-    // Helper method to parse error messages
+    /**
+     * Extracts a meaningful error message from a VolleyError.
+     *
+     * @param error The VolleyError object.
+     * @return A string containing the error message.
+     */
     private static String getErrorMessage(VolleyError error) {
         String errorMsg = "An unexpected error occurred";
         if (error.networkResponse != null && error.networkResponse.data != null) {

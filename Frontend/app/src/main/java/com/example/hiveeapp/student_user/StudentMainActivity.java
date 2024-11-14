@@ -21,6 +21,10 @@ import com.example.hiveeapp.student_user.swipe.JobSwipeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
+/**
+ * Main activity for student users, providing navigation between profile,
+ * chat, job applications, and job swiping features.
+ */
 public class StudentMainActivity extends AppCompatActivity {
 
     private static final String TAG = "StudentMainActivity";
@@ -29,6 +33,12 @@ public class StudentMainActivity extends AppCompatActivity {
     private String userPassword;
     private BottomNavigationView bottomNavigationView;
 
+    /**
+     * Called when the activity is first created. Initializes the UI components
+     * and sets up navigation features.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,12 +59,19 @@ public class StudentMainActivity extends AppCompatActivity {
         replaceFragment(new JobSwipeFragment());
     }
 
+    /**
+     * Called when the activity resumes. Sets the default selected item
+     * in the BottomNavigationView.
+     */
     @Override
     protected void onResume() {
         super.onResume();
         bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
     }
 
+    /**
+     * Sets up the BottomNavigationView and handles navigation item selections.
+     */
     private void setupBottomNavigationView() {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -71,6 +88,10 @@ public class StudentMainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Retrieves user details from SharedPreferences and checks if they are valid.
+     * If user details are missing, prompts the user to log in again.
+     */
     private void retrieveUserDetails() {
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
         userId = preferences.getInt("userId", -1);
@@ -84,6 +105,11 @@ public class StudentMainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets up the TabLayout and handles tab selection events.
+     *
+     * @param tabLayout The TabLayout to set up.
+     */
     private void setupTabLayout(TabLayout tabLayout) {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -105,7 +131,11 @@ public class StudentMainActivity extends AppCompatActivity {
         });
     }
 
-    // Helper method to replace fragments
+    /**
+     * Replaces the current fragment in the frame layout with the specified fragment.
+     *
+     * @param fragment The fragment to display.
+     */
     private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -113,12 +143,20 @@ public class StudentMainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    /**
+     * Navigates to the StudentProfileViewActivity.
+     */
     private void navigateToProfile() {
         Intent intent = new Intent(StudentMainActivity.this, StudentProfileViewActivity.class);
         intent.putExtra("USER_ID", userId);
         startActivity(intent);
     }
 
+    /**
+     * Gets the user ID of the currently logged-in user.
+     *
+     * @return The user ID.
+     */
     public int getUserId() {
         return userId;
     }
