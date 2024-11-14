@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;  // Ensure this import is added
 
 @RestController
 @RequestMapping("/otp")
@@ -17,11 +18,13 @@ public class OtpController {
 
     private final OtpService otpService;
 
+    @Operation(summary = "Send OTP to the user for password reset")
     @PostMapping("/sendOtp")
     public ForgetPasswordResponse sendOtp(@RequestBody OtpRequest otpRequest){
         return otpService.sendOtp(otpRequest);
     }
 
+    @Operation(summary = "Validate the OTP for password reset")
     @PostMapping("/validateOtp")
     public ForgetPasswordResponse validateOtp(@RequestBody OtpValidationRequest otpValidationRequest){
         return otpService.validateOtp(otpValidationRequest);

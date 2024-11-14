@@ -1,6 +1,5 @@
 package com.example.thehiveapp.controller.chat;
 
-
 import com.example.thehiveapp.entity.chat.Chat;
 import com.example.thehiveapp.service.chat.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 
 @RestController
@@ -23,30 +22,34 @@ public class ChatController {
 
     public ChatController() {}
 
+    @Operation(summary = "Get all chats")
     @GetMapping
     public List<Chat> getChats() {
         return chatService.getChats();
     }
 
+    @Operation(summary = "Create a new chat")
     @PostMapping
     public Chat createChat(@RequestBody Chat request) {
         return chatService.createChat(request);
     }
 
+    @Operation(summary = "Get chat by ID")
     @GetMapping("/{id}")
     public Chat getChatById(@PathVariable Long id) {
         return chatService.getChatById(id);
     }
 
+    @Operation(summary = "Update an existing chat")
     @PutMapping
     public Chat updateChat(@RequestBody Chat request) {
         return chatService.updateChat(request);
     }
 
+    @Operation(summary = "Delete a chat by ID")
     @DeleteMapping("/{id}")
     public String deleteChat(@PathVariable Long id) {
         chatService.deleteChat(id);
         return "Chat successfully deleted";
     }
 }
-

@@ -11,6 +11,7 @@ import com.example.thehiveapp.entity.user.User;
 import com.example.thehiveapp.dto.email.ChangePasswordRequest;
 import com.example.thehiveapp.service.authentication.AuthenticationService;
 import com.example.thehiveapp.service.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,26 +31,31 @@ public class AuthenticationController {
 
     public AuthenticationController() {}
 
+    @Operation(summary = "Sign up a company")
     @PostMapping("/signup/company")
     public Company createCompany(@Valid @RequestBody CompanySignUpRequest request) {
         return authenticationService.signUpCompany(request);
     }
 
+    @Operation(summary = "Sign up an employer")
     @PostMapping("/signup/employer")
     public Employer createEmployer(@Valid @RequestBody EmployerSignUpRequest request) {
         return authenticationService.signUpEmployer(request);
     }
 
+    @Operation(summary = "Sign up a student")
     @PostMapping("/signup/student")
     public Student createStudent(@Valid @RequestBody StudentSignUpRequest request) {
         return authenticationService.signUpStudent(request);
     }
 
+    @Operation(summary = "Login and get the current logged-in user")
     @PostMapping("/login")
     public User loginAuthentication(){
         return userService.getCurrentUser();
     }
 
+    @Operation(summary = "Change password for the current user")
     @PostMapping("/change-password")
     public ResponseMessage changePasswordAuthentication(@RequestBody ChangePasswordRequest changePasswordRequest) throws BadRequestException {
         return authenticationService.changePassword(changePasswordRequest);
