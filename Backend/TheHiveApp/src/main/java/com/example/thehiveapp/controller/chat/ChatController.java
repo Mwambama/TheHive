@@ -22,31 +22,31 @@ public class ChatController {
 
     public ChatController() {}
 
-    @Operation(summary = "Get all chats")
+    @Operation(summary = "Get all chats", description = "Retrieves a list of all chat records.")
     @GetMapping
     public List<Chat> getChats() {
         return chatService.getChats();
     }
 
-    @Operation(summary = "Create a new chat")
+    @Operation(summary = "Create a new chat", description = "Creates a new chat with the provided chat request.")
     @PostMapping
     public Chat createChat(@RequestBody Chat request) {
         return chatService.createChat(request);
     }
 
-    @Operation(summary = "Get chat by ID")
+    @Operation(summary = "Get chat by ID", description = "Retrieves a chat record by its unique ID.")
     @GetMapping("/{id}")
     public Chat getChatById(@PathVariable Long id) {
         return chatService.getChatById(id);
     }
 
-    @Operation(summary = "Update an existing chat")
+    @Operation(summary = "Update an existing chat", description = "Updates an existing chat with the provided request.")
     @PutMapping
     public Chat updateChat(@RequestBody Chat request) {
         return chatService.updateChat(request);
     }
 
-    @Operation(summary = "Delete a chat by ID")
+    @Operation(summary = "Delete a chat by ID", description = "Deletes a chat record by its unique ID.")
     @DeleteMapping("/{id}")
     public String deleteChat(@PathVariable Long id) {
         chatService.deleteChat(id);

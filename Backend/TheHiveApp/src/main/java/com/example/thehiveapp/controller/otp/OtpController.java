@@ -18,13 +18,13 @@ public class OtpController {
 
     private final OtpService otpService;
 
-    @Operation(summary = "Send OTP to the user for password reset")
+    @Operation(summary = "Send OTP to the user for password reset", description = "Sends a One-Time Password (OTP) to the user's registered email address to initiate the password reset process.")
     @PostMapping("/sendOtp")
     public ForgetPasswordResponse sendOtp(@RequestBody OtpRequest otpRequest){
         return otpService.sendOtp(otpRequest);
     }
 
-    @Operation(summary = "Validate the OTP for password reset")
+    @Operation(summary = "Validate the OTP for password reset", description = "Validates the OTP entered by the user to verify their identity before allowing them to reset their password.")
     @PostMapping("/validateOtp")
     public ForgetPasswordResponse validateOtp(@RequestBody OtpValidationRequest otpValidationRequest){
         return otpService.validateOtp(otpValidationRequest);
