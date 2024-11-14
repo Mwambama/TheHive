@@ -11,7 +11,7 @@ import java.util.List;
 
 public class TrackingAdapter extends RecyclerView.Adapter<TrackingAdapter.ViewHolder> {
 
-    private List<String> trackingItems; // Replace String with your data model
+    private List<String> trackingItems;
 
     public TrackingAdapter(List<String> trackingItems) {
         this.trackingItems = trackingItems;
