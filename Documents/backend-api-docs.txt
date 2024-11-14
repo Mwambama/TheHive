@@ -1,0 +1,2 @@
+http://coms-3090-063.class.las.iastate.edu:8080/swagger-ui/index.html
+http://coms-3090-063.class.las.iastate.edu:8080/v3/api-docs
