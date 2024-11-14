@@ -2,6 +2,8 @@ package com.example.thehiveapp.controller.address;
 
 import com.example.thehiveapp.entity.address.Address;
 import com.example.thehiveapp.service.address.AddressService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,38 +16,79 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing addresses.
+ */
 @RestController
 @RequestMapping("/address")
 public class AddressController {
 
-    @Autowired private AddressService addressService;
+    @Autowired
+    private AddressService addressService;
 
     public AddressController() {}
 
+    /**
+     * Retrieves a list of all addresses.
+     *
+     * @return List of addresses
+     */
+    @Operation(summary = "Get all addresses", description = "Retrieve a list of all addresses from the system")
     @GetMapping
     public List<Address> getAddresses() {
         return addressService.getAddresses();
     }
 
+    /**
+     * Creates a new address.
+     *
+     * @param request The address details to be created
+     * @return The created address
+     */
+    @Operation(summary = "Create a new address", description = "Create a new address entry in the system")
     @PostMapping
-    public Address createAddress(@RequestBody Address request) {
+    public Address createAddress(@RequestBody @Parameter(description = "Address details to create") Address request) {
         return addressService.createAddress(request);
     }
 
+    /**
+     * Retrieves an address by its ID.
+     *
+     * @param id The ID of the address to retrieve
+     * @return The address with the given ID
+     */
+    @Operation(summary = "Get address by ID", description = "Retrieve a specific address by its ID")
     @GetMapping("/{id}")
-    public Address getAddressById(@PathVariable Long id) {
+    public Address getAddressById(
+            @PathVariable @Parameter(description = "ID of the address to retrieve", required = true) Long id
+    ) {
         return addressService.getAddressById(id);
     }
 
+    /**
+     * Updates an existing address.
+     *
+     * @param request The address details to update
+     * @return The updated address
+     */
+    @Operation(summary = "Update an address", description = "Update the details of an existing address")
     @PutMapping
-    public Address updateAddress(@RequestBody Address request) {
+    public Address updateAddress(@RequestBody @Parameter(description = "Updated address details") Address request) {
         return addressService.updateAddress(request);
     }
 
+    /**
+     * Deletes an address by its ID.
+     *
+     * @param id The ID of the address to delete
+     * @return A message indicating the deletion status
+     */
+    @Operation(summary = "Delete address by ID", description = "Delete an address from the system by its ID")
     @DeleteMapping("/{id}")
-    public String deleteAddress(@PathVariable Long id) {
+    public String deleteAddress(
+            @PathVariable @Parameter(description = "ID of the address to delete", required = true) Long id
+    ) {
         addressService.deleteAddress(id);
         return "Address successfully deleted";
     }
 }
-
