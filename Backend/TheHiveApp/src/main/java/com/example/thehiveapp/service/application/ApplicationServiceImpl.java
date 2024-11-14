@@ -14,6 +14,7 @@ import com.example.thehiveapp.repository.jobPosting.JobPostingRepository;
 import com.example.thehiveapp.repository.user.StudentRepository;
 import com.example.thehiveapp.service.chat.ChatService;
 import com.example.thehiveapp.service.jobPosting.JobPostingService;
+import com.example.thehiveapp.service.user.StudentService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class ApplicationServiceImpl implements ApplicationService{
     @Autowired private JobPostingService jobPostingService;
     @Autowired private JobPostingMapper jobPostingMapper;
     @Autowired private ChatService chatService;
+    @Autowired private StudentService studentService;
 
     @Override
     public ApplicationDto getApplication(Long applicationId) {
@@ -66,7 +68,7 @@ public class ApplicationServiceImpl implements ApplicationService{
     }
     @Override
     public List<ApplicationDto> getApplicationsforStudent(Long studentId){
-        List<Application> applications = applicationRepository.findApplicationsByStudentId(studentId);
+        List<Application> applications = applicationRepository.findApplicationsByStudent(studentService.getStudentById(studentId));
         return applications.stream().map(app -> new ApplicationDto(
                 app.getApplicationId(),
                 app.getJobPosting().getJobPostingId(),
