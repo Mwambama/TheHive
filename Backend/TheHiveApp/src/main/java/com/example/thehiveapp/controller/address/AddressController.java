@@ -32,7 +32,7 @@ public class AddressController {
         return addressService.getAddresses();
     }
 
-    @Operation(summary = "Create a new address", description = "Creates a new address in the system")
+    @Operation(summary = "Create a new address", description = "Creates a new address in the database")
     @PostMapping
     public Address createAddress(@RequestBody Address request) {
         return addressService.createAddress(request);
@@ -50,7 +50,7 @@ public class AddressController {
         return addressService.updateAddress(request);
     }
 
-    @Operation(summary = "Delete an address", description = "Deletes an address from the system by ID")
+    @Operation(summary = "Delete an address", description = "Deletes an address from the database by ID")
     @DeleteMapping("/{id}")
     public String deleteAddress(@PathVariable @Parameter(description = "ID of the address to delete", required = true) Long id) {
         addressService.deleteAddress(id);
