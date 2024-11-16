@@ -13,11 +13,11 @@ maven-build:
   artifacts:
     paths:
       - Backend/TheHiveApp/target/*.jar
-#  only:
-#    refs:
-#      - main
-#    changes:
-#      - Backend/**
+  only:
+    refs:
+      - main
+    changes:
+      - Backend/**
 
 maven-test:
   stage: maventest
@@ -26,11 +26,11 @@ maven-test:
   script:
     - cd Backend/TheHiveApp
     - mvn test
-#  only:
-#    refs:
-#      - main
-#    changes:
-#      - Backend/**
+  only:
+    refs:
+      - main
+    changes:
+      - Backend/**
 
 maven-deploy:
   stage: mavendeploy
@@ -40,8 +40,8 @@ maven-deploy:
     - sudo mv Backend/TheHiveApp/target/*.jar /target/web-demo.jar
     - sudo systemctl stop system-web-demo
     - sudo systemctl start system-web-demo
-#  only:
-#    refs:
-#      - main
-#    changes:
-#      - Backend/**
+  only:
+    refs:
+      - main
+    changes:
+      - Backend/**
