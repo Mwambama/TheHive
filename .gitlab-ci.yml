@@ -1,5 +1,7 @@
 stages:
   - mavenbuild
+  - maventest
+  - mavendeploy
 
 maven-build:
   stage: mavenbuild
@@ -8,11 +10,38 @@ maven-build:
   script:
     - cd Backend/TheHiveApp
     - mvn package
-    - sudo mv target/*.jar /target/web-demo.jar 
+  artifacts:
+    paths:
+      - Backend/TheHiveApp/target/*.jar
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Backend/**
+
+maven-test:
+  stage: maventest
+  tags:
+    - backend_tag
+  script:
+    - cd Backend/TheHiveApp
+    - mvn test
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Backend/**
+
+maven-deploy:
+  stage: mavendeploy
+  tags:
+    - backend_tag
+  script:
+    - sudo mv Backend/TheHiveApp/target/*.jar /target/web-demo.jar
     - sudo systemctl stop system-web-demo
     - sudo systemctl start system-web-demo
-  only:
-    refs:
-      - main
-    changes:
-      - Backend/**
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Backend/**
