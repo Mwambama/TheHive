@@ -6,7 +6,7 @@ maven-build:
   tags:
     - backend_tag
   script:
-    - cd Backend
+    - cd Backend/TheHiveApp
     - mvn package
     - sudo mv target/*.jar /target/web-demo.jar 
     - sudo systemctl stop system-web-demo
