@@ -49,7 +49,7 @@ stages:
 #      - Backend/**
 
 android-build:
-  image: openjdk:17-alpine
+  image:  gjandres/android-ci:latest
   stage: androidbuild
   tags:
     - frontend_tag
@@ -58,7 +58,6 @@ android-build:
     - chmod +x ./Frontend/gradlew
   script:
     - cd Frontend
-    - gradle wrapper --gradle-version 8.7
     - ./gradlew assemble
   artifacts:
     paths:
