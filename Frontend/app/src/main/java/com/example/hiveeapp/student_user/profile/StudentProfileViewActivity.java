@@ -101,11 +101,6 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    public void onBackPressed() {
-        navigateBackToMain();
-    }
-
     private void loadStudentProfile(int userId) {
         Log.d(TAG, "Loading student profile with userId: " + userId);
 
