@@ -42,7 +42,7 @@ maven-deploy:
    - sudo mv Backend/TheHiveApp/target/*.jar /target/web-demo.jar
    - sudo systemctl stop system-web-demo
    - sudo systemctl start system-web-demo
-  only:
+ only:
     refs:
       - main
 #    changes:
