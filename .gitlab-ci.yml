@@ -59,6 +59,7 @@ android-build:
   script:
     - cd Frontend
     - gradle wrapper
+    - chmod +x ./Frontend/gradlew
     - ./gradlew assemble
   artifacts:
     paths:
