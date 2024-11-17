@@ -46,6 +46,7 @@ android-build:
   script:
     - cd Frontend
     - ./gradlew clean assemble --stacktrace --debug
+    - ./gradlew clean build --info
   artifacts:
     paths:
       - Frontend/app/build/outputs/
@@ -71,6 +72,7 @@ android-test:
   script:
     - cd Frontend
     - ./gradlew clean test --stacktrace --debug
+    - ./gradlew clean build --info
   cache:
     key: "$CI_COMMIT_REF_SLUG"
     paths:
