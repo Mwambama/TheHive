@@ -2,6 +2,8 @@ stages:
   - mavenbuild
   - maventest
   - mavendeploy
+  - androidbuild
+  - androidtest
 
 maven-build:
   stage: mavenbuild
@@ -13,11 +15,11 @@ maven-build:
   artifacts:
     paths:
       - Backend/TheHiveApp/target/*.jar
-  only:
-    refs:
-      - main
-    changes:
-      - Backend/**
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Backend/**
 
 maven-test:
   stage: maventest
@@ -26,11 +28,11 @@ maven-test:
   script:
     - cd Backend/TheHiveApp
     - mvn test
-  only:
-    refs:
-      - main
-    changes:
-      - Backend/**
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Backend/**
 
 maven-deploy:
   stage: mavendeploy
@@ -40,8 +42,45 @@ maven-deploy:
     - sudo mv Backend/TheHiveApp/target/*.jar /target/web-demo.jar
     - sudo systemctl stop system-web-demo
     - sudo systemctl start system-web-demo
-  only:
-    refs:
-      - main
-    changes:
-      - Backend/**
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Backend/**
+
+android-build:
+  image:  gjandres/android-ci:latest
+  stage: androidbuild
+  tags:
+    - frontend_tag
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - chmod +x ./Frontend/gradlew
+  script:
+    - cd Frontend
+    - ./gradlew assemble
+  artifacts:
+    paths:
+      - Android_test/app/build/outputs/
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Frontend/**
+
+android-test:
+  image: gjandres/android-ci:latest
+  stage: androidtest
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - chmod +x ./Frontend/gradlew
+  tags:
+    - frontend_tag
+  script:
+    - cd Frontend
+    - ./gradlew test
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Frontend/**
