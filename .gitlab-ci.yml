@@ -58,7 +58,7 @@ android-build:
     - chmod +x ./Frontend/gradlew
   script:
     - cd Frontend
-    - gradle wrapper
+    - gradle wrapper --gradle-version 7.6
     - chmod +x ./gradlew
     - ./gradlew assemble
   artifacts:
