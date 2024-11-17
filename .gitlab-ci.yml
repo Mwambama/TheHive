@@ -1,47 +1,87 @@
 stages:
-  - mavenbuild
-  - maventest
-  - mavendeploy
+ - mavenbuild
+ - maventest
+ - mavendeploy
+ - androidbuild
+ - androidtest
 
 maven-build:
-  stage: mavenbuild
-  tags:
-    - backend_tag
-  script:
-    - cd Backend/TheHiveApp
-    - mvn package
-  artifacts:
-    paths:
-      - Backend/TheHiveApp/target/*.jar
-  only:
+ stage: mavenbuild
+ tags:
+   - backend_tag
+ script:
+   - cd Backend/TheHiveApp
+   - mvn package
+ artifacts:
+   paths:
+     - Backend/TheHiveApp/target/*.jar
+ only:
     refs:
       - main
-    changes:
-      - Backend/**
+#    changes:
+#      - Backend/**
 
 maven-test:
-  stage: maventest
-  tags:
-    - backend_tag
-  script:
-    - cd Backend/TheHiveApp
-    - mvn test
+ stage: maventest
+ tags:
+   - backend_tag
+ script:
+   - cd Backend/TheHiveApp
+   - mvn test
   only:
     refs:
       - main
-    changes:
-      - Backend/**
+#    changes:
+#      - Backend/**
 
 maven-deploy:
-  stage: mavendeploy
-  tags:
-    - backend_tag
-  script:
-    - sudo mv Backend/TheHiveApp/target/*.jar /target/web-demo.jar
-    - sudo systemctl stop system-web-demo
-    - sudo systemctl start system-web-demo
+ stage: mavendeploy
+ tags:
+   - backend_tag
+ script:
+   - sudo mv Backend/TheHiveApp/target/*.jar /target/web-demo.jar
+   - sudo systemctl stop system-web-demo
+   - sudo systemctl start system-web-demo
   only:
     refs:
       - main
-    changes:
-      - Backend/**
+#    changes:
+#      - Backend/**
+
+android-build:
+  image:  gjandres/android-ci:latest
+  stage: androidbuild
+  tags:
+    - frontend_tag
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - chmod +x ./Frontend/gradlew
+  script:
+    - cd Frontend
+    - ./gradlew assemble
+  artifacts:
+    paths:
+      - Android_test/app/build/outputs/
+  only:
+    refs:
+      - main
+#    changes:
+#      - Frontend/**
+
+android-test:
+  image: gjandres/android-ci:latest
+  stage: androidtest
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - chmod +x ./Frontend/gradlew
+  tags:
+    - frontend_tag
+  script:
+    - cd Frontend
+    - ./gradlew test
+  only:
+    refs:
+      - main
+#    changes:
+#      - Frontend/**
+
