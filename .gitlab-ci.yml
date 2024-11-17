@@ -42,6 +42,7 @@ android-build:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - chmod +x ./Frontend/gradlew
     - chmod +x ./Frontend/gradle/wrapper/gradle-wrapper.jar
+    - chmod 644 Frontend/gradle/wrapper/gradle-wrapper.jar
     - ls -al Frontend/gradle/wrapper
   script:
     - cd Frontend
@@ -68,6 +69,7 @@ android-test:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - chmod +x ./Frontend/gradlew
     - chmod +x ./Frontend/gradle/wrapper/gradle-wrapper.jar
+    - chmod 644 Frontend/gradle/wrapper/gradle-wrapper.jar
     - ls -al Frontend/gradle/wrapper
   script:
     - cd Frontend
