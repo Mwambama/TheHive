@@ -1,50 +1,50 @@
 stages:
-#  - mavenbuild
-#  - maventest
-#  - mavendeploy
-  - androidbuild
-  - androidtest
+ - mavenbuild
+ - maventest
+ - mavendeploy
+ - androidbuild
+ - androidtest
 
-#maven-build:
-#  stage: mavenbuild
-#  tags:
-#    - backend_tag
-#  script:
-#    - cd Backend/TheHiveApp
-#    - mvn package
-#  artifacts:
-#    paths:
-#      - Backend/TheHiveApp/target/*.jar
-#  only:
-#    refs:
-#      - main
+maven-build:
+ stage: mavenbuild
+ tags:
+   - backend_tag
+ script:
+   - cd Backend/TheHiveApp
+   - mvn package
+ artifacts:
+   paths:
+     - Backend/TheHiveApp/target/*.jar
+ only:
+    refs:
+      - main
 #    changes:
 #      - Backend/**
 
-#maven-test:
-#  stage: maventest
-#  tags:
-#    - backend_tag
-#  script:
-#    - cd Backend/TheHiveApp
-#    - mvn test
-#  only:
-#    refs:
-#      - main
+maven-test:
+ stage: maventest
+ tags:
+   - backend_tag
+ script:
+   - cd Backend/TheHiveApp
+   - mvn test
+  only:
+    refs:
+      - main
 #    changes:
 #      - Backend/**
 
-#maven-deploy:
-#  stage: mavendeploy
-#  tags:
-#    - backend_tag
-#  script:
-#    - sudo mv Backend/TheHiveApp/target/*.jar /target/web-demo.jar
-#    - sudo systemctl stop system-web-demo
-#    - sudo systemctl start system-web-demo
-#  only:
-#    refs:
-#      - main
+maven-deploy:
+ stage: mavendeploy
+ tags:
+   - backend_tag
+ script:
+   - sudo mv Backend/TheHiveApp/target/*.jar /target/web-demo.jar
+   - sudo systemctl stop system-web-demo
+   - sudo systemctl start system-web-demo
+  only:
+    refs:
+      - main
 #    changes:
 #      - Backend/**
 
@@ -62,9 +62,9 @@ android-build:
   artifacts:
     paths:
       - Android_test/app/build/outputs/
-#  only:
-#    refs:
-#      - main
+  only:
+    refs:
+      - main
 #    changes:
 #      - Frontend/**
 
@@ -79,9 +79,9 @@ android-test:
   script:
     - cd Frontend
     - ./gradlew test
-#  only:
-#    refs:
-#      - main
+  only:
+    refs:
+      - main
 #    changes:
 #      - Frontend/**
 
