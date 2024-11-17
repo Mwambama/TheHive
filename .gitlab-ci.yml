@@ -55,11 +55,12 @@ android-build:
     - frontend_tag
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
+    - export JAVA_HOME=/usr/lib/jvm/jdk-17.0.12-oracle-x64
+    - export PATH=$JAVA_HOME/bin:$PATH
     - chmod +x ./Frontend/gradlew
   script:
     - cd Frontend
     - gradle wrapper --gradle-version 8.7
-    - chmod +x ./gradlew
     - ./gradlew assemble
   artifacts:
     paths:
