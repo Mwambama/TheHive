@@ -1,85 +1,87 @@
 stages:
-  - mavenbuild
-  - maventest
-  - mavendeploy
+#  - mavenbuild
+#  - maventest
+#  - mavendeploy
   - androidbuild
   - androidtest
 
-maven-build:
-  stage: mavenbuild
-  tags:
-    - backend_tag
-  script:
-    - cd Backend/TheHiveApp
-    - mvn package
-  artifacts:
-    paths:
-      - Backend/TheHiveApp/target/*.jar
+#maven-build:
+#  stage: mavenbuild
+#  tags:
+#    - backend_tag
+#  script:
+#    - cd Backend/TheHiveApp
+#    - mvn package
+#  artifacts:
+#    paths:
+#      - Backend/TheHiveApp/target/*.jar
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Backend/**
 
-maven-test:
-  stage: maventest
-  tags:
-    - backend_tag
-  script:
-    - cd Backend/TheHiveApp
-    - mvn test
+#maven-test:
+#  stage: maventest
+#  tags:
+#    - backend_tag
+#  script:
+#    - cd Backend/TheHiveApp
+#    - mvn test
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Backend/**
 
-maven-deploy:
-  stage: mavendeploy
-  tags:
-    - backend_tag
-  script:
-    - sudo mv Backend/TheHiveApp/target/*.jar /target/web-demo.jar
-    - sudo systemctl stop system-web-demo
-    - sudo systemctl start system-web-demo
+#maven-deploy:
+#  stage: mavendeploy
+#  tags:
+#    - backend_tag
+#  script:
+#    - sudo mv Backend/TheHiveApp/target/*.jar /target/web-demo.jar
+#    - sudo systemctl stop system-web-demo
+#    - sudo systemctl start system-web-demo
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Backend/**
 
 android-build:
-  image: gjandres/android-ci:latest
+  image:  gjandres/android-ci:latest
   stage: androidbuild
   tags:
     - frontend_tag
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - chmod +x ./Frontend/gradlew
-    - chmod +x ./Frontend/gradle/wrapper/gradle-wrapper.jar
-    - chmod 644 Frontend/gradle/wrapper/gradle-wrapper.jar
-    - ls -al Frontend/gradle/wrapper
   script:
     - cd Frontend
-    - ./gradlew clean assemble --stacktrace --debug
-    - ./gradlew clean build --info
+    - ./gradlew assemble
   artifacts:
     paths:
-      - Frontend/app/build/outputs/
-  cache:
-    key: "$CI_COMMIT_REF_SLUG"
-    paths:
-      - .gradle/
-      - Frontend/.gradle/
-  variables:
-    GIT_STRATEGY: clone
-    GIT_DEPTH: 1
+      - Android_test/app/build/outputs/
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Frontend/**
 
 android-test:
   image: gjandres/android-ci:latest
   stage: androidtest
-  tags:
-    - frontend_tag
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - chmod +x ./Frontend/gradlew
-    - chmod +x ./Frontend/gradle/wrapper/gradle-wrapper.jar
-    - chmod 644 Frontend/gradle/wrapper/gradle-wrapper.jar
-    - ls -al Frontend/gradle/wrapper
+  tags:
+    - frontend_tag
   script:
     - cd Frontend
-    - ./gradlew clean test --stacktrace --debug
-    - ./gradlew clean build --info
-  cache:
-    key: "$CI_COMMIT_REF_SLUG"
-    paths:
-      - .gradle/
-      - Frontend/.gradle/
-  variables:
-    GIT_STRATEGY: clone
-    GIT_DEPTH: 1
+    - ./gradlew test
+#  only:
+#    refs:
+#      - main
+#    changes:
+#      - Frontend/**
+
