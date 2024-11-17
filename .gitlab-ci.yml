@@ -28,7 +28,7 @@ maven-test:
  script:
    - cd Backend/TheHiveApp
    - mvn test
-  only:
+ only:
     refs:
       - main
 #    changes:
