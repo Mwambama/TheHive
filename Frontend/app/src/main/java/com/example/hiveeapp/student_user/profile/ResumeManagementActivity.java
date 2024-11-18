@@ -1,11 +1,14 @@
 package com.example.hiveeapp.student_user.profile;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.provider.DocumentsContract;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -17,6 +20,9 @@ import com.example.hiveeapp.R;
 import com.example.hiveeapp.student_user.setting.StudentApi;
 import com.google.android.material.button.MaterialButton;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 public class ResumeManagementActivity extends AppCompatActivity {
 
     private static final int PICK_PDF_REQUEST = 1;
@@ -24,6 +30,8 @@ public class ResumeManagementActivity extends AppCompatActivity {
     private ImageView pdfPreview;
     private MaterialButton uploadResumeButton;
     private int userId;
+
+    private static final String TAG = "ResumeManagement";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +47,16 @@ public class ResumeManagementActivity extends AppCompatActivity {
 
         // Handle PDF upload
         uploadResumeButton.setOnClickListener(v -> selectPdf());
+
+        // If the user has already uploaded a PDF, load the preview
+        loadStoredPdfPreview();
     }
 
     private void selectPdf() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("application/pdf");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(Intent.createChooser(intent, "Select PDF"), PICK_PDF_REQUEST);
+        startActivityForResult(intent, PICK_PDF_REQUEST);
     }
 
     @Override
@@ -54,6 +65,13 @@ public class ResumeManagementActivity extends AppCompatActivity {
 
         if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             pdfUri = data.getData();
+
+            // Take persistent permissions
+            getContentResolver().takePersistableUriPermission(
+                    pdfUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            );
+
             uploadPdf();
         }
     }
@@ -89,9 +107,33 @@ public class ResumeManagementActivity extends AppCompatActivity {
                 page.close();
                 pdfRenderer.close();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "File not found: " + uri.toString(), e);
+            Toast.makeText(this, "Error: File not found", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            Log.e(TAG, "Error rendering PDF", e);
             Toast.makeText(this, "Error loading PDF preview", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadStoredPdfPreview() {
+        // Check if the PDF URI is stored locally (shared preferences or database)
+        String storedUri = getSharedPreferences("app_prefs", MODE_PRIVATE).getString("pdf_uri", null);
+
+        if (storedUri != null) {
+            pdfUri = Uri.parse(storedUri);
+            showPdfThumbnail(pdfUri);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Store the selected PDF URI for future use
+        if (pdfUri != null) {
+            getSharedPreferences("app_prefs", MODE_PRIVATE).edit()
+                    .putString("pdf_uri", pdfUri.toString())
+                    .apply();
         }
     }
 }
