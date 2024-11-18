@@ -20,32 +20,6 @@
             android:contentDescription="@string/illustration_desc"
             android:layout_marginBottom="24dp" />
 
-        <!-- Name Field -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Name"
-                android:textSize="16sp"
-                android:textColor="#6200EE"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
-                android:id="@+id/signup_name_edt"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp"
-                android:hint="Enter Name"
-                android:textColorHint="#9E9E9E"
-                android:textSize="16sp" />
-        </LinearLayout>
-
         <!-- Email Field -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -77,8 +51,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -88,14 +62,95 @@
                 android:textColor="#6200EE"
                 android:layout_marginBottom="8dp" />
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <EditText
+                    android:id="@+id/signup_password_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:hint="Enter Password"
+                    android:inputType="textPassword"
+                    android:textColorHint="#9E9E9E"
+                    android:textSize="16sp" />
+
+                <ImageButton
+                    android:id="@+id/toggle_password_visibility_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:src="@drawable/ic_visibility_off"
+                    android:contentDescription="Toggle Password Visibility" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- Verify Password Field -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Verify Password"
+                android:textSize="16sp"
+                android:textColor="#6200EE"
+                android:layout_marginBottom="8dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <EditText
+                    android:id="@+id/signup_verify_password_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:hint="Verify Password"
+                    android:inputType="textPassword"
+                    android:textColorHint="#9E9E9E"
+                    android:textSize="16sp" />
+
+                <ImageButton
+                    android:id="@+id/toggle_verify_password_visibility_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:src="@drawable/ic_visibility_off"
+                    android:contentDescription="Toggle Verify Password Visibility" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- Name Field -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:textSize="16sp"
+                android:textColor="#6200EE"
+                android:layout_marginBottom="8dp" />
+
             <EditText
-                android:id="@+id/signup_password_edt"
+                android:id="@+id/signup_name_edt"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/edittext_background"
                 android:padding="12dp"
-                android:hint="Enter Password"
-                android:inputType="textPassword"
+                android:hint="Enter Name"
                 android:textColorHint="#9E9E9E"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -104,7 +159,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="16dp"
             android:orientation="vertical">
 
             <TextView
@@ -152,7 +207,6 @@
                 android:textColorHint="#9E9E9E"
                 android:textSize="16sp" />
         </LinearLayout>
-
 
         <!-- Signup Button -->
         <Button

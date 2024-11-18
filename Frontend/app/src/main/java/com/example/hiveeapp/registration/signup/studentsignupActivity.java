@@ -19,17 +19,19 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.view.LayoutInflater;
 import android.view.View;
 import com.example.hiveeapp.registration.login.LoginActivity;
 
 public class studentsignupActivity extends AppCompatActivity {
     private EditText nameEditText;
     private EditText passwordEditText;
+    private EditText verifyPasswordEditText;
     private EditText emailEditText;
     private EditText universityEditText;
     private ImageButton togglePasswordVisibilityButton;
+    private ImageButton toggleVerifyPasswordVisibilityButton;
     private boolean isPasswordVisible = false;
+    private boolean isVerifyPasswordVisible = false;
     private final String URL = "http://coms-3090-063.class.las.iastate.edu:8080/account/signup/student";
 
     @Override
@@ -40,31 +42,38 @@ public class studentsignupActivity extends AppCompatActivity {
         // Initialize EditText fields
         nameEditText = findViewById(R.id.signup_name_edt);
         passwordEditText = findViewById(R.id.signup_password_edt);
+        verifyPasswordEditText = findViewById(R.id.signup_verify_password_edt);
         emailEditText = findViewById(R.id.signup_email_edt);
         universityEditText = findViewById(R.id.signup_university_edt);
+        togglePasswordVisibilityButton = findViewById(R.id.toggle_password_visibility_btn);
+        toggleVerifyPasswordVisibilityButton = findViewById(R.id.toggle_verify_password_visibility_btn);
 
-        // Inflate the additional layout
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View passwordLayout = inflater.inflate(R.layout.activity_show_passwords, null);
-        togglePasswordVisibilityButton = passwordLayout.findViewById(R.id.toggle_password_visibility_btn);
-
-        togglePasswordVisibilityButton.setOnClickListener(view -> togglePasswordVisibility());
+        // Toggle Password Visibility
+        togglePasswordVisibilityButton.setOnClickListener(view -> togglePasswordVisibility(passwordEditText, togglePasswordVisibilityButton));
+        toggleVerifyPasswordVisibilityButton.setOnClickListener(view -> togglePasswordVisibility(verifyPasswordEditText, toggleVerifyPasswordVisibilityButton));
 
         // Signup button click listener
         findViewById(R.id.signup_signup_btn).setOnClickListener(view -> {
-            if (nameEditText == null || passwordEditText == null || emailEditText == null || universityEditText == null) {
+            if (nameEditText == null || passwordEditText == null || emailEditText == null || universityEditText == null || verifyPasswordEditText == null) {
                 Toast.makeText(studentsignupActivity.this, "Error initializing fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             String name = nameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
+            String verifyPassword = verifyPasswordEditText.getText().toString();
             String email = emailEditText.getText().toString();
             String university = universityEditText.getText().toString();
 
             // Check for empty fields
-            if (name.isEmpty() || password.isEmpty() || email.isEmpty() || university.isEmpty()) {
+            if (name.isEmpty() || password.isEmpty() || email.isEmpty() || university.isEmpty() || verifyPassword.isEmpty()) {
                 Toast.makeText(studentsignupActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Check if passwords match
+            if (!password.equals(verifyPassword)) {
+                Toast.makeText(studentsignupActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -129,16 +138,14 @@ public class studentsignupActivity extends AppCompatActivity {
         return hasUppercase && hasDigit;
     }
 
-    private void togglePasswordVisibility() {
-        if (isPasswordVisible) {
-            passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            togglePasswordVisibilityButton.setImageResource(R.drawable.ic_visibility_off);
-            isPasswordVisible = false;
+    private void togglePasswordVisibility(EditText editText, ImageButton button) {
+        if (editText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+            editText.setInputType(InputType.TYPE_CLASS_TEXT);
+            button.setImageResource(R.drawable.ic_visibility_on);
         } else {
-            passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-            togglePasswordVisibilityButton.setImageResource(R.drawable.ic_visibility_off);
-            isPasswordVisible = true;
+            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            button.setImageResource(R.drawable.ic_visibility_off);
         }
-        passwordEditText.setSelection(passwordEditText.getText().length());
+        editText.setSelection(editText.getText().length());
     }
 }
