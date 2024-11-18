@@ -44,61 +44,81 @@ public class StudentProfileViewActivity extends AppCompatActivity {
             return;
         }
 
-        // Initialize TextViews and Button with the corresponding views in XML
-        nameTextView = findViewById(R.id.profileNameView);
-        emailTextView = findViewById(R.id.profileEmailView);
-        phoneTextView = findViewById(R.id.profilePhoneView);
-        universityTextView = findViewById(R.id.profileUniversityView);
-        graduationDateTextView = findViewById(R.id.profileGraduationDateView);
-        gpaTextView = findViewById(R.id.profileGpaView);
-        streetTextView = findViewById(R.id.profileStreet);
-        complementTextView = findViewById(R.id.profileComplement);
-        cityTextView = findViewById(R.id.profileCity);
-        stateTextView = findViewById(R.id.profileState);
-        zipCodeTextView = findViewById(R.id.profileZipCode);
-        updateInfoButton = findViewById(R.id.updateInfoButton);
+        // Initialize views
+        initViews();
 
-        // Set up the back button
-        backArrowIcon = findViewById(R.id.backArrowIcon);
-        backArrowIcon.setOnClickListener(v -> finish());
-
-        // Set up the update button to navigate to the update activity
+        // Set up the update button
         updateInfoButton.setOnClickListener(v -> {
-            Log.d(TAG, "Update button clicked, navigating to StudentProfileActivity");
-            Intent intent = new Intent(StudentProfileViewActivity.this, StudentProfileActivity.class);
-            intent.putExtra("USER_ID", userId);
-            startActivity(intent);
+            Log.d(TAG, "Update button clicked");
+            navigateToEditProfile();
         });
 
         // Load student information from the backend
         loadStudentProfile(userId);
 
         // Set up BottomNavigationView
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.navigation_apply) {
-                startActivity(new Intent(StudentProfileViewActivity.this, StudentMainActivity.class));
-                finish();
-                return true;
-            } else if (itemId == R.id.navigation_profile) {
-                return true;
-            } else if (itemId == R.id.navigation_chat) {
-                Intent intent = new Intent(StudentProfileViewActivity.this, ChatListActivity.class);
-                startActivity(intent);
-                return true;
-            }
-            return false;
-        });
-
-        bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
+        setupBottomNavigationView();
     }
 
-    private void navigateBackToMain() {
-        Intent intent = new Intent(StudentProfileViewActivity.this, StudentMainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+    private void initViews() {
+        try {
+            nameTextView = findViewById(R.id.profileNameView);
+            emailTextView = findViewById(R.id.profileEmailView);
+            phoneTextView = findViewById(R.id.profilePhoneView);
+            universityTextView = findViewById(R.id.profileUniversityView);
+            graduationDateTextView = findViewById(R.id.profileGraduationDateView);
+            gpaTextView = findViewById(R.id.profileGpaView);
+            streetTextView = findViewById(R.id.profileStreet);
+            complementTextView = findViewById(R.id.profileComplement);
+            cityTextView = findViewById(R.id.profileCity);
+            stateTextView = findViewById(R.id.profileState);
+            zipCodeTextView = findViewById(R.id.profileZipCode);
+            updateInfoButton = findViewById(R.id.updateProfileButton);
+            backArrowIcon = findViewById(R.id.backArrowIcon);
+
+            backArrowIcon.setOnClickListener(v -> finish());
+        } catch (Exception e) {
+            Log.e(TAG, "Error initializing views: " + e.getMessage());
+        }
+    }
+
+    private void navigateToEditProfile() {
+        if (userId <= 0) {
+            Toast.makeText(this, "Invalid User ID. Cannot proceed to edit profile.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Invalid userId: " + userId);
+            return;
+        }
+
+        Intent intent = new Intent(StudentProfileViewActivity.this, StudentProfileActivity.class);
+        intent.putExtra("USER_ID", userId);
+        Log.d(TAG, "Navigating to StudentProfileActivity with userId: " + userId);
         startActivity(intent);
-        finish();
+    }
+
+    private void setupBottomNavigationView() {
+        try {
+            BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+            bottomNavigationView.setOnItemSelectedListener(item -> {
+                int itemId = item.getItemId();
+                Log.d(TAG, "BottomNavigationView item selected: " + itemId);
+                if (itemId == R.id.navigation_apply) {
+                    startActivity(new Intent(StudentProfileViewActivity.this, StudentMainActivity.class));
+                    finish();
+                    return true;
+                } else if (itemId == R.id.navigation_profile) {
+                    return true;
+                } else if (itemId == R.id.navigation_chat) {
+                    Intent intent = new Intent(StudentProfileViewActivity.this, ChatListActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
+            });
+
+            bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
+        } catch (Exception e) {
+            Log.e(TAG, "Error setting up BottomNavigationView: " + e.getMessage());
+        }
     }
 
     private void loadStudentProfile(int userId) {
@@ -108,15 +128,17 @@ public class StudentProfileViewActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject student) {
                 try {
+                    Log.d(TAG, "Student profile loaded successfully");
                     displayProfile(student);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "JSON Exception while displaying profile: " + e.getMessage());
                     Toast.makeText(StudentProfileViewActivity.this, "Error loading profile", Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Error fetching profile: " + error.getMessage());
                 Toast.makeText(StudentProfileViewActivity.this, "Error fetching profile: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -125,28 +147,33 @@ public class StudentProfileViewActivity extends AppCompatActivity {
     private void displayProfile(JSONObject student) throws JSONException {
         Log.d(TAG, "Displaying profile data for student: " + student.optString("name"));
 
-        // Set basic profile fields
-        nameTextView.setText(student.optString("name"));
-        emailTextView.setText(student.optString("email"));
-        phoneTextView.setText(student.optString("phone"));
-        universityTextView.setText(student.optString("university"));
-        graduationDateTextView.setText(student.optString("graduationDate"));
-        gpaTextView.setText(String.valueOf(student.optDouble("gpa")));
+        try {
+            // Set basic profile fields
+            nameTextView.setText(student.optString("name", "N/A"));
+            emailTextView.setText(student.optString("email", "N/A"));
+            phoneTextView.setText(student.optString("phone", "N/A"));
+            universityTextView.setText(student.optString("university", "N/A"));
+            graduationDateTextView.setText(student.optString("graduationDate", "N/A"));
+            gpaTextView.setText(String.valueOf(student.optDouble("gpa", 0.0)));
 
-        // Set address fields
-        JSONObject address = student.optJSONObject("address");
-        if (address != null) {
-            streetTextView.setText(address.optString("street"));
-            complementTextView.setText(address.optString("complement"));
-            cityTextView.setText(address.optString("city"));
-            stateTextView.setText(address.optString("state"));
-            zipCodeTextView.setText(address.optString("zipCode"));
-        } else {
-            streetTextView.setText("");
-            complementTextView.setText("");
-            cityTextView.setText("");
-            stateTextView.setText("");
-            zipCodeTextView.setText("");
+            // Set address fields
+            JSONObject address = student.optJSONObject("address");
+            if (address != null) {
+                streetTextView.setText(address.optString("street", "N/A"));
+                complementTextView.setText(address.optString("complement", "N/A"));
+                cityTextView.setText(address.optString("city", "N/A"));
+                stateTextView.setText(address.optString("state", "N/A"));
+                zipCodeTextView.setText(address.optString("zipCode", "N/A"));
+            } else {
+                Log.d(TAG, "No address found for student");
+                streetTextView.setText("N/A");
+                complementTextView.setText("N/A");
+                cityTextView.setText("N/A");
+                stateTextView.setText("N/A");
+                zipCodeTextView.setText("N/A");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error displaying profile data: " + e.getMessage());
         }
     }
 }
