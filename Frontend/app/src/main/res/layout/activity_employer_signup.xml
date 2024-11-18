@@ -46,59 +46,86 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- Password Field with Toggle -->
+        <!-- Password Field -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/signup_password_edt"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp"
-                android:hint="Enter Password"
-                android:inputType="textPassword"
-                android:textColorHint="#9E9E9E"
-                android:textSize="16sp" />
-
-            <ImageButton
-                android:id="@+id/toggle_password_visibility_btn"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@null"
-                android:src="@drawable/ic_visibility_off"
-                android:contentDescription="Toggle Password Visibility" />
-        </LinearLayout>
-
-        <!-- Company ID Field -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Company ID"
+                android:text="Password"
                 android:textSize="16sp"
                 android:textColor="#6200EE"
                 android:layout_marginBottom="8dp" />
 
-            <EditText
-                android:id="@+id/signup_company_id_edt"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp"
-                android:hint="Enter Company ID"
-                android:inputType="number"
-                android:textColorHint="#9E9E9E"
-                android:textSize="16sp" />
+                android:layout_height="50dp">
+
+                <EditText
+                    android:id="@+id/signup_password_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:hint="Enter Password"
+                    android:inputType="textPassword"
+                    android:textColorHint="#9E9E9E"
+                    android:textSize="16sp" />
+
+                <ImageButton
+                    android:id="@+id/toggle_password_visibility_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:src="@drawable/ic_visibility_off"
+                    android:contentDescription="Toggle Password Visibility" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- Verify Password Field -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Verify Password"
+                android:textSize="16sp"
+                android:textColor="#6200EE"
+                android:layout_marginBottom="8dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <EditText
+                    android:id="@+id/signup_verify_password_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:hint="Verify Password"
+                    android:inputType="textPassword"
+                    android:textColorHint="#9E9E9E"
+                    android:textSize="16sp" />
+
+                <ImageButton
+                    android:id="@+id/toggle_verify_password_visibility_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:src="@drawable/ic_visibility_off"
+                    android:contentDescription="Toggle Verify Password Visibility" />
+            </RelativeLayout>
         </LinearLayout>
 
         <!-- Email Field -->
@@ -124,6 +151,33 @@
                 android:padding="12dp"
                 android:hint="Enter Email"
                 android:inputType="textEmailAddress"
+                android:textColorHint="#9E9E9E"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Company ID Field -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Company ID"
+                android:textSize="16sp"
+                android:textColor="#6200EE"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/signup_company_id_edt"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:hint="Enter Company ID"
+                android:inputType="number"
                 android:textColorHint="#9E9E9E"
                 android:textSize="16sp" />
         </LinearLayout>
