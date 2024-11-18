@@ -18,8 +18,8 @@ maven-build:
  only:
     refs:
       - main
-#    changes:
-#      - Backend/**
+    changes:
+      - Backend/**
 
 maven-test:
  stage: maventest
@@ -31,8 +31,8 @@ maven-test:
  only:
     refs:
       - main
-#    changes:
-#      - Backend/**
+    changes:
+      - Backend/**
 
 maven-deploy:
  stage: mavendeploy
@@ -45,8 +45,8 @@ maven-deploy:
  only:
     refs:
       - main
-#    changes:
-#      - Backend/**
+    changes:
+      - Backend/**
 
 android-build:
   image: afirefly/android-ci:java17
@@ -65,8 +65,8 @@ android-build:
   only:
     refs:
       - main
-#    changes:
-#      - Frontend/**
+    changes:
+      - Frontend/**
 
 android-test:
   image: afirefly/android-ci:java17
@@ -82,6 +82,6 @@ android-test:
   only:
     refs:
       - main
-#    changes:
-#      - Frontend/**
+    changes:
+      - Frontend/**
 
