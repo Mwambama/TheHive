@@ -3,7 +3,6 @@ package com.example.hiveeapp.registration.signup;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -27,27 +26,23 @@ public class employersignupActivity extends AppCompatActivity {
     private EditText nameEditText;
     private EditText passwordEditText;
     private EditText emailEditText;
-    private EditText companyIdEditText;  // Added Company ID field
+    private EditText companyIdEditText;
     private ImageButton togglePasswordVisibilityButton;
     private boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_employer_signup); // Updated layout file name
+        setContentView(R.layout.activity_employer_signup);
 
         // Initialize EditText fields
         nameEditText = findViewById(R.id.signup_name_edt);
         passwordEditText = findViewById(R.id.signup_password_edt);
         emailEditText = findViewById(R.id.signup_email_edt);
-        companyIdEditText = findViewById(R.id.signup_company_id_edt);  // Initialize Company ID field
+        companyIdEditText = findViewById(R.id.signup_company_id_edt);
+        togglePasswordVisibilityButton = findViewById(R.id.toggle_password_visibility_btn);
 
-        // Inflate the additional layout for password visibility toggle
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View passwordLayout = inflater.inflate(R.layout.activity_show_passwords, null);
-        togglePasswordVisibilityButton = passwordLayout.findViewById(R.id.toggle_password_visibility_btn);
-
-        // Set click listener for the toggle button
+        // Toggle password visibility
         togglePasswordVisibilityButton.setOnClickListener(view -> togglePasswordVisibility());
 
         // Signup button click listener
@@ -55,95 +50,55 @@ public class employersignupActivity extends AppCompatActivity {
             String name = nameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
             String email = emailEditText.getText().toString();
-            String companyId = companyIdEditText.getText().toString();  // Get Company ID
+            String companyId = companyIdEditText.getText().toString();
 
-            // Check for empty fields
             if (name.isEmpty() || password.isEmpty() || email.isEmpty() || companyId.isEmpty()) {
                 Toast.makeText(employersignupActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Check if password is valid
             if (!isPasswordValid(password)) {
                 Toast.makeText(employersignupActivity.this, "Password must be at least 7 characters long, contain an uppercase letter, and a number", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            // Create JSON object with signup data
             JSONObject signupData = new JSONObject();
             try {
                 signupData.put("name", name);
                 signupData.put("password", password);
                 signupData.put("email", email);
-                signupData.put("companyId", companyId);  // Include Company ID in JSON
+                signupData.put("companyId", companyId);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            // URL for the employer signup server
-            String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/signup/employer"; // Updated URL
-
-            // Create JSON request
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                    Request.Method.POST,
-                    url,
-                    signupData,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            // Handle successful signup
-                            Toast.makeText(employersignupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
-                            // Navigate to LoginActivity
-                            Intent intent = new Intent(employersignupActivity.this, LoginActivity.class);
-                            // Ensure the back stack is cleared
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                        }
+            String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/signup/employer";
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, signupData,
+                    response -> {
+                        Toast.makeText(employersignupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(employersignupActivity.this, LoginActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                     },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            // Handle signup error
-                            Toast.makeText(employersignupActivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            );
+                    error -> Toast.makeText(employersignupActivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show());
 
-            // Set custom retry policy to increase timeout
-            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
-                    10000, // Timeout in milliseconds (10 seconds)
-                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-            ));
-
-            // Add request to the Volley request queue
-            VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+            request.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleySingleton.getInstance(this).addToRequestQueue(request);
         });
     }
 
     private boolean isPasswordValid(String password) {
-        if (password.length() < 7) {
-            return false;
-        }
-        boolean hasLowercase = !password.equals(password.toUpperCase());
-        boolean hasUppercase = !password.equals(password.toLowerCase());
-        boolean hasDigit = password.matches(".*\\d.*");
-        return hasLowercase && hasUppercase && hasDigit;
+        return password.length() >= 7 && password.matches(".*[A-Z].*") && password.matches(".*\\d.*");
     }
 
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
-            // Hide password
             passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             togglePasswordVisibilityButton.setImageResource(R.drawable.ic_visibility_off);
-            isPasswordVisible = false;
         } else {
-            // Show password
             passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT);
             togglePasswordVisibilityButton.setImageResource(R.drawable.ic_visibility_on);
-            isPasswordVisible = true;
         }
-        // Move cursor to the end of the text
+        isPasswordVisible = !isPasswordVisible;
         passwordEditText.setSelection(passwordEditText.getText().length());
     }
 }
