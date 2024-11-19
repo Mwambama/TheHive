@@ -7,9 +7,9 @@ import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -29,6 +29,7 @@ public class ResumeManagementActivity extends AppCompatActivity {
     private Uri pdfUri;
     private ImageView pdfPreview;
     private MaterialButton uploadResumeButton;
+    private ImageButton backArrowIcon;
     private int userId;
 
     private static final String TAG = "ResumeManagement";
@@ -44,6 +45,10 @@ public class ResumeManagementActivity extends AppCompatActivity {
         // Initialize views
         pdfPreview = findViewById(R.id.pdfPreview);
         uploadResumeButton = findViewById(R.id.manageResumeButton);
+        backArrowIcon = findViewById(R.id.backArrowIcon);
+
+        // Back button listener
+        backArrowIcon.setOnClickListener(v -> finish());
 
         // Handle PDF upload
         uploadResumeButton.setOnClickListener(v -> selectPdf());
