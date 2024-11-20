@@ -20,7 +20,7 @@ public class JobPostingDto {
     private String summary;
     private BigDecimal salary;
     private JobType jobType;
-    private BigDecimal minimumGpa;
+    private Double minimumGpa;
     private LocalDate jobStart;
     private LocalDate applicationStart;
     private LocalDate applicationEnd;
