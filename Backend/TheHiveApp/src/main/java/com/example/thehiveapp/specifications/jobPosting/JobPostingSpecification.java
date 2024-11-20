@@ -5,6 +5,7 @@ import com.example.thehiveapp.entity.jobPosting.JobPosting;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,23 +15,21 @@ public class JobPostingSpecification {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // Query filter
+            // Keyword search across multiple fields
             addKeywordPredicate(criteriaBuilder, predicates, root, searchDto.getQ());
 
-            // Equality filters
-            addEqualPredicate(criteriaBuilder, predicates, root.get("employer").get("id"), searchDto.getEmployerId());
-
-            // Like filters
-            addLikePredicate(criteriaBuilder, predicates, root.get("title"), searchDto.getTitle());
-            addLikePredicate(criteriaBuilder, predicates, root.get("description"), searchDto.getDescription());
-            addLikePredicate(criteriaBuilder, predicates, root.get("summary"), searchDto.getSummary());
-
-            // Range filters
+            // Range filters for salary and job start date
             addRangePredicate(criteriaBuilder, predicates, root.get("salary"), searchDto.getMinSalary(), searchDto.getMaxSalary());
-            addRangePredicate(criteriaBuilder, predicates, root.get("minimumGpa"), searchDto.getMinGpa(), searchDto.getMaxGpa());
             addRangePredicate(criteriaBuilder, predicates, root.get("jobStart"), searchDto.getMinJobStart(), searchDto.getMaxJobStart());
-            addRangePredicate(criteriaBuilder, predicates, root.get("applicationStart"), searchDto.getMinApplicationStart(), searchDto.getMaxApplicationStart());
-            addRangePredicate(criteriaBuilder, predicates, root.get("applicationEnd"), searchDto.getMinApplicationEnd(), searchDto.getMaxApplicationEnd());
+
+            // Check if the application is open
+            if (Boolean.TRUE.equals(searchDto.getIsApplicationOpen())) {
+                LocalDate today = LocalDate.now();
+                predicates.add(criteriaBuilder.and(
+                        criteriaBuilder.lessThanOrEqualTo(root.get("applicationStart"), today),
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("applicationEnd"), today)
+                ));
+            }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -54,16 +53,6 @@ public class JobPostingSpecification {
         }
     }
 
-    private static void addLikePredicate(
-            jakarta.persistence.criteria.CriteriaBuilder criteriaBuilder,
-            List<Predicate> predicates,
-            jakarta.persistence.criteria.Path<String> field,
-            String value) {
-        if (value != null && !value.isEmpty()) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(field), "%" + value.toLowerCase() + "%"));
-        }
-    }
-
     private static <T extends Comparable<? super T>> void addRangePredicate(
             jakarta.persistence.criteria.CriteriaBuilder criteriaBuilder,
             List<Predicate> predicates,
@@ -77,16 +66,4 @@ public class JobPostingSpecification {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(field, maxValue));
         }
     }
-
-    private static void addEqualPredicate(
-            jakarta.persistence.criteria.CriteriaBuilder criteriaBuilder,
-            List<Predicate> predicates,
-            jakarta.persistence.criteria.Path<Long> field,
-            Long id) {
-        if (id != null) {
-            predicates.add(criteriaBuilder.equal(field, id));
-        }
-    }
-
 }
-

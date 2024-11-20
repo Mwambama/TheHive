@@ -69,45 +69,28 @@ public class JobPostingController {
         jobPostingService.deleteJobPosting(id);
         return "Job posting successfully deleted";
     }
-
-    @GetMapping("/search")
     @Operation(
             summary = "Search for job postings",
-            description = "Search job postings based on various optional filters such as keywords, salary range, GPA range, dates, and employerId."
+            description = "Search job postings based on optional filters including keyword, salary range, job start range, application status, and qualification status."
     )
+    @GetMapping("/search")
     public List<JobPostingDto> searchJobPostings(
             @Parameter(description = "Keyword to search across title, description, and summary") @RequestParam(required = false) String q,
-            @Parameter(description = "Like match for job title", schema = @Schema(type = "string", example = "developer")) @RequestParam(required = false) String title,
-            @Parameter(description = "Like match for job description") @RequestParam(required = false) String description,
-            @Parameter(description = "Like match for job summary") @RequestParam(required = false) String summary,
             @Parameter(description = "Minimum salary for job postings", schema = @Schema(type = "number", example = "10")) @RequestParam(required = false) BigDecimal minSalary,
             @Parameter(description = "Maximum salary for job postings", schema = @Schema(type = "number", example = "100")) @RequestParam(required = false) BigDecimal maxSalary,
-            @Parameter(description = "Minimum GPA required", schema = @Schema(type = "number", format = "double", example = "2.0")) @RequestParam(required = false) BigDecimal minGpa,
-            @Parameter(description = "Maximum GPA required", schema = @Schema(type = "number", format = "double", example = "4.0")) @RequestParam(required = false) BigDecimal maxGpa,
             @Parameter(description = "Earliest job start date (yyyy-MM-dd)", schema = @Schema(type = "string", format = "date", example = "2024-01-01")) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate minJobStart,
             @Parameter(description = "Latest job start date (yyyy-MM-dd)", schema = @Schema(type = "string", format = "date", example = "2027-12-31")) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate maxJobStart,
-            @Parameter(description = "Earliest application start date (yyyy-MM-dd)", schema = @Schema(type = "string", format = "date", example = "2024-01-01")) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate minApplicationStart,
-            @Parameter(description = "Latest application start date (yyyy-MM-dd)", schema = @Schema(type = "string", format = "date", example = "2027-12-31")) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate maxApplicationStart,
-            @Parameter(description = "Earliest application end date (yyyy-MM-dd)", schema = @Schema(type = "string", format = "date", example = "2024-01-01")) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate minApplicationEnd,
-            @Parameter(description = "Latest application end date (yyyy-MM-dd)", schema = @Schema(type = "string", format = "date", example = "2027-12-31")) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate maxApplicationEnd,
-            @Parameter(description = "Exact match for Employer ID") @RequestParam(required = false) Long employerId) {
+            @Parameter(description = "Filter for open applications (true/false)") @RequestParam(required = false) Boolean isApplicationOpen,
+            @Parameter(description = "Filter for jobs student is qualified for based on GPA (true/false)") @RequestParam(required = false) Boolean isQualified) {
 
         JobPostingSearchDto searchDto = JobPostingSearchDto.builder()
                 .q(q)
-                .title(title)
-                .description(description)
-                .summary(summary)
                 .minSalary(minSalary)
                 .maxSalary(maxSalary)
-                .minGpa(minGpa)
-                .maxGpa(maxGpa)
                 .minJobStart(minJobStart)
                 .maxJobStart(maxJobStart)
-                .minApplicationStart(minApplicationStart)
-                .maxApplicationStart(maxApplicationStart)
-                .minApplicationEnd(minApplicationEnd)
-                .maxApplicationEnd(maxApplicationEnd)
-                .employerId(employerId)
+                .isApplicationOpen(isApplicationOpen)
+                .isQualified(isQualified)
                 .build();
         return jobPostingService.searchJobPostings(searchDto);
     }

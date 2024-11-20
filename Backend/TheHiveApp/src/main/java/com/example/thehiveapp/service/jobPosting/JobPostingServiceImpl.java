@@ -4,12 +4,15 @@ import com.example.thehiveapp.dto.jobPosting.JobPostingDto;
 import com.example.thehiveapp.dto.jobPosting.JobPostingSearchDto;
 import com.example.thehiveapp.entity.jobPosting.JobPosting;
 import com.example.thehiveapp.entity.user.Employer;
+import com.example.thehiveapp.entity.user.Student;
 import com.example.thehiveapp.mapper.jobPosting.JobPostingMapper;
+import com.example.thehiveapp.repository.application.ApplicationRepository;
 import com.example.thehiveapp.repository.jobPosting.JobPostingRepository;
+import com.example.thehiveapp.service.user.StudentService;
+import com.example.thehiveapp.service.user.UserService;
 import com.example.thehiveapp.specifications.jobPosting.JobPostingSpecification;
 import com.example.thehiveapp.service.user.EmployerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,9 @@ public class JobPostingServiceImpl implements JobPostingService{
     @Autowired private JobPostingRepository jobPostingRepository;
     @Autowired private JobPostingMapper mapper;
     @Autowired private EmployerService employerService;
+    @Autowired private UserService userService;
+    @Autowired private StudentService studentService;
+    @Autowired private ApplicationRepository applicationRepository;
 
     public JobPostingServiceImpl() {}
 
@@ -83,7 +89,24 @@ public class JobPostingServiceImpl implements JobPostingService{
 
     @Override
     public List<JobPostingDto> searchJobPostings(JobPostingSearchDto searchDto) {
-        Specification<JobPosting> spec = JobPostingSpecification.matchesOptionalFields(searchDto);
-        return jobPostingRepository.findAll(spec).stream().map(mapper::entityToDto).collect(Collectors.toList());
+        List<JobPostingDto> results = jobPostingRepository.findAll(
+                JobPostingSpecification.matchesOptionalFields(searchDto)
+        ).stream().map(mapper::entityToDto).collect(Collectors.toList());
+
+        Student student = studentService.getStudentById(userService.getCurrentUser().getUserId());
+        if (Boolean.TRUE.equals(searchDto.getIsQualified()) && student.getGpa() != null) {
+            results = results.stream().filter(
+                    job -> student.getGpa() >= job.getMinimumGpa()
+            ).collect(Collectors.toList());
+        }
+        if (Boolean.TRUE.equals(searchDto.getHasNotAppliedTo())) {
+            List<Long> appliedJobIds =  applicationRepository.findApplicationsByStudent(student).stream().map(
+                    application -> application.getJobPosting().getJobPostingId()
+            ).toList();
+            results = results.stream().filter(
+                    job -> !appliedJobIds.contains(job.getJobPostingId())
+            ).collect(Collectors.toList());
+        }
+        return results;
     }
 }

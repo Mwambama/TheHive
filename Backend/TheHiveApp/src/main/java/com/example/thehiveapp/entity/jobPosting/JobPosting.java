@@ -65,7 +65,7 @@ public class JobPosting {
     private JobType jobType;
 
     @Column(name = "minimum_gpa")
-    private BigDecimal minimumGpa;
+    private Double minimumGpa;
 
     @Column(name = "job_start")
     private LocalDate jobStart;
