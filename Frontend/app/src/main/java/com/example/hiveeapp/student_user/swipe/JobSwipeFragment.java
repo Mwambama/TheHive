@@ -10,21 +10,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import com.example.hiveeapp.R;
+import com.example.hiveeapp.student_user.StudentMainActivity;
+import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.example.hiveeapp.R;
-import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +28,7 @@ import java.util.Map;
 public class JobSwipeFragment extends Fragment {
 
     private static final String GET_JOB_POSTINGS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
-    private RecyclerView swipeRecyclerView;
+    private SwipeFlingAdapterView swipeFlingAdapterView;
     private JobSwipeAdapter swipeAdapter;
     private List<JobPosting> jobPostings = new ArrayList<>();
     private int studentId;
@@ -48,15 +43,48 @@ public class JobSwipeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_job_swipe, container, false);
-        swipeRecyclerView = view.findViewById(R.id.jobSwipeRecyclerView);
-        swipeRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        swipeFlingAdapterView = view.findViewById(R.id.swipe_view);
 
+        // Initialize the adapter
         swipeAdapter = new JobSwipeAdapter(getContext(), studentId);
-        swipeRecyclerView.setAdapter(swipeAdapter);
+        swipeFlingAdapterView.setAdapter(swipeAdapter);
 
-        // Set up swipe gestures
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeAdapter.getSwipeCallback());
-        itemTouchHelper.attachToRecyclerView(swipeRecyclerView);
+        // Set up fling listener
+        swipeFlingAdapterView.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
+            @Override
+            public void removeFirstObjectInAdapter() {
+                swipeAdapter.removeJob(0);
+            }
+
+            @Override
+            public void onLeftCardExit(Object dataObject) {
+                Toast.makeText(getContext(), "Job dismissed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onRightCardExit(Object dataObject) {
+                JobPosting job = (JobPosting) dataObject;
+                swipeAdapter.applyForJob(job.getJobPostingId());
+                Toast.makeText(getContext(), "Applied for: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAdapterAboutToEmpty(int itemsInAdapter) {
+                if (itemsInAdapter == 0) {
+                    Toast.makeText(getContext(), "No more jobs available.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onScroll(float scrollProgressPercent) {
+                // Handle visual feedback during scrolling
+            }
+        });
+
+        swipeFlingAdapterView.setOnItemClickListener((itemPosition, dataObject) -> {
+            JobPosting job = (JobPosting) dataObject;
+            Toast.makeText(getContext(), "Clicked on: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+        });
 
         loadJobPostings();
 
@@ -89,13 +117,15 @@ public class JobSwipeFragment extends Fragment {
                         obj.getInt("jobPostingId"),
                         obj.getString("title"),
                         obj.getString("description"),
-                        obj.getString("summary"),
-                        obj.getDouble("salary"),
-                        obj.getString("jobType"),
-                        obj.getDouble("minimumGpa"),
-                        obj.getString("jobStart"),
-                        obj.getString("applicationStart"),
-                        obj.getString("applicationEnd")
+                        obj.optString("summary", ""),
+                        obj.optDouble("salary", 0.0),
+                        obj.optString("jobType", "N/A"),
+                        obj.optDouble("minimumGpa", 0.0),
+                        obj.optString("jobStart", ""),
+                        obj.optString("applicationStart", ""),
+                        obj.optString("applicationEnd", ""),
+                        obj.optInt("employerId", -1),
+                        obj.optString("companyName", "Unknown Company")
                 ));
             }
         } catch (JSONException e) {

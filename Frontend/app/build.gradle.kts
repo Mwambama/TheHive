@@ -55,4 +55,6 @@ dependencies {
     implementation ("com.maxkeppeler.sheets:core:2.3.1")
 
     implementation ("com.tbuonomo:dotsindicator:4.2")
+
+    implementation ("com.lorentzos.swipecards:library:1.0.9")
 }
