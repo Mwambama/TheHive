@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class JobSwipeFragment extends Fragment {
 
-    private static final String GET_JOB_POSTINGS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
+    public static final String GET_JOB_POSTINGS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
     private SwipeFlingAdapterView swipeFlingAdapterView;
     private JobSwipeAdapter swipeAdapter;
     private List<JobPosting> jobPostings = new ArrayList<>();
@@ -140,6 +140,7 @@ public class JobSwipeFragment extends Fragment {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
+        // Update credentials if necessary
         String username = "teststudent1@example.com";
         String password = "TestStudent1234@";
 

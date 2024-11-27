@@ -1,5 +1,7 @@
 package com.example.hiveeapp.student_user.swipe;
 
+import static com.example.hiveeapp.student_user.swipe.JobSwipeFragment.GET_JOB_POSTINGS_URL;
+
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
@@ -9,8 +11,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
@@ -18,6 +23,7 @@ import com.example.hiveeapp.volley.VolleySingleton;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,17 +77,25 @@ public class JobSwipeAdapter extends BaseAdapter {
     }
 
     private void loadJobPostings() {
-        String url = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, GET_JOB_POSTINGS_URL, null,
                 response -> {
                     jobPostings.clear();
-                    parseJobPostings(response.names());
-                    notifyDataSetChanged();
+                    parseJobPostings(response);
+                    notifyDataSetChanged();  // Use 'this.notifyDataSetChanged()'
                 },
-                error -> Log.e(TAG, "Error loading job postings", error)
-        );
+                error -> {
+                    Log.e(TAG, "Error loading job postings", error);
+                    Toast.makeText(context, "Failed to load job postings", Toast.LENGTH_SHORT).show();
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                // Ensure the authorization headers are applied here
+                return createAuthorizationHeaders(context);  // Replace 'getContext()' with 'context'
+            }
+        };
 
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
+        VolleySingleton.getInstance(context).addToRequestQueue(request);  // Replace 'getContext()' with 'context'
     }
 
     private void parseJobPostings(JSONArray response) {
@@ -130,7 +144,7 @@ public class JobSwipeAdapter extends BaseAdapter {
                     Log.e(TAG, "Error applying for job: ", error);
                 });
 
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
+        VolleySingleton.getInstance(context).addToRequestQueue(request);  // Use 'context' here
     }
 
     public void removeJob(int position) {

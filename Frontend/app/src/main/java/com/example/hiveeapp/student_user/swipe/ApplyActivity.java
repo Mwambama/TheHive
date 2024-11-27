@@ -1,9 +1,13 @@
 package com.example.hiveeapp.student_user.swipe;
 
+import static com.example.hiveeapp.student_user.swipe.JobSwipeFragment.createAuthorizationHeaders;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -11,6 +15,8 @@ import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Map;
 
 public class ApplyActivity extends AppCompatActivity {
 
@@ -51,7 +57,14 @@ public class ApplyActivity extends AppCompatActivity {
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
                 response -> Toast.makeText(this, "Application submitted successfully!", Toast.LENGTH_SHORT).show(),
-                this::handleError);
+                this::handleError
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                // Apply authorization headers here as well
+                return createAuthorizationHeaders(ApplyActivity.this);
+            }
+        };
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
