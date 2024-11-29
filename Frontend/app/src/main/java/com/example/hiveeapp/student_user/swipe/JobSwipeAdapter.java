@@ -81,7 +81,7 @@ public class JobSwipeAdapter extends BaseAdapter {
                 response -> {
                     jobPostings.clear();
                     parseJobPostings(response);
-                    notifyDataSetChanged();  // Use 'this.notifyDataSetChanged()'
+                    notifyDataSetChanged();
                 },
                 error -> {
                     Log.e(TAG, "Error loading job postings", error);
@@ -91,11 +91,11 @@ public class JobSwipeAdapter extends BaseAdapter {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 // Ensure the authorization headers are applied here
-                return createAuthorizationHeaders(context);  // Replace 'getContext()' with 'context'
+                return createAuthorizationHeaders(context);
             }
         };
 
-        VolleySingleton.getInstance(context).addToRequestQueue(request);  // Replace 'getContext()' with 'context'
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
     private void parseJobPostings(JSONArray response) {
@@ -144,7 +144,7 @@ public class JobSwipeAdapter extends BaseAdapter {
                     Log.e(TAG, "Error applying for job: ", error);
                 });
 
-        VolleySingleton.getInstance(context).addToRequestQueue(request);  // Use 'context' here
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
     public void removeJob(int position) {

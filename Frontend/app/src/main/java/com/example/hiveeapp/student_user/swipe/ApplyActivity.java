@@ -2,7 +2,9 @@ package com.example.hiveeapp.student_user.swipe;
 
 import static com.example.hiveeapp.student_user.swipe.JobSwipeFragment.createAuthorizationHeaders;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import com.example.hiveeapp.volley.VolleySingleton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ApplyActivity extends AppCompatActivity {
@@ -67,6 +70,23 @@ public class ApplyActivity extends AppCompatActivity {
         };
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    /**
+     * Generates headers for API requests with authorization.
+     */
+    public static Map<String, String> createAuthorizationHeaders(Context context) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        String username = "teststudent1@example.com";
+        String password = "TestStudent1234@";
+
+        String credentials = username + ":" + password;
+        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        headers.put("Authorization", auth);
+
+        return headers;
     }
 
     private void handleError(VolleyError error) {

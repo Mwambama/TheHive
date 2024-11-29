@@ -3,6 +3,7 @@ package com.example.hiveeapp.student_user.swipe;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,8 @@ import java.util.Map;
 public class JobSwipeFragment extends Fragment {
 
     public static final String GET_JOB_POSTINGS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
+    private static final String TAG = "JobSwipeFragment";
+
     private SwipeFlingAdapterView swipeFlingAdapterView;
     private JobSwipeAdapter swipeAdapter;
     private List<JobPosting> jobPostings = new ArrayList<>();
@@ -36,7 +39,11 @@ public class JobSwipeFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        studentId = ((StudentMainActivity) context).getUserId();
+        try {
+            studentId = ((StudentMainActivity) context).getUserId();
+        } catch (ClassCastException e) {
+            throw new IllegalStateException("Activity must implement StudentMainActivity to provide studentId");
+        }
     }
 
     @Nullable
@@ -46,7 +53,7 @@ public class JobSwipeFragment extends Fragment {
         swipeFlingAdapterView = view.findViewById(R.id.swipe_view);
 
         // Initialize the adapter
-        swipeAdapter = new JobSwipeAdapter(getContext(), studentId);
+        swipeAdapter = new JobSwipeAdapter(requireContext(), studentId);
         swipeFlingAdapterView.setAdapter(swipeAdapter);
 
         // Set up fling listener
@@ -58,21 +65,20 @@ public class JobSwipeFragment extends Fragment {
 
             @Override
             public void onLeftCardExit(Object dataObject) {
-                Toast.makeText(getContext(), "Job dismissed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Job dismissed", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
                 JobPosting job = (JobPosting) dataObject;
                 swipeAdapter.applyForJob(job.getJobPostingId());
-                Toast.makeText(getContext(), "Applied for: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Applied for: " + job.getTitle(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                if (itemsInAdapter == 0) {
-                    Toast.makeText(getContext(), "No more jobs available.", Toast.LENGTH_SHORT).show();
-                }
+                // Load more job postings when the adapter is about to be empty
+                loadJobPostings();
             }
 
             @Override
@@ -83,7 +89,7 @@ public class JobSwipeFragment extends Fragment {
 
         swipeFlingAdapterView.setOnItemClickListener((itemPosition, dataObject) -> {
             JobPosting job = (JobPosting) dataObject;
-            Toast.makeText(getContext(), "Clicked on: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Clicked on: " + job.getTitle(), Toast.LENGTH_SHORT).show();
         });
 
         loadJobPostings();
@@ -96,17 +102,24 @@ public class JobSwipeFragment extends Fragment {
                 response -> {
                     jobPostings.clear();
                     parseJobPostings(response);
-                    swipeAdapter.notifyDataSetChanged();
+
+                    // Safeguard against null adapter
+                    if (swipeAdapter != null) {
+                        swipeAdapter.notifyDataSetChanged();
+                    }
                 },
-                error -> Toast.makeText(getContext(), "Failed to load job postings", Toast.LENGTH_SHORT).show()
+                error -> {
+                    Log.e(TAG, "Failed to load job postings", error);
+                    Toast.makeText(requireContext(), "Failed to load job postings", Toast.LENGTH_SHORT).show();
+                }
         ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return createAuthorizationHeaders(getContext());
+                return createAuthorizationHeaders(requireContext());
             }
         };
 
-        VolleySingleton.getInstance(getContext()).addToRequestQueue(request);
+        VolleySingleton.getInstance(requireContext()).addToRequestQueue(request);
     }
 
     private void parseJobPostings(JSONArray response) {
@@ -129,7 +142,7 @@ public class JobSwipeFragment extends Fragment {
                 ));
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error parsing job postings", e);
         }
     }
 
@@ -140,7 +153,6 @@ public class JobSwipeFragment extends Fragment {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
-        // Update credentials if necessary
         String username = "teststudent1@example.com";
         String password = "TestStudent1234@";
 

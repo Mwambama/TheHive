@@ -40,11 +40,10 @@
             android:text="Swipe" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/tab_applications"
             android:text="Application Status" />
     </com.google.android.material.tabs.TabLayout>
 
-    <!-- FrameLayout to hold content based on selected tab -->
+    <!-- Fragment Container -->
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="0dp"
@@ -52,7 +51,8 @@
         app:layout_constraintTop_toBottomOf="@id/tabLayout"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
 
     <!-- Bottom Navigation View -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
