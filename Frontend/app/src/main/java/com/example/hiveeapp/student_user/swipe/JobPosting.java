@@ -1,6 +1,8 @@
 package com.example.hiveeapp.student_user.swipe;
 
-public class JobPosting {
+import java.io.Serializable;
+
+public class JobPosting implements Serializable {
     private int jobPostingId;
     private String title;
     private String description;
@@ -14,6 +16,7 @@ public class JobPosting {
     private int employerId;
     private String companyName;
 
+    // Full constructor
     public JobPosting(int jobPostingId, String title, String description, String summary, double salary,
                       String jobType, double minimumGpa, String jobStart, String applicationStart, String applicationEnd, int employerId, String companyName) {
         this.jobPostingId = jobPostingId;
@@ -36,7 +39,7 @@ public class JobPosting {
         this(jobPostingId, title, description, summary, salary, jobType, minimumGpa, jobStart, applicationStart, applicationEnd, -1, "Unknown Company");
     }
 
-    // Getters for each field
+    // Getters
     public int getJobPostingId() { return jobPostingId; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
@@ -49,4 +52,21 @@ public class JobPosting {
     public String getApplicationEnd() { return applicationEnd; }
     public int getEmployerId() { return employerId; }
     public String getCompanyName() { return companyName; }
+
+    // Optional setters for flexibility (only add if needed for mutable fields)
+    public void setSalary(double salary) { this.salary = salary; }
+    public void setJobType(String jobType) { this.jobType = jobType; }
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
+
+    // Helper method for display purposes
+    @Override
+    public String toString() {
+        return "JobPosting{" +
+                "jobPostingId=" + jobPostingId +
+                ", title='" + title + '\'' +
+                ", companyName='" + companyName + '\'' +
+                ", salary=" + salary +
+                ", jobType='" + jobType + '\'' +
+                '}';
+    }
 }

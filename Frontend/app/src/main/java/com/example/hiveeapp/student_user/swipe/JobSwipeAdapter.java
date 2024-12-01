@@ -1,7 +1,5 @@
 package com.example.hiveeapp.student_user.swipe;
 
-import static com.example.hiveeapp.student_user.swipe.JobSwipeFragment.GET_JOB_POSTINGS_URL;
-
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
@@ -16,7 +14,6 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
 
@@ -77,7 +74,7 @@ public class JobSwipeAdapter extends BaseAdapter {
     }
 
     private void loadJobPostings() {
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, GET_JOB_POSTINGS_URL, null,
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, JobSwipeFragment.GET_JOB_POSTINGS_URL, null,
                 response -> {
                     jobPostings.clear();
                     parseJobPostings(response);
@@ -122,7 +119,16 @@ public class JobSwipeAdapter extends BaseAdapter {
     }
 
     public void applyForJob(int jobPostingId) {
-        JobApplicationUtils.applyForJob(context, studentId, jobPostingId);
+        JobApplicationUtils.applyForJob(context, studentId, jobPostingId,
+                () -> {
+                    // Success callback
+                    Toast.makeText(context, "Application submitted successfully!", Toast.LENGTH_SHORT).show();
+                },
+                () -> {
+                    // Failure callback
+                    Toast.makeText(context, "Failed to submit application. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+        );
     }
 
     public void removeJob(int position) {
@@ -132,9 +138,12 @@ public class JobSwipeAdapter extends BaseAdapter {
         }
     }
 
+    /**
+     * Updates the list of job postings dynamically.
+     */
     public void setJobPostings(List<JobPosting> newJobPostings) {
-        this.jobPostings = new ArrayList<>(newJobPostings); // Replace the current list
-        notifyDataSetChanged(); // Notify the adapter about data changes
+        this.jobPostings = new ArrayList<>(newJobPostings);
+        notifyDataSetChanged();
     }
 
     public static Map<String, String> createAuthorizationHeaders(Context context) {
@@ -151,4 +160,3 @@ public class JobSwipeAdapter extends BaseAdapter {
         return headers;
     }
 }
-

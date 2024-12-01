@@ -1,8 +1,7 @@
 package com.example.hiveeapp.student_user.swipe;
 
-import static com.example.hiveeapp.student_user.swipe.JobSwipeFragment.createAuthorizationHeaders;
-
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -15,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,20 +24,21 @@ import java.util.Map;
 public class ApplyActivity extends AppCompatActivity {
 
     private static final String TAG = "ApplyActivity";
+    private static final String PREFERENCES_NAME = "JobSwipePreferences";
+    private static final String SWIPE_POSITION_KEY = "SwipePosition";
+
     private int studentId;
     private int jobPostingId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Updated layout file reference
         setContentView(R.layout.activity_swipe);
 
         // Get the studentId and jobPostingId from Intent extras
         studentId = getIntent().getIntExtra("studentId", -1);
         jobPostingId = getIntent().getIntExtra("jobPostingId", -1);
 
-        // Handle the application process when needed
         if (studentId != -1 && jobPostingId != -1) {
             applyForJob(studentId, jobPostingId);
         } else {
@@ -80,8 +81,8 @@ public class ApplyActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json"); // Ensure JSON content type is set
-                headers.putAll(JobSwipeFragment.createAuthorizationHeaders(ApplyActivity.this)); // Add authorization headers
+                headers.put("Content-Type", "application/json");
+                headers.putAll(createAuthorizationHeaders(ApplyActivity.this));
                 return headers;
             }
         };
@@ -89,11 +90,7 @@ public class ApplyActivity extends AppCompatActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
-
-    /**
-     * Generates headers for API requests with authorization.
-     */
-    public static Map<String, String> createAuthorizationHeaders(Context context) {
+    private Map<String, String> createAuthorizationHeaders(Context context) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
@@ -107,12 +104,13 @@ public class ApplyActivity extends AppCompatActivity {
         return headers;
     }
 
-    private void handleError(VolleyError error) {
-        if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
-            Toast.makeText(this, "You have already applied for this job.", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Failed to apply. Please try again.", Toast.LENGTH_SHORT).show();
-        }
-        Log.e(TAG, "Error applying for job: ", error);
+    private void saveSwipePosition(Context context, int position) {
+        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        preferences.edit().putInt(SWIPE_POSITION_KEY, position).apply();
+    }
+
+    private int getSavedSwipePosition(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return preferences.getInt(SWIPE_POSITION_KEY, 0);
     }
 }

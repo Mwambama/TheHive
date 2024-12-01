@@ -112,7 +112,7 @@ public class JobSwipeFragment extends Fragment {
                     parseJobPostings(response);
 
                     if (swipeAdapter != null) {
-                        swipeAdapter.notifyDataSetChanged();
+                        swipeAdapter.setJobPostings(jobPostings);
                     }
 
                     // Restore swipe position
@@ -157,11 +157,10 @@ public class JobSwipeFragment extends Fragment {
     }
 
     private void restoreSwipePosition() {
-        // Simulate the swipe position by removing items up to saved position
         if (savedSwipePosition > 0 && savedSwipePosition < jobPostings.size()) {
-            List<JobPosting> remainingJobs = new ArrayList<>(jobPostings.subList(savedSwipePosition, jobPostings.size()));
-            swipeAdapter.setJobPostings(remainingJobs);
-            swipeAdapter.notifyDataSetChanged();
+            for (int i = 0; i < savedSwipePosition; i++) {
+                swipeAdapter.removeJob(0);
+            }
         }
     }
 

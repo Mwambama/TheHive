@@ -20,8 +20,9 @@ public class JobApplicationUtils {
     private static final String TAG = "JobApplicationUtils";
     private static final String APPLY_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications/apply";
 
-    public static void applyForJob(Context context, int studentId, int jobPostingId) {
+    public static void applyForJob(Context context, int studentId, int jobPostingId, Runnable onSuccess, Runnable onError) {
         try {
+            // Create the JSON body for the request
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("studentId", studentId);
             jsonObject.put("jobPostingId", jobPostingId);
@@ -29,8 +30,18 @@ public class JobApplicationUtils {
             String requestBody = jsonObject.toString();
 
             StringRequest request = new StringRequest(Request.Method.POST, APPLY_URL,
-                    response -> Toast.makeText(context, "Application submitted successfully!", Toast.LENGTH_SHORT).show(),
-                    error -> handleError(context, error)) {
+                    response -> {
+                        Toast.makeText(context, "Application submitted successfully!", Toast.LENGTH_SHORT).show();
+                        if (onSuccess != null) {
+                            onSuccess.run(); // Callback for success
+                        }
+                    },
+                    error -> {
+                        handleError(context, error);
+                        if (onError != null) {
+                            onError.run(); // Callback for failure
+                        }
+                    }) {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     Map<String, String> headers = new HashMap<>();
@@ -54,8 +65,12 @@ public class JobApplicationUtils {
 
     private static void handleError(Context context, VolleyError error) {
         String errorMessage = "Failed to apply for job.";
-        if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
-            errorMessage = "Server error: Unable to process the application. Please try again later.";
+        if (error.networkResponse != null) {
+            if (error.networkResponse.statusCode == 500) {
+                errorMessage = "Server error: Unable to process the application. Please try again later.";
+            } else if (error.networkResponse.statusCode == 401) {
+                errorMessage = "Unauthorized access. Please log in again.";
+            }
         }
         Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
         Log.e(TAG, "Error applying for job: ", error);
@@ -75,4 +90,3 @@ public class JobApplicationUtils {
         return headers;
     }
 }
-
