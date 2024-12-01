@@ -3,8 +3,6 @@ package com.example.hiveeapp.registration.signup;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -26,47 +24,56 @@ import org.json.JSONObject;
 public class companysignupActivity extends AppCompatActivity {
     private EditText nameEditText;
     private EditText passwordEditText;
+    private EditText verifyPasswordEditText;
     private EditText emailEditText;
     private ImageButton togglePasswordVisibilityButton;
+    private ImageButton toggleVerifyPasswordVisibilityButton;
     private boolean isPasswordVisible = false;
+    private boolean isVerifyPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_company_signup); // Updated layout file name
+        setContentView(R.layout.activity_company_signup);
 
         // Initialize EditText fields
         nameEditText = findViewById(R.id.signup_name_edt);
         passwordEditText = findViewById(R.id.signup_password_edt);
+        verifyPasswordEditText = findViewById(R.id.signup_verify_password_edt);
         emailEditText = findViewById(R.id.signup_email_edt);
+        togglePasswordVisibilityButton = findViewById(R.id.toggle_password_visibility_btn);
+        toggleVerifyPasswordVisibilityButton = findViewById(R.id.toggle_verify_password_visibility_btn);
 
-        // Inflate the additional layout
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View passwordLayout = inflater.inflate(R.layout.activity_show_passwords, null);
-        togglePasswordVisibilityButton = passwordLayout.findViewById(R.id.toggle_password_visibility_btn);
-
-        // Set click listener for the toggle button
-        togglePasswordVisibilityButton.setOnClickListener(view -> togglePasswordVisibility());
+        // Set click listeners for toggle buttons
+        togglePasswordVisibilityButton.setOnClickListener(view -> togglePasswordVisibility(passwordEditText, togglePasswordVisibilityButton));
+        toggleVerifyPasswordVisibilityButton.setOnClickListener(view -> togglePasswordVisibility(verifyPasswordEditText, toggleVerifyPasswordVisibilityButton));
 
         // Signup button click listener
         findViewById(R.id.signup_signup_btn).setOnClickListener(view -> {
             String name = nameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
+            String verifyPassword = verifyPasswordEditText.getText().toString();
             String email = emailEditText.getText().toString();
 
             // Check for empty fields
-            if (name.isEmpty() || password.isEmpty() || email.isEmpty()) {
-                Toast.makeText(com.example.hiveeapp.registration.signup.companysignupActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
+            if (name.isEmpty() || password.isEmpty() || verifyPassword.isEmpty() || email.isEmpty()) {
+                Toast.makeText(companysignupActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Check if password is valid
+            // Check if passwords match
+            if (!password.equals(verifyPassword)) {
+                Toast.makeText(companysignupActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Validate password
             if (!isPasswordValid(password)) {
-                Toast.makeText(com.example.hiveeapp.registration.signup.companysignupActivity.this, "Password must be at least 7 characters long, contain an uppercase letter, and a number", Toast.LENGTH_LONG).show();
+                Toast.makeText(companysignupActivity.this, "Password must be at least 7 characters long, contain an uppercase letter, and a number", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            // Create JSON object with signup data
+            // Create JSON object for signup data
             JSONObject signupData = new JSONObject();
             try {
                 signupData.put("name", name);
@@ -76,66 +83,38 @@ public class companysignupActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            // URL for the company signup server
-            String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/signup/company"; // Updated URL
-
-            // Create JSON request
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                    Request.Method.POST,
-                    url,
-                    signupData,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            // Handle successful signup
-                            Toast.makeText(com.example.hiveeapp.registration.signup.companysignupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
-                            // Navigate to LoginActivity
-                            Intent intent = new Intent(com.example.hiveeapp.registration.signup.companysignupActivity.this, LoginActivity.class);
-                            // Ensure the back stack is cleared
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                        }
+            String url = "http://coms-3090-063.class.las.iastate.edu:8080/account/signup/company";
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, signupData,
+                    response -> {
+                        Toast.makeText(companysignupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(companysignupActivity.this, LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
                     },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            // Handle signup error
-                            Toast.makeText(com.example.hiveeapp.registration.signup.companysignupActivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            );
-            // Set a retry policy with a timeout of 10 seconds (10000 ms)
-            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
-                    10000, // Timeout in milliseconds (10 seconds)
+                    error -> Toast.makeText(companysignupActivity.this, "Error: " + error.toString(), Toast.LENGTH_SHORT).show());
+
+            request.setRetryPolicy(new DefaultRetryPolicy(
+                    10000,
                     DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            // Add request to the Volley request queue
-            VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+            VolleySingleton.getInstance(this).addToRequestQueue(request);
         });
     }
 
+    // Password validation method
     private boolean isPasswordValid(String password) {
-        if (password.length() < 7) {
-            return false;
-        }
-        boolean hasUppercase = !password.equals(password.toLowerCase());
-        boolean hasDigit = password.matches(".*\\d.*");
-        return hasUppercase && hasDigit;
+        return password.length() >= 7 && password.matches(".*[A-Z].*") && password.matches(".*\\d.*");
     }
 
-    private void togglePasswordVisibility() {
-        if (isPasswordVisible) {
-            // Hide password
-            passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            togglePasswordVisibilityButton.setImageResource(R.drawable.ic_visibility_off);
-            isPasswordVisible = false;
+    // Toggle password visibility method
+    private void togglePasswordVisibility(EditText editText, ImageButton button) {
+        if (editText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+            editText.setInputType(InputType.TYPE_CLASS_TEXT);
+            button.setImageResource(R.drawable.ic_visibility_on);
         } else {
-            // Show password
-            passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-            togglePasswordVisibilityButton.setImageResource(R.drawable.ic_visibility_on);
-            isPasswordVisible = true;
+            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            button.setImageResource(R.drawable.ic_visibility_off);
         }
-        // Move cursor to the end of the text
-        passwordEditText.setSelection(passwordEditText.getText().length());
+        editText.setSelection(editText.getText().length());
     }
 }

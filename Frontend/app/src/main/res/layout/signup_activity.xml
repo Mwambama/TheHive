@@ -19,12 +19,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Welcome Text -->
+    <!-- Welcome Title -->
     <TextView
-        android:id="@+id/loginTitle"
+        android:id="@+id/welcomeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome"
+        android:text="Welcome to The Hive App"
         android:textSize="28sp"
         android:textStyle="bold"
         android:textColor="#000000"
@@ -33,45 +33,83 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <TextView
+        android:id="@+id/instructionsText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Let's get started. \n Choose your role below to create your account."
+        android:textSize="18sp"
+        android:textColor="#000000"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/welcomeTitle"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- Buttons Layout for Student, Employer, and Company -->
     <LinearLayout
         android:id="@+id/user_type_buttons_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="24dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/loginTitle"
+        app:layout_constraintTop_toBottomOf="@id/instructionsText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center_horizontal">
 
-        <Button
+        <!-- Student Button -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/signup_student_btn"
-            android:layout_width="200dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:text="Student"
-            android:textSize="20sp"
-            android:textColor="#ffffff"
-            android:backgroundTint="@color/light_blue" />
-
-        <Button
-            android:id="@+id/signup_employer_btn"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/colorPrimaryDark"
+            app:cornerRadius="16dp"
             android:layout_marginBottom="16dp"
-            android:text="Employer"
-            android:textSize="20sp"
-            android:textColor="#ffffff"
-            android:backgroundTint="@color/light_blue" />
+            android:elevation="4dp" />
 
-        <Button
+        <!-- Employer Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/signup_employer_btn"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="Employer"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/colorPrimaryDark"
+            app:cornerRadius="16dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp" />
+
+        <!-- Company Button -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/signup_company_btn"
-            android:layout_width="200dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:text="Company"
-            android:textSize="20sp"
-            android:textColor="#ffffff"
-            android:backgroundTint="@color/light_blue" />
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/colorPrimaryDark"
+            app:cornerRadius="16dp"
+            android:elevation="4dp" />
     </LinearLayout>
+
+    <!-- Already Have an Account Text -->
+    <TextView
+        android:id="@+id/go_to_login_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Already have an account? Go to Login"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:padding="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toBottomOf="@id/user_type_buttons_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

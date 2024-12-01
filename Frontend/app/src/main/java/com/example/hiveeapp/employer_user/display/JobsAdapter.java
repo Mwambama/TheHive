@@ -56,7 +56,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
     @Override
     public EmployerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Inflate the layout for each employer item in the RecyclerView
-        View view = LayoutInflater.from(context).inflate(R.layout.item_jobs, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.activity_apply, parent, false);
         return new EmployerViewHolder(view);
     }
 

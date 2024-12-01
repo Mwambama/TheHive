@@ -54,4 +54,11 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    implementation(kotlin("script-runtime"))
+
+    implementation ("com.maxkeppeler.sheets:core:2.3.1")
+
+    implementation ("com.tbuonomo:dotsindicator:4.2")
+
+    implementation ("com.lorentzos.swipecards:library:1.0.9")
 }

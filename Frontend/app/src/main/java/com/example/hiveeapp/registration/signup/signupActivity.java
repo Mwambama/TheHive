@@ -5,15 +5,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.registration.login.LoginActivity;
 
 public class signupActivity extends AppCompatActivity {
     private LinearLayout userTypeButtonsLayout;
     private Button studentButton;
     private Button employerButton;
     private Button companyButton;
+    private TextView goToLoginText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,29 +28,21 @@ public class signupActivity extends AppCompatActivity {
         studentButton = findViewById(R.id.signup_student_btn);
         employerButton = findViewById(R.id.signup_employer_btn);
         companyButton = findViewById(R.id.signup_company_btn);
+        goToLoginText = findViewById(R.id.go_to_login_text);
 
         // Set click listener for student button
-        studentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToSignup("student");
-            }
-        });
+        studentButton.setOnClickListener(v -> navigateToSignup("student"));
 
         // Set click listener for employer button
-        employerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToSignup("employer");
-            }
-        });
+        employerButton.setOnClickListener(v -> navigateToSignup("employer"));
 
         // Set click listener for company button
-        companyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToSignup("company");
-            }
+        companyButton.setOnClickListener(v -> navigateToSignup("company"));
+
+        // Set click listener for "Go to Login" text
+        goToLoginText.setOnClickListener(v -> {
+            Intent intent = new Intent(signupActivity.this, LoginActivity.class);
+            startActivity(intent);
         });
     }
 

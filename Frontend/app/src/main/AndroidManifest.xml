@@ -16,18 +16,22 @@
         tools:targetApi="31"
         android:usesCleartextTraffic="true">
 
-        <!--Login Activity-->
-        <activity android:name=".registration.login.LoginActivity" />
 
-        <!-- Main Activity -->
-        <activity
-            android:name=".MainActivity"
+        <!-- Onboarding Activity -->
+        <activity android:name=".registration.onBoarding.OnboardingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <!--Login Activity-->
+        <activity android:name=".registration.login.LoginActivity" />
+
+        <!-- Main Activity -->
+        <activity android:name=".MainActivity" android:exported="true" />
 
         <!-- Sign up and related activities -->
         <activity android:name=".registration.signup.signupActivity" android:exported="true" />
@@ -61,6 +65,7 @@
         <!-- Add the StudentProfileActivity -->
         <activity android:name=".student_user.profile.StudentProfileActivity" android:exported="true" />
         <activity android:name=".student_user.profile.StudentProfileViewActivity" android:exported="true" />
+        <activity android:name=".student_user.profile.ResumeManagementActivity" android:exported="true" />
 
         <!-- Student Chat Activity -->
         <activity android:name=".student_user.chat.ChatActivity" android:exported="true"/>

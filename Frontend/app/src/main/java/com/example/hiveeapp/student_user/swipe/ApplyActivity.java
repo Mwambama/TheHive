@@ -1,57 +1,116 @@
 package com.example.hiveeapp.student_user.swipe;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.volley.VolleySingleton;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ApplyActivity extends AppCompatActivity {
 
     private static final String TAG = "ApplyActivity";
+    private static final String PREFERENCES_NAME = "JobSwipePreferences";
+    private static final String SWIPE_POSITION_KEY = "SwipePosition";
+
     private int studentId;
     private int jobPostingId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_apply);
+        setContentView(R.layout.activity_swipe);
 
+        // Get the studentId and jobPostingId from Intent extras
         studentId = getIntent().getIntExtra("studentId", -1);
         jobPostingId = getIntent().getIntExtra("jobPostingId", -1);
+
+        if (studentId != -1 && jobPostingId != -1) {
+            applyForJob(studentId, jobPostingId);
+        } else {
+            Toast.makeText(this, "Invalid data provided for job application.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Invalid studentId or jobPostingId");
+        }
     }
 
     private void applyForJob(int studentId, int jobPostingId) {
         String url = "http://coms-3090-063.class.las.iastate.edu:8080/applications/apply";
+
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("studentId", studentId);
             jsonObject.put("jobPostingId", jobPostingId);
         } catch (JSONException e) {
             e.printStackTrace();
+            Toast.makeText(this, "Error creating application request.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
-                response -> Toast.makeText(this, "Application submitted successfully!", Toast.LENGTH_SHORT).show(),
-                this::handleError);
+                response -> {
+                    try {
+                        // Parse the plain string response
+                        String message = response.toString();
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error parsing server response", e);
+                    }
+                },
+                error -> {
+                    String errorMessage = "Failed to apply for job.";
+                    if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
+                        errorMessage = "Server error: Unable to process the application. Please try again later.";
+                    }
+                    Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error applying for job: ", error);
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                headers.putAll(createAuthorizationHeaders(ApplyActivity.this));
+                return headers;
+            }
+        };
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
-    private void handleError(VolleyError error) {
-        if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
-            Toast.makeText(this, "You have already applied for this job.", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Failed to apply. Please try again.", Toast.LENGTH_SHORT).show();
-        }
-        Log.e(TAG, "Error applying for job: ", error);
+    private Map<String, String> createAuthorizationHeaders(Context context) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        String username = "teststudent1@example.com";
+        String password = "TestStudent1234@";
+
+        String credentials = username + ":" + password;
+        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        headers.put("Authorization", auth);
+
+        return headers;
+    }
+
+    private void saveSwipePosition(Context context, int position) {
+        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        preferences.edit().putInt(SWIPE_POSITION_KEY, position).apply();
+    }
+
+    private int getSavedSwipePosition(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return preferences.getInt(SWIPE_POSITION_KEY, 0);
     }
 }
