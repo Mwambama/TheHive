@@ -1,6 +1,7 @@
 package com.example.hiveeapp.student_user.swipe;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -30,11 +31,14 @@ public class JobSwipeFragment extends Fragment {
 
     public static final String GET_JOB_POSTINGS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
     private static final String TAG = "JobSwipeFragment";
+    private static final String PREFERENCES_NAME = "JobSwipePreferences";
+    private static final String SWIPE_POSITION_KEY = "SwipePosition";
 
     private SwipeFlingAdapterView swipeFlingAdapterView;
     private JobSwipeAdapter swipeAdapter;
     private List<JobPosting> jobPostings = new ArrayList<>();
     private int studentId;
+    private int savedSwipePosition = 0;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -52,6 +56,9 @@ public class JobSwipeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_job_swipe, container, false);
         swipeFlingAdapterView = view.findViewById(R.id.swipe_view);
 
+        // Retrieve saved position from SharedPreferences
+        savedSwipePosition = getSavedSwipePosition(requireContext());
+
         // Initialize the adapter
         swipeAdapter = new JobSwipeAdapter(requireContext(), studentId);
         swipeFlingAdapterView.setAdapter(swipeAdapter);
@@ -61,6 +68,8 @@ public class JobSwipeFragment extends Fragment {
             @Override
             public void removeFirstObjectInAdapter() {
                 swipeAdapter.removeJob(0);
+                savedSwipePosition++;
+                saveSwipePosition(requireContext(), savedSwipePosition);
             }
 
             @Override
@@ -77,7 +86,6 @@ public class JobSwipeFragment extends Fragment {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                // Load more job postings when the adapter is about to be empty
                 loadJobPostings();
             }
 
@@ -103,10 +111,12 @@ public class JobSwipeFragment extends Fragment {
                     jobPostings.clear();
                     parseJobPostings(response);
 
-                    // Safeguard against null adapter
                     if (swipeAdapter != null) {
                         swipeAdapter.notifyDataSetChanged();
                     }
+
+                    // Restore swipe position
+                    restoreSwipePosition();
                 },
                 error -> {
                     Log.e(TAG, "Failed to load job postings", error);
@@ -146,9 +156,31 @@ public class JobSwipeFragment extends Fragment {
         }
     }
 
-    /**
-     * Generates headers for API requests with authorization.
-     */
+    private void restoreSwipePosition() {
+        // Simulate the swipe position by removing items up to saved position
+        if (savedSwipePosition > 0 && savedSwipePosition < jobPostings.size()) {
+            List<JobPosting> remainingJobs = new ArrayList<>(jobPostings.subList(savedSwipePosition, jobPostings.size()));
+            swipeAdapter.setJobPostings(remainingJobs);
+            swipeAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        saveSwipePosition(requireContext(), savedSwipePosition);
+    }
+
+    private void saveSwipePosition(Context context, int position) {
+        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        preferences.edit().putInt(SWIPE_POSITION_KEY, position).apply();
+    }
+
+    private int getSavedSwipePosition(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return preferences.getInt(SWIPE_POSITION_KEY, 0);
+    }
+
     public static Map<String, String> createAuthorizationHeaders(Context context) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");

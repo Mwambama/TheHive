@@ -48,6 +48,7 @@ public class ApplyActivity extends AppCompatActivity {
 
     private void applyForJob(int studentId, int jobPostingId) {
         String url = "http://coms-3090-063.class.las.iastate.edu:8080/applications/apply";
+
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("studentId", studentId);
@@ -59,18 +60,35 @@ public class ApplyActivity extends AppCompatActivity {
         }
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
-                response -> Toast.makeText(this, "Application submitted successfully!", Toast.LENGTH_SHORT).show(),
-                this::handleError
-        ) {
+                response -> {
+                    try {
+                        // Parse the plain string response
+                        String message = response.toString();
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error parsing server response", e);
+                    }
+                },
+                error -> {
+                    String errorMessage = "Failed to apply for job.";
+                    if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
+                        errorMessage = "Server error: Unable to process the application. Please try again later.";
+                    }
+                    Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error applying for job: ", error);
+                }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                // Apply authorization headers here as well
-                return createAuthorizationHeaders(ApplyActivity.this);
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json"); // Ensure JSON content type is set
+                headers.putAll(JobSwipeFragment.createAuthorizationHeaders(ApplyActivity.this)); // Add authorization headers
+                return headers;
             }
         };
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
+
 
     /**
      * Generates headers for API requests with authorization.

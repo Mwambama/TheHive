@@ -90,7 +90,6 @@ public class JobSwipeAdapter extends BaseAdapter {
         ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                // Ensure the authorization headers are applied here
                 return createAuthorizationHeaders(context);
             }
         };
@@ -123,28 +122,7 @@ public class JobSwipeAdapter extends BaseAdapter {
     }
 
     public void applyForJob(int jobPostingId) {
-        String url = "http://coms-3090-063.class.las.iastate.edu:8080/applications/apply";
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("studentId", studentId);
-            jsonObject.put("jobPostingId", jobPostingId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
-                response -> Toast.makeText(context, "Application submitted successfully!", Toast.LENGTH_SHORT).show(),
-                error -> {
-                    String errorMessage = "Failed to apply for job.";
-                    if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
-                        errorMessage = "You have already applied for this job.";
-                    }
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Error applying for job: ", error);
-                });
-
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
+        JobApplicationUtils.applyForJob(context, studentId, jobPostingId);
     }
 
     public void removeJob(int position) {
@@ -154,9 +132,11 @@ public class JobSwipeAdapter extends BaseAdapter {
         }
     }
 
-    /**
-     * Generates headers for API requests with authorization.
-     */
+    public void setJobPostings(List<JobPosting> newJobPostings) {
+        this.jobPostings = new ArrayList<>(newJobPostings); // Replace the current list
+        notifyDataSetChanged(); // Notify the adapter about data changes
+    }
+
     public static Map<String, String> createAuthorizationHeaders(Context context) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
@@ -171,3 +151,4 @@ public class JobSwipeAdapter extends BaseAdapter {
         return headers;
     }
 }
+
