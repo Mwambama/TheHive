@@ -105,6 +105,7 @@ public class studentsignupActivity extends AppCompatActivity {
                             // Handle successful signup
                             Toast.makeText(studentsignupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
                             // Navigate to LoginActivity
+                            Log.d("Navigation", "Navigating to LoginActivity");
                             Intent intent = new Intent(studentsignupActivity.this, LoginActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
