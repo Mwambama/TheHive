@@ -141,7 +141,7 @@ public class EmployerProfileActivity extends AppCompatActivity {
     private static final String TAG = "EmployerProfileActivity";
     private EditText nameEditText, streetEditText, complementEditText, cityEditText, stateEditText, zipCodeEditText;
     private EditText emailEditText, phoneEditText, fieldEditText;
-    private MaterialButton saveButton;
+    private Button saveButton;
     private ImageButton backArrowIcon;
     private int userId;
     private int companyId;
