@@ -1,6 +1,7 @@
 package com.example.hiveeapp;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
@@ -14,12 +15,16 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.View;
 
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.PerformException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
@@ -32,6 +37,8 @@ import androidx.test.runner.lifecycle.Stage;
 
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.student_user.StudentMainActivity;
+import com.example.hiveeapp.student_user.profile.StudentProfileActivity;
+import com.example.hiveeapp.student_user.swipe.JobSwipeFragment;
 
 import org.hamcrest.Matcher;
 import org.junit.After;
@@ -46,26 +53,23 @@ public class LucasSorgeSystemTest {
 
     @Before
     public void setup() {
-        Intents.init(); // Initialize Espresso Intents
+        Intents.init();
     }
 
     @After
     public void tearDown() {
-        Intents.release(); // Release Espresso Intents
+        Intents.release();
     }
 
     @Test
     public void testSuccessfulLoginAndNavigation() {
-        // Log in with an existing user
         onView(withId(R.id.emailField)).perform(typeText("test643@example.com"));
         onView(withId(R.id.passwordField)).perform(typeText("Test$1234"));
 
         onView(withId(R.id.loginButton)).perform(click());
 
-        // Verify navigation to StudentMainActivity
         intended(hasComponent(StudentMainActivity.class.getName()));
 
-        // Validate shared preferences were saved
         SharedPreferences sharedPreferences =
                 InstrumentationRegistry.getInstrumentation()
                         .getTargetContext()
@@ -77,16 +81,12 @@ public class LucasSorgeSystemTest {
 
     @Test
     public void testSignUpAndLogin() throws InterruptedException {
-        // Generate a unique email for each test run
         String uniqueEmail = "testuser" + System.currentTimeMillis() + "@example.com";
 
-        // Navigate to signup activity
         onView(withId(R.id.registerText)).perform(click());
 
-        // Select "Student" signup
         onView(withId(R.id.signup_student_btn)).perform(click());
 
-        // Fill out the signup form
         onView(withId(R.id.signup_name_edt)).perform(scrollTo(), typeText("New Test User"));
         onView(withId(R.id.signup_email_edt)).perform(scrollTo(), typeText(uniqueEmail));
         onView(withId(R.id.signup_password_edt)).perform(scrollTo(), typeText("Test@1234"));
@@ -94,29 +94,22 @@ public class LucasSorgeSystemTest {
         onView(isRoot()).perform(closeSoftKeyboard());
         onView(withId(R.id.signup_university_edt)).perform(scrollTo(), typeText("Test University"));
 
-        // Submit the signup form
         onView(withId(R.id.signup_signup_btn)).perform(scrollTo(), click());
 
-        // Wait for API response and navigation to the login page
-        Thread.sleep(5000); // Use IdlingResource in production
+        Thread.sleep(5000);
 
-        // Ensure the login page is displayed
         onView(withId(R.id.emailField)).check(matches(isDisplayed()));
 
-        // Log in with the newly created user credentials
         onView(withId(R.id.emailField))
                 .perform(typeText(uniqueEmail), closeSoftKeyboard());
         onView(withId(R.id.passwordField))
                 .perform(typeText("Test@1234"), closeSoftKeyboard());
         onView(withId(R.id.loginButton)).perform(click());
 
-        // Wait for the navigation to StudentMainActivity
         Thread.sleep(2000);
 
-        // Verify navigation to StudentMainActivity
         intended(hasComponent(StudentMainActivity.class.getName()));
 
-        // Validate shared preferences
         SharedPreferences sharedPreferences =
                 InstrumentationRegistry.getInstrumentation()
                         .getTargetContext()
@@ -124,5 +117,44 @@ public class LucasSorgeSystemTest {
 
         assertEquals(uniqueEmail, sharedPreferences.getString("email", null));
         assertEquals("Test@1234", sharedPreferences.getString("password", null));
+    }
+
+    @Test
+    public void testLoginNavigateAndUpdateProfile() throws InterruptedException{
+        onView(withId(R.id.emailField))
+                .perform(typeText("test643@example.com"), closeSoftKeyboard());
+        onView(withId(R.id.passwordField))
+                .perform(typeText("Test$1234"), closeSoftKeyboard());
+        onView(withId(R.id.loginButton)).perform(click());
+
+        Thread.sleep(2000);
+
+        intended(hasComponent(StudentMainActivity.class.getName()));
+
+        onView(withId(R.id.navigation_profile)).perform(click());
+
+        Thread.sleep(2000);
+
+        onView(withId(R.id.profileScrollView)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void testLoginAndNavigateToChat() throws InterruptedException {
+        onView(withId(R.id.emailField))
+                .perform(typeText("test643@example.com"), closeSoftKeyboard());
+        onView(withId(R.id.passwordField))
+                .perform(typeText("Test$1234"), closeSoftKeyboard());
+        onView(withId(R.id.loginButton)).perform(click());
+
+        Thread.sleep(2000);
+
+        intended(hasComponent(StudentMainActivity.class.getName()));
+
+        onView(withId(R.id.navigation_chat)).perform(click());
+
+        Thread.sleep(2000);
+
+        onView(withId(R.id.chatRecyclerView))
+                .check(matches(isDisplayed()));
     }
 }
