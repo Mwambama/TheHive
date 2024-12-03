@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("jacoco")
 }
 
 android {
@@ -18,6 +19,9 @@ android {
     }
 
     buildTypes {
+        debug {
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -33,7 +37,37 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8" // Ensure compatibility with Java 1.8
+        jvmTarget = "1.8"
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.10"
+}
+
+tasks.register("createDebugCoverageReport", JacocoReport::class) {
+    dependsOn("connectedDebugAndroidTest")
+
+    val debugTree = fileTree("${buildDir}/intermediates/classes/debug") {
+        exclude("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*")
+    }
+    val debugExecutionData = fileTree("${buildDir}") {
+        include("**/*.exec")
+    }
+
+    sourceDirectories.setFrom(files("src/main/java"))
+    classDirectories.setFrom(debugTree)
+    executionData.setFrom(debugExecutionData)
+
+    reports {
+        html.required.set(true)
+        html.outputLocation.set(file("${buildDir}/reports/jacoco/debugCoverageReport"))
     }
 }
 
@@ -54,12 +88,10 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation ("androidx.test.espresso:espresso-intents:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
     implementation(kotlin("script-runtime"))
 
-    implementation ("com.maxkeppeler.sheets:core:2.3.1")
-
-    implementation ("com.tbuonomo:dotsindicator:4.2")
-
-    implementation ("com.lorentzos.swipecards:library:1.0.9")
+    implementation("com.maxkeppeler.sheets:core:2.3.1")
+    implementation("com.tbuonomo:dotsindicator:4.2")
+    implementation("com.lorentzos.swipecards:library:1.0.9")
 }
