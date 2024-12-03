@@ -5,12 +5,14 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 
 import android.app.Activity;
@@ -18,11 +20,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 
-import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.PerformException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.idling.CountingIdlingResource;
 import androidx.test.espresso.util.HumanReadables;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -44,34 +44,28 @@ public class LucasSorgeSystemTest {
     @Rule
     public ActivityScenarioRule<LoginActivity> activityRule = new ActivityScenarioRule<>(LoginActivity.class);
 
-    private CountingIdlingResource idlingResource;
-
     @Before
     public void setup() {
         Intents.init(); // Initialize Espresso Intents
-        idlingResource = new CountingIdlingResource("SignupLoader");
-        IdlingRegistry.getInstance().register(idlingResource);
     }
 
     @After
     public void tearDown() {
         Intents.release(); // Release Espresso Intents
-        IdlingRegistry.getInstance().unregister(idlingResource);
     }
 
     @Test
     public void testSuccessfulLoginAndNavigation() {
-        // Step 1: Set the input fields
+        // Log in with an existing user
         onView(withId(R.id.emailField)).perform(typeText("test643@example.com"));
         onView(withId(R.id.passwordField)).perform(typeText("Test$1234"));
 
-        // Step 2: Click the login button
         onView(withId(R.id.loginButton)).perform(click());
 
-        // Step 3: Check if the correct activity is launched based on role
-        intended(hasComponent(StudentMainActivity.class.getName())); // Assuming role is STUDENT
+        // Verify navigation to StudentMainActivity
+        intended(hasComponent(StudentMainActivity.class.getName()));
 
-        // Step 4: Validate shared preferences were saved
+        // Validate shared preferences were saved
         SharedPreferences sharedPreferences =
                 InstrumentationRegistry.getInstrumentation()
                         .getTargetContext()
@@ -82,7 +76,10 @@ public class LucasSorgeSystemTest {
     }
 
     @Test
-    public void testSignUpAndLogin() {
+    public void testSignUpAndLogin() throws InterruptedException {
+        // Generate a unique email for each test run
+        String uniqueEmail = "testuser" + System.currentTimeMillis() + "@example.com";
+
         // Navigate to signup activity
         onView(withId(R.id.registerText)).perform(click());
 
@@ -91,27 +88,30 @@ public class LucasSorgeSystemTest {
 
         // Fill out the signup form
         onView(withId(R.id.signup_name_edt)).perform(scrollTo(), typeText("New Test User"));
-        onView(withId(R.id.signup_email_edt)).perform(scrollTo(), typeText("newuser@example.com"));
-        onView(withId(R.id.signup_password_edt)).perform(scrollTo(), typeText("Test1234!"));
-        onView(withId(R.id.signup_verify_password_edt)).perform(scrollTo(), typeText("Test1234!"));
+        onView(withId(R.id.signup_email_edt)).perform(scrollTo(), typeText(uniqueEmail));
+        onView(withId(R.id.signup_password_edt)).perform(scrollTo(), typeText("Test@1234"));
+        onView(withId(R.id.signup_verify_password_edt)).perform(scrollTo(), typeText("Test@1234"));
         onView(isRoot()).perform(closeSoftKeyboard());
-        onView(withId(R.id.signup_company_id_edt)).perform(scrollTo(), typeText("101"));
         onView(withId(R.id.signup_university_edt)).perform(scrollTo(), typeText("Test University"));
 
         // Submit the signup form
-        idlingResource.increment(); // Notify IdlingResource of loading
         onView(withId(R.id.signup_signup_btn)).perform(scrollTo(), click());
 
-        // Wait for the app to navigate to the LoginActivity
-        onView(isRoot()).perform(waitForActivity(LoginActivity.class, 5000));
+        // Wait for API response and navigation to the login page
+        Thread.sleep(5000); // Use IdlingResource in production
 
-        // Verify navigation to LoginActivity
-        intended(hasComponent(LoginActivity.class.getName()));
+        // Ensure the login page is displayed
+        onView(withId(R.id.emailField)).check(matches(isDisplayed()));
 
-        // Log in with the new user credentials
-        onView(withId(R.id.emailField)).perform(typeText("newuser@example.com"));
-        onView(withId(R.id.passwordField)).perform(typeText("Test1234!"));
+        // Log in with the newly created user credentials
+        onView(withId(R.id.emailField))
+                .perform(typeText(uniqueEmail), closeSoftKeyboard());
+        onView(withId(R.id.passwordField))
+                .perform(typeText("Test@1234"), closeSoftKeyboard());
         onView(withId(R.id.loginButton)).perform(click());
+
+        // Wait for the navigation to StudentMainActivity
+        Thread.sleep(2000);
 
         // Verify navigation to StudentMainActivity
         intended(hasComponent(StudentMainActivity.class.getName()));
@@ -122,46 +122,7 @@ public class LucasSorgeSystemTest {
                         .getTargetContext()
                         .getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
 
-        assertEquals("newuser@example.com", sharedPreferences.getString("email", null));
-        assertEquals("Test1234!", sharedPreferences.getString("password", null));
-
-        idlingResource.decrement(); // Notify IdlingResource of completion
-    }
-
-    private static ViewAction waitForActivity(final Class<?> activityClass, final long timeoutMillis) {
-        return new ViewAction() {
-            @Override
-            public Matcher<View> getConstraints() {
-                return isRoot();
-            }
-
-            @Override
-            public String getDescription() {
-                return "Wait for " + activityClass.getSimpleName() + " to load within " + timeoutMillis + "ms.";
-            }
-
-            @Override
-            public void perform(UiController uiController, View view) {
-                long endTime = System.currentTimeMillis() + timeoutMillis;
-                while (System.currentTimeMillis() < endTime) {
-                    Activity activity = ActivityLifecycleMonitorRegistry.getInstance()
-                            .getActivitiesInStage(Stage.RESUMED)
-                            .stream()
-                            .filter(a -> a.getClass().equals(activityClass))
-                            .findFirst()
-                            .orElse(null);
-
-                    if (activity != null) {
-                        return;
-                    }
-
-                    uiController.loopMainThreadForAtLeast(50);
-                }
-                throw new PerformException.Builder()
-                        .withActionDescription(getDescription())
-                        .withViewDescription(HumanReadables.describe(view))
-                        .build();
-            }
-        };
+        assertEquals(uniqueEmail, sharedPreferences.getString("email", null));
+        assertEquals("Test@1234", sharedPreferences.getString("password", null));
     }
 }
