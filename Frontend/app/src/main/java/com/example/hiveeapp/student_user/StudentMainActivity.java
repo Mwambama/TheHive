@@ -17,6 +17,7 @@ import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.student_user.application.JobApplicationFragment;
 import com.example.hiveeapp.student_user.chat.ChatListActivity;
 import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
+import com.example.hiveeapp.student_user.search.JobSearchFragment;
 import com.example.hiveeapp.student_user.swipe.JobSwipeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -82,6 +83,9 @@ public class StudentMainActivity extends AppCompatActivity {
                 startActivity(new Intent(StudentMainActivity.this, ChatListActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_apply) {
+                return true;
+            } else if (itemId == R.id.navigation_search) {
+                replaceFragment(new JobSearchFragment());
                 return true;
             }
             return false;

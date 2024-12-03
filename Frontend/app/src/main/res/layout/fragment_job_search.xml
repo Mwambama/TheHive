@@ -1,0 +1,97 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Keyword Input -->
+        <EditText
+            android:id="@+id/keywordInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Keyword"
+            android:inputType="text"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Input field for keyword search" />
+
+        <!-- Minimum Salary Input -->
+        <EditText
+            android:id="@+id/minSalaryInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Minimum Salary"
+            android:inputType="numberDecimal"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Input field for minimum salary" />
+
+        <!-- Maximum Salary Input -->
+        <EditText
+            android:id="@+id/maxSalaryInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Maximum Salary"
+            android:inputType="numberDecimal"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Input field for maximum salary" />
+
+        <!-- Earliest Job Start Date -->
+        <EditText
+            android:id="@+id/minJobStartInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Earliest Job Start Date (yyyy-MM-dd)"
+            android:inputType="date"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Input field for earliest job start date" />
+
+        <!-- Latest Job Start Date -->
+        <EditText
+            android:id="@+id/maxJobStartInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Latest Job Start Date (yyyy-MM-dd)"
+            android:inputType="date"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Input field for latest job start date" />
+
+        <!-- Open Applications Only -->
+        <CheckBox
+            android:id="@+id/isApplicationOpenCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Open Applications Only"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Checkbox for filtering open applications only" />
+
+        <!-- Only Qualified Jobs -->
+        <CheckBox
+            android:id="@+id/isQualifiedCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Only Qualified Jobs"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Checkbox for filtering only qualified jobs" />
+
+        <!-- Search Button -->
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Search button to submit the job search" />
+
+        <!-- Job List RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/jobListRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:importantForAccessibility="yes"
+            android:contentDescription="List of job search results" />
+    </LinearLayout>
+</ScrollView>

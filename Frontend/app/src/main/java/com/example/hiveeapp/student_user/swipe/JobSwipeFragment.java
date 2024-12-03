@@ -12,12 +12,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.example.hiveeapp.R;
-import com.example.hiveeapp.student_user.StudentMainActivity;
-import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.example.hiveeapp.R;
+import com.example.hiveeapp.student_user.StudentMainActivity;
+import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.example.hiveeapp.volley.VolleySingleton;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,6 +50,19 @@ public class JobSwipeFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Check for recommended jobs passed via arguments
+        if (getArguments() != null) {
+            List<JobPosting> recommendedJobs = (List<JobPosting>) getArguments().getSerializable("recommendedJobs");
+            if (recommendedJobs != null && !recommendedJobs.isEmpty()) {
+                Log.d(TAG, "Received recommended jobs: " + recommendedJobs.size());
+                prependRecommendedJobs(recommendedJobs);
+            }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,79 +77,125 @@ public class JobSwipeFragment extends Fragment {
         swipeFlingAdapterView.setAdapter(swipeAdapter);
 
         // Set up fling listener
+        setupFlingListener();
+
+        swipeFlingAdapterView.setOnItemClickListener((itemPosition, dataObject) -> {
+            if (!isAdded()) return;
+            JobPosting job = (JobPosting) dataObject;
+            Toast.makeText(requireContext(), "Clicked on: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+        });
+
+        // Load default job postings
+        loadJobPostings();
+
+        return view;
+    }
+
+    private void setupFlingListener() {
         swipeFlingAdapterView.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
-                swipeAdapter.removeJob(0);
-                savedSwipePosition++;
-                saveSwipePosition(requireContext(), savedSwipePosition);
+                if (!jobPostings.isEmpty()) {
+                    Log.d(TAG, "Removing job: " + jobPostings.get(0).getTitle());
+                    swipeAdapter.removeJob(0);
+                    savedSwipePosition++;
+                    saveSwipePosition(requireContext(), savedSwipePosition);
+                } else {
+                    Log.e(TAG, "No jobs available to remove.");
+                }
             }
 
             @Override
             public void onLeftCardExit(Object dataObject) {
+                Log.d(TAG, "Job dismissed: " + ((JobPosting) dataObject).getTitle());
                 Toast.makeText(requireContext(), "Job dismissed", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
                 JobPosting job = (JobPosting) dataObject;
+                Log.d(TAG, "Job applied: " + job.getTitle());
                 swipeAdapter.applyForJob(job.getJobPostingId());
                 Toast.makeText(requireContext(), "Applied for: " + job.getTitle(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
+                Log.d(TAG, "Adapter about to empty. Reloading jobs.");
                 loadJobPostings();
             }
 
             @Override
             public void onScroll(float scrollProgressPercent) {
-                // Handle visual feedback during scrolling
+                Log.d(TAG, "Scroll progress: " + scrollProgressPercent);
             }
         });
-
-        swipeFlingAdapterView.setOnItemClickListener((itemPosition, dataObject) -> {
-            JobPosting job = (JobPosting) dataObject;
-            Toast.makeText(requireContext(), "Clicked on: " + job.getTitle(), Toast.LENGTH_SHORT).show();
-        });
-
-        loadJobPostings();
-
-        return view;
     }
 
     private void loadJobPostings() {
+        if (!isAdded()) {
+            Log.e(TAG, "Fragment not added. Skipping loadJobPostings.");
+            return;
+        }
+
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, GET_JOB_POSTINGS_URL, null,
                 response -> {
+                    if (!isAdded()) return;
                     jobPostings.clear();
-                    parseJobPostings(response);
-
+                    jobPostings.addAll(parseJobPostings(response));
+                    if (jobPostings.isEmpty()) {
+                        Toast.makeText(requireContext(), "No jobs available.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.d(TAG, "Jobs loaded: " + jobPostings.size());
+                    }
                     if (swipeAdapter != null) {
                         swipeAdapter.setJobPostings(jobPostings);
+                        swipeAdapter.notifyDataSetChanged();
                     }
-
-                    // Restore swipe position
                     restoreSwipePosition();
                 },
                 error -> {
+                    if (!isAdded()) return;
                     Log.e(TAG, "Failed to load job postings", error);
                     Toast.makeText(requireContext(), "Failed to load job postings", Toast.LENGTH_SHORT).show();
                 }
         ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return createAuthorizationHeaders(requireContext());
+                return createAuthorizationHeaders();
             }
         };
 
-        VolleySingleton.getInstance(requireContext()).addToRequestQueue(request);
+        VolleySingleton.getInstance(requireContext().getApplicationContext()).addToRequestQueue(request);
     }
 
-    private void parseJobPostings(JSONArray response) {
+    public void prependRecommendedJobs(List<JobPosting> recommendedJobs) {
+        if (!isAdded() || recommendedJobs == null || recommendedJobs.isEmpty()) {
+            Log.e(TAG, "No jobs to prepend or fragment not added.");
+            return;
+        }
+
+        Log.d(TAG, "Prepending jobs: " + recommendedJobs.size());
+        // Limit to 10 recommended jobs
+        List<JobPosting> topRecommendedJobs = recommendedJobs.size() > 10
+                ? recommendedJobs.subList(0, 10)
+                : recommendedJobs;
+
+        // Prepend recommended jobs
+        jobPostings.addAll(0, topRecommendedJobs);
+
+        if (swipeAdapter != null) {
+            swipeAdapter.setJobPostings(jobPostings);
+            swipeAdapter.notifyDataSetChanged(); // Notify adapter to refresh the UI
+        }
+    }
+
+    private List<JobPosting> parseJobPostings(JSONArray response) {
+        List<JobPosting> parsedJobs = new ArrayList<>();
         try {
             for (int i = 0; i < response.length(); i++) {
                 JSONObject obj = response.getJSONObject(i);
-                jobPostings.add(new JobPosting(
+                parsedJobs.add(new JobPosting(
                         obj.getInt("jobPostingId"),
                         obj.getString("title"),
                         obj.getString("description"),
@@ -154,13 +213,17 @@ public class JobSwipeFragment extends Fragment {
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing job postings", e);
         }
+        return parsedJobs;
     }
 
     private void restoreSwipePosition() {
         if (savedSwipePosition > 0 && savedSwipePosition < jobPostings.size()) {
+            Log.d(TAG, "Restoring swipe position to: " + savedSwipePosition);
             for (int i = 0; i < savedSwipePosition; i++) {
                 swipeAdapter.removeJob(0);
             }
+        } else {
+            Log.d(TAG, "No saved position to restore or out of bounds.");
         }
     }
 
@@ -180,7 +243,7 @@ public class JobSwipeFragment extends Fragment {
         return preferences.getInt(SWIPE_POSITION_KEY, 0);
     }
 
-    public static Map<String, String> createAuthorizationHeaders(Context context) {
+    private Map<String, String> createAuthorizationHeaders() {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
