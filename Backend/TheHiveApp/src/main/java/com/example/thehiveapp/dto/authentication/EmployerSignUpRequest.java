@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class EmployerSignUpRequest extends BaseSignUpRequest {
-    @NotNull
+    @NotNull(message = "Company Id is required")
     private Long companyId;
 }

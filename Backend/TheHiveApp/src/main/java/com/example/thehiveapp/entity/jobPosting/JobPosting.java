@@ -48,10 +48,10 @@ public class JobPosting {
     @OneToMany(mappedBy = "jobPosting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Application> applications;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "summary")
@@ -64,7 +64,7 @@ public class JobPosting {
     @Column(name = "job_type")
     private JobType jobType;
 
-    @Column(name = "minimum_gpa")
+    @Column(name = "minimum_gpa", nullable = false)
     private Double minimumGpa;
 
     @Column(name = "job_start")
