@@ -22,7 +22,7 @@ public class Employer extends User{
     @Column(name="company_id", nullable = false)
     private Long companyId;
 
-    @Column(name="field", nullable = false)
+    @Column(name="field")
     private String field;
 
     @JsonIgnore
