@@ -124,23 +124,28 @@ public class JobPostingServiceImpl implements JobPostingService{
                 .map(Application::getJobPosting)
                 .collect(Collectors.toList());
 
+        // Get all applications
+        List<Long> appliedJobIds = applicationRepository.findApplicationsByStudent(student)
+                .stream()
+                .map(application -> application.getJobPosting().getJobPostingId())
+                .toList();
 
         // Fetch all job postings
         List<JobPosting> allPostings = jobPostingRepository.findAll();
 
         // Filter and rank postings based on criteria
         return allPostings.stream()
-                .filter(posting -> student.getGpa() == null ||
-                        posting.getMinimumGpa() <= student.getGpa()) // Filter by GPA
-                .filter(posting -> student.getGraduationDate() == null ||
-                        LocalDate.parse(student.getGraduationDate()).isBefore(posting.getJobStart())) // Graduation date relevance
+                .filter(posting -> student.getGpa() == null || // Unqualified
+                        posting.getMinimumGpa() <= student.getGpa())
+                .filter(posting -> posting.getApplicationEnd() == null || // Application closed
+                        posting.getApplicationEnd().isAfter(LocalDate.now()))
+                .filter(posting -> !appliedJobIds.contains(posting.getJobPostingId())) // Already applied
                 .sorted((p1, p2) -> {
                     // Sort by relevance
                     double score1 = calculateRelevanceScore(student, p1, recentJobs);
                     double score2 = calculateRelevanceScore(student, p2, recentJobs);
                     return Double.compare(score2, score1); // Higher score first
                 })
-                .limit(10) // Limit to top 10
                 .map(mapper::entityToDto)
                 .collect(Collectors.toList());
     }
@@ -167,7 +172,7 @@ public class JobPostingServiceImpl implements JobPostingService{
         double textSimilarityScore = totalSimilarity / recentJobs.size();
 
         // Return weighted relevance score
-        return gpaScore + 1.2 * startDateProximity + 2.5 * textSimilarityScore;
+        return gpaScore + 1.2 * startDateProximity + 4 * textSimilarityScore;
     }
 
     private double computeSimilarity(String text1, String text2) {

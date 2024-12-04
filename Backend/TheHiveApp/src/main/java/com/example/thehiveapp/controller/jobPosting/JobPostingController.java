@@ -96,7 +96,7 @@ public class JobPostingController {
         return jobPostingService.searchJobPostings(searchDto);
     }
 
-    @Operation(summary = "Get job posting suggestions for a student", description = "Retrieves the top 10 most relevant job postings for a specific student.")
+    @Operation(summary = "Get job posting suggestions for a student", description = "Retrieves the most relevant job postings for a specific student, sorted.")
     @GetMapping("/suggestions/{studentId}")
     public List<JobPostingDto> getJobPostingSuggestions(@PathVariable Long studentId) {
         return jobPostingService.getJobPostingSuggestions(studentId);
