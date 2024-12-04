@@ -1,7 +1,10 @@
 package com.example.thehiveapp.controller.chat;
 
+import com.example.thehiveapp.dto.jobPosting.JobPostingDto;
 import com.example.thehiveapp.entity.chat.Chat;
 import com.example.thehiveapp.service.chat.ChatService;
+import com.example.thehiveapp.service.user.UserService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
@@ -19,12 +23,16 @@ import java.util.List;
 public class ChatController {
 
     @Autowired private ChatService chatService;
+    @Autowired private UserService userService;
 
     public ChatController() {}
 
-    @Operation(summary = "Get all chats", description = "Retrieves a list of all chat records.")
+    @Operation(summary = "Get all chats or filter by user ID", description = "Retrieves a list of all chat records or filters them by user ID if provided.")
     @GetMapping
-    public List<Chat> getChats() {
+    public List<Chat> getChats(@RequestParam(value = "userId", required = false) Long userId) throws BadRequestException {
+        if (userId != null) {
+            return chatService.getChatsByUserId(userId);
+        }
         return chatService.getChats();
     }
 
