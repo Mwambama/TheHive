@@ -102,13 +102,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public ResponseMessage changePassword(ChangePasswordRequest changePasswordRequest) throws BadRequestException {
-        if (!changePasswordRequest.getPassword().equals(changePasswordRequest.getConfirmPassword())){
-            throw new BadRequestException("Passwords do not match! Try again!");
-        }
         User user = userService.getUserByEmail(changePasswordRequest.getEmail());
         Authentication authentication = authenticationRepository.findById(user.getUserId()).orElseThrow(
                 () -> new ResourceNotFoundException("User not found"));
-        authentication.setPassword(securityConfig.passwordEncoder().encode(changePasswordRequest.getConfirmPassword()));
+        if (securityConfig.passwordEncoder().matches(changePasswordRequest.getPassword(), authentication.getPassword())) {
+            throw new BadRequestException("You cannot use old password! Try again!");
+        }
+        if (!changePasswordRequest.getPassword().equals(changePasswordRequest.getConfirmPassword())) {
+            throw new BadRequestException("Passwords do not match! Try again!");
+        }
+        authentication.setPassword(securityConfig.passwordEncoder().encode(changePasswordRequest.getPassword()));
         authenticationRepository.save(authentication);
         return ResponseMessage.builder().message("Password changed successfully").build();
     }
