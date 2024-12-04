@@ -39,7 +39,11 @@ public class EmployerServiceImpl implements EmployerService{
         if (!employerRepository.existsById(id)){
             throw new ResourceNotFoundException("Employer not found with id " + id);
         }
-        addressService.updateAddress(request.getAddress());
+        if (request.getAddress().getAddressId() == null){
+            addressService.createAddress(request.getAddress());
+        } else {
+            addressService.updateAddress(request.getAddress());
+        }
         return employerRepository.save(request);
     }
 
