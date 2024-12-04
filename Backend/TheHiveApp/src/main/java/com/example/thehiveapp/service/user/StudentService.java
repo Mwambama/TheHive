@@ -11,6 +11,7 @@ public interface StudentService {
     Student getStudentById(Long id);
     Student updateStudent(Student request);
     void trackApplication(Long studentId);
+    void resetDailyApplications();
     void uploadStudentResume(Long id, MultipartFile file);
     byte[] getStudentResume(Long id);
     void deleteStudent(Long id);

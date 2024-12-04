@@ -64,6 +64,15 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
+    public void resetDailyApplications() {
+        List<Student> students = studentRepository.findAll();
+        students.forEach(student -> {
+            student.setApplicationsMadeToday(0);
+        });
+        studentRepository.saveAll(students);
+    }
+
+    @Override
     public void uploadStudentResume(Long id, MultipartFile file) {
         Student student = studentRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Student not found with id " + id));
