@@ -1,5 +1,6 @@
 package com.example.thehiveapp;
 
+import com.example.thehiveapp.dto.application.ApplicationRequest;
 import com.example.thehiveapp.dto.authentication.CompanySignUpRequest;
 import com.example.thehiveapp.dto.authentication.EmployerSignUpRequest;
 import com.example.thehiveapp.dto.authentication.StudentSignUpRequest;
@@ -10,11 +11,14 @@ import com.example.thehiveapp.entity.user.Employer;
 import com.example.thehiveapp.entity.user.Student;
 import com.example.thehiveapp.enums.jobPosting.JobType;
 import com.example.thehiveapp.service.address.AddressService;
+import com.example.thehiveapp.service.application.ApplicationService;
 import com.example.thehiveapp.service.authentication.AuthenticationService;
+import com.example.thehiveapp.service.chat.ChatService;
 import com.example.thehiveapp.service.jobPosting.JobPostingService;
 import com.example.thehiveapp.service.user.StudentService;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -39,6 +43,8 @@ class RilloSystemTest {
     @Autowired private JobPostingService jobPostingService;
     @Autowired private AuthenticationService authenticationService;
     @Autowired private AddressService addressService;
+    @Autowired private ChatService chatService;
+    @Autowired private ApplicationService applicationService;
 
     private Long companyId;
     private Long studentId;
@@ -78,22 +84,20 @@ class RilloSystemTest {
     private final LocalDate JOB_POSTING_JOB_START = JOB_POSTING_APPLICATION_END.plusMonths(1);
     private final LocalDate ANOTHER_JOB_POSTING_JOB_START = ANOTHER_JOB_POSTING_APPLICATION_END.plusMonths(3);
 
-    // Test data for the first address
+    // Set up addresses
     private final String ADDRESS_STREET = "123 Main St";
-    private final String ADDRESS_COMPLEMENT = "Suite 4B";
-    private final String ADDRESS_CITY = "Springfield";
-    private final String ADDRESS_STATE = "IL";
-    private final String ADDRESS_ZIP_CODE = "62704";
-
-    // Test data for the second address (to be created during the test)
     private final String ANOTHER_ADDRESS_STREET = "456 Elm St";
+    private final String ADDRESS_COMPLEMENT = "Suite 4B";
     private final String ANOTHER_ADDRESS_COMPLEMENT = "Apt 2C";
+    private final String ADDRESS_CITY = "Springfield";
     private final String ANOTHER_ADDRESS_CITY = "Chicago";
+    private final String ADDRESS_STATE = "IL";
     private final String ANOTHER_ADDRESS_STATE = "IL";
+    private final String ADDRESS_ZIP_CODE = "62704";
     private final String ANOTHER_ADDRESS_ZIP_CODE = "60616";
 
     @BeforeAll
-    public void setUp() {
+    public void setUp() throws BadRequestException {
         RestAssured.port = port;
         RestAssured.baseURI = "http://localhost";
 
@@ -330,4 +334,50 @@ class RilloSystemTest {
                 .get("/address/" + anotherAddress.getAddressId());
         assertEquals(404, verifyDeleteResponse.getStatusCode(), "Deleted address should not be found");
     }
+
+    @Test
+    void testChat() {
+        // Step 1: Apply for a job posting
+        Response applyResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .header("Content-Type", "application/json")
+                .body(ApplicationRequest.builder()
+                        .studentId(studentId)
+                        .jobPostingId(jobPostingId)
+                        .build())
+                .post("/applications/apply");
+        assertEquals(200, applyResponse.getStatusCode(), "POST request should succeed");
+
+        // Step 2: Retrieve applications for the student
+        Response getApplicationsResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .queryParam("studentId", studentId)
+                .get("/applications/student");
+        assertEquals(200, getApplicationsResponse.getStatusCode(), "GET request should succeed");
+        List<?> applications = getApplicationsResponse.jsonPath().getList("$");
+        assertEquals(1, applications.size(), "There should be exactly one application in the response");
+
+        // Step 3: Accept the application
+        Long applicationId = getApplicationsResponse.jsonPath().getLong("[0].applicationId");
+        Response acceptApplicationResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .post("/applications/" + applicationId + "/accept");
+        assertEquals(200, acceptApplicationResponse.getStatusCode(), "POST request should succeed for accepting application");
+
+        // Step 4: Verify the chat is created for the student
+        Response getChatResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .queryParam("userId", studentId)
+                .get("/chat");
+        assertEquals(200, getChatResponse.getStatusCode(), "GET request should succeed for retrieving chats");
+        List<?> chats = getChatResponse.jsonPath().getList("$");
+        assertEquals(1, chats.size(), "There should be exactly one chat for the student");
+        Long chatUserId = getChatResponse.jsonPath().getLong("[0].studentId");
+        assertEquals(studentId, chatUserId, "Chat should belong to the correct student");
+    }
+
 }
