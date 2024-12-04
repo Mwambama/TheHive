@@ -23,13 +23,13 @@ public class Student extends User{
     @Column(name="university", nullable = false)
     private String university;
 
-    @Column(name="graduation_date", nullable = false)
+    @Column(name="graduation_date")
     private String graduationDate;
 
-    @Column(name="gpa", nullable = false)
+    @Column(name="gpa")
     private Double gpa;
 
-    @Column(name="resume_path", nullable = false)
+    @Column(name="resume_path")
     private String resumePath;
 
     @JsonIgnore

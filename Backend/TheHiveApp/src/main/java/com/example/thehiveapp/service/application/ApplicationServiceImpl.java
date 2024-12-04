@@ -50,7 +50,7 @@ public class ApplicationServiceImpl implements ApplicationService{
     }
 
     @Override
-    public void applyForJobPosting(ApplicationRequest request){
+    public ApplicationDto applyForJobPosting(ApplicationRequest request){
         JobPosting jobPosting = jobPostingRepository.findById(request.getJobPostingId())
                 .orElseThrow(() -> new ResourceNotFoundException("Job posting not found"));
         Student student = studentRepository.findById(request.getStudentId())
@@ -65,6 +65,14 @@ public class ApplicationServiceImpl implements ApplicationService{
         application.setStatus(Status.PENDING);
         applicationRepository.save(application);
         log.info("Student Id: " + request.getStudentId() + " applied for Job Posting " + request.getJobPostingId());
+        return new ApplicationDto(
+                application.getApplicationId(),
+                application.getJobPosting().getJobPostingId(),
+                application.getStudent().getUserId(),
+                application.getJobPosting().getTitle(),
+                application.getStatus(),
+                application.getAppliedOn()
+        );
     }
     @Override
     public List<ApplicationDto> getApplicationsforStudent(Long studentId){

@@ -1,0 +1,267 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > AuthenticationServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.service.authentication</a>
+</div>
+
+<h1>Coverage Summary for Class: AuthenticationServiceImpl (com.example.thehiveapp.service.authentication)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AuthenticationServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    77.8%
+  </span>
+  <span class="absValue">
+    (7/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.5%
+  </span>
+  <span class="absValue">
+    (52/55)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AuthenticationServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    77.8%
+  </span>
+  <span class="absValue">
+    (7/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.5%
+  </span>
+  <span class="absValue">
+    (52/55)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.service.authentication;
+&nbsp;
+&nbsp;import com.example.thehiveapp.dto.ResponseMessage;
+&nbsp;import com.example.thehiveapp.dto.authentication.CompanySignUpRequest;
+&nbsp;import com.example.thehiveapp.dto.authentication.CustomUserDetails;
+&nbsp;import com.example.thehiveapp.config.SecurityConfig;
+&nbsp;import com.example.thehiveapp.dto.authentication.BaseSignUpRequest;
+&nbsp;import com.example.thehiveapp.dto.authentication.EmployerSignUpRequest;
+&nbsp;import com.example.thehiveapp.dto.authentication.StudentSignUpRequest;
+&nbsp;import com.example.thehiveapp.dto.email.ChangePasswordRequest;
+&nbsp;import com.example.thehiveapp.dto.email.EmailDetails;
+&nbsp;import com.example.thehiveapp.entity.authentication.Authentication;
+&nbsp;import com.example.thehiveapp.entity.user.Company;
+&nbsp;import com.example.thehiveapp.entity.user.Employer;
+&nbsp;import com.example.thehiveapp.entity.user.Student;
+&nbsp;import com.example.thehiveapp.entity.user.User;
+&nbsp;import com.example.thehiveapp.enums.user.Role;
+&nbsp;import com.example.thehiveapp.repository.authentication.AuthenticationRepository;
+&nbsp;import com.example.thehiveapp.service.email.EmailService;
+&nbsp;import com.example.thehiveapp.service.user.CompanyService;
+&nbsp;import com.example.thehiveapp.service.user.EmployerService;
+&nbsp;import com.example.thehiveapp.service.user.StudentService;
+&nbsp;import com.example.thehiveapp.service.user.UserService;
+&nbsp;import com.example.thehiveapp.utilities.SignUpUtils;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import org.apache.coyote.BadRequestException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+&nbsp;import org.springframework.security.core.userdetails.UserDetails;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class AuthenticationServiceImpl implements AuthenticationService {</b>
+&nbsp;
+&nbsp;    @Autowired private AuthenticationRepository authenticationRepository;
+&nbsp;    @Autowired private SecurityConfig securityConfig;
+&nbsp;    @Autowired private CompanyService companyService;
+&nbsp;    @Autowired private StudentService studentService;
+&nbsp;    @Autowired private UserService userService;
+&nbsp;    @Autowired private EmployerService employerService;
+&nbsp;    @Autowired private EmailService emailService;
+&nbsp;    @Autowired private PasswordEncoder passwordEncoder;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UserDetails loadUserByUsername(String email) {
+<b class="fc">&nbsp;        User user = userService.getUserByEmail(email);</b>
+<b class="fc">&nbsp;        return new CustomUserDetails(user, authenticationRepository);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public Company signUpCompany(CompanySignUpRequest signUpRequest) {
+<b class="fc">&nbsp;        Company company = new Company();</b>
+<b class="fc">&nbsp;        company.setEmail(signUpRequest.getEmail());</b>
+<b class="fc">&nbsp;        company.setName(signUpRequest.getName());</b>
+<b class="fc">&nbsp;        company.setRole(Role.COMPANY);</b>
+<b class="fc">&nbsp;        companyService.createCompany(company);</b>
+<b class="fc">&nbsp;        createAuthentication(signUpRequest, company.getUserId());</b>
+<b class="fc">&nbsp;        return company;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public Student signUpStudent(StudentSignUpRequest studentSignUpRequest) {
+<b class="fc">&nbsp;        Student student = new Student();</b>
+<b class="fc">&nbsp;        student.setEmail(studentSignUpRequest.getEmail());</b>
+<b class="fc">&nbsp;        student.setName(studentSignUpRequest.getName());</b>
+<b class="fc">&nbsp;        student.setRole(Role.STUDENT);</b>
+<b class="fc">&nbsp;        student.setUniversity(studentSignUpRequest.getUniversity());</b>
+<b class="fc">&nbsp;        studentService.createStudent(student);</b>
+<b class="fc">&nbsp;        createAuthentication(studentSignUpRequest, student.getUserId());</b>
+<b class="fc">&nbsp;        emailService.sendEmailWithLogo(EmailDetails.builder()</b>
+<b class="fc">&nbsp;                .name(studentSignUpRequest.getName())</b>
+<b class="fc">&nbsp;                .subject(&quot;Welcome to The Hive!&quot;)</b>
+<b class="fc">&nbsp;                .recipient(studentSignUpRequest.getEmail())</b>
+<b class="fc">&nbsp;                .messageBody(SignUpUtils.STUDENT_SUCCESSFUL_SIGNUP_MESSAGE)</b>
+<b class="fc">&nbsp;                .build());</b>
+<b class="fc">&nbsp;        return student;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public Employer signUpEmployer(EmployerSignUpRequest employerSignUpRequest) {
+<b class="fc">&nbsp;        Employer employer = new Employer();</b>
+<b class="fc">&nbsp;        employer.setEmail(employerSignUpRequest.getEmail());</b>
+<b class="fc">&nbsp;        employer.setName(employerSignUpRequest.getName());</b>
+<b class="fc">&nbsp;        employer.setRole(Role.EMPLOYER);</b>
+<b class="fc">&nbsp;        Company company = companyService.getCompanyById(employerSignUpRequest.getCompanyId());</b>
+<b class="fc">&nbsp;        employer.setCompanyId(company.getUserId());</b>
+<b class="fc">&nbsp;        employerService.createEmployer(employer);</b>
+<b class="fc">&nbsp;        createAuthentication(employerSignUpRequest, employer.getUserId());</b>
+<b class="fc">&nbsp;        emailService.sendEmailWithLogo(EmailDetails.builder()</b>
+<b class="fc">&nbsp;                .name(employerSignUpRequest.getName())</b>
+<b class="fc">&nbsp;                .subject(&quot;Welcome to The Hive!&quot;)</b>
+<b class="fc">&nbsp;                .recipient(employerSignUpRequest.getEmail())</b>
+<b class="fc">&nbsp;                .messageBody(SignUpUtils.EMPLOYER_SUCCESSFUL_SIGNUP_MESSAGE)</b>
+<b class="fc">&nbsp;                .build());</b>
+<b class="fc">&nbsp;        return employer;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseMessage changePassword(ChangePasswordRequest changePasswordRequest) throws BadRequestException {
+<b class="fc">&nbsp;        User user = userService.getUserByEmail(changePasswordRequest.getEmail());</b>
+<b class="fc">&nbsp;        Authentication authentication = authenticationRepository.findById(user.getUserId()).orElseThrow(</b>
+<b class="nc">&nbsp;                () -&gt; new ResourceNotFoundException(&quot;User not found&quot;));</b>
+<b class="fc">&nbsp;        if (securityConfig.passwordEncoder().matches(changePasswordRequest.getPassword(), authentication.getPassword())) {</b>
+<b class="fc">&nbsp;            throw new BadRequestException(&quot;You cannot use old password! Try again!&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!changePasswordRequest.getPassword().equals(changePasswordRequest.getConfirmPassword())) {</b>
+<b class="fc">&nbsp;            throw new BadRequestException(&quot;Passwords do not match! Try again!&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        authentication.setPassword(securityConfig.passwordEncoder().encode(changePasswordRequest.getPassword()));</b>
+<b class="fc">&nbsp;        authenticationRepository.save(authentication);</b>
+<b class="fc">&nbsp;        return ResponseMessage.builder().message(&quot;Password changed successfully&quot;).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Boolean existsByEmailAndPassword(String email, String password) {
+<b class="nc">&nbsp;        Authentication authentication = authenticationRepository.findByUserId(userService.getUserByEmail(email).getUserId());</b>
+<b class="nc">&nbsp;        return passwordEncoder.matches(password, authentication.getPassword());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void createAuthentication(BaseSignUpRequest baseSignUpRequest, Long userId) {
+<b class="fc">&nbsp;        Authentication authentication = new Authentication();</b>
+<b class="fc">&nbsp;        authentication.setUserId(userId);</b>
+<b class="fc">&nbsp;        authentication.setPassword(securityConfig.passwordEncoder().encode(baseSignUpRequest.getPassword()));</b>
+<b class="fc">&nbsp;        authenticationRepository.save(authentication);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 17:47</div>
+</div>
+</body>
+</html>
