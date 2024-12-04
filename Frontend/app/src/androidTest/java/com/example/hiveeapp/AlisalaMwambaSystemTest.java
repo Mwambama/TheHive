@@ -18,6 +18,7 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
+import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.student_user.StudentMainActivity;
 
@@ -42,6 +43,53 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static java.util.regex.Pattern.matches;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.view.View;
+
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.PerformException;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.util.HumanReadables;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.espresso.intent.Intents;
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import androidx.test.runner.lifecycle.Stage;
+
+import com.example.hiveeapp.registration.login.LoginActivity;
+import com.example.hiveeapp.student_user.StudentMainActivity;
+import com.example.hiveeapp.student_user.profile.StudentProfileActivity;
+import com.example.hiveeapp.student_user.swipe.JobSwipeFragment;
+
+import org.hamcrest.Matcher;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+
+
 public class AlisalaMwambaSystemTest {
 
     @Rule
@@ -65,14 +113,14 @@ public class AlisalaMwambaSystemTest {
 //    @Test
 //    public void testSuccessfulLoginAndNavigation() {
 //        // Step 1: Set the input fields
-//        onView(withId(R.id.emailField)).perform(typeText("test643@example.com"), closeSoftKeyboard());
-//        onView(withId(R.id.passwordField)).perform(typeText("Test$1234"), closeSoftKeyboard());
+//        onView(withId(R.id.emailField)).perform(typeText("employerTest@aol.com"), closeSoftKeyboard());
+//        onView(withId(R.id.passwordField)).perform(typeText("Test1234@"), closeSoftKeyboard());
 //
 //        // Step 2: Click the login button
 //        onView(withId(R.id.loginButton)).perform(click());
 //
 //        // Step 3: Check if the correct activity is launched based on role
-//        intended(hasComponent(StudentMainActivity.class.getName())); // Assuming role is STUDENT
+//        intended(hasComponent(EmployerMainActivity.class.getName())); // Assuming role is STUDENT
 //
 //        // Step 4: Validate shared preferences were saved
 //        SharedPreferences sharedPreferences =
@@ -80,26 +128,40 @@ public class AlisalaMwambaSystemTest {
 //                        .getTargetContext()
 //                        .getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
 //
-//        assertEquals("test643@example.com", sharedPreferences.getString("email", null));
-//        assertEquals("Test$1234", sharedPreferences.getString("password", null));
+//        assertEquals("employerTest@aol.com", sharedPreferences.getString("email", null));
+//        assertEquals("Test1234@", sharedPreferences.getString("password", null));
+//
 //    }
+
+
 
     @Test
     public void testSuccessfulLoginAndNavigation() {
         // Step 1: Set the input fields
-        onView(withId(R.id.emailField)).perform(typeText("test643@example.com"), closeSoftKeyboard());
-        onView(withId(R.id.passwordField)).perform(typeText("Test$1234"), closeSoftKeyboard());
+        onView(withId(R.id.emailField)).perform(typeText("employerTest@aol.com"), closeSoftKeyboard());
+        onView(withId(R.id.passwordField)).perform(typeText("Test1234@"), closeSoftKeyboard());
 
         // Step 2: Click the login button
         onView(withId(R.id.loginButton)).perform(click());
 
         // Step 3: Use ActivityScenario to validate navigation
-        ActivityScenario<StudentMainActivity> scenario = ActivityScenario.launch(StudentMainActivity.class);
+        ActivityScenario<EmployerMainActivity> scenario = ActivityScenario.launch(EmployerMainActivity.class);
         scenario.onActivity(activity -> {
             // Perform checks directly on the activity instance if needed
             assertNotNull(activity.findViewById(R.id.bottomNavigationView)); // Assuming bottomNavigationView exists
         });
     }
+
+    // NEW TEST: Validate UI elements on the LoginActivity screen
+//    @Test
+//    public void testLoginActivityUIElements() {
+//        // Verify that email and password fields are displayed
+//        onView(withId(R.id.emailField)).perform(click());
+//        onView(withId(R.id.passwordField)).perform(click());
+//
+//        // Verify that login button is enabled
+//        onView(withId(R.id.loginButton)).perform(click());
+//    }
 
 
 //    @Test
@@ -108,7 +170,7 @@ public class AlisalaMwambaSystemTest {
 //        onView(withId(R.id.registerText)).perform(click());
 //
 //        // Select "Student" signup
-//        onView(withId(R.id.signup_student_btn)).perform(click());
+//        onView(withId(R.id.signup_employer_btn)).perform(click());
 //
 //        // Fill out the signup form
 //        onView(withId(R.id.signup_name_edt)).perform(scrollTo(), typeText("New Testing User"));
@@ -148,6 +210,127 @@ public class AlisalaMwambaSystemTest {
 //
 //        idlingResource.decrement(); // Notify Espresso of completion
 //    }
+
+
+//    }
+
+      // from when I saw Lucas code
+//
+//    @Test
+//    public void testSignUpAndLogin() throws InterruptedException {
+//        String uniqueEmail = "testuser" + System.currentTimeMillis() + "@examples.com";
+//
+//        // Step 1: Navigate to signup activity
+//        onView(withId(R.id.registerText)).perform(click());
+//
+//        // Step 2: Select "Employer" signup
+//        onView(withId(R.id.signup_employer_btn)).perform(click());
+//
+//        // Step 3: Fill out the signup form
+//        onView(withId(R.id.signup_name_edt)).perform(scrollTo(), typeText("New Test User"));
+//        onView(withId(R.id.signup_email_edt)).perform(scrollTo(), typeText(uniqueEmail));
+//        onView(withId(R.id.signup_password_edt)).perform(scrollTo(), typeText("Test1234!!"));
+//        onView(withId(R.id.signup_verify_password_edt)).perform(scrollTo(), typeText("Test1234!!"));
+//        onView(isRoot()).perform(closeSoftKeyboard());
+//        onView(withId(R.id.signup_company_id_edt)).perform(scrollTo(), typeText("101"));
+//
+//        // Step 4: Submit the signup form
+//        onView(withId(R.id.signup_signup_btn)).perform(scrollTo(), click());
+//
+//        // Step 5: Wait for LoginActivity
+//        onView(isRoot()).perform(waitFor(5000));
+//
+//        // Step 6: Verify LoginActivity is displayed
+//        intended(hasComponent(LoginActivity.class.getName()));
+//
+//        // Step 7: Log in with the new user credentials
+//        onView(withId(R.id.emailField))
+//                .check(matches(isDisplayed())) // Ensure email field is visible
+//                .perform(typeText(uniqueEmail), closeSoftKeyboard());
+//        onView(withId(R.id.passwordField))
+//                .check(matches(isDisplayed())) // Ensure password field is visible
+//                .perform(typeText("Test1234!!"), closeSoftKeyboard());
+//        onView(withId(R.id.loginButton)).perform(click());
+//
+//        // Step 8: Wait for EmployerMainActivity to load
+//        onView(isRoot()).perform(waitFor(2000));
+//
+//        // Step 9: Verify EmployerMainActivity
+//        intended(hasComponent(EmployerMainActivity.class.getName()));
+//
+//        // Step 10: Validate shared preferences
+//        SharedPreferences sharedPreferences =
+//                InstrumentationRegistry.getInstrumentation()
+//                        .getTargetContext()
+//                        .getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+//
+//        assertEquals(uniqueEmail, sharedPreferences.getString("email", null));
+//        assertEquals("Test1234!!", sharedPreferences.getString("password", null));
+//    }
+
+
+
+    @Test
+    public void testSignUpAndLogin() {
+        String uniqueEmail = "testuser" + System.currentTimeMillis() + "@examplesKing.com";
+
+        // Step 1: Navigate to signup activity
+        onView(withId(R.id.registerText)).perform(click());
+
+        // Step 2: Select "Employer" signup
+        onView(withId(R.id.signup_employer_btn)).perform(click());
+
+        // Step 3: Fill out the signup form
+        onView(withId(R.id.signup_name_edt))
+                .perform(scrollTo(), typeText("New Test King"));
+        onView(withId(R.id.signup_email_edt))
+                .perform(scrollTo(), typeText(uniqueEmail));
+        onView(withId(R.id.signup_password_edt))
+                .perform(scrollTo(), typeText("Test1234!!@"));
+        onView(withId(R.id.signup_verify_password_edt))
+                .perform(scrollTo(), typeText("Test1234!!@"));
+        onView(isRoot()).perform(closeSoftKeyboard());
+        onView(withId(R.id.signup_company_id_edt))
+                .perform(scrollTo(), typeText("103"));
+
+        // Step 4: Submit the signup form
+        onView(withId(R.id.signup_signup_btn)).perform(scrollTo(), click());
+
+        // Step 5: Wait for LoginActivity
+        onView(isRoot()).perform(waitFor(5000));
+
+        // Verify LoginActivity is displayed
+        intended(hasComponent(LoginActivity.class.getName()));
+
+        // Step 6: Log in with the new user credentials
+        onView(withId(R.id.emailField))
+                .check(matches(isDisplayed())) // Ensure email field is visible
+                .perform(typeText(uniqueEmail), closeSoftKeyboard());
+        onView(withId(R.id.passwordField))
+                .check(matches(isDisplayed())) // Ensure password field is visible
+                .perform(typeText("Test1234!!@"), closeSoftKeyboard());
+        onView(withId(R.id.loginButton)).perform(click());
+
+        // Step 7: Wait for EmployerMainActivity to load
+        onView(isRoot()).perform(waitFor(2000));
+
+        // Verify EmployerMainActivity
+        intended(hasComponent(EmployerMainActivity.class.getName()));
+
+        // Step 8: Validate shared preferences
+        SharedPreferences sharedPreferences =
+                InstrumentationRegistry.getInstrumentation()
+                        .getTargetContext()
+                        .getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+
+        assertEquals(uniqueEmail, sharedPreferences.getString("email", null));
+        assertEquals("Test1234!!@", sharedPreferences.getString("password", null));
+    }
+
+
+
+
+
 
 //    @Test
 //    public void testSignUpAndLogin() {
@@ -222,16 +405,7 @@ public class AlisalaMwambaSystemTest {
 //    }
 
 
-    // NEW TEST: Validate UI elements on the LoginActivity screen
-    @Test
-    public void testLoginActivityUIElements() {
-        // Verify that email and password fields are displayed
-        onView(withId(R.id.emailField)).perform(click());
-        onView(withId(R.id.passwordField)).perform(click());
 
-        // Verify that login button is enabled
-        onView(withId(R.id.loginButton)).perform(click());
-    }
 
     private static ViewAction waitForActivity(final Class<?> activityClass, final long timeoutMillis) {
         return new ViewAction() {
