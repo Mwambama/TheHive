@@ -114,10 +114,10 @@ public class AlisalaMwambaSystemTest {
         onView(withId(R.id.signup_student_btn)).perform(click());
 
         // Fill out the signup form
-        onView(withId(R.id.signup_name_edt)).perform(scrollTo(), typeText("New Test User"));
-        onView(withId(R.id.signup_email_edt)).perform(scrollTo(), typeText("newuser@example.com"));
-        onView(withId(R.id.signup_password_edt)).perform(scrollTo(), typeText("Test1234!"));
-        onView(withId(R.id.signup_verify_password_edt)).perform(scrollTo(), typeText("Test1234!"));
+        onView(withId(R.id.signup_name_edt)).perform(scrollTo(), typeText("New Testing User"));
+        onView(withId(R.id.signup_email_edt)).perform(scrollTo(), typeText("newuser@examples.com"));
+        onView(withId(R.id.signup_password_edt)).perform(scrollTo(), typeText("Test1234!!"));
+        onView(withId(R.id.signup_verify_password_edt)).perform(scrollTo(), typeText("Test1234!!"));
         onView(isRoot()).perform(closeSoftKeyboard());
         onView(withId(R.id.signup_company_id_edt)).perform(scrollTo(), typeText("101"));
         onView(withId(R.id.signup_university_edt)).perform(scrollTo(), typeText("Test University"));
@@ -133,8 +133,8 @@ public class AlisalaMwambaSystemTest {
         intended(hasComponent(LoginActivity.class.getName()));
 
         // Log in with the new user credentials
-        onView(withId(R.id.emailField)).perform(typeText("newuser@example.com"));
-        onView(withId(R.id.passwordField)).perform(typeText("Test1234!"));
+        onView(withId(R.id.emailField)).perform(typeText("newuser@examples.com"));
+        onView(withId(R.id.passwordField)).perform(typeText("Test1234!!"));
         onView(withId(R.id.loginButton)).perform(click());
 
         // Verify navigation to StudentMainActivity
