@@ -4,10 +4,12 @@ import com.example.thehiveapp.dto.authentication.CompanySignUpRequest;
 import com.example.thehiveapp.dto.authentication.EmployerSignUpRequest;
 import com.example.thehiveapp.dto.authentication.StudentSignUpRequest;
 import com.example.thehiveapp.dto.jobPosting.JobPostingDto;
+import com.example.thehiveapp.entity.address.Address;
 import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.entity.user.Employer;
 import com.example.thehiveapp.entity.user.Student;
 import com.example.thehiveapp.enums.jobPosting.JobType;
+import com.example.thehiveapp.service.address.AddressService;
 import com.example.thehiveapp.service.authentication.AuthenticationService;
 import com.example.thehiveapp.service.jobPosting.JobPostingService;
 import com.example.thehiveapp.service.user.StudentService;
@@ -22,9 +24,9 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -36,12 +38,14 @@ class RilloSystemTest {
     @Autowired private StudentService studentService;
     @Autowired private JobPostingService jobPostingService;
     @Autowired private AuthenticationService authenticationService;
+    @Autowired private AddressService addressService;
 
     private Long companyId;
     private Long studentId;
     private Long employerId;
     private Long jobPostingId;
     private Long anotherJobPostingId;
+    private Long addressId;
 
     // Set Up Users
     private final String COMPANY_NAME = "Company";
@@ -74,10 +78,35 @@ class RilloSystemTest {
     private final LocalDate JOB_POSTING_JOB_START = JOB_POSTING_APPLICATION_END.plusMonths(1);
     private final LocalDate ANOTHER_JOB_POSTING_JOB_START = ANOTHER_JOB_POSTING_APPLICATION_END.plusMonths(3);
 
+    // Test data for the first address
+    private final String ADDRESS_STREET = "123 Main St";
+    private final String ADDRESS_COMPLEMENT = "Suite 4B";
+    private final String ADDRESS_CITY = "Springfield";
+    private final String ADDRESS_STATE = "IL";
+    private final String ADDRESS_ZIP_CODE = "62704";
+
+    // Test data for the second address (to be created during the test)
+    private final String ANOTHER_ADDRESS_STREET = "456 Elm St";
+    private final String ANOTHER_ADDRESS_COMPLEMENT = "Apt 2C";
+    private final String ANOTHER_ADDRESS_CITY = "Chicago";
+    private final String ANOTHER_ADDRESS_STATE = "IL";
+    private final String ANOTHER_ADDRESS_ZIP_CODE = "60616";
+
     @BeforeAll
     public void setUp() {
         RestAssured.port = port;
         RestAssured.baseURI = "http://localhost";
+
+        // Create test address
+        Address address = Address.builder()
+                .street(ADDRESS_STREET)
+                .complement(ADDRESS_COMPLEMENT)
+                .city(ADDRESS_CITY)
+                .state(ADDRESS_STATE)
+                .zipCode(ADDRESS_ZIP_CODE)
+                .build();
+        address = addressService.createAddress(address);
+        addressId = address.getAddressId();
 
         // Create test company
         CompanySignUpRequest companySignUpRequest = new CompanySignUpRequest();
@@ -95,6 +124,7 @@ class RilloSystemTest {
         studentSignUpRequest.setUniversity(STUDENT_UNIVERSITY);
         Student student = authenticationService.signUpStudent(studentSignUpRequest);
         student.setGpa(STUDENT_GPA);
+        student.setAddress(address);
         studentService.updateStudent(student);
         studentId = student.getUserId();
 
@@ -235,5 +265,69 @@ class RilloSystemTest {
         assertEquals(expectedResults, response.jsonPath().getList("$").size(), "Expected number of results does not match");
     }
 
+    @Test
+    void testAddressCRUDL() {
+        // Test POST: Create a second address
+        Address anotherAddressRequest = Address.builder()
+                .street(ANOTHER_ADDRESS_STREET)
+                .complement(ANOTHER_ADDRESS_COMPLEMENT)
+                .city(ANOTHER_ADDRESS_CITY)
+                .state(ANOTHER_ADDRESS_STATE)
+                .zipCode(ANOTHER_ADDRESS_ZIP_CODE)
+                .build();
+        Response postResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .header("Content-Type", "application/json")
+                .body(anotherAddressRequest)
+                .post("/address");
+        assertEquals(200, postResponse.getStatusCode(), "POST request should succeed");
+        Address anotherAddress = postResponse.as(Address.class);
+        assertNotNull(anotherAddress.getAddressId(), "Second address ID should not be null");
 
+        // Test GET by ID: Verify the initial address
+        Response getByIdResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .get("/address/" + addressId);
+        assertEquals(200, getByIdResponse.getStatusCode(), "GET by ID should succeed");
+        Address fetchedAddress = getByIdResponse.as(Address.class);
+        assertEquals(ADDRESS_STREET, fetchedAddress.getStreet(), "Street should match the initial address");
+
+        // Test GET all: Verify both addresses are listed
+        Response getAllResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .get("/address");
+        assertEquals(200, getAllResponse.getStatusCode(), "GET all should succeed");
+        List<Address> addresses = getAllResponse.jsonPath().getList("$", Address.class);
+        assertEquals(2, addresses.size(), "There should be two addresses");
+
+        // Test PUT: Update the second address
+        anotherAddress.setStreet(ADDRESS_STREET);
+        anotherAddress.setComplement(ADDRESS_COMPLEMENT);
+        Response putResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .header("Content-Type", "application/json")
+                .body(anotherAddress)
+                .put("/address");
+        assertEquals(200, putResponse.getStatusCode(), "PUT request should succeed");
+        Address updatedAddress = putResponse.as(Address.class);
+        assertEquals(ADDRESS_STREET, updatedAddress.getStreet(), "Street should be updated");
+        assertEquals(ADDRESS_COMPLEMENT, updatedAddress.getComplement(), "Complement should be updated");
+
+        // Test DELETE: Delete the second address
+        Response deleteResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .delete("/address/" + anotherAddress.getAddressId());
+        assertEquals(200, deleteResponse.getStatusCode(), "DELETE request should succeed");
+        assertTrue(deleteResponse.asString().contains("Address successfully deleted"), "Deletion confirmation message should be returned");
+        Response verifyDeleteResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .get("/address/" + anotherAddress.getAddressId());
+        assertEquals(404, verifyDeleteResponse.getStatusCode(), "Deleted address should not be found");
+    }
 }
