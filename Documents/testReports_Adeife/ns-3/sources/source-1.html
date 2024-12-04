@@ -1,0 +1,163 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > AddressController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.controller.address</a>
+</div>
+
+<h1>Coverage Summary for Class: AddressController (com.example.thehiveapp.controller.address)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AddressController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (1/7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.controller.address;
+&nbsp;
+&nbsp;import com.example.thehiveapp.entity.address.Address;
+&nbsp;import com.example.thehiveapp.service.address.AddressService;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.Parameter;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller for managing addresses.
+&nbsp; */
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/address&quot;)
+<b class="fc">&nbsp;public class AddressController {</b>
+&nbsp;
+&nbsp;
+&nbsp;    @Autowired private AddressService addressService;
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get all addresses&quot;, description = &quot;Fetches all addresses from the database&quot;)
+&nbsp;    @GetMapping
+&nbsp;    public List&lt;Address&gt; getAddresses() {
+<b class="nc">&nbsp;        return addressService.getAddresses();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Create a new address&quot;, description = &quot;Creates a new address in the database&quot;)
+&nbsp;    @PostMapping
+&nbsp;    public Address createAddress(@RequestBody Address request) {
+<b class="nc">&nbsp;        return addressService.createAddress(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get address by ID&quot;, description = &quot;Fetches a specific address by ID&quot;)
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public Address getAddressById(@PathVariable @Parameter(description = &quot;ID of the address to retrieve&quot;, required = true) Long id) {
+<b class="nc">&nbsp;        return addressService.getAddressById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Update an address&quot;, description = &quot;Updates the information of an existing address&quot;)
+&nbsp;    @PutMapping
+&nbsp;    public Address updateAddress(@RequestBody Address request) {
+<b class="nc">&nbsp;        return addressService.updateAddress(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Delete an address&quot;, description = &quot;Deletes an address from the database by ID&quot;)
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    public String deleteAddress(@PathVariable @Parameter(description = &quot;ID of the address to delete&quot;, required = true) Long id) {
+<b class="nc">&nbsp;        addressService.deleteAddress(id);</b>
+<b class="nc">&nbsp;        return &quot;Address successfully deleted&quot;;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 17:47</div>
+</div>
+</body>
+</html>
