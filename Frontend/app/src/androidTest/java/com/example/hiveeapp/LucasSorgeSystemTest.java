@@ -87,13 +87,13 @@ public class LucasSorgeSystemTest {
 
         onView(withId(R.id.signup_student_btn)).perform(click());
 
-        onView(withId(R.id.signup_name_edt)).perform(scrollTo(), typeText("New Test User"));
+        onView(withId(R.id.signup_name_edt)).check(matches(isDisplayed())).perform(scrollTo(), typeText("New Test User"));
         onView(withId(R.id.signup_email_edt)).perform(scrollTo(), typeText(uniqueEmail));
         onView(withId(R.id.signup_password_edt)).perform(scrollTo(), typeText("Test@1234"));
         onView(withId(R.id.signup_verify_password_edt)).perform(scrollTo(), typeText("Test@1234"));
         onView(isRoot()).perform(closeSoftKeyboard());
         onView(withId(R.id.signup_university_edt)).perform(scrollTo(), typeText("Test University"));
-
+        onView(isRoot()).perform(closeSoftKeyboard());
         onView(withId(R.id.signup_signup_btn)).perform(scrollTo(), click());
 
         Thread.sleep(5000);

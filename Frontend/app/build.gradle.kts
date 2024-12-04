@@ -1,3 +1,6 @@
+import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
+import org.gradle.testing.jacoco.tasks.JacocoReport
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -44,11 +47,12 @@ android {
         unitTests {
             isIncludeAndroidResources = true
         }
+        animationsDisabled = true
     }
-}
 
-jacoco {
-    toolVersion = "0.8.10"
+    jacoco{
+        version = "0.8.10"
+    }
 }
 
 tasks.register("createDebugCoverageReport", JacocoReport::class) {
@@ -58,7 +62,7 @@ tasks.register("createDebugCoverageReport", JacocoReport::class) {
         exclude("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*")
     }
     val debugExecutionData = fileTree("${buildDir}") {
-        include("**/*.exec")
+        include("**/*.ec", "**/*.exec")
     }
 
     sourceDirectories.setFrom(files("src/main/java"))
