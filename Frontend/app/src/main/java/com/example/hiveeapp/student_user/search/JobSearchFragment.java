@@ -1,6 +1,5 @@
 package com.example.hiveeapp.student_user.search;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -11,12 +10,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -24,7 +23,6 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.student_user.swipe.JobPosting;
-import com.example.hiveeapp.student_user.swipe.JobSwipeFragment;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONArray;
@@ -35,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+// ... other imports ...
 
 public class JobSearchFragment extends Fragment {
 
@@ -47,7 +46,8 @@ public class JobSearchFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_job_search, container, false);
 
         // Initialize views
@@ -93,7 +93,16 @@ public class JobSearchFragment extends Fragment {
             if (jobPostings.isEmpty()) {
                 Toast.makeText(getContext(), "No jobs found.", Toast.LENGTH_SHORT).show();
             } else {
-                sendRecommendedJobsToMainPage(jobPostings);
+                // Use ViewModel to share data
+                SharedViewModel sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+                sharedViewModel.setJobPostings(jobPostings);
+
+                // Navigate to JobResultsFragment
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.frameLayout, new JobResultsFragment());
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
     }
@@ -127,8 +136,8 @@ public class JobSearchFragment extends Fragment {
                     Toast.makeText(getContext(), "Error fetching job postings", Toast.LENGTH_SHORT).show();
                 }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = createAuthorizationHeaders(); // Removed the argument
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = createAuthorizationHeaders();
                 Log.d(TAG, "Headers: " + headers);
                 return headers;
             }
@@ -143,27 +152,6 @@ public class JobSearchFragment extends Fragment {
         VolleySingleton.getInstance(getContext()).addToRequestQueue(request);
     }
 
-    private void sendRecommendedJobsToMainPage(List<JobPosting> recommendedJobs) {
-        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-
-        JobSwipeFragment jobSwipeFragment = (JobSwipeFragment) fragmentManager.findFragmentByTag("JobSwipeFragment");
-
-        if (jobSwipeFragment != null) {
-            jobSwipeFragment.prependRecommendedJobs(recommendedJobs);
-        } else {
-            // Create a new instance if it doesn't exist
-            JobSwipeFragment newJobSwipeFragment = new JobSwipeFragment();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("recommendedJobs", new ArrayList<>(recommendedJobs));
-            newJobSwipeFragment.setArguments(bundle);
-
-            fragmentManager.beginTransaction()
-                    .replace(R.id.frameLayout, newJobSwipeFragment, "JobSwipeFragment")
-                    .addToBackStack(null)
-                    .commit();
-        }
-    }
-
     private List<JobPosting> parseJobPostings(JSONArray response) throws JSONException {
         List<JobPosting> jobPostings = new ArrayList<>();
         for (int i = 0; i < response.length(); i++) {
@@ -173,7 +161,7 @@ public class JobSearchFragment extends Fragment {
                     jsonObject.getString("title"),
                     jsonObject.getString("description"),
                     jsonObject.optString("summary", ""),
-                    jsonObject.getDouble("salary"),
+                    jsonObject.optDouble("salary", 0.0),
                     jsonObject.optString("jobType", "N/A"),
                     jsonObject.optDouble("minimumGpa", 0.0),
                     jsonObject.getString("jobStart"),
@@ -200,4 +188,3 @@ public class JobSearchFragment extends Fragment {
         return headers;
     }
 }
-
