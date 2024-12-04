@@ -74,6 +74,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 application.getAppliedOn()
         );
     }
+
     @Override
     public List<ApplicationDto> getApplicationsforStudent(Long studentId){
         List<Application> applications = applicationRepository.findApplicationsByStudent(studentService.getStudentById(studentId));
@@ -86,6 +87,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 app.getAppliedOn()
         )).collect(Collectors.toList());
     }
+
     @Override
     public List<ApplicationDto> getApplications(){
         return applicationRepository.findAll().stream()
@@ -98,6 +100,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 app.getAppliedOn()))
                 .collect(Collectors.toList());
     }
+
     @Override
     public ApplicationDto updateApplicationStatus(Long applicationId, ApplicationUpdateRequest applicationUpdateRequest){
         Application application = applicationRepository.findById(applicationId)
@@ -115,6 +118,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 updatedApplication.getAppliedOn()
         );
     }
+
     @Override
     public void deleteApplication(Long applicationId){
         Application application = applicationRepository.findById(applicationId)

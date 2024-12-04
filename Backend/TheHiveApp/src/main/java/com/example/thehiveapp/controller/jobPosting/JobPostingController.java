@@ -69,6 +69,7 @@ public class JobPostingController {
         jobPostingService.deleteJobPosting(id);
         return "Job posting successfully deleted";
     }
+
     @Operation(
             summary = "Search for job postings",
             description = "Search job postings based on optional filters including keyword, salary range, job start range, application status, and qualification status."
@@ -95,4 +96,9 @@ public class JobPostingController {
         return jobPostingService.searchJobPostings(searchDto);
     }
 
+    @Operation(summary = "Get job posting suggestions for a student", description = "Retrieves the most relevant job postings for a specific student, sorted.")
+    @GetMapping("/suggestions/{studentId}")
+    public List<JobPostingDto> getJobPostingSuggestions(@PathVariable Long studentId) {
+        return jobPostingService.getJobPostingSuggestions(studentId);
+    }
 }
