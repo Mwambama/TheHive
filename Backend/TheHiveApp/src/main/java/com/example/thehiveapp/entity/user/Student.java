@@ -32,6 +32,9 @@ public class Student extends User{
     @Column(name="resume_path")
     private String resumePath;
 
+    @Column(name = "applications_made_today")
+    private int applicationsMadeToday = 0;
+
     @JsonIgnore
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Application> applications;
