@@ -33,7 +33,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8" // Ensure compatibility with Java 1.8
+        jvmTarget = "1.8"
     }
 }
 

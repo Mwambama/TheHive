@@ -23,7 +23,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.student_user.swipe.JobPosting; // Use the swipe.JobPosting class
+import com.example.hiveeapp.student_user.swipe.JobPosting;
 import com.example.hiveeapp.student_user.swipe.JobSwipeFragment;
 import com.example.hiveeapp.volley.VolleySingleton;
 
