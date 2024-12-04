@@ -7,15 +7,15 @@ import com.example.thehiveapp.dto.jobPosting.JobPostingDto;
 import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.entity.user.Employer;
 import com.example.thehiveapp.entity.user.Student;
+import com.example.thehiveapp.enums.jobPosting.JobType;
 import com.example.thehiveapp.service.authentication.AuthenticationService;
 import com.example.thehiveapp.service.jobPosting.JobPostingService;
-import com.example.thehiveapp.service.user.CompanyService;
-import com.example.thehiveapp.service.user.EmployerService;
 import com.example.thehiveapp.service.user.StudentService;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -27,14 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RilloSystemTest {
 
     @LocalServerPort
     private int port;
 
-    @Autowired private CompanyService companyService;
     @Autowired private StudentService studentService;
-    @Autowired private EmployerService employerService;
     @Autowired private JobPostingService jobPostingService;
     @Autowired private AuthenticationService authenticationService;
 
@@ -55,17 +54,27 @@ class RilloSystemTest {
     private final String EMPLOYER_NAME = "Employer";
     private final String EMPLOYER_EMAIL = "employer@test.com";
     private final String EMPLOYER_PASSWORD = "Password1@";
-    private final Double STUDENT_GPA = 3.5;
+    private final Double STUDENT_GPA = 3.0;
 
     // Set Up Job Postings
     private final String JOB_POSTING_TITLE = "Job Posting Title";
     private final String ANOTHER_JOB_POSTING_TITLE = "Another Job Posting Title";
     private final String JOB_POSTING_DESCRIPTION = "Job Posting Description";
     private final String ANOTHER_JOB_POSTING_DESCRIPTION = "Another Job Posting Description";
-    private final Double JOB_POSTING_MINIMUM_GPA = 3.5;
-    private final Double ANOTHER_JOB_POSTING_MINIMUM_GPA = 3.0;
+    private final String JOB_POSTING_SUMMARY = "Job Posting Summary";
+    private final String ANOTHER_JOB_POSTING_SUMMARY = "Another Job Posting Summary";
+    private final BigDecimal SMALL_SALARY = BigDecimal.valueOf(23.5);
+    private final BigDecimal LARGE_SALARY = BigDecimal.valueOf(40);
+    private final Double SMALL_GPA = 1.0;
+    private final Double LARGE_GPA = 3.5;
+    private final LocalDate JOB_POSTING_APPLICATION_START = LocalDate.now().minusWeeks(2); // Applications open
+    private final LocalDate ANOTHER_JOB_POSTING_APPLICATION_START = LocalDate.now().plusWeeks(2); // Applications open in two weeks
+    private final LocalDate JOB_POSTING_APPLICATION_END = JOB_POSTING_APPLICATION_START.plusMonths(2);
+    private final LocalDate ANOTHER_JOB_POSTING_APPLICATION_END = ANOTHER_JOB_POSTING_APPLICATION_START.plusMonths(2);
+    private final LocalDate JOB_POSTING_JOB_START = JOB_POSTING_APPLICATION_END.plusMonths(1);
+    private final LocalDate ANOTHER_JOB_POSTING_JOB_START = ANOTHER_JOB_POSTING_APPLICATION_END.plusMonths(3);
 
-    @BeforeEach
+    @BeforeAll
     public void setUp() {
         RestAssured.port = port;
         RestAssured.baseURI = "http://localhost";
@@ -98,23 +107,35 @@ class RilloSystemTest {
         Employer employer = authenticationService.signUpEmployer(employerSignUpRequest);
         employerId = employer.getUserId();
 
-        // Create test job posting
+        // Create test job posting (open)
         JobPostingDto jobPostingDto = jobPostingService.createJobPosting(
                 JobPostingDto.builder()
                         .title(JOB_POSTING_TITLE)
                         .description(JOB_POSTING_DESCRIPTION)
-                        .minimumGpa(JOB_POSTING_MINIMUM_GPA)
+                        .summary(JOB_POSTING_SUMMARY)
+                        .salary(SMALL_SALARY)
+                        .jobType(JobType.POST_GRADUATION_JOB)
+                        .minimumGpa(SMALL_GPA)
+                        .applicationStart(JOB_POSTING_APPLICATION_START)
+                        .applicationEnd(JOB_POSTING_APPLICATION_END)
+                        .jobStart(JOB_POSTING_JOB_START)
                         .employerId(employerId)
                         .build()
         );
         jobPostingId = jobPostingDto.getJobPostingId();
 
-        // Create another test job posting
+        // Create another test job posting (in the future)
         JobPostingDto anotherJobPostingDto = jobPostingService.createJobPosting(
                 JobPostingDto.builder()
                         .title(ANOTHER_JOB_POSTING_TITLE)
                         .description(ANOTHER_JOB_POSTING_DESCRIPTION)
-                        .minimumGpa(ANOTHER_JOB_POSTING_MINIMUM_GPA)
+                        .summary(ANOTHER_JOB_POSTING_SUMMARY)
+                        .salary(LARGE_SALARY)
+                        .jobType(JobType.INTERNSHIP)
+                        .minimumGpa(LARGE_GPA)
+                        .applicationStart(ANOTHER_JOB_POSTING_APPLICATION_START)
+                        .applicationEnd(ANOTHER_JOB_POSTING_APPLICATION_END)
+                        .jobStart(ANOTHER_JOB_POSTING_JOB_START)
                         .employerId(employerId)
                         .build()
         );
@@ -173,24 +194,27 @@ class RilloSystemTest {
     }
 
     @Test
-    void searchTest() {
-        // Test case 1: Search by keyword
-        assertSearch("Developer", null, null, null, null, null, null, 200, 2);
+    void testSearch() {
+        // Test case 1a: Search by keyword, one result
+        assertSearch(ANOTHER_JOB_POSTING_DESCRIPTION, null, null, null, null, null, null, 200, 1);
+
+        // Test case 1b: Search by keyword, two results
+        assertSearch(JOB_POSTING_DESCRIPTION, null, null, null, null, null, null, 200, 2);
 
         // Test case 2: Filter by minimum salary
-        assertSearch(null, BigDecimal.valueOf(60000), null, null, null, null, null, 200, 1);
+        assertSearch(null, SMALL_SALARY.add(BigDecimal.valueOf(1)), null, null, null, null, null, 200, 1);
 
         // Test case 3: Filter by maximum salary
-        assertSearch(null, null, BigDecimal.valueOf(50000), null, null, null, null, 200, 1);
+        assertSearch(null, null, LARGE_SALARY.subtract(BigDecimal.valueOf(1)), null, null, null, null, 200, 1);
 
         // Test case 4: Filter by job start date range
-        assertSearch(null, null, null, LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31), null, null, 200, 1);
+        assertSearch(null, null, null, JOB_POSTING_JOB_START, ANOTHER_JOB_POSTING_JOB_START.minusDays(1), null, null, 200, 1);
 
         // Test case 5: Filter by open applications
-        assertSearch(null, null, null, null, null, true, null, 200, 2);
+        assertSearch(null, null, null, null, null, true, null, 200, 1);
 
         // Test case 6: No results for unmatched filter
-        assertSearch(null, BigDecimal.valueOf(100000), null, null, null, null, null, 200, 0);
+        assertSearch(null, LARGE_SALARY.add(BigDecimal.valueOf(1)), null, null, null, null, null, 200, 0);
     }
 
     private void assertSearch(String q, BigDecimal minSalary, BigDecimal maxSalary, LocalDate minJobStart, LocalDate maxJobStart, Boolean isApplicationOpen, Boolean isQualified, int expectedStatus, int expectedResults) {
@@ -200,8 +224,8 @@ class RilloSystemTest {
                 .queryParam("q", q)
                 .queryParam("minSalary", minSalary)
                 .queryParam("maxSalary", maxSalary)
-                .queryParam("minJobStart", minJobStart)
-                .queryParam("maxJobStart", maxJobStart)
+                .queryParam("minJobStart", minJobStart != null ? minJobStart.toString() : null)
+                .queryParam("maxJobStart", maxJobStart != null ? maxJobStart.toString() : null)
                 .queryParam("isApplicationOpen", isApplicationOpen)
                 .queryParam("isQualified", isQualified)
                 .when()
