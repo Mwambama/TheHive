@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.hiveeapp.R;
@@ -106,7 +107,6 @@ public class JobSearchFragment extends Fragment {
             }
         }
         String url = urlBuilder.toString();
-
         Log.d(TAG, "Request URL: " + url);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -120,58 +120,48 @@ public class JobSearchFragment extends Fragment {
                     }
                 },
                 error -> {
-                    Log.e(TAG, "Volley Request Error: " + error.getMessage(), error); // Log error details
-                    handleError(error);
+                    if (error instanceof AuthFailureError) {
+                        Log.e(TAG, "Authentication failure. Check credentials.");
+                    }
+                    Log.e(TAG, "Volley Request Error: ", error);
                     Toast.makeText(getContext(), "Error fetching job postings", Toast.LENGTH_SHORT).show();
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return createAuthorizationHeaders(getContext());
+                Map<String, String> headers = createAuthorizationHeaders(); // Removed the argument
+                Log.d(TAG, "Headers: " + headers);
+                return headers;
             }
         };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        ));
 
         VolleySingleton.getInstance(getContext()).addToRequestQueue(request);
     }
 
     private void sendRecommendedJobsToMainPage(List<JobPosting> recommendedJobs) {
-        Log.d(TAG, "Sending recommended jobs: " + recommendedJobs.size());
-
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        Fragment jobSwipeFragment = fragmentManager.findFragmentByTag("JobSwipeFragment");
 
-        if (jobSwipeFragment instanceof JobSwipeFragment) {
-            ((JobSwipeFragment) jobSwipeFragment).prependRecommendedJobs(recommendedJobs);
-            Log.d(TAG, "Recommended jobs passed to JobSwipeFragment");
+        JobSwipeFragment jobSwipeFragment = (JobSwipeFragment) fragmentManager.findFragmentByTag("JobSwipeFragment");
+
+        if (jobSwipeFragment != null) {
+            jobSwipeFragment.prependRecommendedJobs(recommendedJobs);
         } else {
-            Log.e(TAG, "JobSwipeFragment not found. Creating a new instance.");
-
+            // Create a new instance if it doesn't exist
             JobSwipeFragment newJobSwipeFragment = new JobSwipeFragment();
             Bundle bundle = new Bundle();
             bundle.putSerializable("recommendedJobs", new ArrayList<>(recommendedJobs));
             newJobSwipeFragment.setArguments(bundle);
 
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.frameLayout, new JobSwipeFragment(), "JobSwipeFragment");
-            transaction.addToBackStack(null);
-            transaction.commit();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.frameLayout, newJobSwipeFragment, "JobSwipeFragment")
+                    .addToBackStack(null)
+                    .commit();
         }
-
-        // Navigate back if the fragment is already found
-        fragmentManager.popBackStack();
-    }
-
-    private Map<String, String> createAuthorizationHeaders(Context context) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-
-        String username = "teststudent1@example.com";
-        String password = "TestStudent1234@";
-
-        String credentials = username + ":" + password;
-        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        headers.put("Authorization", auth);
-
-        return headers;
     }
 
     private List<JobPosting> parseJobPostings(JSONArray response) throws JSONException {
@@ -194,22 +184,20 @@ public class JobSearchFragment extends Fragment {
             );
             jobPostings.add(jobPosting);
         }
-
-        Log.d(TAG, "Parsed job postings: " + jobPostings); // Log the parsed data
         return jobPostings;
-    }
-
-
-    private void handleError(Throwable error) {
-        String errorMessage = "Error fetching job postings.";
-        if (error != null && error.getMessage() != null) {
-            errorMessage += " Details: " + error.getMessage();
-        }
-        Log.e(TAG, "Volley Error: ", error);
-        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     interface JobPostingsCallback {
         void onJobPostingsFetched(List<JobPosting> jobPostings);
     }
+
+    private Map<String, String> createAuthorizationHeaders() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        String credentials = "teststudent1@example.com:TestStudent1234@";
+        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        headers.put("Authorization", auth);
+        return headers;
+    }
 }
+
