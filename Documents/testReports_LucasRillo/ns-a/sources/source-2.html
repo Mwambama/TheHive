@@ -1,0 +1,176 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EmployerController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.controller.user</a>
+</div>
+
+<h1>Coverage Summary for Class: EmployerController (com.example.thehiveapp.controller.user)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EmployerController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (1/9)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.controller.user;
+&nbsp;
+&nbsp;import com.example.thehiveapp.entity.user.Employer;
+&nbsp;import com.example.thehiveapp.service.user.EmployerService;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/employer&quot;)
+&nbsp;public class EmployerController {
+&nbsp;
+&nbsp;    @Autowired private EmployerService employerService;
+&nbsp;
+<b class="fc">&nbsp;    public EmployerController(){}</b>
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Retrieve all employers&quot;, description = &quot;Fetches a list of all registered employers. Optionally, filter by company ID.&quot;)
+&nbsp;    @GetMapping
+&nbsp;    public List&lt;Employer&gt; getEmployers(@RequestParam(value = &quot;companyId&quot;, required = false) Long companyId) {
+<b class="nc">&nbsp;        if (companyId != null) {</b>
+<b class="nc">&nbsp;            return employerService.getEmployersByCompanyId(companyId);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return employerService.getEmployers();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Create a new employer&quot;, description = &quot;Registers a new employer with the provided request.&quot;)
+&nbsp;    @PostMapping
+&nbsp;    public Employer createEmployer(@RequestBody Employer request) {
+<b class="nc">&nbsp;        return employerService.createEmployer(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get employer by ID&quot;, description = &quot;Retrieves employer information based on the employer&#39;s unique ID.&quot;)
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public Employer getEmployerById(@PathVariable Long id) {
+<b class="nc">&nbsp;        return employerService.getEmployerById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Update employer details&quot;, description = &quot;Updates the details of an existing employer based on the provided request.&quot;)
+&nbsp;    @PutMapping
+&nbsp;    public Employer updateEmployer(@RequestBody Employer request) {
+<b class="nc">&nbsp;        return employerService.updateEmployer(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Delete an employer&quot;, description = &quot;Deletes an employer&#39;s record using their unique ID.&quot;)
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    public String deleteEmployer(@PathVariable Long id) {
+<b class="nc">&nbsp;        employerService.deleteEmployer(id);</b>
+<b class="nc">&nbsp;        return &quot;Employer account successfully deleted&quot;;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 17:35</div>
+</div>
+</body>
+</html>
