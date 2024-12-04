@@ -2,6 +2,7 @@ package com.example.thehiveapp.service.jobPosting;
 
 import com.example.thehiveapp.dto.jobPosting.JobPostingDto;
 import com.example.thehiveapp.dto.jobPosting.JobPostingSearchDto;
+import com.example.thehiveapp.entity.application.Application;
 import com.example.thehiveapp.entity.jobPosting.JobPosting;
 import com.example.thehiveapp.entity.user.Employer;
 import com.example.thehiveapp.entity.user.Student;
@@ -16,8 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class JobPostingServiceImpl implements JobPostingService{
@@ -108,5 +113,70 @@ public class JobPostingServiceImpl implements JobPostingService{
             ).collect(Collectors.toList());
         }
         return results;
+    }
+
+    @Override
+    public List<JobPostingDto> getJobPostingSuggestions(Long studentId) {
+        // Get the last 10 applications
+        Student student = studentService.getStudentById(studentId);
+        List<JobPosting> recentJobs = applicationRepository.findTop10ByStudentOrderByAppliedOnDesc(student)
+                .stream()
+                .map(Application::getJobPosting)
+                .collect(Collectors.toList());
+
+
+        // Fetch all job postings
+        List<JobPosting> allPostings = jobPostingRepository.findAll();
+
+        // Filter and rank postings based on criteria
+        return allPostings.stream()
+                .filter(posting -> student.getGpa() == null ||
+                        posting.getMinimumGpa() <= student.getGpa()) // Filter by GPA
+                .filter(posting -> student.getGraduationDate() == null ||
+                        LocalDate.parse(student.getGraduationDate()).isBefore(posting.getJobStart())) // Graduation date relevance
+                .sorted((p1, p2) -> {
+                    // Sort by relevance
+                    double score1 = calculateRelevanceScore(student, p1, recentJobs);
+                    double score2 = calculateRelevanceScore(student, p2, recentJobs);
+                    return Double.compare(score2, score1); // Higher score first
+                })
+                .limit(10) // Limit to top 10
+                .map(mapper::entityToDto)
+                .collect(Collectors.toList());
+    }
+
+    private double calculateRelevanceScore(Student student, JobPosting posting, List<JobPosting> recentJobs) {
+        // Closer GPAs score higher
+        double gpaScore = student.getGpa() != null ? 1.0 / (1 + Math.abs(student.getGpa() - posting.getMinimumGpa())) : 0;
+
+        // Closer dates score higher
+        double startDateProximity = 0.0;
+        if (student.getGraduationDate() != null) {
+            LocalDate gradDate = LocalDate.parse(student.getGraduationDate());
+            if (posting.getJobStart() != null) {
+                long daysDiff = Math.abs(DAYS.between(gradDate, posting.getJobStart()));
+                startDateProximity = 1.0 / (1 + daysDiff);
+            }
+        }
+
+        // Similar titles to last 10 applications score higher
+        double totalSimilarity = 0.0;
+        for (JobPosting recent : recentJobs) {
+            totalSimilarity += computeSimilarity(posting.getTitle(), recent.getTitle());
+        }
+        double textSimilarityScore = totalSimilarity / recentJobs.size();
+
+        // Return weighted relevance score
+        return gpaScore + 1.2 * startDateProximity + 2.5 * textSimilarityScore;
+    }
+
+    private double computeSimilarity(String text1, String text2) {
+        if (text1 == null || text2 == null) return 0.0;
+        String[] words1 = text1.toLowerCase().split("\\s+");
+        String[] words2 = text2.toLowerCase().split("\\s+");
+        long commonWords = Arrays.stream(words1)
+                .filter(word -> Arrays.asList(words2).contains(word))
+                .count();
+        return (double) commonWords / Math.max(words1.length, words2.length); // Similarity ratio
     }
 }
