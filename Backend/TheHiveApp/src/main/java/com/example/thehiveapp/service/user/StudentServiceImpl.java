@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -52,6 +53,14 @@ public class StudentServiceImpl implements StudentService{
             }
         }
         return studentRepository.save(request);
+    }
+
+    @Override
+    public void trackApplication(Long studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalStateException("Student not found"));
+        student.setApplicationsMadeToday(student.getApplicationsMadeToday() + 1);
+        studentRepository.save(student);
     }
 
     @Override
