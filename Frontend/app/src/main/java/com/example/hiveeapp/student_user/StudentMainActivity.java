@@ -205,7 +205,7 @@ import java.util.Map;
 public class StudentMainActivity extends AppCompatActivity {
 
     private static final String TAG = "StudentMainActivity";
-    private static final String GET_STUDENT_INFO_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications/apply";
+    private static final String GET_STUDENT_INFO_URL = "http://coms-3090-063.class.las.iastate.edu:8080/student";
     private static final String PREFERENCES_NAME = "StudentPreferences";
     private static final String DAILY_APPLIED_COUNT_KEY = "dailyAppliedCount";
 
@@ -353,26 +353,37 @@ public class StudentMainActivity extends AppCompatActivity {
      *
      * @param studentId The ID of the currently logged-in student.
      */
+    /**
+     * Fetches the daily applied count for the user from the backend and updates the UI.
+     *
+     * @param studentId The ID of the currently logged-in student.
+     */
     private void fetchDailyAppliedCount(int studentId) {
         String url = GET_STUDENT_INFO_URL + "/" + studentId;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
                     try {
-                        // Parse the daily applied count
-                        int applicationsMadeToday = response.getInt("applicationsMadeToday");
+                        // Safely parse the daily applied count with a default value of 0
+                        int applicationsMadeToday = response.optInt("applicationsMadeToday", 0);
+
+                        // Log the fetched value
+                        Log.d(TAG, "Fetched applicationsMadeToday: " + applicationsMadeToday);
 
                         // Update the UI and save the count locally
                         updateDailyAppliedCount(applicationsMadeToday);
                         saveDailyAppliedCount(applicationsMadeToday);
 
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         Log.e(TAG, "Error parsing daily applied count", e);
                     }
                 },
                 error -> {
                     Log.e(TAG, "Failed to fetch daily applied count", error);
                     Toast.makeText(this, "Failed to fetch Daily Applied count.", Toast.LENGTH_SHORT).show();
+
+                    // If the fetch fails, fallback to displaying the saved count
+                    displaySavedDailyAppliedCount();
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -382,6 +393,7 @@ public class StudentMainActivity extends AppCompatActivity {
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
+
 
     /**
      * Updates the Daily Applied Count TextView with the fetched count.
@@ -400,6 +412,7 @@ public class StudentMainActivity extends AppCompatActivity {
     private void saveDailyAppliedCount(int count) {
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         preferences.edit().putInt(DAILY_APPLIED_COUNT_KEY, count).apply();
+        Log.d(TAG, "Updated Daily Applied Count TextView: " + count);
     }
 
     /**
@@ -409,7 +422,10 @@ public class StudentMainActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         int savedCount = preferences.getInt(DAILY_APPLIED_COUNT_KEY, 0);
         dailyAppliedCount.setText(String.valueOf(savedCount));
+        Log.d(TAG, "Displayed saved Daily Applied Count: " + savedCount);
     }
+
+
 
     /**
      * Creates authorization headers for the API requests.
