@@ -330,6 +330,28 @@ class AdeifeSystemTest {
 
     }
 
+    @Test
+    void testJobAnalytics(){
+        // Test case 1: Successful Retrieval of Job Analytics
+        assertJobAnalytics(jobPostingId3, 200, null);
+
+        // Test case 2: Invalid job posting id
+        assertJobAnalytics(-1L, 404, "Job Posting not found with id -1");
+    }
+
+    private void assertJobAnalytics(Long jobPostingId3, int expectedStatus, String expectedError){
+        Response response = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .when()
+                .get("/job-posting/analytics/" + jobPostingId3);
+
+        assertEquals(expectedStatus, response.getStatusCode());
+        if (expectedError != null) {
+            assertTrue(response.asString().contains(expectedError), "Expected error message: " + expectedError);
+        }
+    }
+
 
 
 }

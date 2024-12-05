@@ -1,5 +1,12 @@
 package com.example.thehiveapp.service.jobPosting;
 
+import com.example.thehiveapp.enums.status.Status;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtils;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.data.general.DefaultPieDataset;
 import com.example.thehiveapp.dto.jobPosting.JobPostingDto;
 import com.example.thehiveapp.dto.jobPosting.JobPostingSearchDto;
 import com.example.thehiveapp.entity.application.Application;
@@ -17,11 +24,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.thehiveapp.enums.status.Status.*;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
@@ -73,6 +82,47 @@ public class JobPostingServiceImpl implements JobPostingService{
                 )
         );
     }
+
+    @Override
+    public byte[] getJobPostingAnalytics(Long jobPostingId) {
+        JobPosting jobPosting = jobPostingRepository.findById(jobPostingId).orElseThrow(
+                () -> new ResourceNotFoundException("Job Posting not found with id " + jobPostingId)
+        );
+        DefaultPieDataset defaultPieDataset = new DefaultPieDataset();
+        int pendingCount = applicationRepository.findApplicationsByJobPostingAndStatus(jobPosting, PENDING).size();
+        int acceptedCount = applicationRepository.findApplicationsByJobPostingAndStatus(jobPosting, ACCEPTED).size();
+        int rejectedCount = applicationRepository.findApplicationsByJobPostingAndStatus(jobPosting, REJECTED).size();
+        double total = pendingCount + acceptedCount + rejectedCount;
+        String pendingLabel = String.format("PENDING (%.1f%%)", (pendingCount / total * 100));
+        String acceptedLabel = String.format("ACCEPTED (%.1f%%)", (acceptedCount / total * 100));
+        String rejectedLabel = String.format("REJECTED (%.1f%%)", (rejectedCount / total * 100));
+        defaultPieDataset.setValue(pendingLabel, pendingCount);
+        defaultPieDataset.setValue(acceptedLabel, acceptedCount);
+        defaultPieDataset.setValue(rejectedLabel, rejectedCount);
+        JFreeChart pieChart = ChartFactory.createPieChart(
+                "Job Posting: " + jobPosting.getTitle() + " Status Distribution",
+                defaultPieDataset,
+                true,
+                true,
+                false
+        );
+        String subHeading = String.format("Total Applications: %d | Pending: %d | Accepted: %d | Rejected: %d",
+                (int) total, pendingCount, acceptedCount, rejectedCount);
+        TextTitle subtitle = new TextTitle(subHeading, new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 13));
+        pieChart.addSubtitle(subtitle);
+        PiePlot plot = (PiePlot) pieChart.getPlot();
+        plot.setSectionPaint(pendingLabel, new java.awt.Color(232, 217, 109)); // Orange
+        plot.setSectionPaint(acceptedLabel, new java.awt.Color(69, 176, 69)); // Green
+        plot.setSectionPaint(rejectedLabel, new java.awt.Color(219, 43, 22));   // Red
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            ChartUtils.writeChartAsPNG(outputStream, pieChart, 640, 480);
+            return outputStream.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate pie chart", e);
+        }
+    }
+
 
     @Override
     public JobPostingDto updateJobPosting(JobPostingDto dto) {
