@@ -1,0 +1,171 @@
+<!-- fragment_job_search.xml -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/search_scroll_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="@drawable/gradient_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Job Search"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#6200EE"
+            android:layout_marginBottom="24dp" />
+
+            <!-- Keyword Field -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Keyword"
+                    android:textSize="16sp"
+                    android:textColor="#6200EE"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/keywordInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:hint="Enter keyword"
+                    android:inputType="text"
+                    android:textColorHint="#9E9E9E"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Minimum Salary Field -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Minimum Salary"
+                    android:textSize="16sp"
+                    android:textColor="#6200EE"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/minSalaryInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:hint="Enter minimum salary"
+                    android:inputType="numberDecimal"
+                    android:textColorHint="#9E9E9E"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Maximum Salary Field -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Maximum Salary"
+                    android:textSize="16sp"
+                    android:textColor="#6200EE"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/maxSalaryInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:hint="Enter maximum salary"
+                    android:inputType="numberDecimal"
+                    android:textColorHint="#9E9E9E"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Job Start Date Fields -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/minJobStartInput"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:hint="Start Date (Min)"
+                    android:inputType="date"
+                    android:textColorHint="#9E9E9E"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="8dp" />
+
+                <EditText
+                    android:id="@+id/maxJobStartInput"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:hint="Start Date (Max)"
+                    android:inputType="date"
+                    android:textColorHint="#9E9E9E"
+                    android:textSize="16sp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+            <!-- Filters -->
+            <CheckBox
+                android:id="@+id/isApplicationOpenCheckbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Open Applications Only"
+                android:textColor="#6200EE"
+                android:layout_marginBottom="8dp" />
+
+            <CheckBox
+                android:id="@+id/isQualifiedCheckbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Only Qualified Jobs"
+                android:textColor="#6200EE"
+                android:layout_marginBottom="16dp" />
+
+        <!-- Search Button -->
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#6200EE"
+            android:padding="12dp"
+            android:elevation="4dp"
+            android:layout_marginBottom="24dp" />
+    </LinearLayout>
+</ScrollView>
