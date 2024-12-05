@@ -64,6 +64,7 @@ public class ApplicationServiceImpl implements ApplicationService{
         application.setStudent(student);
         application.setStatus(Status.PENDING);
         applicationRepository.save(application);
+        studentService.trackApplication(student.getUserId());
         log.info("Student Id: " + request.getStudentId() + " applied for Job Posting " + request.getJobPostingId());
         return new ApplicationDto(
                 application.getApplicationId(),
