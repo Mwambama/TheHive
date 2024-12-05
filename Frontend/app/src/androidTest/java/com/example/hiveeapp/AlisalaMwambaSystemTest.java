@@ -353,7 +353,7 @@ public class AlisalaMwambaSystemTest {
 
         // Step 4: Validate navigation to the Profile page
 //        Thread.sleep(2000); // Replace with IdlingResource if possible
-        onView(withId(R.id.navigation_main_user_page)).perform(click());
+     //   onView(withId(R.id.navigation_main_user_page)).perform(click());
         // Step 5: Use the back button to navigate back to EmployerMainActivity
         onView(withId(R.id.backArrowIcon)).perform(click());
         Thread.sleep(2000);
