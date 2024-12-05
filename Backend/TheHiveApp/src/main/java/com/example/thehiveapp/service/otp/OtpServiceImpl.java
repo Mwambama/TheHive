@@ -22,6 +22,17 @@ public class OtpServiceImpl implements OtpService{
     private final OtpRepository otpRepository;
     private final EmailService emailService;
 
+    @Override
+    public void updateOtp(Otp otp){
+        Otp existingOtp = otpRepository.findByEmail(otp.getEmail());
+        existingOtp.setOtp(otp.getOtp());
+        existingOtp.setEmail(otp.getEmail());
+        existingOtp.setCreatedAt(LocalDateTime.now());
+        existingOtp.setExpiresAt(otp.getExpiresAt());
+        otpRepository.save(existingOtp);
+    }
+
+    @Override
     public ForgetPasswordResponse sendOtp(OtpRequest otpRequest){
         Otp existingOtp = otpRepository.findByEmail(otpRequest.getEmail());
         if (existingOtp != null){
@@ -42,8 +53,13 @@ public class OtpServiceImpl implements OtpService{
         return ForgetPasswordResponse.builder()
                 .statusCode(200)
                 .responseMessage("SUCCESS")
+                .otpResponse(OtpResponse.builder()
+                        .otp(otp)
+                        .build())
                 .build();
     }
+
+    @Override
     public ForgetPasswordResponse validateOtp(OtpValidationRequest otpValidationRequest){
         Otp otp = otpRepository.findByEmail(otpValidationRequest.getEmail());
         log.info("Email: {}", otpValidationRequest.getEmail());

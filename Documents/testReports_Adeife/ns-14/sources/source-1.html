@@ -1,0 +1,299 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ApplicationServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.service.application</a>
+</div>
+
+<h1>Coverage Summary for Class: ApplicationServiceImpl (com.example.thehiveapp.service.application)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ApplicationServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (5/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (3/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    48.3%
+  </span>
+  <span class="absValue">
+    (42/87)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ApplicationServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (5/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (3/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    48.3%
+  </span>
+  <span class="absValue">
+    (42/87)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.service.application;
+&nbsp;
+&nbsp;import com.example.thehiveapp.dto.application.ApplicationDto;
+&nbsp;import com.example.thehiveapp.dto.application.ApplicationRequest;
+&nbsp;import com.example.thehiveapp.dto.application.ApplicationUpdateRequest;
+&nbsp;import com.example.thehiveapp.entity.application.Application;
+&nbsp;import com.example.thehiveapp.entity.chat.Chat;
+&nbsp;import com.example.thehiveapp.entity.jobPosting.JobPosting;
+&nbsp;import com.example.thehiveapp.entity.user.Student;
+&nbsp;import com.example.thehiveapp.enums.status.Status;
+&nbsp;import com.example.thehiveapp.mapper.jobPosting.JobPostingMapper;
+&nbsp;import com.example.thehiveapp.repository.application.ApplicationRepository;
+&nbsp;import com.example.thehiveapp.repository.jobPosting.JobPostingRepository;
+&nbsp;import com.example.thehiveapp.repository.user.StudentRepository;
+&nbsp;import com.example.thehiveapp.service.chat.ChatService;
+&nbsp;import com.example.thehiveapp.service.jobPosting.JobPostingService;
+&nbsp;import com.example.thehiveapp.service.user.StudentService;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Service
+<b class="fc">&nbsp;public class ApplicationServiceImpl implements ApplicationService{</b>
+&nbsp;
+&nbsp;    @Autowired private ApplicationRepository applicationRepository;
+&nbsp;    @Autowired private JobPostingRepository jobPostingRepository;
+&nbsp;    @Autowired private StudentRepository studentRepository;
+&nbsp;    @Autowired private JobPostingService jobPostingService;
+&nbsp;    @Autowired private JobPostingMapper jobPostingMapper;
+&nbsp;    @Autowired private ChatService chatService;
+&nbsp;    @Autowired private StudentService studentService;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ApplicationDto getApplication(Long applicationId) {
+<b class="nc">&nbsp;        Application application = applicationRepository.findById(applicationId)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Application cannot be found!&quot;));</b>
+<b class="nc">&nbsp;        return new ApplicationDto(</b>
+<b class="nc">&nbsp;                application.getApplicationId(),</b>
+<b class="nc">&nbsp;                application.getJobPosting().getJobPostingId(),</b>
+<b class="nc">&nbsp;                application.getStudent().getUserId(),</b>
+<b class="nc">&nbsp;                application.getJobPosting().getTitle(),</b>
+<b class="nc">&nbsp;                application.getStatus(),</b>
+<b class="nc">&nbsp;                application.getAppliedOn()</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ApplicationDto applyForJobPosting(ApplicationRequest request){
+<b class="fc">&nbsp;        JobPosting jobPosting = jobPostingRepository.findById(request.getJobPostingId())</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Job posting not found&quot;));</b>
+<b class="fc">&nbsp;        Student student = studentRepository.findById(request.getStudentId())</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Student not found&quot;));</b>
+<b class="fc">&nbsp;        boolean alreadyApplied = applicationRepository.existsByStudentAndJobPosting(student, jobPosting);</b>
+<b class="fc">&nbsp;        if (alreadyApplied) {</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Student has already applied for this job posting!&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Application application = new Application();</b>
+<b class="fc">&nbsp;        application.setJobPosting(jobPosting);</b>
+<b class="fc">&nbsp;        application.setStudent(student);</b>
+<b class="fc">&nbsp;        application.setStatus(Status.PENDING);</b>
+<b class="fc">&nbsp;        applicationRepository.save(application);</b>
+<b class="fc">&nbsp;        log.info(&quot;Student Id: &quot; + request.getStudentId() + &quot; applied for Job Posting &quot; + request.getJobPostingId());</b>
+<b class="fc">&nbsp;        return new ApplicationDto(</b>
+<b class="fc">&nbsp;                application.getApplicationId(),</b>
+<b class="fc">&nbsp;                application.getJobPosting().getJobPostingId(),</b>
+<b class="fc">&nbsp;                application.getStudent().getUserId(),</b>
+<b class="fc">&nbsp;                application.getJobPosting().getTitle(),</b>
+<b class="fc">&nbsp;                application.getStatus(),</b>
+<b class="fc">&nbsp;                application.getAppliedOn()</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;    @Override
+&nbsp;    public List&lt;ApplicationDto&gt; getApplicationsforStudent(Long studentId){
+<b class="nc">&nbsp;        List&lt;Application&gt; applications = applicationRepository.findApplicationsByStudent(studentService.getStudentById(studentId));</b>
+<b class="nc">&nbsp;        return applications.stream().map(app -&gt; new ApplicationDto(</b>
+<b class="nc">&nbsp;                app.getApplicationId(),</b>
+<b class="nc">&nbsp;                app.getJobPosting().getJobPostingId(),</b>
+<b class="nc">&nbsp;                app.getStudent().getUserId(),</b>
+<b class="nc">&nbsp;                app.getJobPosting().getTitle(),</b>
+<b class="nc">&nbsp;                app.getStatus(),</b>
+<b class="nc">&nbsp;                app.getAppliedOn()</b>
+<b class="nc">&nbsp;        )).collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;    @Override
+&nbsp;    public List&lt;ApplicationDto&gt; getApplications(){
+<b class="nc">&nbsp;        return applicationRepository.findAll().stream()</b>
+<b class="nc">&nbsp;                .map(app -&gt; new ApplicationDto(</b>
+<b class="nc">&nbsp;                app.getApplicationId(),</b>
+<b class="nc">&nbsp;                app.getJobPosting().getJobPostingId(),</b>
+<b class="nc">&nbsp;                app.getStudent().getUserId(),</b>
+<b class="nc">&nbsp;                app.getJobPosting().getTitle(),</b>
+<b class="nc">&nbsp;                app.getStatus(),</b>
+<b class="nc">&nbsp;                app.getAppliedOn()))</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;    @Override
+&nbsp;    public ApplicationDto updateApplicationStatus(Long applicationId, ApplicationUpdateRequest applicationUpdateRequest){
+<b class="fc">&nbsp;        Application application = applicationRepository.findById(applicationId)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Application not found&quot;));</b>
+<b class="pc">&nbsp;        if (applicationUpdateRequest.getStatus() != null) {</b>
+<b class="fc">&nbsp;            application.setStatus(applicationUpdateRequest.getStatus());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Application updatedApplication = applicationRepository.save(application);</b>
+<b class="fc">&nbsp;        return new ApplicationDto(</b>
+<b class="fc">&nbsp;                updatedApplication.getApplicationId(),</b>
+<b class="fc">&nbsp;                updatedApplication.getJobPosting().getJobPostingId(),</b>
+<b class="fc">&nbsp;                updatedApplication.getStudent().getUserId(),</b>
+<b class="fc">&nbsp;                updatedApplication.getJobPosting().getTitle(),</b>
+<b class="fc">&nbsp;                updatedApplication.getStatus(),</b>
+<b class="fc">&nbsp;                updatedApplication.getAppliedOn()</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;    @Override
+&nbsp;    public void deleteApplication(Long applicationId){
+<b class="nc">&nbsp;        Application application = applicationRepository.findById(applicationId)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Application not found&quot;));</b>
+<b class="nc">&nbsp;        applicationRepository.delete(application);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;ApplicationDto&gt; getApplicationsByJobPostingIdAndStatus(Long jobPostingId, Status status) {
+<b class="nc">&nbsp;        JobPosting jobPosting = jobPostingMapper.dtoToEntity(jobPostingService.getJobPostingById(jobPostingId));</b>
+&nbsp;        List&lt;Application&gt; applications;
+<b class="nc">&nbsp;        if (status == null) {</b>
+<b class="nc">&nbsp;            applications = applicationRepository.findApplicationsByJobPosting(jobPosting);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            applications = applicationRepository.findApplicationsByJobPostingAndStatus(jobPosting, status);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return applications.stream().map(</b>
+<b class="nc">&nbsp;                application -&gt; new ApplicationDto(</b>
+<b class="nc">&nbsp;                        application.getApplicationId(),</b>
+<b class="nc">&nbsp;                        application.getJobPosting().getJobPostingId(),</b>
+<b class="nc">&nbsp;                        application.getStudent().getUserId(),</b>
+<b class="nc">&nbsp;                        application.getJobPosting().getTitle(),</b>
+<b class="nc">&nbsp;                        application.getStatus(),</b>
+<b class="nc">&nbsp;                        application.getAppliedOn()</b>
+&nbsp;                )
+<b class="nc">&nbsp;        ).collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void rejectApplication(Long applicationId) {
+<b class="nc">&nbsp;        this.updateApplicationStatus(applicationId, ApplicationUpdateRequest.builder().status(Status.REJECTED).build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    @Override
+&nbsp;    public void acceptApplication(Long applicationId) {
+<b class="fc">&nbsp;        this.updateApplicationStatus(applicationId, ApplicationUpdateRequest.builder().status(Status.ACCEPTED).build());</b>
+<b class="fc">&nbsp;        Application application = applicationRepository.findApplicationByApplicationId(applicationId).orElseThrow(</b>
+<b class="nc">&nbsp;                () -&gt; new ResourceNotFoundException(&quot;Application not found with id: &quot; + applicationId)</b>
+&nbsp;        );
+<b class="fc">&nbsp;        Chat chat = Chat.builder()</b>
+<b class="fc">&nbsp;                .studentId(application.getStudent().getUserId())</b>
+<b class="fc">&nbsp;                .employerId(application.getJobPosting().getEmployer().getUserId())</b>
+<b class="fc">&nbsp;                .jobPostingId(application.getJobPosting().getJobPostingId())</b>
+<b class="fc">&nbsp;                .build();</b>
+<b class="fc">&nbsp;        chatService.createChat(chat);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 17:47</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > JobPosting</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.entity.jobPosting</a>
+</div>
+
+<h1>Coverage Summary for Class: JobPosting (com.example.thehiveapp.entity.jobPosting)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">JobPosting$HibernateInstantiator$flBUx39e</td>
+  </tr>
+  <tr>
+    <td class="name">JobPosting$HibernateProxy$kbRuZuy0</td>
+  </tr>
+  <tr>
+    <td class="name">JobPosting$JobPostingBuilder</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.entity.jobPosting;
+&nbsp;
+&nbsp;
+&nbsp;import com.example.thehiveapp.entity.application.Application;
+&nbsp;import com.example.thehiveapp.entity.user.Employer;
+&nbsp;import com.example.thehiveapp.enums.jobPosting.JobType;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnore;
+&nbsp;import jakarta.persistence.CascadeType;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.EnumType;
+&nbsp;import jakarta.persistence.Enumerated;
+&nbsp;import jakarta.persistence.FetchType;
+&nbsp;import jakarta.persistence.GeneratedValue;
+&nbsp;import jakarta.persistence.GenerationType;
+&nbsp;import jakarta.persistence.Id;
+&nbsp;import jakarta.persistence.JoinColumn;
+&nbsp;import jakarta.persistence.ManyToOne;
+&nbsp;import jakarta.persistence.OneToMany;
+&nbsp;import jakarta.persistence.Table;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Builder;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@AllArgsConstructor
+&nbsp;@NoArgsConstructor
+&nbsp;@Builder
+&nbsp;@Data
+&nbsp;@Table(name = &quot;job_posting&quot;)
+&nbsp;public class JobPosting {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    @Column(name = &quot;job_posting_id&quot;)
+&nbsp;    private Long jobPostingId;
+&nbsp;
+&nbsp;    @ManyToOne(fetch = FetchType.LAZY)
+&nbsp;    @JoinColumn(name = &quot;employer_id&quot;, nullable = false)
+&nbsp;    private Employer employer;
+&nbsp;
+&nbsp;    @JsonIgnore
+&nbsp;    @OneToMany(mappedBy = &quot;jobPosting&quot;, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+&nbsp;    private List&lt;Application&gt; applications;
+&nbsp;
+&nbsp;    @Column(name = &quot;title&quot;, nullable = false)
+&nbsp;    private String title;
+&nbsp;
+&nbsp;    @Column(name = &quot;description&quot;, nullable = false)
+&nbsp;    private String description;
+&nbsp;
+&nbsp;    @Column(name = &quot;summary&quot;)
+&nbsp;    private String summary;
+&nbsp;
+&nbsp;    @Column(name = &quot;salary&quot;)
+&nbsp;    private BigDecimal salary;
+&nbsp;
+&nbsp;    @Enumerated(EnumType.STRING)
+&nbsp;    @Column(name = &quot;job_type&quot;)
+&nbsp;    private JobType jobType;
+&nbsp;
+&nbsp;    @Column(name = &quot;minimum_gpa&quot;, nullable = false)
+&nbsp;    private Double minimumGpa;
+&nbsp;
+&nbsp;    @Column(name = &quot;job_start&quot;)
+&nbsp;    private LocalDate jobStart;
+&nbsp;
+&nbsp;    @Column(name = &quot;application_start&quot;)
+&nbsp;    private LocalDate applicationStart;
+&nbsp;
+&nbsp;    @Column(name = &quot;application_end&quot;)
+&nbsp;    private LocalDate applicationEnd;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 17:47</div>
+</div>
+</body>
+</html>

@@ -19,20 +19,24 @@ public class ChatServiceImpl implements ChatService {
 
     public ChatServiceImpl() {}
 
+    @Override
     public List<Chat> getChats() {
         return chatRepository.findAll();
     }
 
+    @Override
     public Chat createChat(Chat chat) {
         return chatRepository.save(chat);
     }
 
+    @Override
     public Chat getChatById(Long id) {
         return chatRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Chat not found with id " + id)
         );
     }
 
+    @Override
     public String getOtherUserEmail(Long chatId, Long userId){
         Chat chat = getChatById(chatId);
         // if student
@@ -46,6 +50,8 @@ public class ChatServiceImpl implements ChatService {
             return user.getEmail();
         }
     }
+
+    @Override
     public Chat updateChat(Chat chat) {
         Long id = chat.getChatId();
         chatRepository.findById(id).orElseThrow(
@@ -54,6 +60,7 @@ public class ChatServiceImpl implements ChatService {
         return chatRepository.save(chat);
     }
 
+    @Override
     public void deleteChat(Long id) {
         Chat chat = chatRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Chat not found with id " + id)
@@ -62,16 +69,17 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<Long> getChatIdsByUser(User user) throws BadRequestException {
-        return switch (user.getRole()) {
-            case EMPLOYER -> chatRepository.findAllByEmployerId(
-                    user.getUserId()
-            ).stream().map(Chat::getChatId).collect(Collectors.toList());
-            case STUDENT -> chatRepository.findAllByStudentId(
-                        user.getUserId()
-                ).stream().map(Chat::getChatId).toList();
+    public List<Chat> getChatsByUserId(Long userId) throws BadRequestException {
+        return switch (userService.getUserById(userId).getRole()) {
+            case EMPLOYER -> chatRepository.findAllByEmployerId(userId);
+            case STUDENT -> chatRepository.findAllByStudentId(userId);
             default -> throw new BadRequestException("Invalid role: must be STUDENT or EMPLOYER");
         };
+    }
+
+    @Override
+    public List<Long> getChatIdsByUser(User user) throws BadRequestException {
+        return getChatsByUserId(user.getUserId()).stream().map(Chat::getChatId).collect(Collectors.toList());
     }
 
 }

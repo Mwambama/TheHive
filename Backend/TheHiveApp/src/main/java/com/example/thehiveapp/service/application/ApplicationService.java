@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ApplicationService {
     ApplicationDto getApplication(Long applicationId);
-    void applyForJobPosting(ApplicationRequest request);
+    ApplicationDto applyForJobPosting(ApplicationRequest request);
     List<ApplicationDto> getApplications();
     List<ApplicationDto> getApplicationsforStudent(Long studentId);
     ApplicationDto updateApplicationStatus(Long applicationId, ApplicationUpdateRequest applicationUpdateRequest);
