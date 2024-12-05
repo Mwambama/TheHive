@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,6 +62,14 @@ public class JobPostingController {
     @PutMapping
     public JobPostingDto updateJobPosting(@RequestBody JobPostingDto dto) {
         return jobPostingService.updateJobPosting(dto);
+    }
+
+    @Operation(summary = "Get job posting analytics for application",
+            description = "Allows an employer to retrieve analytics data for their job postings."
+    )
+    @GetMapping(value = "/analytics/{jobPostingId}", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] getJobPostingAnalytics(@PathVariable Long jobPostingId){
+        return jobPostingService.getJobPostingAnalytics(jobPostingId);
     }
 
     @Operation(summary = "Delete a job posting by ID", description = "Deletes a job posting by its unique ID.")
