@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,6 +75,30 @@ public class EmployerApis {
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
+    public static void getGraphImage(Context context, long jobId, Response.Listener<byte[]> listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL + "/analytics/" + jobId;
+        Log.d(TAG, "GET Graph Request URL: " + url);
+
+        // Create an ImageRequest to fetch the graph as a byte array
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                url,
+                response -> {
+                    byte[] imageData = response.getBytes(StandardCharsets.ISO_8859_1);    // Decode byte[]
+                    listener.onResponse(imageData);
+                },
+                error -> handleErrorResponse("Error fetching graph image", error, errorListener)
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return EmployerApis.getHeaders(context);
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
 
     /**
      * Internal method to add a new employer (called after address creation).
