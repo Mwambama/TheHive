@@ -4,7 +4,6 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("jacoco")
 }
 
 android {
@@ -23,6 +22,8 @@ android {
 
     buildTypes {
         debug {
+            // enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
         }
 
         release {
@@ -42,37 +43,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-        animationsDisabled = true
-    }
-
-    jacoco{
-        version = "0.8.10"
-    }
-}
-
-tasks.register("createDebugCoverageReport", JacocoReport::class) {
-    dependsOn("connectedDebugAndroidTest")
-
-    val debugTree = fileTree("${buildDir}/intermediates/classes/debug") {
-        exclude("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*")
-    }
-    val debugExecutionData = fileTree("${buildDir}") {
-        include("**/*.ec", "**/*.exec")
-    }
-
-    sourceDirectories.setFrom(files("src/main/java"))
-    classDirectories.setFrom(debugTree)
-    executionData.setFrom(debugExecutionData)
-
-    reports {
-        html.required.set(true)
-        html.outputLocation.set(file("${buildDir}/reports/jacoco/debugCoverageReport"))
-    }
 }
 
 dependencies {
@@ -89,9 +59,12 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
     implementation("org.java-websocket:Java-WebSocket:1.5.7")
 
-    testImplementation("junit:junit:4.13.2")
+    testImplementation("junit:junit:4.13.2") //ok
+    androidTestImplementation ("com.android.support.test:rules:1.0.2")
+    androidTestImplementation ("com.android.support.test:runner:1.0.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
     implementation(kotlin("script-runtime"))
 
