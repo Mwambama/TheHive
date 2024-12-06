@@ -15,6 +15,7 @@ import com.example.hiveeapp.employer_user.display.EditJobActivity;
 import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
 import com.example.hiveeapp.employer_user.setting.EmployerProfileActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -30,6 +31,10 @@ public class EmployerMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_employer_profile);
+
+        // Initialize Toolbar and set back button functionality
+        MaterialToolbar topAppBar = findViewById(R.id.topAppBar);
+        topAppBar.setNavigationOnClickListener(v -> onBackPressed()); // Navigate back
 
         // Initialize BottomNavigationView
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -47,6 +52,11 @@ public class EmployerMainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
+    }
+    @Override
+    public void onBackPressed() {
+        // Custom back navigation logic (if needed)
+        super.onBackPressed(); // Default back behavior
     }
 
     private void setupBottomNavigationView() {
