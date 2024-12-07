@@ -84,7 +84,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             // Get the employer object at the current position
             JSONObject job = jobs.getJSONObject(position);
 
-            holder.graphButton.setOnClickListener(v -> {
+            holder.analyticsButton.setOnClickListener(v -> {
                 long jobId = job.optLong("jobPostingId", -1);
                 if (jobId == -1) {
                     Toast.makeText(context, "Invalid Job ID", Toast.LENGTH_SHORT).show();
@@ -94,8 +94,8 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
                 EmployerApis.getGraphImage(context, jobId,
                         response -> {
                             Bitmap bitmap = BitmapFactory.decodeByteArray(response, 0, response.length);
-                            holder.graphImageView.setImageBitmap(bitmap);
-                            holder.graphImageView.setVisibility(View.VISIBLE);
+                            holder.analyticsImageView.setImageBitmap(bitmap);
+                            holder.analyticsImageView.setVisibility(View.VISIBLE);
                         },
                         error -> {
                             Toast.makeText(context, "Failed to fetch graph image", Toast.LENGTH_SHORT).show();
@@ -332,8 +332,8 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
         ImageButton updateButton;       // Button for updating job details
         ImageButton deleteButton;       // Button for deleting job
 
-        MaterialButton graphButton;  // Button for fetching the graph
-        ImageView graphImageView;    // ImageView for displaying the graph
+        MaterialButton analyticsButton;  // Button for fetching the graph
+        ImageView analyticsImageView;    // ImageView for displaying the graph
 
 
         public EmployerViewHolder(View itemView) {
@@ -351,8 +351,8 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             applicationEndTextView = itemView.findViewById(R.id.applicationEndTextView);
             updateButton = itemView.findViewById(R.id.updateButton);
             deleteButton = itemView.findViewById(R.id.deleteButton);
-            graphButton = itemView.findViewById(R.id.graphButton);  // Added Graph Button
-            graphImageView = itemView.findViewById(R.id.graphImageView);  // Added ImageView for Graph
+            analyticsButton = itemView.findViewById(R.id.analyticsButton);  // Added Graph Button
+            analyticsImageView = itemView.findViewById(R.id.analyticsImageView);  // Added ImageView for Graph
 
         }
     }

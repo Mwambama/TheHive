@@ -143,10 +143,10 @@
 
             <!-- Graph Button -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/graphButton"
+                android:id="@+id/analyticsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Graph"
+                android:text="Analytics"
                 android:layout_marginTop="8dp"
                 app:cornerRadius="16dp"
                 android:backgroundTint="@color/colorPrimary"
@@ -155,7 +155,7 @@
 
             <!-- Image View for Graph -->
             <ImageView
-                android:id="@+id/graphImageView"
+                android:id="@+id/analyticsImageView"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="8dp"
