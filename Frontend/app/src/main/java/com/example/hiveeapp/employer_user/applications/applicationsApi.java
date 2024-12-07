@@ -172,36 +172,6 @@ public class applicationsApi {
     }
 
     /**
-     * Deletes an employer based on the provided employer ID.
-     *
-     * @param context       The application context.
-     * @param employerId    The ID of the employer to delete.
-     * @param listener      Response listener for successful deletion.
-     * @param errorListener Error listener for handling errors.
-     */
-    public static void deleteEmployer(Context context, long employerId, Response.Listener<String> listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL + "/" + employerId;
-        Log.d(TAG, "DELETE Employer Request URL: " + url);
-
-        StringRequest request = new StringRequest(
-                Request.Method.DELETE,
-                url,
-                response -> {
-                    Log.d(TAG, "Employer deleted successfully: " + response);
-                    listener.onResponse(response);
-                },
-                error -> handleErrorResponse("Error deleting employer", error, errorListener)
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                return applicationsApi.getHeaders(context);
-            }
-        };
-
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
-    }
-
-    /**
      * Handles error responses from the server, logs the details, and invokes the error listener.
      *
      * @param errorMessagePrefix Prefix for the error message to log.
