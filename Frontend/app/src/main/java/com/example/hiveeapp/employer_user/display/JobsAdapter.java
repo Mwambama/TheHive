@@ -85,7 +85,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             JSONObject job = jobs.getJSONObject(position);
 
             holder.analyticsButton.setOnClickListener(v -> {
-                long jobId = job.optLong("jobPostingId", -1);
+                long jobId = job.optLong("jobPostingId", -1); // Get the job ID from the JSON object
                 if (jobId == -1) {
                     Toast.makeText(context, "Invalid Job ID", Toast.LENGTH_SHORT).show();
                     return;
@@ -93,15 +93,15 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
 
                 EmployerApis.getGraphImage(context, jobId,
                         response -> {
-                            Bitmap bitmap = BitmapFactory.decodeByteArray(response, 0, response.length);
-                            holder.analyticsImageView.setImageBitmap(bitmap);
-                            holder.analyticsImageView.setVisibility(View.VISIBLE);
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(response, 0, response.length); // Convert byte[] to Bitmap
+                            displayPopupWithImage(context, bitmap); // Display the image in a popup
                         },
                         error -> {
                             Toast.makeText(context, "Failed to fetch graph image", Toast.LENGTH_SHORT).show();
                             Log.e(TAG, "Error fetching graph image: ", error);
                         });
             });
+
 
             // Extract employer details, handling null cases with default values
 
@@ -313,6 +313,26 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             Toast.makeText(context, "Error opening edit form", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void displayPopupWithImage(Context context, Bitmap bitmap) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Analytics Image");
+
+        // Create an ImageView to display the image
+        ImageView imageView = new ImageView(context);
+        imageView.setImageBitmap(bitmap);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        imageView.setAdjustViewBounds(true);
+
+        builder.setView(imageView);
+
+        builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
 
     /**
      * ViewHolder class to hold views for each employer item.

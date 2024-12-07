@@ -76,28 +76,48 @@ public class EmployerApis {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    public static void getGraphImage(Context context, long jobId, Response.Listener<byte[]> listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL + "/analytics/" + jobId;
-        Log.d(TAG, "GET Graph Request URL: " + url);
+//    public static void getGraphImage(Context context, long jobId, Response.Listener<byte[]> listener, Response.ErrorListener errorListener) {
+//        String url = BASE_URL + "/analytics/" + jobId;
+//        Log.d(TAG, "GET Graph Request URL: " + url);
+//
+//        // Create an ImageRequest to fetch the graph as a byte array
+//        StringRequest request = new StringRequest(
+//                Request.Method.GET,
+//                url,
+//                response -> {
+//                    byte[] imageData = response.getBytes(StandardCharsets.ISO_8859_1);    // Decode byte[]
+//                    listener.onResponse(imageData);
+//                },
+//                error -> handleErrorResponse("Error fetching graph image", error, errorListener)
+//        ) {
+//            @Override
+//            public Map<String, String> getHeaders() {
+//                return EmployerApis.getHeaders(context);
+//            }
+//        };
+//
+//        VolleySingleton.getInstance(context).addToRequestQueue(request);
+//    }
+public static void getGraphImage(Context context, long jobId, Response.Listener<byte[]> listener, Response.ErrorListener errorListener) {
+    String url = BASE_URL + "/analytics/" + jobId; // Backend endpoint for fetching the graph
+    Log.d(TAG, "GET Graph Request URL: " + url);
 
-        // Create an ImageRequest to fetch the graph as a byte array
-        StringRequest request = new StringRequest(
-                Request.Method.GET,
-                url,
-                response -> {
-                    byte[] imageData = response.getBytes(StandardCharsets.ISO_8859_1);    // Decode byte[]
-                    listener.onResponse(imageData);
-                },
-                error -> handleErrorResponse("Error fetching graph image", error, errorListener)
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                return EmployerApis.getHeaders(context);
-            }
-        };
+    // Use the ByteRequest to fetch binary data
+    analyticRequest byteRequest = new analyticRequest(
+            Request.Method.GET,
+            url,
+            listener,
+            error -> handleErrorResponse("Error fetching graph image", error, errorListener)
+    ) {
+        @Override
+        public Map<String, String> getHeaders() {
+            return EmployerApis.getHeaders(context); // Use authorization headers
+        }
+    };
 
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
-    }
+    VolleySingleton.getInstance(context).addToRequestQueue(byteRequest);
+}
+
 
 
     /**

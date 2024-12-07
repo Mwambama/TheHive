@@ -1,5 +1,4 @@
 package com.example.hiveeapp.employer_user.display;
-
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
