@@ -33,8 +33,8 @@ public class EmployerMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_employer_profile);
 
         // Initialize Toolbar and set back button functionality
-        MaterialToolbar topAppBar = findViewById(R.id.topAppBar);
-        topAppBar.setNavigationOnClickListener(v -> onBackPressed()); // Navigate back
+//        MaterialToolbar topAppBar = findViewById(R.id.topAppBar);
+//        topAppBar.setNavigationOnClickListener(v -> onBackPressed()); // Navigate back
 
         // Initialize BottomNavigationView
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -53,11 +53,11 @@ public class EmployerMainActivity extends AppCompatActivity {
         super.onResume();
         bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
     }
-    @Override
-    public void onBackPressed() {
-        // Custom back navigation logic (if needed)
-        super.onBackPressed(); // Default back behavior
-    }
+//    @Override
+//    public void onBackPressed() {
+//        // Custom back navigation logic (if needed)
+//        super.onBackPressed(); // Default back behavior
+//    }
 
     private void setupBottomNavigationView() {
         bottomNavigationView.setOnItemSelectedListener(item -> {

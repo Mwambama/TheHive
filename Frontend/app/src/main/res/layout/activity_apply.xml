@@ -25,7 +25,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp" />
 
         <!-- Job Description -->
         <TextView
@@ -35,7 +35,7 @@
             android:text="Job Description"
             android:textSize="14sp"
             android:textColor="@android:color/secondary_text_light"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp" />
 
         <!-- Job Summary -->
         <TextView
@@ -45,7 +45,7 @@
             android:text="Job Summary"
             android:textSize="14sp"
             android:textColor="@android:color/secondary_text_light"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp" />
 
         <!-- Salary -->
         <TextView
@@ -55,7 +55,7 @@
             android:text="Salary"
             android:textSize="14sp"
             android:textColor="@android:color/secondary_text_light"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp" />
 
         <!-- Job Type -->
         <TextView
@@ -65,7 +65,7 @@
             android:text="Job Type"
             android:textSize="14sp"
             android:textColor="@android:color/secondary_text_light"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp" />
 
         <!-- Minimum GPA -->
         <TextView
@@ -75,7 +75,7 @@
             android:text="Minimum GPA"
             android:textSize="14sp"
             android:textColor="@android:color/secondary_text_light"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp" />
 
         <!-- Job Start Date -->
         <TextView
@@ -85,7 +85,7 @@
             android:text="Job Start Date"
             android:textSize="14sp"
             android:textColor="@android:color/secondary_text_light"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp" />
 
         <!-- Application Start Date -->
         <TextView
@@ -95,7 +95,7 @@
             android:text="Application Start Date"
             android:textSize="14sp"
             android:textColor="@android:color/secondary_text_light"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp" />
 
         <!-- Application End Date -->
         <TextView
@@ -105,7 +105,7 @@
             android:text="Application End Date"
             android:textSize="14sp"
             android:textColor="@android:color/secondary_text_light"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp" />
 
         <!-- Buttons for update and delete -->
         <LinearLayout
@@ -125,7 +125,7 @@
                 android:scaleType="fitCenter"
                 android:padding="8dp"
                 app:tint="@android:color/black"
-                android:layout_marginEnd="16dp"/>
+                android:layout_marginEnd="16dp" />
 
             <ImageButton
                 android:id="@+id/deleteButton"
@@ -136,10 +136,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="fitCenter"
                 android:padding="8dp"
-                app:tint="@android:color/holo_red_dark"/>
-
-
-            <!-- Other TextView elements here -->
+                app:tint="@android:color/holo_red_dark" />
 
             <!-- Graph Button -->
             <com.google.android.material.button.MaterialButton
@@ -152,8 +149,16 @@
                 android:backgroundTint="@color/colorPrimary"
                 android:textColor="@android:color/white"
                 android:layout_gravity="end" />
+        </LinearLayout>
 
-            <!-- Image View for Graph -->
+        <!-- Image and Footer Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Image View -->
             <ImageView
                 android:id="@+id/analyticsImageView"
                 android:layout_width="match_parent"
@@ -162,7 +167,7 @@
                 android:scaleType="fitCenter"
                 android:visibility="gone" />
 
-        </LinearLayout>
 
+        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
