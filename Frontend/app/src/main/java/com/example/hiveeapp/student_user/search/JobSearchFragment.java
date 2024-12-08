@@ -122,6 +122,12 @@ public class JobSearchFragment extends Fragment {
                 response -> {
                     try {
                         List<JobPosting> jobPostings = parseJobPostings(response);
+
+                        // Slice the list to include only the first 10 jobs
+                        if (jobPostings.size() > 10) {
+                            jobPostings = jobPostings.subList(0, 10);
+                        }
+
                         callback.onJobPostingsFetched(jobPostings);
                     } catch (JSONException e) {
                         Log.e(TAG, "Error parsing job postings", e);
