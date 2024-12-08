@@ -38,6 +38,8 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
+    private static final String PREFERENCES_NAME = "JobSwipePreferences";
+    private static final String STUDENT_ID_KEY = "studentId";
 
     private EditText emailField, passwordField;
     private MaterialButton loginButton;
@@ -56,13 +58,9 @@ public class LoginActivity extends AppCompatActivity {
         // Set event listeners for buttons
         setListeners();
 
-        // Test purpose
+        // Test purposes
         emailField.setText("test643@example.com");
         passwordField.setText("Test$1234");
-
-        //Test purpose
-//        emailField.setText("employerTest@aol.com");
-//        passwordField.setText("Test1234@");
     }
 
     private void initializeViews() {
@@ -145,17 +143,18 @@ public class LoginActivity extends AppCompatActivity {
             // Debug: Log retrieved userId and role
             Log.d(TAG, "handleLoginSuccess: userId=" + userId + ", role=" + role);
 
-            SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
+            SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putInt("userId", userId);
+            editor.putInt(STUDENT_ID_KEY, userId); // Save as studentId for consistency
             editor.putString("email", email); // Save email
             editor.putString("password", password); // Save password
-            editor.apply();
+            editor.commit(); // Ensure data is saved synchronously
 
-            // Debug: Confirm userId, email, and password saved to SharedPreferences
-            Log.d(TAG, "UserId saved in SharedPreferences: " + preferences.getInt("userId", -1));
-            Log.d(TAG, "Email saved in SharedPreferences: " + preferences.getString("email", ""));
-            Log.d(TAG, "Password saved in SharedPreferences: " + preferences.getString("password", ""));
+            // Debug: Log all preferences
+            Map<String, ?> allEntries = preferences.getAll();
+            for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+                Log.d(TAG, "SharedPreferences key: " + entry.getKey() + ", value: " + entry.getValue());
+            }
 
             navigateToUserActivity(role);
         } catch (JSONException e) {

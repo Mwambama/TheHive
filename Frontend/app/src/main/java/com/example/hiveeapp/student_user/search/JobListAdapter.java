@@ -15,24 +15,29 @@ import com.example.hiveeapp.student_user.swipe.JobPosting;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.widget.Button;
+
 public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewHolder> {
 
     private List<JobPosting> jobPostings = new ArrayList<>();
-    private OnJobClickListener onJobClickListener;
+    private OnJobInteractionListener onJobInteractionListener;
 
-    public interface OnJobClickListener {
+    // Unified interface for handling clicks and applies
+    public interface OnJobInteractionListener {
         void onJobClick(JobPosting jobPosting);
+
+        void onJobApply(JobPosting jobPosting, int position);
     }
 
-    public JobListAdapter(OnJobClickListener listener) {
-        this.onJobClickListener = listener;
+    public JobListAdapter(OnJobInteractionListener listener) {
+        this.onJobInteractionListener = listener;
     }
 
     @NonNull
     @Override
     public JobViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the correct layout file
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.job_search_list_item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.job_search_list_item, parent, false);
         return new JobViewHolder(itemView);
     }
 
@@ -40,25 +45,23 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
     public void onBindViewHolder(@NonNull JobViewHolder holder, int position) {
         JobPosting jobPosting = jobPostings.get(position);
 
-        // Ensure views are not null before setting text
-        if (holder.jobTitle != null) {
-            holder.jobTitle.setText(jobPosting.getTitle());
-        }
-        if (holder.companyName != null) {
-            holder.companyName.setText(jobPosting.getCompanyName());
-        }
-        if (holder.jobSalary != null) {
-            holder.jobSalary.setText(String.format("$%.2f", jobPosting.getSalary()));
-        }
-        if (holder.jobDescription != null) {
-            holder.jobDescription.setText(jobPosting.getDescription());
-        }
+        // Set job data
+        holder.jobTitle.setText(jobPosting.getTitle());
+        holder.companyName.setText(jobPosting.getCompanyName());
+        holder.jobSalary.setText(String.format("$%.2f", jobPosting.getSalary()));
+        holder.jobDescription.setText(jobPosting.getDescription());
 
+        // Set item click listener
         holder.itemView.setOnClickListener(v -> {
-            if (onJobClickListener != null) {
-                onJobClickListener.onJobClick(jobPosting);
-            } else {
-                Toast.makeText(v.getContext(), "Clicked on: " + jobPosting.getTitle(), Toast.LENGTH_SHORT).show();
+            if (onJobInteractionListener != null) {
+                onJobInteractionListener.onJobClick(jobPosting);
+            }
+        });
+
+        // Set apply button listener
+        holder.applyButton.setOnClickListener(v -> {
+            if (onJobInteractionListener != null) {
+                onJobInteractionListener.onJobApply(jobPosting, position);
             }
         });
     }
@@ -73,16 +76,24 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
         notifyDataSetChanged();
     }
 
+    public void removeJob(int position) {
+        if (position >= 0 && position < jobPostings.size()) {
+            jobPostings.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
     public static class JobViewHolder extends RecyclerView.ViewHolder {
         TextView jobTitle, companyName, jobSalary, jobDescription;
+        Button applyButton;
 
         public JobViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Ensure the IDs match those in job_search_list_item.xml
             jobTitle = itemView.findViewById(R.id.jobTitle);
             companyName = itemView.findViewById(R.id.companyName);
             jobSalary = itemView.findViewById(R.id.jobSalary);
             jobDescription = itemView.findViewById(R.id.jobDescription);
+            applyButton = itemView.findViewById(R.id.applyButton);
         }
     }
 }
