@@ -1,6 +1,5 @@
 package com.example.thehiveapp;
 
-import com.example.thehiveapp.dto.application.ApplicationDto;
 import com.example.thehiveapp.dto.application.ApplicationRequest;
 import com.example.thehiveapp.dto.authentication.CompanySignUpRequest;
 import com.example.thehiveapp.dto.authentication.EmployerSignUpRequest;
@@ -9,7 +8,6 @@ import com.example.thehiveapp.dto.email.ChangePasswordRequest;
 import com.example.thehiveapp.dto.jobPosting.JobPostingDto;
 import com.example.thehiveapp.dto.otp.OtpRequest;
 import com.example.thehiveapp.dto.otp.OtpValidationRequest;
-import com.example.thehiveapp.entity.application.Application;
 import com.example.thehiveapp.entity.otp.Otp;
 import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.entity.user.Employer;
@@ -28,17 +26,18 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class AdeifeSystemTest {
     @LocalServerPort
     private int port;
@@ -328,6 +327,28 @@ class AdeifeSystemTest {
                     "Expected error message: " + expectedError);
         }
 
+    }
+
+    @Test
+    void testJobAnalytics(){
+        // Test case 1: Successful Retrieval of Job Analytics
+        assertJobAnalytics(jobPostingId3, 200, null);
+
+        // Test case 2: Invalid job posting id
+        assertJobAnalytics(-1L, 404, "Job Posting not found with id -1");
+    }
+
+    private void assertJobAnalytics(Long jobPostingId3, int expectedStatus, String expectedError){
+        Response response = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .when()
+                .get("/job-posting/analytics/" + jobPostingId3);
+
+        assertEquals(expectedStatus, response.getStatusCode());
+        if (expectedError != null) {
+            assertTrue(response.asString().contains(expectedError), "Expected error message: " + expectedError);
+        }
     }
 
 

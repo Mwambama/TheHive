@@ -2,7 +2,7 @@ package com.example.hiveeapp.student_user.search;
 
 import androidx.lifecycle.ViewModel;
 
-import com.example.hiveeapp.student_user.swipe.JobPosting;
+import com.example.hiveeapp.student_user.search.JobPosting;
 
 import java.util.List;
 

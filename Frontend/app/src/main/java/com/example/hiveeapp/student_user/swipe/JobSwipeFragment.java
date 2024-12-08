@@ -130,7 +130,6 @@ public class JobSwipeFragment extends Fragment {
                 JobPosting job = (JobPosting) dataObject;
                 Toast.makeText(requireContext(), "Applied to: " + job.getTitle(), Toast.LENGTH_SHORT).show();
                 saveAppliedJob(job.getJobPostingId());
-                // No need to reload postings here since we're updating the list
             }
 
             @Override

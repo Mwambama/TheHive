@@ -1,185 +1,8 @@
-//package com.example.hiveeapp.student_user;
-//
-//import android.content.Intent;
-//import android.content.SharedPreferences;
-//import android.os.Bundle;
-//import android.util.Log;
-//import android.widget.Toast;
-//
-//import androidx.annotation.NonNull;
-//import androidx.appcompat.app.AppCompatActivity;
-//import androidx.fragment.app.Fragment;
-//import androidx.fragment.app.FragmentManager;
-//import androidx.fragment.app.FragmentTransaction;
-//
-//import com.example.hiveeapp.R;
-//import com.example.hiveeapp.registration.login.LoginActivity;
-//import com.example.hiveeapp.student_user.application.JobApplicationFragment;
-//import com.example.hiveeapp.student_user.chat.ChatListActivity;
-//import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
-//import com.example.hiveeapp.student_user.search.JobSearchFragment;
-//import com.example.hiveeapp.student_user.swipe.JobSwipeFragment;
-//import com.google.android.material.bottomnavigation.BottomNavigationView;
-//import com.google.android.material.tabs.TabLayout;
-//
-///**
-// * Main activity for student users, providing navigation between profile,
-// * chat, job applications, and job swiping features.
-// */
-//public class StudentMainActivity extends AppCompatActivity {
-//
-//    private static final String TAG = "StudentMainActivity";
-//    private int userId;
-//    private String userEmail;
-//    private String userPassword;
-//    private BottomNavigationView bottomNavigationView;
-//
-//    /**
-//     * Called when the activity is first created. Initializes the UI components
-//     * and sets up navigation features.
-//     *
-//     * @param savedInstanceState The saved instance state bundle.
-//     */
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_student_main);
-//
-//        // Initialize BottomNavigationView
-//        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-//        setupBottomNavigationView();
-//
-//        // Retrieve user details from SharedPreferences
-//        retrieveUserDetails();
-//
-//        // Initialize TabLayout and set default fragment
-//        TabLayout tabLayout = findViewById(R.id.tabLayout);
-//        setupTabLayout(tabLayout);
-//
-//        // Set default fragment to JobSwipeFragment (swiping jobs)
-//        replaceFragment(new JobSwipeFragment());
-//    }
-//
-//    /**
-//     * Called when the activity resumes. Sets the default selected item
-//     * in the BottomNavigationView.
-//     */
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
-//    }
-//
-//    /**
-//     * Sets up the BottomNavigationView and handles navigation item selections.
-//     */
-//    private void setupBottomNavigationView() {
-//        bottomNavigationView.setOnItemSelectedListener(item -> {
-//            int itemId = item.getItemId();
-//            if (itemId == R.id.navigation_profile) {
-//                navigateToProfile();
-//                return true;
-//            } else if (itemId == R.id.navigation_chat) {
-//                startActivity(new Intent(StudentMainActivity.this, ChatListActivity.class));
-//                return true;
-//            } else if (itemId == R.id.navigation_apply) {
-//                return true;
-//            } else if (itemId == R.id.navigation_search) {
-//                replaceFragment(new JobSearchFragment());
-//                return true;
-//            }
-//            return false;
-//        });
-//    }
-//
-//    /**
-//     * Retrieves user details from SharedPreferences and checks if they are valid.
-//     * If user details are missing, prompts the user to log in again.
-//     */
-//    private void retrieveUserDetails() {
-//        SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
-//        userId = preferences.getInt("userId", -1);
-//        userEmail = preferences.getString("email", "");
-//        userPassword = preferences.getString("password", "");
-//
-//        if (userId == -1 || userEmail.isEmpty() || userPassword.isEmpty()) {
-//            Toast.makeText(this, "User credentials not found. Please log in again.", Toast.LENGTH_SHORT).show();
-//            startActivity(new Intent(this, LoginActivity.class));
-//            finish();
-//        }
-//    }
-//
-//    /**
-//     * Sets up the TabLayout and handles tab selection events.
-//     *
-//     * @param tabLayout The TabLayout to set up.
-//     */
-//    private void setupTabLayout(TabLayout tabLayout) {
-//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(@NonNull TabLayout.Tab tab) {
-//                Fragment selectedFragment;
-//                if (tab.getPosition() == 0) {
-//                    selectedFragment = new JobSwipeFragment();
-//                } else {
-//                    selectedFragment = new JobApplicationFragment();
-//                }
-//                replaceFragment(selectedFragment);
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) { }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) { }
-//        });
-//    }
-//
-//    /**
-//     * Replaces the current fragment in the frame layout with the specified fragment.
-//     *
-//     * @param fragment The fragment to display.
-//     */
-//    private void replaceFragment(Fragment fragment) {
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.frameLayout, fragment);
-//        fragmentTransaction.commit();
-//    }
-//
-//    /**
-//     * Navigates to the StudentProfileViewActivity.
-//     */
-//    private void navigateToProfile() {
-//        Intent intent = new Intent(StudentMainActivity.this, StudentProfileViewActivity.class);
-//        intent.putExtra("USER_ID", userId);
-//        startActivity(intent);
-//    }
-//
-//    /**
-//     * Gets the user ID of the currently logged-in user.
-//     *
-//     * @return The user ID.
-//     */
-//    public int getUserId() {
-//        return userId;
-//    }
-//}
-
-
-
-
-
-
-
 package com.example.hiveeapp.student_user;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -188,24 +11,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.student_user.application.JobApplicationFragment;
 import com.example.hiveeapp.student_user.chat.ChatListActivity;
 import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
+import com.example.hiveeapp.student_user.search.JobSearchActivity;
 import com.example.hiveeapp.student_user.swipe.JobSwipeFragment;
-import com.example.hiveeapp.volley.VolleySingleton;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Main activity for student users, providing navigation between profile,
@@ -214,16 +28,10 @@ import java.util.Map;
 public class StudentMainActivity extends AppCompatActivity {
 
     private static final String TAG = "StudentMainActivity";
-    private static final String GET_STUDENT_INFO_URL = "http://coms-3090-063.class.las.iastate.edu:8080/student";
-    private static final String PREFERENCES_NAME = "StudentPreferences";
-    private static final String DAILY_APPLIED_COUNT_KEY = "dailyAppliedCount";
-
     private int userId;
     private String userEmail;
     private String userPassword;
     private BottomNavigationView bottomNavigationView;
-
-    private TextView dailyAppliedCount; // TextView to display daily applied count
 
     /**
      * Called when the activity is first created. Initializes the UI components
@@ -235,9 +43,6 @@ public class StudentMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_main);
-
-        // Initialize Daily Applied Count TextView
-        dailyAppliedCount = findViewById(R.id.dailyAppliedCount);
 
         // Initialize BottomNavigationView
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -252,12 +57,6 @@ public class StudentMainActivity extends AppCompatActivity {
 
         // Set default fragment to JobSwipeFragment (swiping jobs)
         replaceFragment(new JobSwipeFragment());
-
-        // Load and display the locally saved daily applied count
-        displaySavedDailyAppliedCount();
-
-        // Fetch and display the daily applied count from the backend
-        fetchDailyAppliedCount(userId);
     }
 
     /**
@@ -268,8 +67,6 @@ public class StudentMainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
-        // Refresh daily applied count on resume
-        fetchDailyAppliedCount(userId);
     }
 
     /**
@@ -285,6 +82,10 @@ public class StudentMainActivity extends AppCompatActivity {
                 startActivity(new Intent(StudentMainActivity.this, ChatListActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_apply) {
+                replaceFragment(new JobSwipeFragment());
+                return true;
+            } else if (itemId == R.id.navigation_search) {
+                startActivity(new Intent(StudentMainActivity.this, JobSearchActivity.class));
                 return true;
             }
             return false;
@@ -355,102 +156,6 @@ public class StudentMainActivity extends AppCompatActivity {
         Intent intent = new Intent(StudentMainActivity.this, StudentProfileViewActivity.class);
         intent.putExtra("USER_ID", userId);
         startActivity(intent);
-    }
-
-    /**
-     * Fetches the daily applied count for the user from the backend and updates the UI.
-     *
-     * @param studentId The ID of the currently logged-in student.
-     */
-    /**
-     * Fetches the daily applied count for the user from the backend and updates the UI.
-     *
-     * @param studentId The ID of the currently logged-in student.
-     */
-    private void fetchDailyAppliedCount(int studentId) {
-        String url = GET_STUDENT_INFO_URL + "/" + studentId;
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                response -> {
-                    try {
-                        // Safely parse the daily applied count with a default value of 0
-                        int applicationsMadeToday = response.optInt("applicationsMadeToday", 0);
-
-                        // Log the fetched value
-                        Log.d(TAG, "Fetched applicationsMadeToday: " + applicationsMadeToday);
-
-                        // Update the UI and save the count locally
-                        updateDailyAppliedCount(applicationsMadeToday);
-                        saveDailyAppliedCount(applicationsMadeToday);
-
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error parsing daily applied count", e);
-                    }
-                },
-                error -> {
-                    Log.e(TAG, "Failed to fetch daily applied count", error);
-                    Toast.makeText(this, "Failed to fetch Daily Applied count.", Toast.LENGTH_SHORT).show();
-
-                    // If the fetch fails, fallback to displaying the saved count
-                    displaySavedDailyAppliedCount();
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return createAuthorizationHeaders();
-            }
-        };
-
-        VolleySingleton.getInstance(this).addToRequestQueue(request);
-    }
-
-
-    /**
-     * Updates the Daily Applied Count TextView with the fetched count.
-     *
-     * @param count The number of applications made today by the user.
-     */
-    private void updateDailyAppliedCount(int count) {
-        dailyAppliedCount.setText(String.valueOf(count));
-    }
-
-    /**
-     * Saves the daily applied count in SharedPreferences.
-     *
-     * @param count The count to save.
-     */
-    private void saveDailyAppliedCount(int count) {
-        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
-        preferences.edit().putInt(DAILY_APPLIED_COUNT_KEY, count).apply();
-        Log.d(TAG, "Updated Daily Applied Count TextView: " + count);
-    }
-
-    /**
-     * Displays the locally saved daily applied count.
-     */
-    private void displaySavedDailyAppliedCount() {
-        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
-        int savedCount = preferences.getInt(DAILY_APPLIED_COUNT_KEY, 0);
-        dailyAppliedCount.setText(String.valueOf(savedCount));
-        Log.d(TAG, "Displayed saved Daily Applied Count: " + savedCount);
-    }
-
-
-
-    /**
-     * Creates authorization headers for the API requests.
-     *
-     * @return A map containing the authorization headers.
-     */
-    private Map<String, String> createAuthorizationHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-
-        // Example credentials
-        String credentials = userEmail + ":" + userPassword;
-        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        headers.put("Authorization", auth);
-
-        return headers;
     }
 
     /**
