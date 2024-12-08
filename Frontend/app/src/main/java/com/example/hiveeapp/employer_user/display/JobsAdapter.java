@@ -188,6 +188,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
         }
     }
 
+
     @Override
     public int getItemCount() {
         return jobs.length();  // Return the number of employers in the list
