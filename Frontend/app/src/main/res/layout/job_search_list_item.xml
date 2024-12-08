@@ -1,0 +1,66 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/job_list_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/card_background"
+    android:padding="12dp"
+    android:layout_margin="8dp"
+    android:elevation="2dp">
+
+    <!-- Job Title -->
+    <TextView
+        android:id="@+id/jobTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Job Title"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="#000000" />
+
+    <!-- Company Name -->
+    <TextView
+        android:id="@+id/companyName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Company Name"
+        android:textSize="16sp"
+        android:textColor="#757575"
+        android:layout_marginTop="4dp" />
+
+    <!-- Salary -->
+    <TextView
+        android:id="@+id/jobSalary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Salary"
+        android:textSize="16sp"
+        android:textColor="#757575"
+        android:layout_marginTop="4dp" />
+
+    <!-- Job Description -->
+    <TextView
+        android:id="@+id/jobDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Job Description"
+        android:textSize="14sp"
+        android:textColor="#000000"
+        android:layout_marginTop="8dp" />
+
+    <!-- Apply Button -->
+    <Button
+        android:id="@+id/applyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apply"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/rounded_button_background"
+        android:textColor="#FFFFFF"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_gravity="end"
+        android:elevation="4dp" />
+
+</LinearLayout>

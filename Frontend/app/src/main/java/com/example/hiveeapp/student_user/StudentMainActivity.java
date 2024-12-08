@@ -3,7 +3,6 @@ package com.example.hiveeapp.student_user;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,6 +16,7 @@ import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.student_user.application.JobApplicationFragment;
 import com.example.hiveeapp.student_user.chat.ChatListActivity;
 import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
+import com.example.hiveeapp.student_user.search.JobSearchActivity;
 import com.example.hiveeapp.student_user.swipe.JobSwipeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -82,6 +82,10 @@ public class StudentMainActivity extends AppCompatActivity {
                 startActivity(new Intent(StudentMainActivity.this, ChatListActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_apply) {
+                replaceFragment(new JobSwipeFragment());
+                return true;
+            } else if (itemId == R.id.navigation_search) {
+                startActivity(new Intent(StudentMainActivity.this, JobSearchActivity.class));
                 return true;
             }
             return false;
@@ -124,10 +128,12 @@ public class StudentMainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) { }
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) { }
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
         });
     }
 
