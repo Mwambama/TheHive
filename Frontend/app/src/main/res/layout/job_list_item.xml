@@ -1,0 +1,63 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <!-- Job Title -->
+    <TextView
+        android:id="@+id/jobTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="Job Title"
+        android:textSize="16sp" />
+
+    <!-- Job Description -->
+    <TextView
+        android:id="@+id/jobDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Job Description"
+        android:textSize="14sp" />
+
+    <!-- Job Salary -->
+    <TextView
+        android:id="@+id/jobSalary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Salary: $0.00"
+        android:textSize="14sp" />
+
+    <!-- Job Start Date -->
+    <TextView
+        android:id="@+id/jobStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Date: yyyy-MM-dd"
+        android:textSize="14sp" />
+
+    <!-- Application Start Date -->
+    <TextView
+        android:id="@+id/applicationStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Application Start: yyyy-MM-dd"
+        android:textSize="14sp" />
+
+    <!-- Application End Date -->
+    <TextView
+        android:id="@+id/applicationEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Application End: yyyy-MM-dd"
+        android:textSize="14sp" />
+
+    <!-- Job Summary -->
+    <TextView
+        android:id="@+id/summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Summary"
+        android:textSize="14sp" />
+</LinearLayout>
