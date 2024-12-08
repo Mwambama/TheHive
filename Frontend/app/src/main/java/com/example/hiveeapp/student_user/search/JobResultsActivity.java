@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,10 +13,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.student_user.swipe.JobPosting;
+import com.example.hiveeapp.volley.VolleySingleton;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JobResultsActivity extends AppCompatActivity implements JobListAdapter.OnJobInteractionListener {
 
@@ -79,6 +89,70 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
 
     @Override
     public void onJobApply(JobPosting jobPosting, int position) {
-        Toast.makeText(this, "Apply functionality not implemented.", Toast.LENGTH_SHORT).show();
+        applyForJob(studentId, jobPosting.getJobPostingId(), position);
+    }
+
+    private void applyForJob(int studentId, int jobPostingId, int position) {
+        String url = "http://coms-3090-063.class.las.iastate.edu:8080/applications/apply";
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("studentId", studentId);
+            jsonObject.put("jobPostingId", jobPostingId);
+        } catch (JSONException e) {
+            Log.e(TAG, "Error creating JSON object for application request", e);
+            Toast.makeText(this, "Error creating application request.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Convert JSON object to a string for the request body
+        String requestBody = jsonObject.toString();
+
+        // Use StringRequest to handle plain string responses
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    Toast.makeText(this, "Application submitted successfully!", Toast.LENGTH_SHORT).show();
+                    // Update the job's applied status in the adapter
+                    jobListAdapter.updateAppliedJobStatus(position);
+                },
+                error -> {
+                    String errorMessage = "Failed to apply for job.";
+                    if (error.networkResponse != null) {
+                        if (error.networkResponse.statusCode == 500) {
+                            errorMessage = "Server error: Unable to process the application. Please try again later.";
+                        } else if (error.networkResponse.statusCode == 401) {
+                            errorMessage = "Unauthorized access. Please log in again.";
+                        }
+                    }
+                    Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error applying for job: ", error);
+                }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return requestBody.getBytes(); // Convert request body to bytes
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", createAuthorizationHeader());
+                return headers;
+            }
+        };
+
+        VolleySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    private String createAuthorizationHeader() {
+        String username = "teststudent1@example.com";
+        String password = "TestStudent1234@";
+        String credentials = username + ":" + password;
+        return "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
     }
 }

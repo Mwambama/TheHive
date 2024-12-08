@@ -16,6 +16,7 @@ public class JobPosting implements Serializable {
     private String applicationEnd;
     private int employerId;
     private String companyName;
+    private boolean applied; // New field to track application status
 
     public JobPosting(int jobPostingId, String title, String description, String summary, double salary,
                       String jobType, double minimumGpa, String jobStart, String applicationStart,
@@ -32,8 +33,10 @@ public class JobPosting implements Serializable {
         this.applicationEnd = applicationEnd;
         this.employerId = employerId;
         this.companyName = companyName;
+        this.applied = false; // Default to not applied
     }
 
+    // Getters and setters
     public int getJobPostingId() {
         return jobPostingId;
     }
@@ -130,21 +133,11 @@ public class JobPosting implements Serializable {
         this.companyName = companyName;
     }
 
-    @Override
-    public String toString() {
-        return "JobPosting{" +
-                "jobPostingId=" + jobPostingId +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", summary='" + summary + '\'' +
-                ", salary=" + salary +
-                ", jobType='" + jobType + '\'' +
-                ", minimumGpa=" + minimumGpa +
-                ", jobStart='" + jobStart + '\'' +
-                ", applicationStart='" + applicationStart + '\'' +
-                ", applicationEnd='" + applicationEnd + '\'' +
-                ", employerId=" + employerId +
-                ", companyName='" + companyName + '\'' +
-                '}';
+    public boolean isApplied() {
+        return applied;
+    }
+
+    public void setApplied(boolean applied) {
+        this.applied = applied;
     }
 }

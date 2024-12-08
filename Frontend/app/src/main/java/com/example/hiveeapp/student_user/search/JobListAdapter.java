@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.student_user.swipe.JobPosting;
+import com.example.hiveeapp.student_user.search.JobPosting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +51,15 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
         holder.jobSalary.setText(String.format("$%.2f", jobPosting.getSalary()));
         holder.jobDescription.setText(jobPosting.getDescription());
 
+        // Update the apply button based on the job's "applied" status
+        if (jobPosting.isApplied()) {
+            holder.applyButton.setEnabled(false);
+            holder.applyButton.setText("Applied");
+        } else {
+            holder.applyButton.setEnabled(true);
+            holder.applyButton.setText("Apply");
+        }
+
         // Set item click listener
         holder.itemView.setOnClickListener(v -> {
             if (onJobInteractionListener != null) {
@@ -80,6 +89,13 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
         if (position >= 0 && position < jobPostings.size()) {
             jobPostings.remove(position);
             notifyItemRemoved(position);
+        }
+    }
+
+    public void updateAppliedJobStatus(int position) {
+        if (position >= 0 && position < jobPostings.size()) {
+            jobPostings.get(position).setApplied(true); // Mark job as applied
+            notifyItemChanged(position); // Update the UI for this item
         }
     }
 

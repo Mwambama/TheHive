@@ -1,5 +1,6 @@
 package com.example.hiveeapp.student_user.search;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,7 +19,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.student_user.swipe.JobPosting;
+import com.example.hiveeapp.student_user.search.JobPosting;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONArray;
@@ -26,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,11 +39,14 @@ public class JobSearchActivity extends AppCompatActivity {
     private static final String PREFERENCES_NAME = "JobSwipePreferences";
     private static final String STUDENT_ID_KEY = "studentId";
 
-    private EditText keywordInput, minSalaryInput, maxSalaryInput, minJobStartInput, maxJobStartInput;
+    private EditText keywordInput, minSalaryInput, maxSalaryInput;
+    private com.google.android.material.textfield.TextInputEditText minJobStartButton, maxJobStartButton;
     private CheckBox isApplicationOpenCheckbox, isQualifiedCheckbox;
     private Button searchButton;
 
     private int studentId;
+    private String minJobStartDate = "";
+    private String maxJobStartDate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +59,9 @@ public class JobSearchActivity extends AppCompatActivity {
         // Retrieve Student ID
         retrieveStudentId();
 
+        // Set date pickers for job start date fields
+        setupDatePickers();
+
         // Set search button click listener
         searchButton.setOnClickListener(v -> performSearch());
     }
@@ -62,8 +70,8 @@ public class JobSearchActivity extends AppCompatActivity {
         keywordInput = findViewById(R.id.keywordInput);
         minSalaryInput = findViewById(R.id.minSalaryInput);
         maxSalaryInput = findViewById(R.id.maxSalaryInput);
-        minJobStartInput = findViewById(R.id.minJobStartInput);
-        maxJobStartInput = findViewById(R.id.maxJobStartInput);
+        minJobStartButton = findViewById(R.id.minJobStartButton); // Corrected to TextInputEditText
+        maxJobStartButton = findViewById(R.id.maxJobStartButton); // Corrected to TextInputEditText
         isApplicationOpenCheckbox = findViewById(R.id.isApplicationOpenCheckbox);
         isQualifiedCheckbox = findViewById(R.id.isQualifiedCheckbox);
         searchButton = findViewById(R.id.searchButton);
@@ -82,6 +90,32 @@ public class JobSearchActivity extends AppCompatActivity {
         }
     }
 
+    private void setupDatePickers() {
+        minJobStartButton.setOnClickListener(v -> showDatePicker(date -> {
+            minJobStartDate = date;
+            minJobStartButton.setText(date); // Display the selected date in the TextInputEditText
+        }));
+
+        maxJobStartButton.setOnClickListener(v -> showDatePicker(date -> {
+            maxJobStartDate = date;
+            maxJobStartButton.setText(date);
+        }));
+    }
+
+    private void showDatePicker(OnDateSelectedListener listener) {
+        Calendar calendar = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                (view, year, month, dayOfMonth) -> {
+                    // Format date to yyyy-MM-dd
+                    String selectedDate = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth);
+                    listener.onDateSelected(selectedDate);
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
+
     private void performSearch() {
         Map<String, String> filters = new HashMap<>();
         if (!keywordInput.getText().toString().isEmpty()) {
@@ -93,11 +127,11 @@ public class JobSearchActivity extends AppCompatActivity {
         if (!maxSalaryInput.getText().toString().isEmpty()) {
             filters.put("maxSalary", maxSalaryInput.getText().toString());
         }
-        if (!minJobStartInput.getText().toString().isEmpty()) {
-            filters.put("minJobStart", minJobStartInput.getText().toString());
+        if (!minJobStartDate.isEmpty()) {
+            filters.put("minJobStart", minJobStartDate);
         }
-        if (!maxJobStartInput.getText().toString().isEmpty()) {
-            filters.put("maxJobStart", maxJobStartInput.getText().toString());
+        if (!maxJobStartDate.isEmpty()) {
+            filters.put("maxJobStart", maxJobStartDate);
         }
         filters.put("isApplicationOpen", String.valueOf(isApplicationOpenCheckbox.isChecked()));
         filters.put("isQualified", String.valueOf(isQualifiedCheckbox.isChecked()));
@@ -190,5 +224,9 @@ public class JobSearchActivity extends AppCompatActivity {
         String password = "TestStudent1234@";
         String credentials = username + ":" + password;
         return "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+    }
+
+    interface OnDateSelectedListener {
+        void onDateSelected(String date);
     }
 }
