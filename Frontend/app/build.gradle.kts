@@ -1,6 +1,3 @@
-import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
-import org.gradle.testing.jacoco.tasks.JacocoReport
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -21,10 +18,10 @@ android {
     }
 
     buildTypes {
-        debug {
-            // enableUnitTestCoverage = true
-            enableAndroidTestCoverage = true
-        }
+//        debug {
+//            // enableUnitTestCoverage = true
+//            enableAndroidTestCoverage = true
+//        }
 
         release {
             isMinifyEnabled = false
@@ -60,7 +57,7 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
     implementation("org.java-websocket:Java-WebSocket:1.5.7")
 
-    testImplementation("junit:junit:4.13.2") //ok
+    testImplementation("junit:junit:4.13.2")
     androidTestImplementation ("com.android.support.test:rules:1.0.2")
     androidTestImplementation ("com.android.support.test:runner:1.0.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

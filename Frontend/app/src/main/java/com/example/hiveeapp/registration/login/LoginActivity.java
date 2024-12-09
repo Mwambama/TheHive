@@ -38,8 +38,8 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
-    private static final String PREFERENCES_NAME = "JobSwipePreferences";
-    private static final String STUDENT_ID_KEY = "studentId";
+    private static final String PREFERENCES_NAME = "UserPreferences";
+    private static final String STUDENT_ID_KEY = "userId";
 
     private EditText emailField, passwordField;
     private MaterialButton loginButton;
@@ -59,12 +59,12 @@ public class LoginActivity extends AppCompatActivity {
         setListeners();
 
         //Test purpose
-//        emailField.setText("test643@example.com");
-//        passwordField.setText("Test$1234");
+        emailField.setText("test643@example.com");
+        passwordField.setText("Test$1234");
 
         //Test purpose
-//        emailField.setText("employerTest@aols.com");
-//        passwordField.setText("Test12345@");
+        emailField.setText("employerTest@aols.com");
+        passwordField.setText("Test12345@");
     }
 
     private void initializeViews() {
