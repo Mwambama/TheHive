@@ -57,7 +57,7 @@ public class JobSearchActivity extends AppCompatActivity {
     private String minJobStartDate = "";
     private String maxJobStartDate = "";
 
-    private AutoCompleteTextView jobTypeDropdown;
+    private AutoCompleteTextView jobTypeDropdown, jobModeDropdown;
     private EditText locationInput, companyNameInput;
 
     @Override
@@ -77,6 +77,9 @@ public class JobSearchActivity extends AppCompatActivity {
         // Set date pickers for job start date fields
         setupDatePickers();
 
+        setupJobTypeDropdown();
+        setupJobModeDropdown();
+
         // Set search button click listener
         searchButton.setOnClickListener(v -> performSearch());
     }
@@ -92,33 +95,32 @@ public class JobSearchActivity extends AppCompatActivity {
         searchButton = findViewById(R.id.searchButton);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         jobTypeDropdown = findViewById(R.id.jobTypeDropdown);
+        jobModeDropdown = findViewById(R.id.jobModeDropdown);
         locationInput = findViewById(R.id.locationInput);
         setupJobTypeDropdown();
     }
 
     private void setupJobTypeDropdown() {
-        // Mock data for the dropdown
-        String[] jobTypes = {"Full-Time", "Part-Time", "Internship", "Contract", "Temporary"};
-
-        // Create an ArrayAdapter using a simple dropdown layout
+        String[] jobTypes = {"Full-Time", "Part-Time", "Internship", "Co-op"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, jobTypes);
-
-        // Set the adapter to the AutoCompleteTextView
         jobTypeDropdown.setAdapter(adapter);
-
-        // Optional: Allow dropdown to show when the field gains focus
         jobTypeDropdown.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) {
                 jobTypeDropdown.showDropDown();
             }
         });
-
-        // Optional: Toast for debugging the selected value
-        jobTypeDropdown.setOnItemClickListener((parent, view, position, id) -> {
-            String selectedJobType = (String) parent.getItemAtPosition(position);
-            Toast.makeText(this, "Selected: " + selectedJobType, Toast.LENGTH_SHORT).show();
+    }
+    private void setupJobModeDropdown() {
+        String[] jobModes = {"Online", "Hybrid", "Presential"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, jobModes);
+        jobModeDropdown.setAdapter(adapter);
+        jobModeDropdown.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                jobModeDropdown.showDropDown();
+            }
         });
     }
+
 
     private void retrieveStudentId() {
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
