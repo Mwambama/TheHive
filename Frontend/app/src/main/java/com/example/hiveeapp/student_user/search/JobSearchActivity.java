@@ -227,7 +227,22 @@ public class JobSearchActivity extends AppCompatActivity {
                         Toast.makeText(this, "Failed to parse job postings.", Toast.LENGTH_SHORT).show();
                     }
                 },
-                error -> Toast.makeText(this, "Error fetching job postings.", Toast.LENGTH_SHORT).show());
+                error -> Toast.makeText(this, "Error fetching job postings.", Toast.LENGTH_SHORT).show()) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                // Add Authorization header
+                SharedPreferences preferences = getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+                String username = preferences.getString("email", "teststudent1@example.com");
+                String password = preferences.getString("password", "TestStudent1234@");
+
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                String credentials = username + ":" + password;
+                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
 
         request.setRetryPolicy(new DefaultRetryPolicy(
                 5000,
@@ -240,7 +255,7 @@ public class JobSearchActivity extends AppCompatActivity {
 
     private List<JobPosting> parseJobPostings(JSONArray response) throws JSONException {
         List<JobPosting> jobPostings = new ArrayList<>();
-        for (int i = 0; i < response.length(); i++) {
+        for (int i = 0; i < response.length() && i < 10; i++) {
             JSONObject jsonObject = response.getJSONObject(i);
             JobPosting jobPosting = new JobPosting(
                     jsonObject.optInt("jobPostingId", -1),

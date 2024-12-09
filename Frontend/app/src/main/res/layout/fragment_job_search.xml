@@ -64,6 +64,7 @@
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Location Field -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -182,7 +183,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Job Type"
-                    android:inputType="none"
                     android:padding="12dp"
                     android:textColor="@android:color/black"
                     android:textSize="16sp"

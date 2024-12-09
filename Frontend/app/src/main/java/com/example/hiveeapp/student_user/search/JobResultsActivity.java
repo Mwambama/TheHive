@@ -1,7 +1,6 @@
 package com.example.hiveeapp.student_user.search;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Base64;
@@ -24,14 +23,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class JobResultsActivity extends AppCompatActivity implements JobListAdapter.OnJobInteractionListener {
 
     private static final String TAG = "JobResultsActivity";
     private static final String PREFERENCES_NAME = "JobSwipePreferences";
-    private static final String STUDENT_ID_KEY = "studentId";
+    private static final String APPLIED_JOBS_KEY = "AppliedJobs";
 
     private RecyclerView jobResultsRecyclerView;
     private JobListAdapter jobListAdapter;
@@ -73,7 +74,7 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
 
     private void retrieveStudentId() {
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        studentId = preferences.getInt(STUDENT_ID_KEY, -1);
+        studentId = preferences.getInt("studentId", -1);
 
         if (studentId != -1) {
             Log.d(TAG, "Student ID retrieved from SharedPreferences: " + studentId);
@@ -93,6 +94,15 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
     }
 
     private void applyForJob(int studentId, int jobPostingId, int position) {
+        // Check if the job has already been applied for
+        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        Set<String> appliedJobs = preferences.getStringSet(APPLIED_JOBS_KEY, new HashSet<>());
+
+        if (appliedJobs.contains(String.valueOf(jobPostingId))) {
+            Toast.makeText(this, "You have already applied for this job.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String url = "http://coms-3090-063.class.las.iastate.edu:8080/applications/apply";
 
         JSONObject jsonObject = new JSONObject();
@@ -105,21 +115,19 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
             return;
         }
 
-        // Convert JSON object to a string for the request body
         String requestBody = jsonObject.toString();
 
-        // Use StringRequest to handle plain string responses
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 response -> {
                     Toast.makeText(this, "Application submitted successfully!", Toast.LENGTH_SHORT).show();
-                    // Update the job's applied status in the adapter
-                    jobListAdapter.updateAppliedJobStatus(position);
+                    saveAppliedJob(jobPostingId); // Persist the applied job
+                    jobListAdapter.updateAppliedJobStatus(position); // Update UI
                 },
                 error -> {
                     String errorMessage = "Failed to apply for job.";
                     if (error.networkResponse != null) {
                         if (error.networkResponse.statusCode == 500) {
-                            errorMessage = "Server error: Unable to process the application. Please try again later.";
+                            errorMessage = "Server error: You may have already applied for this job.";
                         } else if (error.networkResponse.statusCode == 401) {
                             errorMessage = "Unauthorized access. Please log in again.";
                         }
@@ -141,7 +149,7 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
-                headers.put("Authorization", createAuthorizationHeader());
+                headers.putAll(createAuthorizationHeaders());
                 return headers;
             }
         };
@@ -149,10 +157,30 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
-    private String createAuthorizationHeader() {
-        String username = "teststudent1@example.com";
-        String password = "TestStudent1234@";
+    private void saveAppliedJob(int jobPostingId) {
+        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        Set<String> appliedJobs = preferences.getStringSet(APPLIED_JOBS_KEY, new HashSet<>());
+        appliedJobs.add(String.valueOf(jobPostingId));
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putStringSet(APPLIED_JOBS_KEY, appliedJobs);
+        editor.apply();
+
+        Log.d(TAG, "Job ID " + jobPostingId + " saved as applied.");
+    }
+
+    private Map<String, String> createAuthorizationHeaders() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        SharedPreferences preferences = getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+        String username = preferences.getString("email", "teststudent1@example.com");
+        String password = preferences.getString("password", "TestStudent1234@");
+
         String credentials = username + ":" + password;
-        return "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        headers.put("Authorization", auth);
+
+        return headers;
     }
 }
