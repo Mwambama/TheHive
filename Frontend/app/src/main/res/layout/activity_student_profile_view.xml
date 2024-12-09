@@ -34,24 +34,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- Back Arrow Icon -->
-            <ImageButton
-                android:id="@+id/backArrowIcon"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="Back Arrow"
-                android:focusable="true"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_back_arrow"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@android:color/white" />
-
             <!-- Personal Details Section -->
             <TextView
                 android:id="@+id/personalDetailsHeader"
@@ -340,6 +322,7 @@
         app:itemIconTint="@android:color/white"
         app:itemTextColor="@android:color/white"
         app:menu="@menu/nav_menu_student"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

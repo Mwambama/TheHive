@@ -14,6 +14,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
+import com.example.hiveeapp.student_user.search.JobSearchActivity;
 import com.example.hiveeapp.student_user.swipe.ApplyActivity;
 import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.student_user.setting.StudentApi;
@@ -77,6 +78,10 @@ public class ChatListActivity extends AppCompatActivity {
                 finish();
                 return true;
             } else if (itemId == R.id.navigation_chat) {
+                return true; // Stay on the current activity
+            } else if (itemId == R.id.navigation_search) {
+                startActivity(new Intent(ChatListActivity.this, JobSearchActivity.class));
+                finish();
                 return true;
             }
             return false;
