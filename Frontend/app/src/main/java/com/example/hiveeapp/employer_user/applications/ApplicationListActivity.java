@@ -40,12 +40,6 @@ public class ApplicationListActivity extends AppCompatActivity {
         // Initialize views
         initViews();
 
-        // Set up "Add Employer" button to navigate to  CreationJobsActivity
-//        addEmployerButton.setOnClickListener(v -> {
-//            Intent intent = new Intent(com.example.hiveeapp.employer_user.display.EditJobActivity.this, AddJobActivity.class);
-//            startActivity(intent);
-//        });
-
         // Set up the RecyclerView with a linear layout and the employer adapter
         applicationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         applicAdapter = new applicationAdapter(this, true);  // true indicates editable mode

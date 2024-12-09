@@ -58,11 +58,13 @@ public class LoginActivity extends AppCompatActivity {
         // Set event listeners for buttons
         setListeners();
 
-        // Test purposes
+        //Test purpose
         emailField.setText("test643@example.com");
         passwordField.setText("Test$1234");
 
-
+        //Test purpose
+//        emailField.setText("employerTest@aols.com");
+//        passwordField.setText("Test12345@");
     }
 
     private void initializeViews() {

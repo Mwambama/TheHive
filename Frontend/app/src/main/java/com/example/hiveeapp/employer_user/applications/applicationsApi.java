@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class applicationsApi {
 
-    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications?jobPostingId=16&status=PENDING";
+    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications?jobPostingId=1003&status=PENDING";
     private static final String ACCEPT_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications/";
     private static final String REJECT_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications/";
     private static final String TAG = "applicationsApi";
@@ -161,36 +161,6 @@ public class applicationsApi {
                 url,
                 listener,
                 error -> handleErrorResponse("Error rejecting application", error, errorListener)
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                return applicationsApi.getHeaders(context);
-            }
-        };
-
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
-    }
-
-    /**
-     * Deletes an employer based on the provided employer ID.
-     *
-     * @param context       The application context.
-     * @param employerId    The ID of the employer to delete.
-     * @param listener      Response listener for successful deletion.
-     * @param errorListener Error listener for handling errors.
-     */
-    public static void deleteEmployer(Context context, long employerId, Response.Listener<String> listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL + "/" + employerId;
-        Log.d(TAG, "DELETE Employer Request URL: " + url);
-
-        StringRequest request = new StringRequest(
-                Request.Method.DELETE,
-                url,
-                response -> {
-                    Log.d(TAG, "Employer deleted successfully: " + response);
-                    listener.onResponse(response);
-                },
-                error -> handleErrorResponse("Error deleting employer", error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {

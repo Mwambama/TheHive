@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.employer_user.display.EmployerApis;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +32,7 @@ public class applicationsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_applications, container, false);
+        View view = inflater.inflate(R.layout.fragment_applied_jobs, container, false);
 
         // Initialize RecyclerView and set its layout manager
         applicationsRecyclerView = view.findViewById(R.id.applicationsRecyclerView);

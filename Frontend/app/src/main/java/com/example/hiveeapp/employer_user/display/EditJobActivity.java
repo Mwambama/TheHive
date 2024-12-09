@@ -11,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.employer_user.applications.ApplicationListActivity;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import org.json.JSONArray;
@@ -34,6 +35,10 @@ public class EditJobActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job_list);
+
+        // Initialize Toolbar and set back button functionality
+        MaterialToolbar topAppBar = findViewById(R.id.topAppBar);
+        topAppBar.setNavigationOnClickListener(v -> onBackPressed()); // Navigate back
 
         // Initialize views
         initViews();
@@ -75,6 +80,12 @@ public class EditJobActivity extends AppCompatActivity {
         super.onResume();
         // Refresh the job list when the activity is resumed
         loadJobs();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Custom back navigation logic (if needed)
+        super.onBackPressed(); // Default back behavior
     }
 
     /**
