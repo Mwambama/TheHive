@@ -1,6 +1,7 @@
 package com.example.hiveeapp.student_user.search;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Base64;
@@ -17,6 +18,10 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.example.hiveeapp.R;
+import com.example.hiveeapp.student_user.StudentMainActivity;
+import com.example.hiveeapp.student_user.chat.ChatListActivity;
+import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONException;
@@ -38,6 +43,7 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
     private JobListAdapter jobListAdapter;
     private List<JobPosting> jobPostings;
     private int studentId = -1;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +76,10 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
             Log.e(TAG, "No job postings found.");
             Toast.makeText(this, "No jobs to display. Try another search.", Toast.LENGTH_SHORT).show();
         }
+
+        // Initialize BottomNavigationView
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        setupBottomNavigationView();
     }
 
     private void retrieveStudentId() {
@@ -83,6 +93,43 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
         }
     }
 
+    private void setupBottomNavigationView() {
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_profile) {
+                navigateToProfile();
+                return true;
+            } else if (itemId == R.id.navigation_chat) {
+                navigateToChat();
+                return true;
+            } else if (itemId == R.id.navigation_apply) {
+                navigateToApply();
+                return true;
+            } else if (itemId == R.id.navigation_search) {
+                finish(); // Already in Job Search
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private void navigateToProfile() {
+        Intent intent = new Intent(this, StudentProfileViewActivity.class);
+        intent.putExtra("USER_ID", studentId);
+        startActivity(intent);
+    }
+
+    private void navigateToChat() {
+        Intent intent = new Intent(this, ChatListActivity.class);
+        intent.putExtra("studentId", studentId);
+        startActivity(intent);
+    }
+
+    private void navigateToApply() {
+        Intent intent = new Intent(this, StudentMainActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onJobClick(JobPosting jobPosting) {
         Toast.makeText(this, "Clicked on: " + jobPosting.getTitle(), Toast.LENGTH_SHORT).show();
@@ -94,7 +141,6 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
     }
 
     private void applyForJob(int studentId, int jobPostingId, int position) {
-        // Check if the job has already been applied for
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         Set<String> appliedJobs = preferences.getStringSet(APPLIED_JOBS_KEY, new HashSet<>());
 
@@ -115,13 +161,11 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
             return;
         }
 
-        String requestBody = jsonObject.toString();
-
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 response -> {
                     Toast.makeText(this, "Application submitted successfully!", Toast.LENGTH_SHORT).show();
-                    saveAppliedJob(jobPostingId); // Persist the applied job
-                    jobListAdapter.updateAppliedJobStatus(position); // Update UI
+                    saveAppliedJob(jobPostingId);
+                    jobListAdapter.updateAppliedJobStatus(position);
                 },
                 error -> {
                     String errorMessage = "Failed to apply for job.";
@@ -142,7 +186,7 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
 
             @Override
             public byte[] getBody() throws AuthFailureError {
-                return requestBody.getBytes(); // Convert request body to bytes
+                return jsonObject.toString().getBytes();
             }
 
             @Override
