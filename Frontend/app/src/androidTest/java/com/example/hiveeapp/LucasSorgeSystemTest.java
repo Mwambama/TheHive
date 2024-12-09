@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.espresso.intent.Intents;
@@ -54,15 +55,14 @@ public class LucasSorgeSystemTest {
         onView(withId(R.id.loginButton)).perform(click());
 
         // Aguarda a navegação para a próxima tela
-        Thread.sleep(5000); // Use IdlingResource se possível
+        Thread.sleep(1000); // Substituir por IdlingResource, se possível
 
         // Verifica se a navegação para StudentMainActivity ocorreu
         intended(hasComponent(StudentMainActivity.class.getName()));
 
         // Valida os dados no SharedPreferences
         SharedPreferences sharedPreferences =
-                InstrumentationRegistry.getInstrumentation()
-                        .getTargetContext()
+                ApplicationProvider.getApplicationContext()
                         .getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
 
         String savedEmail = sharedPreferences.getString("email", null);
