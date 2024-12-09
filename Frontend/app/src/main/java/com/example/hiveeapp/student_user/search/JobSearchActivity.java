@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -55,6 +57,9 @@ public class JobSearchActivity extends AppCompatActivity {
     private String minJobStartDate = "";
     private String maxJobStartDate = "";
 
+    private AutoCompleteTextView jobTypeDropdown;
+    private EditText locationInput, companyNameInput;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +91,33 @@ public class JobSearchActivity extends AppCompatActivity {
         isQualifiedCheckbox = findViewById(R.id.isQualifiedCheckbox);
         searchButton = findViewById(R.id.searchButton);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        jobTypeDropdown = findViewById(R.id.jobTypeDropdown);
+        locationInput = findViewById(R.id.locationInput);
+        setupJobTypeDropdown();
+    }
+
+    private void setupJobTypeDropdown() {
+        // Mock data for the dropdown
+        String[] jobTypes = {"Full-Time", "Part-Time", "Internship", "Contract", "Temporary"};
+
+        // Create an ArrayAdapter using a simple dropdown layout
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, jobTypes);
+
+        // Set the adapter to the AutoCompleteTextView
+        jobTypeDropdown.setAdapter(adapter);
+
+        // Optional: Allow dropdown to show when the field gains focus
+        jobTypeDropdown.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                jobTypeDropdown.showDropDown();
+            }
+        });
+
+        // Optional: Toast for debugging the selected value
+        jobTypeDropdown.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedJobType = (String) parent.getItemAtPosition(position);
+            Toast.makeText(this, "Selected: " + selectedJobType, Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void retrieveStudentId() {
