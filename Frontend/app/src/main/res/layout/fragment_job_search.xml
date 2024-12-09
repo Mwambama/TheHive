@@ -197,6 +197,7 @@
         app:itemIconTint="@android:color/white"
         app:itemTextColor="@android:color/white"
         app:menu="@menu/nav_menu_student"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
