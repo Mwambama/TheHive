@@ -59,12 +59,12 @@ public class LoginActivity extends AppCompatActivity {
         setListeners();
 
         //Test purpose
-        emailField.setText("test643@example.com");
-        passwordField.setText("Test$1234");
+//        emailField.setText("test643@example.com");
+//        passwordField.setText("Test$1234");
 
         //Test purpose
-        emailField.setText("employerTest@aols.com");
-        passwordField.setText("Test12345@");
+//        emailField.setText("employerTest@aols.com");
+//        passwordField.setText("Test12345@");
     }
 
     private void initializeViews() {
@@ -149,10 +149,10 @@ public class LoginActivity extends AppCompatActivity {
 
             SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putInt(STUDENT_ID_KEY, userId); // Save as studentId for consistency
-            editor.putString("email", email); // Save email
-            editor.putString("password", password); // Save password
-            editor.commit(); // Ensure data is saved synchronously
+            editor.putInt(STUDENT_ID_KEY, userId);
+            editor.putString("email", email);
+            editor.putString("password", password);
+            editor.commit();
 
             // Debug: Log all preferences
             Map<String, ?> allEntries = preferences.getAll();
