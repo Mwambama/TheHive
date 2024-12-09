@@ -13,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.student_user.chat.ChatListActivity;
+import com.example.hiveeapp.student_user.search.JobSearchActivity;
 import com.example.hiveeapp.student_user.setting.StudentApi;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -109,7 +110,15 @@ public class StudentProfileViewActivity extends AppCompatActivity {
                     return true;
                 } else if (itemId == R.id.navigation_chat) {
                     Intent intent = new Intent(StudentProfileViewActivity.this, ChatListActivity.class);
+                    intent.putExtra("USER_ID", userId);
                     startActivity(intent);
+                    finish();
+                    return true;
+                } else if (itemId == R.id.navigation_search) {
+                    Intent intent = new Intent(StudentProfileViewActivity.this, JobSearchActivity.class);
+                    intent.putExtra("USER_ID", userId);
+                    startActivity(intent);
+                    finish();
                     return true;
                 }
                 return false;

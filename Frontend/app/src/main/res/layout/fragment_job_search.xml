@@ -64,6 +64,23 @@
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Location Field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:boxStrokeColor="@color/colorPrimary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/locationInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Location"
+                    android:inputType="text"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <!-- Salary Inputs -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -154,6 +171,60 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
+            <!-- Job Type Dropdown -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="Job Type"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxBackgroundMode="filled"
+                app:hintEnabled="true">
+
+                <AutoCompleteTextView
+                    android:id="@+id/jobTypeDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:dropDownVerticalOffset="10dp"
+                    android:dropDownHeight="wrap_content"
+                    android:dropDownWidth="match_parent" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Job Mode Dropdown -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="Job Mode"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:boxBackgroundMode="filled"
+                app:hintEnabled="true">
+
+                <AutoCompleteTextView
+                    android:id="@+id/jobModeDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:dropDownVerticalOffset="10dp"
+                    android:dropDownHeight="wrap_content"
+                    android:dropDownWidth="match_parent" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <!-- Checkboxes -->
             <CheckBox
                 android:id="@+id/isApplicationOpenCheckbox"
@@ -197,6 +268,7 @@
         app:itemIconTint="@android:color/white"
         app:itemTextColor="@android:color/white"
         app:menu="@menu/nav_menu_student"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

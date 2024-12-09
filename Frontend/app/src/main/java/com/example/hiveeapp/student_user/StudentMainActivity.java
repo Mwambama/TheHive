@@ -13,7 +13,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.registration.login.LoginActivity;
-import com.example.hiveeapp.student_user.application.JobApplicationFragment;
+import com.example.hiveeapp.student_user.application.AppliedJobsFragment;
 import com.example.hiveeapp.student_user.chat.ChatListActivity;
 import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
 import com.example.hiveeapp.student_user.search.JobSearchActivity;
@@ -122,7 +122,7 @@ public class StudentMainActivity extends AppCompatActivity {
                 if (tab.getPosition() == 0) {
                     selectedFragment = new JobSwipeFragment();
                 } else {
-                    selectedFragment = new JobApplicationFragment();
+                    selectedFragment = new AppliedJobsFragment();
                 }
                 replaceFragment(selectedFragment);
             }

@@ -7,19 +7,27 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.hiveeapp.R;
-import com.example.hiveeapp.student_user.search.JobPosting;
+import com.example.hiveeapp.student_user.StudentMainActivity;
+import com.example.hiveeapp.student_user.chat.ChatListActivity;
+import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
+import com.example.hiveeapp.student_user.swipe.JobSwipeFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONArray;
@@ -43,10 +51,14 @@ public class JobSearchActivity extends AppCompatActivity {
     private com.google.android.material.textfield.TextInputEditText minJobStartButton, maxJobStartButton;
     private CheckBox isApplicationOpenCheckbox, isQualifiedCheckbox;
     private Button searchButton;
+    private BottomNavigationView bottomNavigationView;
 
     private int studentId;
     private String minJobStartDate = "";
     private String maxJobStartDate = "";
+
+    private AutoCompleteTextView jobTypeDropdown, jobModeDropdown;
+    private EditText locationInput, companyNameInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +71,14 @@ public class JobSearchActivity extends AppCompatActivity {
         // Retrieve Student ID
         retrieveStudentId();
 
+        // Set up BottomNavigationView
+        setupBottomNavigationView();
+
         // Set date pickers for job start date fields
         setupDatePickers();
+
+        setupJobTypeDropdown();
+        setupJobModeDropdown();
 
         // Set search button click listener
         searchButton.setOnClickListener(v -> performSearch());
@@ -70,12 +88,39 @@ public class JobSearchActivity extends AppCompatActivity {
         keywordInput = findViewById(R.id.keywordInput);
         minSalaryInput = findViewById(R.id.minSalaryInput);
         maxSalaryInput = findViewById(R.id.maxSalaryInput);
-        minJobStartButton = findViewById(R.id.minJobStartButton); // Corrected to TextInputEditText
-        maxJobStartButton = findViewById(R.id.maxJobStartButton); // Corrected to TextInputEditText
+        minJobStartButton = findViewById(R.id.minJobStartButton);
+        maxJobStartButton = findViewById(R.id.maxJobStartButton);
         isApplicationOpenCheckbox = findViewById(R.id.isApplicationOpenCheckbox);
         isQualifiedCheckbox = findViewById(R.id.isQualifiedCheckbox);
         searchButton = findViewById(R.id.searchButton);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        jobTypeDropdown = findViewById(R.id.jobTypeDropdown);
+        jobModeDropdown = findViewById(R.id.jobModeDropdown);
+        locationInput = findViewById(R.id.locationInput);
+        setupJobTypeDropdown();
     }
+
+    private void setupJobTypeDropdown() {
+        String[] jobTypes = {"Full-Time", "Part-Time", "Internship", "Co-op"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, jobTypes);
+        jobTypeDropdown.setAdapter(adapter);
+        jobTypeDropdown.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                jobTypeDropdown.showDropDown();
+            }
+        });
+    }
+    private void setupJobModeDropdown() {
+        String[] jobModes = {"Online", "Hybrid", "Presential"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, jobModes);
+        jobModeDropdown.setAdapter(adapter);
+        jobModeDropdown.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                jobModeDropdown.showDropDown();
+            }
+        });
+    }
+
 
     private void retrieveStudentId() {
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -90,10 +135,30 @@ public class JobSearchActivity extends AppCompatActivity {
         }
     }
 
+    private void setupBottomNavigationView() {
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_profile) {
+                navigateToProfile();
+                return true;
+            } else if (itemId == R.id.navigation_chat) {
+                navigateToChat();
+                return true;
+            } else if (itemId == R.id.navigation_apply) {
+                navigateToApply();
+                return true;
+            } else if (itemId == R.id.navigation_search) {
+                // Already in JobSearchActivity
+                return true;
+            }
+            return false;
+        });
+    }
+
     private void setupDatePickers() {
         minJobStartButton.setOnClickListener(v -> showDatePicker(date -> {
             minJobStartDate = date;
-            minJobStartButton.setText(date); // Display the selected date in the TextInputEditText
+            minJobStartButton.setText(date);
         }));
 
         maxJobStartButton.setOnClickListener(v -> showDatePicker(date -> {
@@ -106,7 +171,6 @@ public class JobSearchActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                 (view, year, month, dayOfMonth) -> {
-                    // Format date to yyyy-MM-dd
                     String selectedDate = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth);
                     listener.onDateSelected(selectedDate);
                 },
@@ -136,8 +200,6 @@ public class JobSearchActivity extends AppCompatActivity {
         filters.put("isApplicationOpen", String.valueOf(isApplicationOpenCheckbox.isChecked()));
         filters.put("isQualified", String.valueOf(isQualifiedCheckbox.isChecked()));
 
-        Log.d(TAG, "Filters: " + filters);
-
         fetchJobPostings(filters);
     }
 
@@ -150,14 +212,11 @@ public class JobSearchActivity extends AppCompatActivity {
             }
         }
         String url = urlBuilder.toString();
-        Log.d(TAG, "Request URL: " + url);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
                     try {
                         List<JobPosting> jobPostings = parseJobPostings(response);
-
-                        Log.d(TAG, "Parsed job postings count: " + jobPostings.size());
 
                         if (!jobPostings.isEmpty()) {
                             Intent intent = new Intent(this, JobResultsActivity.class);
@@ -167,19 +226,22 @@ public class JobSearchActivity extends AppCompatActivity {
                             Toast.makeText(this, "No jobs found for your search criteria.", Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
-                        Log.e(TAG, "Error parsing job postings", e);
-                        Toast.makeText(this, "Failed to parse job postings", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed to parse job postings.", Toast.LENGTH_SHORT).show();
                     }
                 },
-                error -> {
-                    Toast.makeText(this, "Error fetching job postings", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Volley Request Error: ", error);
-                }) {
+                error -> Toast.makeText(this, "Error fetching job postings.", Toast.LENGTH_SHORT).show()) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                // Add Authorization header
+                SharedPreferences preferences = getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+                String username = preferences.getString("email", "teststudent1@example.com");
+                String password = preferences.getString("password", "TestStudent1234@");
+
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
-                headers.put("Authorization", createAuthorizationHeader());
+                String credentials = username + ":" + password;
+                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
                 return headers;
             }
         };
@@ -195,9 +257,7 @@ public class JobSearchActivity extends AppCompatActivity {
 
     private List<JobPosting> parseJobPostings(JSONArray response) throws JSONException {
         List<JobPosting> jobPostings = new ArrayList<>();
-        int limit = Math.min(response.length(), 10);
-
-        for (int i = 0; i < limit; i++) {
+        for (int i = 0; i < response.length() && i < 10; i++) {
             JSONObject jsonObject = response.getJSONObject(i);
             JobPosting jobPosting = new JobPosting(
                     jsonObject.optInt("jobPostingId", -1),
@@ -215,15 +275,24 @@ public class JobSearchActivity extends AppCompatActivity {
             );
             jobPostings.add(jobPosting);
         }
-
         return jobPostings;
     }
 
-    private String createAuthorizationHeader() {
-        String username = "teststudent1@example.com";
-        String password = "TestStudent1234@";
-        String credentials = username + ":" + password;
-        return "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+    private void navigateToProfile() {
+        Intent intent = new Intent(this, StudentProfileViewActivity.class);
+        intent.putExtra("USER_ID", studentId);
+        startActivity(intent);
+    }
+
+    private void navigateToChat() {
+        Intent intent = new Intent(this, ChatListActivity.class);
+        intent.putExtra("studentId", studentId);
+        startActivity(intent);
+    }
+
+    private void navigateToApply() {
+        Intent intent = new Intent(this, StudentMainActivity.class);
+        startActivity(intent);
     }
 
     interface OnDateSelectedListener {

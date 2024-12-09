@@ -45,10 +45,6 @@ public class ResumeManagementActivity extends AppCompatActivity {
         // Initialize views
         pdfPreview = findViewById(R.id.pdfPreview);
         uploadResumeButton = findViewById(R.id.manageResumeButton);
-        backArrowIcon = findViewById(R.id.backArrowIcon);
-
-        // Back button listener
-        backArrowIcon.setOnClickListener(v -> finish());
 
         // Handle PDF upload
         uploadResumeButton.setOnClickListener(v -> selectPdf());

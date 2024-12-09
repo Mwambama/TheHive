@@ -14,11 +14,13 @@
         <!-- Illustration Image -->
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:src="@drawable/illustration"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/logo"
             android:contentDescription="@string/illustration_desc"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="24dp"
+            android:scaleType="centerInside" />
+
 
         <!-- Email Field -->
         <LinearLayout
