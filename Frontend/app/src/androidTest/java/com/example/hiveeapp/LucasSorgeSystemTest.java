@@ -45,54 +45,73 @@ public class LucasSorgeSystemTest {
     }
 
     @Test
-    public void testSuccessfulLoginAndNavigation() {
-        onView(withId(R.id.emailField)).perform(typeText("test643@example.com"));
-        onView(withId(R.id.passwordField)).perform(typeText("Test$1234"));
-
+    public void testSuccessfulLoginAndNavigation() throws InterruptedException {
+        // Preenche email e senha
+        onView(withId(R.id.emailField))
+                .perform(typeText("test644@example.com"), closeSoftKeyboard());
+        onView(withId(R.id.passwordField))
+                .perform(typeText("Test$1234"), closeSoftKeyboard());
         onView(withId(R.id.loginButton)).perform(click());
 
+        // Aguarda a navegação para a próxima tela
+        Thread.sleep(5000); // Use IdlingResource se possível
+
+        // Verifica se a navegação para StudentMainActivity ocorreu
         intended(hasComponent(StudentMainActivity.class.getName()));
 
+        // Valida os dados no SharedPreferences
         SharedPreferences sharedPreferences =
                 InstrumentationRegistry.getInstrumentation()
                         .getTargetContext()
                         .getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
 
-        assertEquals("test643@example.com", sharedPreferences.getString("email", null));
-        assertEquals("Test$1234", sharedPreferences.getString("password", null));
+        String savedEmail = sharedPreferences.getString("email", null);
+        String savedPassword = sharedPreferences.getString("password", null);
+
+        System.out.println("Email salvo: " + savedEmail);
+        System.out.println("Senha salva: " + savedPassword);
+
+        assertEquals("test644@example.com", savedEmail);
+        assertEquals("Test$1234", savedPassword);
     }
 
     @Test
-    public void testSignUpAndLogin() throws InterruptedException {
+    public void testSignUpAndLogin() {
         String uniqueEmail = "testuser" + System.currentTimeMillis() + "@example.com";
 
         onView(withId(R.id.registerText)).perform(click());
-
         onView(withId(R.id.signup_student_btn)).perform(click());
 
-        onView(withId(R.id.signup_name_edt)).check(matches(isDisplayed())).perform(scrollTo(), typeText("New Test User"));
-        onView(withId(R.id.signup_email_edt)).perform(scrollTo(), typeText(uniqueEmail));
-        onView(withId(R.id.signup_password_edt)).perform(scrollTo(), typeText("Test@1234"));
-        onView(withId(R.id.signup_verify_password_edt)).perform(scrollTo(), typeText("Test@1234"));
+        onView(withId(R.id.signup_name_edt))
+                .check(matches(isDisplayed()))
+                .perform(scrollTo(), typeText("New Test User"));
+        onView(withId(R.id.signup_email_edt))
+                .perform(scrollTo(), typeText(uniqueEmail));
+        onView(withId(R.id.signup_password_edt))
+                .perform(scrollTo(), typeText("Test@1234"));
+        onView(withId(R.id.signup_verify_password_edt))
+                .perform(scrollTo(), typeText("Test@1234"));
         onView(isRoot()).perform(closeSoftKeyboard());
-        onView(withId(R.id.signup_university_edt)).perform(scrollTo(), typeText("Test University"));
+        onView(withId(R.id.signup_university_edt))
+                .perform(scrollTo(), typeText("Test University"));
         onView(isRoot()).perform(closeSoftKeyboard());
-        onView(withId(R.id.signup_signup_btn)).perform(scrollTo(), click());
+        onView(withId(R.id.signup_signup_btn))
+                .perform(scrollTo(), click());
 
-        Thread.sleep(5000);
-
+        // Verifica se o campo de e-mail está visível após o registro
         onView(withId(R.id.emailField)).check(matches(isDisplayed()));
 
+        // Faz login com as credenciais criadas
         onView(withId(R.id.emailField))
                 .perform(typeText(uniqueEmail), closeSoftKeyboard());
         onView(withId(R.id.passwordField))
                 .perform(typeText("Test@1234"), closeSoftKeyboard());
         onView(withId(R.id.loginButton)).perform(click());
 
-        Thread.sleep(2000);
-
+        // Verifica a navegação para StudentMainActivity
         intended(hasComponent(StudentMainActivity.class.getName()));
 
+        // Valida dados salvos no SharedPreferences
         SharedPreferences sharedPreferences =
                 InstrumentationRegistry.getInstrumentation()
                         .getTargetContext()
@@ -103,40 +122,38 @@ public class LucasSorgeSystemTest {
     }
 
     @Test
-    public void testLoginNavigateAndUpdateProfile() throws InterruptedException{
+    public void testLoginNavigateAndUpdateProfile() {
         onView(withId(R.id.emailField))
                 .perform(typeText("test643@example.com"), closeSoftKeyboard());
         onView(withId(R.id.passwordField))
                 .perform(typeText("Test$1234"), closeSoftKeyboard());
         onView(withId(R.id.loginButton)).perform(click());
 
-        Thread.sleep(2000);
-
+        // Verifica a navegação para StudentMainActivity
         intended(hasComponent(StudentMainActivity.class.getName()));
 
+        // Navega até o perfil
         onView(withId(R.id.navigation_profile)).perform(click());
 
-        Thread.sleep(2000);
-
+        // Verifica se a view do perfil está visível
         onView(withId(R.id.profileScrollView)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void testLoginAndNavigateToChat() throws InterruptedException {
+    public void testLoginAndNavigateToChat() {
         onView(withId(R.id.emailField))
                 .perform(typeText("test643@example.com"), closeSoftKeyboard());
         onView(withId(R.id.passwordField))
                 .perform(typeText("Test$1234"), closeSoftKeyboard());
         onView(withId(R.id.loginButton)).perform(click());
 
-        Thread.sleep(2000);
-
+        // Verifica a navegação para StudentMainActivity
         intended(hasComponent(StudentMainActivity.class.getName()));
 
+        // Navega para o chat
         onView(withId(R.id.navigation_chat)).perform(click());
 
-        Thread.sleep(2000);
-
+        // Verifica se a RecyclerView do chat está visível
         onView(withId(R.id.chatRecyclerView))
                 .check(matches(isDisplayed()));
     }
