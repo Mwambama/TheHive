@@ -19,13 +19,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ApplyActivity extends AppCompatActivity {
 
     private static final String TAG = "ApplyActivity";
     private static final String PREFERENCES_NAME = "JobSwipePreferences";
-    private static final String SWIPE_POSITION_KEY = "SwipePosition";
+    private static final String APPLIED_JOBS_KEY = "AppliedJobs";
 
     private int studentId;
     private int jobPostingId;
@@ -55,7 +57,7 @@ public class ApplyActivity extends AppCompatActivity {
             jsonObject.put("studentId", studentId);
             jsonObject.put("jobPostingId", jobPostingId);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error creating JSON object for application request", e);
             Toast.makeText(this, "Error creating application request.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -63,17 +65,22 @@ public class ApplyActivity extends AppCompatActivity {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
                 response -> {
                     try {
-                        // Parse the plain string response
-                        String message = response.toString();
+                        // Parse and display the server response
+                        String message = response.optString("message", "Application submitted successfully!");
                         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                        saveAppliedJob(jobPostingId); // Persist the applied job
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing server response", e);
                     }
                 },
                 error -> {
                     String errorMessage = "Failed to apply for job.";
-                    if (error.networkResponse != null && error.networkResponse.statusCode == 500) {
-                        errorMessage = "Server error: Unable to process the application. Please try again later.";
+                    if (error.networkResponse != null) {
+                        if (error.networkResponse.statusCode == 500) {
+                            errorMessage = "Server error: Unable to process the application. Please try again later.";
+                        } else if (error.networkResponse.statusCode == 401) {
+                            errorMessage = "Unauthorized access. Please log in again.";
+                        }
                     }
                     Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Error applying for job: ", error);
@@ -82,7 +89,7 @@ public class ApplyActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
-                headers.putAll(createAuthorizationHeaders(ApplyActivity.this));
+                headers.putAll(createAuthorizationHeaders());
                 return headers;
             }
         };
@@ -90,7 +97,19 @@ public class ApplyActivity extends AppCompatActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
-    private Map<String, String> createAuthorizationHeaders(Context context) {
+    private void saveAppliedJob(int jobPostingId) {
+        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        Set<String> appliedJobs = preferences.getStringSet(APPLIED_JOBS_KEY, new HashSet<>());
+        appliedJobs.add(String.valueOf(jobPostingId));
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putStringSet(APPLIED_JOBS_KEY, appliedJobs);
+        editor.apply();
+
+        Log.d(TAG, "Job ID " + jobPostingId + " saved as applied.");
+    }
+
+    private Map<String, String> createAuthorizationHeaders() {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
@@ -102,15 +121,5 @@ public class ApplyActivity extends AppCompatActivity {
         headers.put("Authorization", auth);
 
         return headers;
-    }
-
-    private void saveSwipePosition(Context context, int position) {
-        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        preferences.edit().putInt(SWIPE_POSITION_KEY, position).apply();
-    }
-
-    private int getSavedSwipePosition(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        return preferences.getInt(SWIPE_POSITION_KEY, 0);
     }
 }

@@ -1,0 +1,227 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ApplicationController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.controller.application</a>
+</div>
+
+<h1>Coverage Summary for Class: ApplicationController (com.example.thehiveapp.controller.application)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ApplicationController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    44.4%
+  </span>
+  <span class="absValue">
+    (4/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    46.7%
+  </span>
+  <span class="absValue">
+    (7/15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.controller.application;
+&nbsp;
+&nbsp;import com.example.thehiveapp.dto.application.ApplicationDto;
+&nbsp;import com.example.thehiveapp.dto.application.ApplicationRequest;
+&nbsp;import com.example.thehiveapp.dto.application.ApplicationUpdateRequest;
+&nbsp;import com.example.thehiveapp.enums.status.Status;
+&nbsp;import com.example.thehiveapp.service.application.ApplicationService;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/applications&quot;)
+&nbsp;public class ApplicationController {
+&nbsp;
+&nbsp;    @Autowired private ApplicationService applicationService;
+&nbsp;
+<b class="fc">&nbsp;    public ApplicationController() {}</b>
+&nbsp;
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Submit an application for a job posting&quot;,
+&nbsp;            description = &quot;Allows a student to submit an application for a specific job posting.&quot;
+&nbsp;    )
+&nbsp;    @PostMapping(&quot;/apply&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; applyForJobPosting(@RequestBody ApplicationRequest request) {
+<b class="fc">&nbsp;        applicationService.applyForJobPosting(request);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(&quot;Application submitted successfully!&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Get applications for a student or all applications&quot;,
+&nbsp;            description = &quot;Retrieves all applications submitted by a specific student or all applications if no student ID is provided.&quot;
+&nbsp;    )
+&nbsp;    @GetMapping(&quot;/student&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;ApplicationDto&gt;&gt; getApplications(@RequestParam(value = &quot;studentId&quot;, required = false) Long studentId){
+<b class="pc">&nbsp;        if (studentId != null){</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(applicationService.getApplicationsforStudent(studentId));</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.ok(applicationService.getApplications());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Get an application by its ID&quot;,
+&nbsp;            description = &quot;Retrieves the details of a specific application using its ID.&quot;
+&nbsp;    )
+&nbsp;    @GetMapping(&quot;/{applicationId}&quot;)
+&nbsp;    public ApplicationDto getApplication(@PathVariable Long applicationId){
+<b class="nc">&nbsp;        return applicationService.getApplication(applicationId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Update the status of an application&quot;,
+&nbsp;            description = &quot;Allows updating the status of an application, such as &#39;ACCEPTED&#39; or &#39;REJECTED&#39;.&quot;
+&nbsp;    )
+&nbsp;    @PutMapping(&quot;/update/{applicationId}&quot;)
+&nbsp;    public ResponseEntity&lt;ApplicationDto&gt; updateApplicationStatus(@PathVariable Long applicationId, @RequestBody ApplicationUpdateRequest applicationUpdateRequest) {
+<b class="nc">&nbsp;        return ResponseEntity.ok(applicationService.updateApplicationStatus(applicationId, applicationUpdateRequest));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Delete an application by ID&quot;,
+&nbsp;            description = &quot;Deletes a specific application using its ID.&quot;
+&nbsp;    )
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    public String deleteApplication(@PathVariable Long id) {
+<b class="nc">&nbsp;        applicationService.deleteApplication(id);</b>
+<b class="nc">&nbsp;        return &quot;Application successfully deleted&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Get applications filtered by job posting and status&quot;,
+&nbsp;            description = &quot;Retrieves applications filtered by a specific job posting and status (ACCEPTED, PENDING, REJECTED).&quot;
+&nbsp;    )
+&nbsp;    @GetMapping
+&nbsp;    public List&lt;ApplicationDto&gt; getApplicationsByJobPostingAndStatus(
+&nbsp;            @RequestParam(value = &quot;jobPostingId&quot;, required = false) Long jobPostingId,
+&nbsp;            @RequestParam(value = &quot;status&quot;, required = false) Status status) {
+<b class="nc">&nbsp;        return applicationService.getApplicationsByJobPostingIdAndStatus(jobPostingId, status);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Reject an application&quot;,
+&nbsp;            description = &quot;Allows rejecting an application by changing its status to &#39;REJECTED&#39;.&quot;
+&nbsp;    )
+&nbsp;    @PostMapping(&quot;/{id}/reject&quot;)
+&nbsp;    public String rejectApplication(@PathVariable Long id) {
+<b class="nc">&nbsp;        applicationService.rejectApplication(id);</b>
+<b class="nc">&nbsp;        return &quot;Application successfully rejected&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Accept an application and create a chat&quot;,
+&nbsp;            description = &quot;Accepts an application and creates a new chat for communication between the student and employer.&quot;
+&nbsp;    )
+&nbsp;    @PostMapping(&quot;/{id}/accept&quot;)
+&nbsp;    public String acceptApplication(@PathVariable Long id) {
+<b class="fc">&nbsp;        applicationService.acceptApplication(id);</b>
+<b class="fc">&nbsp;        return &quot;Application successfully accepted and chat created&quot;;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 17:35</div>
+</div>
+</body>
+</html>

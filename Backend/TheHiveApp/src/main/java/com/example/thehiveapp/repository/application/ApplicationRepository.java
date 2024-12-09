@@ -14,4 +14,5 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     List<Application> findApplicationsByJobPosting(JobPosting jobPosting);
     List<Application> findApplicationsByJobPostingAndStatus(JobPosting jobPosting, Status status);
     Optional<Application> findApplicationByApplicationId(Long id);
+    List<Application> findTop10ByStudentOrderByAppliedOnDesc(Student student);
 }

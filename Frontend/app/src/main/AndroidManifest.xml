@@ -16,7 +16,6 @@
         tools:targetApi="31"
         android:usesCleartextTraffic="true">
 
-
         <!-- Onboarding Activity -->
         <activity android:name=".registration.onBoarding.OnboardingActivity"
             android:exported="true">
@@ -25,7 +24,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
 
         <!--Login Activity-->
         <activity android:name=".registration.login.LoginActivity" />
@@ -44,48 +42,25 @@
 
         <activity android:name=".employer_user.EmployerMainActivity" android:exported="true" />
         <activity android:name=".employer_user.setting.EmployerProfileActivity" android:exported="true" />
-        <!--        <activity android:name=".employer_user.model.CreateJobsActivity" android:exported="true" />-->
         <activity android:name=".employer_user.applications.ApplicationListActivity" />
-
 
         <activity android:name=".employer_user.model.EmployerLoginActivity" android:exported="true" />
         <activity android:name=".employer_user.model.TrackingApplicationActivity" android:exported="true" />
-
         <activity android:name=".employer_user.display.EditJobActivity" android:exported="true" />
         <activity android:name=".employer_user.display.AddJobActivity" android:exported="true" />
 
-
-<!--        <activity android:name=".employer_user.setting.employerinfoApi" android:exported="true" />-->
-        <activity android:name=".employer_user.setting.ViewEmployerInfoActivity" android:exported="true" />
-<!--        <activity android:name=".employer_user." android:exported="true" />-->
-
-        <!-- Student Activity -->
+        <!-- Student Activities -->
         <activity android:name=".student_user.StudentMainActivity" android:exported="true" />
-
-        <!-- Add the StudentProfileActivity -->
         <activity android:name=".student_user.profile.StudentProfileActivity" android:exported="true" />
         <activity android:name=".student_user.profile.StudentProfileViewActivity" android:exported="true" />
         <activity android:name=".student_user.profile.ResumeManagementActivity" android:exported="true" />
+        <activity android:name=".student_user.chat.ChatActivity" android:exported="true" />
+        <activity android:name=".student_user.chat.ChatListActivity" android:exported="true" />
+        <activity android:name=".student_user.swipe.ApplyActivity" android:exported="true" />
 
-        <!-- Student Chat Activity -->
-        <activity android:name=".student_user.chat.ChatActivity" android:exported="true"/>
-        <activity android:name=".student_user.chat.ChatListActivity" android:exported="true"/>
-
-
-        <!-- Employer Chat Activity -->
-        <activity
-            android:name=".employer_user.chat.EmployerChatActivity"
-            android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity android:name=".employer_user.chat.EmployerChatListActivity" />
-
-
-        <activity android:name=".student_user.swipe.ApplyActivity" android:exported="true"/>
+        <!-- Add JobSearchActivity -->
+        <activity android:name=".student_user.search.JobSearchActivity" android:exported="true" />
+        <activity android:name=".student_user.search.JobResultsActivity" android:exported="true" />
 
         <!-- Admin Activity -->
         <activity android:name=".admin_user.AdminMainActivity" android:exported="true" />

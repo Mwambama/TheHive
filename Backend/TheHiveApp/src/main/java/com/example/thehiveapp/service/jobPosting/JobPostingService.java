@@ -11,7 +11,9 @@ public interface JobPostingService {
     List<JobPostingDto> getJobPostingsByEmployerId(Long employerId);
     JobPostingDto createJobPosting(JobPostingDto request);
     JobPostingDto getJobPostingById(Long id);
+    byte[] getJobPostingAnalytics(Long jobPostingId);
     JobPostingDto updateJobPosting(JobPostingDto request);
     void deleteJobPosting(Long id);
     List<JobPostingDto> searchJobPostings(JobPostingSearchDto searchDto);
+    List<JobPostingDto> getJobPostingSuggestions(Long studentId);
 }

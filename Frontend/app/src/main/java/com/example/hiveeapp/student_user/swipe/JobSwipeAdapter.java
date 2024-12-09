@@ -118,19 +118,6 @@ public class JobSwipeAdapter extends BaseAdapter {
         }
     }
 
-    public void applyForJob(int jobPostingId) {
-        JobApplicationUtils.applyForJob(context, studentId, jobPostingId,
-                () -> {
-                    // Success callback
-                    Toast.makeText(context, "Application submitted successfully!", Toast.LENGTH_SHORT).show();
-                },
-                () -> {
-                    // Failure callback
-                    Toast.makeText(context, "Failed to submit application. Please try again.", Toast.LENGTH_SHORT).show();
-                }
-        );
-    }
-
     public void removeJob(int position) {
         if (position < jobPostings.size()) {
             jobPostings.remove(position);

@@ -1,0 +1,214 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JobPostingController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.controller.jobPosting</a>
+</div>
+
+<h1>Coverage Summary for Class: JobPostingController (com.example.thehiveapp.controller.jobPosting)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JobPostingController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (2/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    55%
+  </span>
+  <span class="absValue">
+    (11/20)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.controller.jobPosting;
+&nbsp;
+&nbsp;import com.example.thehiveapp.dto.jobPosting.JobPostingDto;
+&nbsp;import com.example.thehiveapp.dto.jobPosting.JobPostingSearchDto;
+&nbsp;import com.example.thehiveapp.service.jobPosting.JobPostingService;
+&nbsp;import io.swagger.v3.oas.annotations.Parameter;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.format.annotation.DateTimeFormat;
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/job-posting&quot;)
+&nbsp;public class JobPostingController {
+&nbsp;
+&nbsp;    @Autowired private JobPostingService jobPostingService;
+&nbsp;
+<b class="fc">&nbsp;    public JobPostingController() {}</b>
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get all job postings or filter by employer ID&quot;, description = &quot;Retrieves a list of all job postings or filters them by employer ID if provided.&quot;)
+&nbsp;    @GetMapping
+&nbsp;    public List&lt;JobPostingDto&gt; getJobPostings(@RequestParam(value = &quot;employerId&quot;, required = false) Long employerId) {
+<b class="nc">&nbsp;        if (employerId != null) {</b>
+<b class="nc">&nbsp;            return jobPostingService.getJobPostingsByEmployerId(employerId);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return jobPostingService.getJobPostings();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get job postings available for a specific student&quot;, description = &quot;Retrieves job postings that are available for a specific student by their student ID.&quot;)
+&nbsp;    @GetMapping(&quot;/student/{studentId}&quot;)
+&nbsp;    public List&lt;JobPostingDto&gt; getJobPostingsForStudent(@PathVariable Long studentId) {
+<b class="nc">&nbsp;        return jobPostingService.getJobPostingsForStudent(studentId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Create a new job posting&quot;, description = &quot;Creates a new job posting with the details provided in the request body.&quot;)
+&nbsp;    @PostMapping
+&nbsp;    public JobPostingDto createJobPosting(@RequestBody JobPostingDto dto) {
+<b class="nc">&nbsp;        return jobPostingService.createJobPosting(dto);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get a job posting by ID&quot;, description = &quot;Retrieves a job posting by its unique ID.&quot;)
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public JobPostingDto getJobPostingById(@PathVariable Long id) {
+<b class="nc">&nbsp;        return jobPostingService.getJobPostingById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Update an existing job posting&quot;, description = &quot;Updates an existing job posting with the provided details.&quot;)
+&nbsp;    @PutMapping
+&nbsp;    public JobPostingDto updateJobPosting(@RequestBody JobPostingDto dto) {
+<b class="nc">&nbsp;        return jobPostingService.updateJobPosting(dto);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Delete a job posting by ID&quot;, description = &quot;Deletes a job posting by its unique ID.&quot;)
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    public String deleteJobPosting(@PathVariable Long id) {
+<b class="nc">&nbsp;        jobPostingService.deleteJobPosting(id);</b>
+<b class="nc">&nbsp;        return &quot;Job posting successfully deleted&quot;;</b>
+&nbsp;    }
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Search for job postings&quot;,
+&nbsp;            description = &quot;Search job postings based on optional filters including keyword, salary range, job start range, application status, and qualification status.&quot;
+&nbsp;    )
+&nbsp;    @GetMapping(&quot;/search&quot;)
+&nbsp;    public List&lt;JobPostingDto&gt; searchJobPostings(
+&nbsp;            @Parameter(description = &quot;Keyword to search across title, description, and summary&quot;) @RequestParam(required = false) String q,
+&nbsp;            @Parameter(description = &quot;Minimum salary for job postings&quot;, schema = @Schema(type = &quot;number&quot;, example = &quot;10&quot;)) @RequestParam(required = false) BigDecimal minSalary,
+&nbsp;            @Parameter(description = &quot;Maximum salary for job postings&quot;, schema = @Schema(type = &quot;number&quot;, example = &quot;100&quot;)) @RequestParam(required = false) BigDecimal maxSalary,
+&nbsp;            @Parameter(description = &quot;Earliest job start date (yyyy-MM-dd)&quot;, schema = @Schema(type = &quot;string&quot;, format = &quot;date&quot;, example = &quot;2024-01-01&quot;)) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate minJobStart,
+&nbsp;            @Parameter(description = &quot;Latest job start date (yyyy-MM-dd)&quot;, schema = @Schema(type = &quot;string&quot;, format = &quot;date&quot;, example = &quot;2027-12-31&quot;)) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate maxJobStart,
+&nbsp;            @Parameter(description = &quot;Filter for open applications (true/false)&quot;) @RequestParam(required = false) Boolean isApplicationOpen,
+&nbsp;            @Parameter(description = &quot;Filter for jobs student is qualified for based on GPA (true/false)&quot;) @RequestParam(required = false) Boolean isQualified) {
+&nbsp;
+<b class="fc">&nbsp;        JobPostingSearchDto searchDto = JobPostingSearchDto.builder()</b>
+<b class="fc">&nbsp;                .q(q)</b>
+<b class="fc">&nbsp;                .minSalary(minSalary)</b>
+<b class="fc">&nbsp;                .maxSalary(maxSalary)</b>
+<b class="fc">&nbsp;                .minJobStart(minJobStart)</b>
+<b class="fc">&nbsp;                .maxJobStart(maxJobStart)</b>
+<b class="fc">&nbsp;                .isApplicationOpen(isApplicationOpen)</b>
+<b class="fc">&nbsp;                .isQualified(isQualified)</b>
+<b class="fc">&nbsp;                .build();</b>
+<b class="fc">&nbsp;        return jobPostingService.searchJobPostings(searchDto);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 17:35</div>
+</div>
+</body>
+</html>

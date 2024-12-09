@@ -1,16 +1,21 @@
 package com.example.hiveeapp.employer_user.display;
 
-
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -23,6 +28,8 @@ public class AddJobActivity extends AppCompatActivity {
             minimumGpaField, jobStartField, applicationStartField, applicationEndField;
     private Button postJobButton;
     private ImageButton backArrowIcon;
+
+    private static final String USER_PREFS = "UserPreferences"; // SharedPreferences name
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,23 +169,28 @@ public class AddJobActivity extends AppCompatActivity {
         String applicationStart = applicationStartField.getText().toString().trim();
         String applicationEnd = applicationEndField.getText().toString().trim();
 
+        // Retrieve employerId dynamically from SharedPreferences
+        SharedPreferences preferences = getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
+        int employerId = preferences.getInt("userId", -1);
+
+        if (employerId == -1) {
+            Toast.makeText(this, "Error: User not logged in. Please log in again.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Construct the job posting JSON object
         JSONObject jobData = new JSONObject();
         try {
-           // jobData.put("jobPostingId", 625); // Hardcoded for now; adjust as necessary
             jobData.put("title", jobTitle);
             jobData.put("description", jobDescription);
             jobData.put("summary", summary);
-            jobData.put("salary", Double.parseDouble(salaryRequirements)); // Assuming salary is an integer // change to double
+            jobData.put("salary", Double.parseDouble(salaryRequirements)); // Assuming salary is a double
             jobData.put("jobType", jobType); // Ensure jobType matches your enum or backend requirement
             jobData.put("minimumGpa", Double.parseDouble(minimumGpa)); // Assuming GPA is a double
             jobData.put("jobStart", jobStart);
             jobData.put("applicationStart", applicationStart);
             jobData.put("applicationEnd", applicationEnd);
-
-            // Add employerId logic (replace with actual logic to retrieve employerId)
-            int employerId = 373; // Hardcoded for now; replace with your logic
-            jobData.put("employerId", employerId);
+            jobData.put("employerId", employerId); // Use dynamic employerId
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error creating job data", Toast.LENGTH_SHORT).show();
@@ -186,41 +198,28 @@ public class AddJobActivity extends AppCompatActivity {
         }
 
         // Send the job data to the server using the EmployerApis
-
         EmployerApis.addJob(this, jobData,
                 response -> {
-                    // Handle successful response
                     Toast.makeText(AddJobActivity.this, "Job posted successfully!", Toast.LENGTH_SHORT).show();
-                    finish();  // Close the activity and return to the previous screen
+                    finish(); // Close the activity and return to the previous screen
                 },
                 error -> {
-                    // Handle error response and display user-friendly message
                     String errorMessage = getErrorMessage(error);
                     Toast.makeText(AddJobActivity.this, "Error posting job: " + errorMessage, Toast.LENGTH_SHORT).show();
                 });
     }
 
-    /**
-     * Extracts and returns a meaningful error message from a VolleyError.
-     *
-     * @param error The VolleyError object containing the error details
-     * @return A user-friendly error message
-     */
     private String getErrorMessage(VolleyError error) {
         String errorMsg = "An unexpected error occurred";
         if (error.networkResponse != null && error.networkResponse.data != null) {
             try {
                 String errorData = new String(error.networkResponse.data, "UTF-8");
-
-                // Attempt to parse errorData as JSON
                 try {
                     JSONObject jsonError = new JSONObject(errorData);
                     errorMsg = jsonError.optString("message", errorMsg);
-                } catch (JSONException jsonException) {
-                    // If parsing fails, use the raw errorData
+                } catch (JSONException e) {
                     errorMsg = errorData;
                 }
-
             } catch (UnsupportedEncodingException e) {
                 errorMsg = error.getMessage();
             }
