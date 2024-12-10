@@ -1,0 +1,121 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Student</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.entity.user</a>
+</div>
+
+<h1>Coverage Summary for Class: Student (com.example.thehiveapp.entity.user)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">Student$HibernateInstantiator$45x4OA3g</td>
+  </tr>
+  <tr>
+    <td class="name">Student$HibernateInstantiator$zEHQG0iR</td>
+  </tr>
+  <tr>
+    <td class="name">Student$HibernateProxy$TsJTut11</td>
+  </tr>
+  <tr>
+    <td class="name">Student$HibernateProxy$yYBJPHFU</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.entity.user;
+&nbsp;
+&nbsp;import com.example.thehiveapp.entity.application.Application;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnore;
+&nbsp;import jakarta.persistence.CascadeType;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.FetchType;
+&nbsp;import jakarta.persistence.OneToMany;
+&nbsp;import jakarta.persistence.Table;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.EqualsAndHashCode;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@EqualsAndHashCode(callSuper = true)
+&nbsp;@Entity
+&nbsp;@NoArgsConstructor
+&nbsp;@Data
+&nbsp;@Table(name = &quot;student&quot;)
+&nbsp;public class Student extends User{
+&nbsp;    @Column(name=&quot;university&quot;, nullable = false)
+&nbsp;    private String university;
+&nbsp;
+&nbsp;    @Column(name=&quot;graduation_date&quot;)
+&nbsp;    private String graduationDate;
+&nbsp;
+&nbsp;    @Column(name=&quot;gpa&quot;)
+&nbsp;    private Double gpa;
+&nbsp;
+&nbsp;    @Column(name=&quot;resume_path&quot;)
+&nbsp;    private String resumePath;
+&nbsp;
+&nbsp;    @Column(name = &quot;applications_made_today&quot;)
+&nbsp;    private int applicationsMadeToday = 0;
+&nbsp;
+&nbsp;    @JsonIgnore
+&nbsp;    @OneToMany(mappedBy = &quot;student&quot;, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+&nbsp;    private List&lt;Application&gt; applications;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-09 22:19</div>
+</div>
+</body>
+</html>
