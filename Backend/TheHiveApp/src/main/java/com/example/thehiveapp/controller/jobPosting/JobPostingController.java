@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,12 +64,21 @@ public class JobPostingController {
         return jobPostingService.updateJobPosting(dto);
     }
 
+    @Operation(summary = "Get job posting analytics for application",
+            description = "Allows an employer to retrieve analytics data for their job postings."
+    )
+    @GetMapping(value = "/analytics/{jobPostingId}", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] getJobPostingAnalytics(@PathVariable Long jobPostingId){
+        return jobPostingService.getJobPostingAnalytics(jobPostingId);
+    }
+
     @Operation(summary = "Delete a job posting by ID", description = "Deletes a job posting by its unique ID.")
     @DeleteMapping("/{id}")
     public String deleteJobPosting(@PathVariable Long id) {
         jobPostingService.deleteJobPosting(id);
         return "Job posting successfully deleted";
     }
+
     @Operation(
             summary = "Search for job postings",
             description = "Search job postings based on optional filters including keyword, salary range, job start range, application status, and qualification status."
@@ -95,4 +105,9 @@ public class JobPostingController {
         return jobPostingService.searchJobPostings(searchDto);
     }
 
+    @Operation(summary = "Get job posting suggestions for a student", description = "Retrieves the most relevant job postings for a specific student, sorted.")
+    @GetMapping("/suggestions/{studentId}")
+    public List<JobPostingDto> getJobPostingSuggestions(@PathVariable Long studentId) {
+        return jobPostingService.getJobPostingSuggestions(studentId);
+    }
 }

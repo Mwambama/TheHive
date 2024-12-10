@@ -1,0 +1,185 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JobPostingSpecification</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.specifications.jobPosting</a>
+</div>
+
+<h1>Coverage Summary for Class: JobPostingSpecification (com.example.thehiveapp.specifications.jobPosting)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JobPostingSpecification</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (4/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.7%
+  </span>
+  <span class="absValue">
+    (11/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95.8%
+  </span>
+  <span class="absValue">
+    (23/24)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.specifications.jobPosting;
+&nbsp;
+&nbsp;import com.example.thehiveapp.dto.jobPosting.JobPostingSearchDto;
+&nbsp;import com.example.thehiveapp.entity.jobPosting.JobPosting;
+&nbsp;import jakarta.persistence.criteria.Predicate;
+&nbsp;import org.springframework.data.jpa.domain.Specification;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+<b class="nc">&nbsp;public class JobPostingSpecification {</b>
+&nbsp;
+&nbsp;    public static Specification&lt;JobPosting&gt; matchesOptionalFields(JobPostingSearchDto searchDto) {
+<b class="fc">&nbsp;        return (root, query, criteriaBuilder) -&gt; {</b>
+<b class="fc">&nbsp;            List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;            // Keyword search across multiple fields
+<b class="fc">&nbsp;            addKeywordPredicate(criteriaBuilder, predicates, root, searchDto.getQ());</b>
+&nbsp;
+&nbsp;            // Range filters for salary and job start date
+<b class="fc">&nbsp;            addRangePredicate(criteriaBuilder, predicates, root.get(&quot;salary&quot;), searchDto.getMinSalary(), searchDto.getMaxSalary());</b>
+<b class="fc">&nbsp;            addRangePredicate(criteriaBuilder, predicates, root.get(&quot;jobStart&quot;), searchDto.getMinJobStart(), searchDto.getMaxJobStart());</b>
+&nbsp;
+&nbsp;            // Check if the application is open
+<b class="fc">&nbsp;            if (Boolean.TRUE.equals(searchDto.getIsApplicationOpen())) {</b>
+<b class="fc">&nbsp;                LocalDate today = LocalDate.now();</b>
+<b class="fc">&nbsp;                predicates.add(criteriaBuilder.and(</b>
+<b class="fc">&nbsp;                        criteriaBuilder.lessThanOrEqualTo(root.get(&quot;applicationStart&quot;), today),</b>
+<b class="fc">&nbsp;                        criteriaBuilder.greaterThanOrEqualTo(root.get(&quot;applicationEnd&quot;), today)</b>
+&nbsp;                ));
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void addKeywordPredicate(
+&nbsp;            jakarta.persistence.criteria.CriteriaBuilder criteriaBuilder,
+&nbsp;            List&lt;Predicate&gt; predicates,
+&nbsp;            jakarta.persistence.criteria.Root&lt;JobPosting&gt; root,
+&nbsp;            String q) {
+<b class="pc">&nbsp;        if (q != null &amp;&amp; !q.isEmpty()) {</b>
+<b class="fc">&nbsp;            String[] words = q.toLowerCase().split(&quot;\\s+&quot;); // Split on whitespace</b>
+<b class="fc">&nbsp;            for (String word : words) {</b>
+<b class="fc">&nbsp;                String wordPattern = &quot;%&quot; + word + &quot;%&quot;;</b>
+<b class="fc">&nbsp;                predicates.add(criteriaBuilder.or(</b>
+<b class="fc">&nbsp;                        criteriaBuilder.like(criteriaBuilder.lower(root.get(&quot;title&quot;)), wordPattern),</b>
+<b class="fc">&nbsp;                        criteriaBuilder.like(criteriaBuilder.lower(root.get(&quot;description&quot;)), wordPattern),</b>
+<b class="fc">&nbsp;                        criteriaBuilder.like(criteriaBuilder.lower(root.get(&quot;summary&quot;)), wordPattern)</b>
+&nbsp;                ));
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private static &lt;T extends Comparable&lt;? super T&gt;&gt; void addRangePredicate(
+&nbsp;            jakarta.persistence.criteria.CriteriaBuilder criteriaBuilder,
+&nbsp;            List&lt;Predicate&gt; predicates,
+&nbsp;            jakarta.persistence.criteria.Path&lt;T&gt; field,
+&nbsp;            T minValue,
+&nbsp;            T maxValue) {
+<b class="fc">&nbsp;        if (minValue != null) {</b>
+<b class="fc">&nbsp;            predicates.add(criteriaBuilder.greaterThanOrEqualTo(field, minValue));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (maxValue != null) {</b>
+<b class="fc">&nbsp;            predicates.add(criteriaBuilder.lessThanOrEqualTo(field, maxValue));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 17:35</div>
+</div>
+</body>
+</html>

@@ -13,5 +13,6 @@ public interface ChatService {
     Chat getChatById(Long id);
     Chat updateChat(Chat request);
     void deleteChat(Long id);
+    List<Chat> getChatsByUserId(Long userId) throws BadRequestException;
     List<Long> getChatIdsByUser(User user) throws BadRequestException;
 }

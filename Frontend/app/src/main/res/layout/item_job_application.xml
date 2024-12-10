@@ -1,0 +1,41 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/item_background"
+    android:layout_marginBottom="8dp">
+
+    <!-- Job Title -->
+    <TextView
+        android:id="@+id/job_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:fontFamily="sans-serif-medium" />
+
+    <!-- Job Status -->
+    <TextView
+        android:id="@+id/job_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif" />
+
+    <!-- Application Date -->
+    <TextView
+        android:id="@+id/applied_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp"
+        android:fontFamily="sans-serif" />
+</LinearLayout>

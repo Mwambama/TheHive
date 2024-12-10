@@ -44,12 +44,31 @@ public class StudentServiceImpl implements StudentService{
         if (!studentRepository.existsById(id)){
             throw new ResourceNotFoundException("Student not found with id " + id);
         }
-        if (request.getAddress().getAddressId() == null){
-            addressService.createAddress(request.getAddress());
-        } else {
-            addressService.updateAddress(request.getAddress());
+        if (request.getAddress() != null){
+            if (request.getAddress().getAddressId() == null) {
+                addressService.createAddress(request.getAddress());
+            } else {
+                addressService.updateAddress(request.getAddress());
+            }
         }
         return studentRepository.save(request);
+    }
+
+    @Override
+    public void trackApplication(Long studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalStateException("Student not found"));
+        student.setApplicationsMadeToday(student.getApplicationsMadeToday() + 1);
+        studentRepository.save(student);
+    }
+
+    @Override
+    public void resetDailyApplications() {
+        List<Student> students = studentRepository.findAll();
+        students.forEach(student -> {
+            student.setApplicationsMadeToday(0);
+        });
+        studentRepository.saveAll(students);
     }
 
     @Override

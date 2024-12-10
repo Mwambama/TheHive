@@ -75,9 +75,6 @@ public class StudentProfileActivity extends AppCompatActivity {
 
         saveButton = findViewById(R.id.saveProfileButton);
         manageResumeButton = findViewById(R.id.manageResumeButton);
-        backArrowIcon = findViewById(R.id.backArrowIcon);
-
-        backArrowIcon.setOnClickListener(v -> finish());
     }
 
     private void loadStudentProfile() {

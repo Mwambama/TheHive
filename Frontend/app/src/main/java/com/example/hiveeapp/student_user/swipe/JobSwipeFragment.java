@@ -9,36 +9,48 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.example.hiveeapp.R;
-import com.example.hiveeapp.student_user.StudentMainActivity;
-import com.lorentzos.flingswipe.SwipeFlingAdapterView;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.example.hiveeapp.R;
+import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
+import com.lorentzos.flingswipe.SwipeFlingAdapterView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class JobSwipeFragment extends Fragment {
 
-    public static final String GET_JOB_POSTINGS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting";
     private static final String TAG = "JobSwipeFragment";
     private static final String PREFERENCES_NAME = "JobSwipePreferences";
-    private static final String SWIPE_POSITION_KEY = "SwipePosition";
+    private static final String APPLIED_JOBS_KEY = "AppliedJobs";
+    private static final String DISMISSED_JOBS_KEY = "DismissedJobs";
+    public static final String GET_RECOMMENDED_JOB_POSTINGS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting/suggestions/";
 
     private SwipeFlingAdapterView swipeFlingAdapterView;
     private JobSwipeAdapter swipeAdapter;
     private List<JobPosting> jobPostings = new ArrayList<>();
     private int studentId;
-    private int savedSwipePosition = 0;
+
+    private Set<String> appliedJobs;
+    private Set<String> dismissedJobs;
+
+    private JobSwipeViewModel viewModel;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -52,101 +64,155 @@ public class JobSwipeFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_job_swipe, container, false);
+
         swipeFlingAdapterView = view.findViewById(R.id.swipe_view);
-
-        // Retrieve saved position from SharedPreferences
-        savedSwipePosition = getSavedSwipePosition(requireContext());
-
-        // Initialize the adapter
-        swipeAdapter = new JobSwipeAdapter(requireContext(), studentId);
+        swipeAdapter = new JobSwipeAdapter(requireContext(), this);
         swipeFlingAdapterView.setAdapter(swipeAdapter);
 
-        // Set up fling listener
-        swipeFlingAdapterView.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
-            @Override
-            public void removeFirstObjectInAdapter() {
-                swipeAdapter.removeJob(0);
-                savedSwipePosition++;
-                saveSwipePosition(requireContext(), savedSwipePosition);
-            }
-
-            @Override
-            public void onLeftCardExit(Object dataObject) {
-                Toast.makeText(requireContext(), "Job dismissed", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onRightCardExit(Object dataObject) {
-                JobPosting job = (JobPosting) dataObject;
-                swipeAdapter.applyForJob(job.getJobPostingId());
-                Toast.makeText(requireContext(), "Applied for: " + job.getTitle(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                loadJobPostings();
-            }
-
-            @Override
-            public void onScroll(float scrollProgressPercent) {
-                // Handle visual feedback during scrolling
-            }
-        });
+        setupFlingListener();
 
         swipeFlingAdapterView.setOnItemClickListener((itemPosition, dataObject) -> {
             JobPosting job = (JobPosting) dataObject;
             Toast.makeText(requireContext(), "Clicked on: " + job.getTitle(), Toast.LENGTH_SHORT).show();
         });
 
-        loadJobPostings();
+        appliedJobs = getAppliedJobs();
+        dismissedJobs = getDismissedJobs();
+
+        // Initialize ViewModel
+        viewModel = new ViewModelProvider(this).get(JobSwipeViewModel.class);
+
+        // Observe the jobPostings LiveData
+        viewModel.getJobPostings().observe(getViewLifecycleOwner(), postings -> {
+            if (postings != null) {
+                jobPostings = postings;
+                swipeAdapter.setJobPostings(jobPostings);
+            }
+        });
+
+        // Load data if not already loaded
+        if (viewModel.getJobPostings().getValue() == null) {
+            loadJobPostingsFromAdapter(new JobPostingsCallback() {
+                @Override
+                public void onJobPostingsLoaded(List<JobPosting> postings) {
+                    // Filter out applied and dismissed jobs
+                    List<JobPosting> filteredJobs = new ArrayList<>();
+                    for (JobPosting job : postings) {
+                        String jobIdStr = String.valueOf(job.getJobPostingId());
+                        if (!appliedJobs.contains(jobIdStr) && !dismissedJobs.contains(jobIdStr)) {
+                            filteredJobs.add(job);
+                        }
+                    }
+
+                    jobPostings = filteredJobs;
+                    viewModel.setJobPostings(jobPostings);
+                    swipeAdapter.setJobPostings(jobPostings);
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.e(TAG, "Error loading job postings: " + error);
+                    Toast.makeText(requireContext(), "Failed to load job postings: " + error, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
         return view;
     }
 
-    private void loadJobPostings() {
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, GET_JOB_POSTINGS_URL, null,
+    private void setupFlingListener() {
+        swipeFlingAdapterView.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
+            @Override
+            public void removeFirstObjectInAdapter() {
+                if (!jobPostings.isEmpty()) {
+                    swipeAdapter.removeJob(0);
+                    jobPostings.remove(0);
+                    viewModel.setJobPostings(jobPostings);
+                }
+            }
+
+            @Override
+            public void onLeftCardExit(Object dataObject) {
+                JobPosting job = (JobPosting) dataObject;
+                saveDismissedJob(job.getJobPostingId());
+            }
+
+            @Override
+            public void onRightCardExit(Object dataObject) {
+                JobPosting job = (JobPosting) dataObject;
+                if (appliedJobs.contains(String.valueOf(job.getJobPostingId()))) {
+                    Toast.makeText(requireContext(), "You already applied to this job!", Toast.LENGTH_SHORT).show();
+                } else {
+                    saveAppliedJob(job.getJobPostingId());
+                    Toast.makeText(requireContext(), "Successfully applied to: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onAdapterAboutToEmpty(int itemsInAdapter) {
+                Log.d(TAG, "Adapter about to empty.");
+            }
+
+            @Override
+            public void onScroll(float scrollProgressPercent) {
+                // Optional feedback
+            }
+        });
+    }
+
+    public void loadJobPostingsFromAdapter(JobPostingsCallback callback) {
+        String url = GET_RECOMMENDED_JOB_POSTINGS_URL + studentId;
+        Log.d(TAG, "Fetching job postings from URL: " + url);
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
-                    jobPostings.clear();
-                    parseJobPostings(response);
-
-                    if (swipeAdapter != null) {
-                        swipeAdapter.setJobPostings(jobPostings);
-                    }
-
-                    // Restore swipe position
-                    restoreSwipePosition();
+                    List<JobPosting> recommendedJobs = parseJobPostings(response);
+                    callback.onJobPostingsLoaded(recommendedJobs);
                 },
                 error -> {
-                    Log.e(TAG, "Failed to load job postings", error);
-                    Toast.makeText(requireContext(), "Failed to load job postings", Toast.LENGTH_SHORT).show();
-                }
-        ) {
+                    String errorMsg = "Error loading job postings";
+                    if (error.networkResponse != null) {
+                        errorMsg += " (Code: " + error.networkResponse.statusCode + ")";
+                    }
+                    callback.onError(errorMsg);
+                }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return createAuthorizationHeaders(requireContext());
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+
+                String username = "teststudent1@example.com";
+                String password = "TestStudent1234@";
+                String credentials = username + ":" + password;
+                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+
+                return headers;
             }
         };
 
         VolleySingleton.getInstance(requireContext()).addToRequestQueue(request);
     }
 
-    private void parseJobPostings(JSONArray response) {
+    private List<JobPosting> parseJobPostings(JSONArray response) {
+        List<JobPosting> jobs = new ArrayList<>();
         try {
             for (int i = 0; i < response.length(); i++) {
                 JSONObject obj = response.getJSONObject(i);
-                jobPostings.add(new JobPosting(
+                jobs.add(new JobPosting(
                         obj.getInt("jobPostingId"),
                         obj.getString("title"),
                         obj.getString("description"),
                         obj.optString("summary", ""),
                         obj.optDouble("salary", 0.0),
-                        obj.optString("jobType", "N/A"),
+                        obj.optString("jobType", ""),
                         obj.optDouble("minimumGpa", 0.0),
-                        obj.optString("jobStart", ""),
-                        obj.optString("applicationStart", ""),
-                        obj.optString("applicationEnd", ""),
+                        obj.getString("jobStart"),
+                        obj.getString("applicationStart"),
+                        obj.getString("applicationEnd"),
                         obj.optInt("employerId", -1),
                         obj.optString("companyName", "Unknown Company")
                 ));
@@ -154,43 +220,38 @@ public class JobSwipeFragment extends Fragment {
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing job postings", e);
         }
+        return jobs;
     }
 
-    private void restoreSwipePosition() {
-        if (savedSwipePosition > 0 && savedSwipePosition < jobPostings.size()) {
-            for (int i = 0; i < savedSwipePosition; i++) {
-                swipeAdapter.removeJob(0);
-            }
-        }
+    private Set<String> getAppliedJobs() {
+        SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return new HashSet<>(preferences.getStringSet(APPLIED_JOBS_KEY, new HashSet<>()));
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        saveSwipePosition(requireContext(), savedSwipePosition);
+    private Set<String> getDismissedJobs() {
+        SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return new HashSet<>(preferences.getStringSet(DISMISSED_JOBS_KEY, new HashSet<>()));
     }
 
-    private void saveSwipePosition(Context context, int position) {
-        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        preferences.edit().putInt(SWIPE_POSITION_KEY, position).apply();
+    private void saveAppliedJob(int jobPostingId) {
+        appliedJobs.add(String.valueOf(jobPostingId));
+        saveJobs(appliedJobs, APPLIED_JOBS_KEY);
     }
 
-    private int getSavedSwipePosition(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        return preferences.getInt(SWIPE_POSITION_KEY, 0);
+    private void saveDismissedJob(int jobPostingId) {
+        dismissedJobs.add(String.valueOf(jobPostingId));
+        saveJobs(dismissedJobs, DISMISSED_JOBS_KEY);
     }
 
-    public static Map<String, String> createAuthorizationHeaders(Context context) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
+    private void saveJobs(Set<String> jobs, String key) {
+        SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putStringSet(key, jobs);
+        editor.apply();
+    }
 
-        String username = "teststudent1@example.com";
-        String password = "TestStudent1234@";
-
-        String credentials = username + ":" + password;
-        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        headers.put("Authorization", auth);
-
-        return headers;
+    public interface JobPostingsCallback {
+        void onJobPostingsLoaded(List<JobPosting> postings);
+        void onError(String error);
     }
 }

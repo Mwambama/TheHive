@@ -23,14 +23,17 @@ public class Student extends User{
     @Column(name="university", nullable = false)
     private String university;
 
-    @Column(name="graduation_date", nullable = false)
+    @Column(name="graduation_date")
     private String graduationDate;
 
-    @Column(name="gpa", nullable = false)
+    @Column(name="gpa")
     private Double gpa;
 
-    @Column(name="resume_path", nullable = false)
+    @Column(name="resume_path")
     private String resumePath;
+
+    @Column(name = "applications_made_today")
+    private int applicationsMadeToday = 0;
 
     @JsonIgnore
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

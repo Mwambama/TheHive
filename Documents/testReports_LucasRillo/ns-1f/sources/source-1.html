@@ -1,0 +1,170 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JobPostingMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.mapper.jobPosting</a>
+</div>
+
+<h1>Coverage Summary for Class: JobPostingMapper (com.example.thehiveapp.mapper.jobPosting)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JobPostingMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (2/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.5%
+  </span>
+  <span class="absValue">
+    (29/31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.mapper.jobPosting;
+&nbsp;
+&nbsp;import com.example.thehiveapp.dto.jobPosting.JobPostingDto;
+&nbsp;import com.example.thehiveapp.entity.jobPosting.JobPosting;
+&nbsp;import com.example.thehiveapp.service.user.EmployerService;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;public class JobPostingMapper {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private EmployerService employerService;
+&nbsp;
+&nbsp;    public JobPostingDto entityToDto(JobPosting entity) {
+<b class="pc">&nbsp;        if (entity == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        JobPostingDto dto = new JobPostingDto();</b>
+<b class="fc">&nbsp;        dto.setJobPostingId(entity.getJobPostingId());</b>
+<b class="fc">&nbsp;        dto.setTitle(entity.getTitle());</b>
+<b class="fc">&nbsp;        dto.setDescription(entity.getDescription());</b>
+<b class="fc">&nbsp;        dto.setSummary(entity.getSummary());</b>
+<b class="fc">&nbsp;        dto.setSalary(entity.getSalary());</b>
+<b class="fc">&nbsp;        dto.setJobType(entity.getJobType());</b>
+<b class="fc">&nbsp;        dto.setMinimumGpa(entity.getMinimumGpa());</b>
+<b class="fc">&nbsp;        dto.setJobStart(entity.getJobStart());</b>
+<b class="fc">&nbsp;        dto.setApplicationStart(entity.getApplicationStart());</b>
+<b class="fc">&nbsp;        dto.setApplicationEnd(entity.getApplicationEnd());</b>
+<b class="fc">&nbsp;        dto.setEmployerId(entity.getEmployer().getUserId()); // Assuming Employer has getEmployerId() method</b>
+&nbsp;
+<b class="fc">&nbsp;        return dto;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public JobPosting dtoToEntity(JobPostingDto dto) {
+<b class="pc">&nbsp;        if (dto == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        JobPosting entity = new JobPosting();</b>
+<b class="fc">&nbsp;        entity.setJobPostingId(dto.getJobPostingId());</b>
+<b class="fc">&nbsp;        entity.setTitle(dto.getTitle());</b>
+<b class="fc">&nbsp;        entity.setDescription(dto.getDescription());</b>
+<b class="fc">&nbsp;        entity.setSummary(dto.getSummary());</b>
+<b class="fc">&nbsp;        entity.setSalary(dto.getSalary());</b>
+<b class="fc">&nbsp;        entity.setJobType(dto.getJobType());</b>
+<b class="fc">&nbsp;        entity.setMinimumGpa(dto.getMinimumGpa());</b>
+<b class="fc">&nbsp;        entity.setJobStart(dto.getJobStart());</b>
+<b class="fc">&nbsp;        entity.setApplicationStart(dto.getApplicationStart());</b>
+<b class="fc">&nbsp;        entity.setApplicationEnd(dto.getApplicationEnd());</b>
+<b class="fc">&nbsp;        entity.setEmployer(employerService.getEmployerById(dto.getEmployerId()));</b>
+&nbsp;
+<b class="fc">&nbsp;        return entity;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 17:35</div>
+</div>
+</body>
+</html>
