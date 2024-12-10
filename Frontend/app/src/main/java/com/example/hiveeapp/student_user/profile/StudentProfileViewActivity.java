@@ -1,6 +1,7 @@
 package com.example.hiveeapp.student_user.profile;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -35,13 +36,19 @@ public class StudentProfileViewActivity extends AppCompatActivity {
         Log.d(TAG, "StudentProfileViewActivity started");
         setContentView(R.layout.activity_student_profile_view);
 
-        // Retrieve userId from Intent
+        // Retrieve userId from Intent or SharedPreferences
         userId = getIntent().getIntExtra("USER_ID", -1);
-        Log.d(TAG, "Received userId from Intent: " + userId);
+        if (userId == -1) {
+            SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
+            userId = preferences.getInt("userId", -1);
+        }
+
+        Log.d(TAG, "Retrieved userId: " + userId);
 
         if (userId == -1) {
-            Toast.makeText(this, "Invalid User ID", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid User ID. Cannot load profile.", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Invalid userId. Cannot load profile.");
+            finish(); // Close the activity if userId is invalid
             return;
         }
 

@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.student_user.StudentMainActivity;
@@ -40,6 +41,7 @@ public class JobSwipeFragment extends Fragment {
     private static final String PREFERENCES_NAME = "JobSwipePreferences";
     private static final String APPLIED_JOBS_KEY = "AppliedJobs";
     private static final String DISMISSED_JOBS_KEY = "DismissedJobs";
+    public static final String AUTH_PREFERENCES = "UserPreferences";
     public static final String GET_RECOMMENDED_JOB_POSTINGS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting/suggestions/";
 
     private SwipeFlingAdapterView swipeFlingAdapterView;
@@ -51,6 +53,7 @@ public class JobSwipeFragment extends Fragment {
     private Set<String> dismissedJobs;
 
     private JobSwipeViewModel viewModel;
+    private boolean isFetchingJobs = false;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -69,7 +72,7 @@ public class JobSwipeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_job_swipe, container, false);
 
         swipeFlingAdapterView = view.findViewById(R.id.swipe_view);
-        swipeAdapter = new JobSwipeAdapter(requireContext(), this);
+        swipeAdapter = new JobSwipeAdapter(requireContext(), jobPostings);
         swipeFlingAdapterView.setAdapter(swipeAdapter);
 
         setupFlingListener();
@@ -95,29 +98,7 @@ public class JobSwipeFragment extends Fragment {
 
         // Load data if not already loaded
         if (viewModel.getJobPostings().getValue() == null) {
-            loadJobPostingsFromAdapter(new JobPostingsCallback() {
-                @Override
-                public void onJobPostingsLoaded(List<JobPosting> postings) {
-                    // Filter out applied and dismissed jobs
-                    List<JobPosting> filteredJobs = new ArrayList<>();
-                    for (JobPosting job : postings) {
-                        String jobIdStr = String.valueOf(job.getJobPostingId());
-                        if (!appliedJobs.contains(jobIdStr) && !dismissedJobs.contains(jobIdStr)) {
-                            filteredJobs.add(job);
-                        }
-                    }
-
-                    jobPostings = filteredJobs;
-                    viewModel.setJobPostings(jobPostings);
-                    swipeAdapter.setJobPostings(jobPostings);
-                }
-
-                @Override
-                public void onError(String error) {
-                    Log.e(TAG, "Error loading job postings: " + error);
-                    Toast.makeText(requireContext(), "Failed to load job postings: " + error, Toast.LENGTH_SHORT).show();
-                }
-            });
+            fetchJobPostings();
         }
 
         return view;
@@ -128,9 +109,10 @@ public class JobSwipeFragment extends Fragment {
             @Override
             public void removeFirstObjectInAdapter() {
                 if (!jobPostings.isEmpty()) {
-                    swipeAdapter.removeJob(0);
                     jobPostings.remove(0);
-                    viewModel.setJobPostings(jobPostings);
+                    swipeAdapter.setJobPostings(new ArrayList<>(jobPostings));
+                } else {
+                    Log.d(TAG, "No more jobs to swipe.");
                 }
             }
 
@@ -138,6 +120,7 @@ public class JobSwipeFragment extends Fragment {
             public void onLeftCardExit(Object dataObject) {
                 JobPosting job = (JobPosting) dataObject;
                 saveDismissedJob(job.getJobPostingId());
+                Toast.makeText(requireContext(), "Job dismissed: " + job.getTitle(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -153,48 +136,71 @@ public class JobSwipeFragment extends Fragment {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                Log.d(TAG, "Adapter about to empty.");
+                if (itemsInAdapter == 0) {
+                    fetchJobPostings();
+                }
             }
 
             @Override
             public void onScroll(float scrollProgressPercent) {
-                // Optional feedback
+                // Optional visual feedback
             }
         });
     }
 
-    public void loadJobPostingsFromAdapter(JobPostingsCallback callback) {
+    private void fetchJobPostings() {
+        if (isFetchingJobs) return; // Prevent duplicate calls
+        isFetchingJobs = true;
+
         String url = GET_RECOMMENDED_JOB_POSTINGS_URL + studentId;
         Log.d(TAG, "Fetching job postings from URL: " + url);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
-                    List<JobPosting> recommendedJobs = parseJobPostings(response);
-                    callback.onJobPostingsLoaded(recommendedJobs);
+                    isFetchingJobs = false;
+                    List<JobPosting> newJobs = parseJobPostings(response);
+                    if (newJobs.isEmpty()) {
+                        Log.d(TAG, "No jobs returned from the API.");
+                        Toast.makeText(requireContext(), "No jobs available to display.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        List<JobPosting> filteredJobs = filterJobPostings(newJobs);
+                        jobPostings.addAll(filteredJobs);
+                        swipeAdapter.setJobPostings(new ArrayList<>(jobPostings));
+                    }
                 },
                 error -> {
-                    String errorMsg = "Error loading job postings";
-                    if (error.networkResponse != null) {
+                    isFetchingJobs = false;
+                    String errorMsg = "Error fetching job postings";
+                    if (error instanceof VolleyError && error.networkResponse != null) {
                         errorMsg += " (Code: " + error.networkResponse.statusCode + ")";
                     }
-                    callback.onError(errorMsg);
+                    Log.e(TAG, errorMsg);
+                    Toast.makeText(requireContext(), "Failed to fetch jobs. Try again later.", Toast.LENGTH_SHORT).show();
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-
-                String username = "teststudent1@example.com";
-                String password = "TestStudent1234@";
-                String credentials = username + ":" + password;
-                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-
-                return headers;
+                return createAuthorizationHeaders();
             }
         };
 
         VolleySingleton.getInstance(requireContext()).addToRequestQueue(request);
+    }
+
+    private Map<String, String> createAuthorizationHeaders() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        SharedPreferences preferences = requireContext().getSharedPreferences(AUTH_PREFERENCES, Context.MODE_PRIVATE);
+        String username = preferences.getString("email", "");
+        String password = preferences.getString("password", "");
+
+        if (!username.isEmpty() && !password.isEmpty()) {
+            String credentials = username + ":" + password;
+            String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+            headers.put("Authorization", auth);
+        }
+
+        return headers;
     }
 
     private List<JobPosting> parseJobPostings(JSONArray response) {
@@ -223,6 +229,17 @@ public class JobSwipeFragment extends Fragment {
         return jobs;
     }
 
+    private List<JobPosting> filterJobPostings(List<JobPosting> postings) {
+        List<JobPosting> filteredJobs = new ArrayList<>();
+        for (JobPosting job : postings) {
+            String jobIdStr = String.valueOf(job.getJobPostingId());
+            if (!appliedJobs.contains(jobIdStr) && !dismissedJobs.contains(jobIdStr)) {
+                filteredJobs.add(job);
+            }
+        }
+        return filteredJobs;
+    }
+
     private Set<String> getAppliedJobs() {
         SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         return new HashSet<>(preferences.getStringSet(APPLIED_JOBS_KEY, new HashSet<>()));
@@ -248,10 +265,5 @@ public class JobSwipeFragment extends Fragment {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putStringSet(key, jobs);
         editor.apply();
-    }
-
-    public interface JobPostingsCallback {
-        void onJobPostingsLoaded(List<JobPosting> postings);
-        void onError(String error);
     }
 }

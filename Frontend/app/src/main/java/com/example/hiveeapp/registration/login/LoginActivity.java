@@ -38,8 +38,8 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
-    private static final String PREFERENCES_NAME = "JobSwipePreferences";
-    private static final String STUDENT_ID_KEY = "studentId";
+    private static final String PREFERENCES_NAME = "UserPreferences";
+    private static final String STUDENT_ID_KEY = "userId";
 
     private EditText emailField, passwordField;
     private MaterialButton loginButton;
@@ -149,10 +149,10 @@ public class LoginActivity extends AppCompatActivity {
 
             SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putInt(STUDENT_ID_KEY, userId); // Save as studentId for consistency
-            editor.putString("email", email); // Save email
-            editor.putString("password", password); // Save password
-            editor.commit(); // Ensure data is saved synchronously
+            editor.putInt(STUDENT_ID_KEY, userId);
+            editor.putString("email", email);
+            editor.putString("password", password);
+            editor.commit();
 
             // Debug: Log all preferences
             Map<String, ?> allEntries = preferences.getAll();
