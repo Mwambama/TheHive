@@ -69,6 +69,9 @@ dependencies {
 
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation ("androidx.test.espresso:espresso-intents:3.5.1")
+//androidTestImplementation('androidx.test.espresso:espresso-core:3.6.1')
+    androidTestImplementation("androidx.test:runner:1.6.1")
+    androidTestImplementation("androidx.test:rules:1.6.1")
     implementation(kotlin("script-runtime"))
 
     implementation ("com.maxkeppeler.sheets:core:2.3.1")
