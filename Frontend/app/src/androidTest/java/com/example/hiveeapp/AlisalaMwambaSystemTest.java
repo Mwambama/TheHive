@@ -97,8 +97,8 @@ public class AlisalaMwambaSystemTest {
     @Test
     public void testEmployerlLoginAndNavigation() {
         // Step 1: Set the input fields
-        onView(withId(R.id.emailField)).perform(typeText("employerTest@aol.com"), closeSoftKeyboard());
-        onView(withId(R.id.passwordField)).perform(typeText("Test1234@"), closeSoftKeyboard());
+        onView(withId(R.id.emailField)).perform(typeText("employerTest@aols.com"), closeSoftKeyboard());
+        onView(withId(R.id.passwordField)).perform(typeText("Test12345@"), closeSoftKeyboard());
 
         // Step 2: Click the login button
         onView(withId(R.id.loginButton)).perform(click());
@@ -304,9 +304,9 @@ public class AlisalaMwambaSystemTest {
     public void testEmployerLoginAndNavigateToAddJob() throws InterruptedException {
         // Step 1: Log in as an employer
         onView(withId(R.id.emailField))
-                .perform(typeText("employerTest@aol.com"), closeSoftKeyboard());
+                .perform(typeText("employerTest@aols.com"), closeSoftKeyboard());
         onView(withId(R.id.passwordField))
-                .perform(typeText("Test1234@"), closeSoftKeyboard());
+                .perform(typeText("Test12345@"), closeSoftKeyboard());
         onView(withId(R.id.loginButton)).perform(click());
         Thread.sleep(2000);
         // Step 2: Validate navigation to EmployerMainActivity
@@ -340,9 +340,9 @@ public class AlisalaMwambaSystemTest {
     public void testEmployerLoginAndNavigateToProfile() throws InterruptedException {
         // Step 1: Log in as an employer
         onView(withId(R.id.emailField))
-                .perform(typeText("employerTest@aol.com"), closeSoftKeyboard());
+                .perform(typeText("employerTest@aols.com"), closeSoftKeyboard());
         onView(withId(R.id.passwordField))
-                .perform(typeText("Test1234@"), closeSoftKeyboard());
+                .perform(typeText("Test12345@"), closeSoftKeyboard());
         onView(withId(R.id.loginButton)).perform(click());
 
         // Step 2: Validate navigation to EmployerMainActivity
