@@ -33,7 +33,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8" // Ensure compatibility with Java 1.8
+        jvmTarget = "1.8"
     }
 }
 
@@ -46,6 +46,7 @@ dependencies {
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation("androidx.fragment:fragment:1.8.5")
     implementation("androidx.cardview:cardview:1.0.0")
+    implementation ("com.google.android.material:material:1.9.0")
 
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.android.volley:volley:1.2.1")
@@ -61,4 +62,7 @@ dependencies {
     implementation ("com.tbuonomo:dotsindicator:4.2")
 
     implementation ("com.lorentzos.swipecards:library:1.0.9")
+
+    implementation ("com.airbnb.android:lottie:5.2.0")
+    implementation ("com.google.android.material:material:1.9.0")
 }

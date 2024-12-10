@@ -11,7 +11,13 @@
         android:title="Apply" />
 
     <item
+        android:id="@+id/navigation_search"
+        android:icon="@drawable/ic_search"
+        android:title="Search" />
+
+    <item
         android:id="@+id/navigation_chat"
         android:icon="@drawable/ic_chat"
         android:title="Chat" />
+
 </menu>

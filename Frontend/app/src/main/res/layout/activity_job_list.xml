@@ -5,6 +5,20 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background">
 
+    <!-- Top App Bar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:navigationIcon="@drawable/ic_back_arrow"
+        android:paddingTop="8dp"
+    app:contentInsetStart="16dp"
+    app:titleTextColor="@android:color/white"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- Post Jobs Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/addEmployerButton"

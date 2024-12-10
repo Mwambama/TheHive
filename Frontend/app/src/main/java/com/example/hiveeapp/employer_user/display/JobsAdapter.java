@@ -1,12 +1,17 @@
 package com.example.hiveeapp.employer_user.display;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hiveeapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,8 +78,30 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
     @Override
     public void onBindViewHolder(EmployerViewHolder holder, int position) {
         try {
+
+
+
             // Get the employer object at the current position
             JSONObject job = jobs.getJSONObject(position);
+
+            holder.analyticsButton.setOnClickListener(v -> {
+                long jobId = job.optLong("jobPostingId", -1); // Get the job ID from the JSON object
+                if (jobId == -1) {
+                    Toast.makeText(context, "Invalid Job ID", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                EmployerApis.getGraphImage(context, jobId,
+                        response -> {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(response, 0, response.length); // Convert byte[] to Bitmap
+                            displayPopupWithImage(context, bitmap); // Display the image in a popup
+                        },
+                        error -> {
+                            Toast.makeText(context, "Failed to fetch graph image", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "Error fetching graph image: ", error);
+                        });
+            });
+
 
             // Extract employer details, handling null cases with default values
 
@@ -159,6 +187,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             Toast.makeText(context, "Error parsing job data", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     @Override
     public int getItemCount() {
@@ -286,6 +315,26 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
         }
     }
 
+    private void displayPopupWithImage(Context context, Bitmap bitmap) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Analytics Image");
+
+        // Create an ImageView to display the image
+        ImageView imageView = new ImageView(context);
+        imageView.setImageBitmap(bitmap);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        imageView.setAdjustViewBounds(true);
+
+        builder.setView(imageView);
+
+        builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+
     /**
      * ViewHolder class to hold views for each employer item.
      */
@@ -304,7 +353,9 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
         ImageButton updateButton;       // Button for updating job details
         ImageButton deleteButton;       // Button for deleting job
 
-        //ImageButton updateButton, deleteButton;
+        MaterialButton analyticsButton;  // Button for fetching the graph
+        ImageView analyticsImageView;    // ImageView for displaying the graph
+
 
         public EmployerViewHolder(View itemView) {
             super(itemView);
@@ -321,6 +372,8 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.EmployerViewHo
             applicationEndTextView = itemView.findViewById(R.id.applicationEndTextView);
             updateButton = itemView.findViewById(R.id.updateButton);
             deleteButton = itemView.findViewById(R.id.deleteButton);
+            analyticsButton = itemView.findViewById(R.id.analyticsButton);  // Added Graph Button
+            analyticsImageView = itemView.findViewById(R.id.analyticsImageView);  // Added ImageView for Graph
 
         }
     }

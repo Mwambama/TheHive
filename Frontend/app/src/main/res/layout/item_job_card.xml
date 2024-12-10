@@ -4,125 +4,212 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/jobCard"
     android:layout_width="match_parent"
-    android:layout_height="400dp"
-    android:layout_margin="20dp"
+    android:layout_height="600dp"
+    android:layout_margin="16dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
     android:foreground="?android:attr/selectableItemBackground">
 
-<LinearLayout
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:orientation="vertical"
-android:padding="24dp">
-
-<!-- Job Title -->
-<TextView
-    android:id="@+id/jobTitle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Job Title"
-    android:textColor="#333333"
-    android:textSize="26sp"
-    android:textStyle="bold"
-    android:ellipsize="end"
-    android:maxLines="1"
-    android:layout_marginBottom="12dp" />
-
-<!-- Job Description -->
-<TextView
-    android:id="@+id/description"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Job Description"
-    android:textColor="#555555"
-    android:textSize="16sp"
-    android:ellipsize="end"
-    android:maxLines="4"
-    android:layout_marginBottom="16dp" />
-
-<!-- Salary and Job Type Container -->
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:layout_marginBottom="12dp">
-
-    <!-- Salary -->
-    <TextView
-        android:id="@+id/salary"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Salary: $0.00"
-        android:textColor="#333333"
-        android:textSize="16sp"
-        android:layout_marginEnd="8dp" />
-
-    <!-- Job Type -->
-    <TextView
-        android:id="@+id/jobType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Job Type: Internship"
-        android:textColor="#333333"
-        android:textSize="16sp" />
-</LinearLayout>
-
-<!-- Additional Information Container -->
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <!-- Minimum GPA -->
-    <TextView
-        android:id="@+id/minimumGpa"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Minimum GPA: 0.00"
-        android:textColor="#555555"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <!-- Job Start Date -->
-    <TextView
-        android:id="@+id/jobStart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Job Start Date: YYYY-MM-DD"
-        android:textColor="#555555"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp" />
+        <!-- Header Section with Background -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/gradient_background">
 
-    <!-- Application Dates -->
-    <TextView
-        android:id="@+id/applicationStart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Application Start: YYYY-MM-DD"
-        android:textColor="#555555"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp" />
+            <!-- Company Logo -->
+            <ImageView
+                android:id="@+id/companyLogo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="16dp"
+                android:src="@drawable/ic_placeholder"
+                android:layout_alignParentStart="true"
+                android:contentDescription="Company Logo" />
 
-    <TextView
-        android:id="@+id/applicationEnd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Application End: YYYY-MM-DD"
-        android:textColor="#555555"
-        android:textSize="16sp" />
-</LinearLayout>
+            <!-- Job Title -->
+            <TextView
+                android:id="@+id/jobTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Software Engineer"
+                android:textColor="@android:color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:padding="16dp"
+                android:layout_alignParentBottom="true"
+                android:background="#11000000" />
+        </RelativeLayout>
 
-<!-- Swipe Hint -->
-<TextView
-    android:id="@+id/swipeHint"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Swipe right to apply, swipe left to skip"
-    android:textColor="#888888"
-    android:textSize="14sp"
-    android:gravity="center"
-    android:layout_marginTop="16dp" />
-</LinearLayout>
-    </androidx.cardview.widget.CardView>
+        <!-- Chip Tags -->
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.chip.Chip
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remote"
+                app:chipBackgroundColor="@color/chip_background"
+                app:chipStrokeColor="@color/chip_stroke"
+                app:chipStrokeWidth="1dp" />
+
+            <com.google.android.material.chip.Chip
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full-Time"
+                app:chipBackgroundColor="@color/chip_background"
+                app:chipStrokeColor="@color/chip_stroke"
+                app:chipStrokeWidth="1dp" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Content Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp">
+
+            <!-- Salary and Job Type -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <!-- Salary Icon and Text -->
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_salary"
+                    android:layout_marginEnd="8dp"
+                    app:tint="@android:color/black" />
+                <TextView
+                    android:id="@+id/salary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Salary: $5000"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+
+                <!-- Spacer -->
+                <View
+                    android:layout_width="16dp"
+                    android:layout_height="0dp" />
+
+                <!-- Job Type Icon and Text -->
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_job_type"
+                    android:layout_marginEnd="8dp"
+                    app:tint="@android:color/black" />
+                <TextView
+                    android:id="@+id/jobType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Full-Time"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Job Description -->
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Job Description"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:ellipsize="end"
+                android:maxLines="4"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Additional Details -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Minimum GPA -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_gpa"
+                        android:layout_marginEnd="8dp"
+                        app:tint="@android:color/black" />
+                    <TextView
+                        android:id="@+id/minimumGpa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Minimum GPA: 3.5"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Job Start Date -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_calendar"
+                        android:layout_marginEnd="8dp"
+                        app:tint="@android:color/black" />
+                    <TextView
+                        android:id="@+id/jobStart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Start Date: 2024-01-01"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Application End Date -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_deadline"
+                        android:layout_marginEnd="8dp"
+                        app:tint="@android:color/black" />
+                    <TextView
+                        android:id="@+id/applicationEnd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Apply By: 2023-12-31"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+</androidx.cardview.widget.CardView>
