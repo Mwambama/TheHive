@@ -38,8 +38,8 @@ public class employerinfoApi {
 //       String username = "iiik@gmail.com";
 //        String password = "Anondwdb##444fedo";
 
-        String username = "employerTest@aol.com";
-        String password = "Test1234@";
+        String username = "employerTest@aols.com";
+        String password = "Test12345@";
 
         String credentials = username + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
