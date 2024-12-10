@@ -6,6 +6,7 @@ import com.example.thehiveapp.dto.authentication.EmployerSignUpRequest;
 import com.example.thehiveapp.dto.authentication.StudentSignUpRequest;
 import com.example.thehiveapp.dto.jobPosting.JobPostingDto;
 import com.example.thehiveapp.entity.address.Address;
+import com.example.thehiveapp.entity.chat.Chat;
 import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.entity.user.Employer;
 import com.example.thehiveapp.entity.user.Student;
@@ -52,6 +53,7 @@ class RilloSystemTest {
     private Long studentId;
     private Long employerId;
     private Long jobPostingId;
+    private Long anotherJobPostingId;
     private Long addressId;
 
     // Set Up Users
@@ -158,6 +160,28 @@ class RilloSystemTest {
                         .build()
         );
         jobPostingId = jobPostingDto.getJobPostingId();
+
+        // Create test job posting (opens in the future)
+        JobPostingDto anotherJobPostingDto = jobPostingService.createJobPosting(
+                JobPostingDto.builder()
+                        .title(ANOTHER_JOB_POSTING_TITLE)
+                        .description(ANOTHER_JOB_POSTING_DESCRIPTION)
+                        .summary(ANOTHER_JOB_POSTING_SUMMARY)
+                        .salary(LARGE_SALARY)
+                        .jobType(JobType.INTERNSHIP)
+                        .minimumGpa(LARGE_GPA)
+                        .applicationStart(ANOTHER_JOB_POSTING_APPLICATION_START)
+                        .applicationEnd(ANOTHER_JOB_POSTING_APPLICATION_END)
+                        .jobStart(ANOTHER_JOB_POSTING_JOB_START)
+                        .employerId(employerId)
+                        .build()
+        );
+        anotherJobPostingId = anotherJobPostingDto.getJobPostingId();
+
+        // Create a third open job posting for search
+        jobPostingDto.setJobPostingId(null);
+        jobPostingDto.setTitle(JOB_POSTING_TITLE + "2");
+        jobPostingService.createJobPosting(jobPostingDto);
     }
 
     @Test
@@ -214,28 +238,34 @@ class RilloSystemTest {
     @Test
     void testSearch() {
         // Test case 1a: Search by keyword, one result
-        assertSearch(ANOTHER_JOB_POSTING_DESCRIPTION, null, null, null, null, null, null, 200, 1);
+        assertSearch(ANOTHER_JOB_POSTING_DESCRIPTION, null, null, null, null, null, null, null,200, 1);
 
         // Test case 1b: Search by keyword, two results
-        assertSearch(JOB_POSTING_DESCRIPTION, null, null, null, null, null, null, 200, 2);
+        assertSearch(JOB_POSTING_DESCRIPTION, null, null, null, null, null, null, null, 200, 3);
 
         // Test case 2: Filter by minimum salary
-        assertSearch(null, SMALL_SALARY.add(BigDecimal.valueOf(1)), null, null, null, null, null, 200, 1);
+        assertSearch(null, SMALL_SALARY.add(BigDecimal.valueOf(1)), null, null, null, null, null, null, 200, 1);
 
         // Test case 3: Filter by maximum salary
-        assertSearch(null, null, LARGE_SALARY.subtract(BigDecimal.valueOf(1)), null, null, null, null, 200, 1);
+        assertSearch(null, null, LARGE_SALARY.subtract(BigDecimal.valueOf(1)), null, null, null, null, null, 200, 2);
 
         // Test case 4: Filter by job start date range
-        assertSearch(null, null, null, JOB_POSTING_JOB_START, ANOTHER_JOB_POSTING_JOB_START.minusDays(1), null, null, 200, 1);
+        assertSearch(null, null, null, JOB_POSTING_JOB_START, ANOTHER_JOB_POSTING_JOB_START.minusDays(1), null, null, null, 200, 2);
 
         // Test case 5: Filter by open applications
-        assertSearch(null, null, null, null, null, true, null, 200, 1);
+        assertSearch(null, null, null, null, null, true, null, null, 200, 2);
 
-        // Test case 6: No results for unmatched filter
-        assertSearch(null, LARGE_SALARY.add(BigDecimal.valueOf(1)), null, null, null, null, null, 200, 0);
+        // Test case 6: Filter by is_qualified
+        assertSearch(null, null, null, null, null, true, true, null, 200, 2);
+
+        // Test case 7: Filter by has not applied to
+        assertSearch(null, null, null, null, null, true, null, true, 200, 2);
+
+        // Test case 7: No results for unmatched filter
+        assertSearch(null, LARGE_SALARY.add(BigDecimal.valueOf(1)), null, null, null, null, null, null, 200, 0);
     }
 
-    private void assertSearch(String q, BigDecimal minSalary, BigDecimal maxSalary, LocalDate minJobStart, LocalDate maxJobStart, Boolean isApplicationOpen, Boolean isQualified, int expectedStatus, int expectedResults) {
+    private void assertSearch(String q, BigDecimal minSalary, BigDecimal maxSalary, LocalDate minJobStart, LocalDate maxJobStart, Boolean isApplicationOpen, Boolean isQualified, Boolean hasNotAppliedTo, int expectedStatus, int expectedResults) {
         Response response = RestAssured.given()
                 .auth()
                 .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
@@ -321,22 +351,6 @@ class RilloSystemTest {
 
     @Test
     void testChat() {
-        // Create another test job posting (in the future)
-        jobPostingService.createJobPosting(
-                JobPostingDto.builder()
-                        .title(ANOTHER_JOB_POSTING_TITLE)
-                        .description(ANOTHER_JOB_POSTING_DESCRIPTION)
-                        .summary(ANOTHER_JOB_POSTING_SUMMARY)
-                        .salary(LARGE_SALARY)
-                        .jobType(JobType.INTERNSHIP)
-                        .minimumGpa(LARGE_GPA)
-                        .applicationStart(ANOTHER_JOB_POSTING_APPLICATION_START)
-                        .applicationEnd(ANOTHER_JOB_POSTING_APPLICATION_END)
-                        .jobStart(ANOTHER_JOB_POSTING_JOB_START)
-                        .employerId(employerId)
-                        .build()
-        );
-
         // Step 1: Apply for a job posting
         Response applyResponse = RestAssured.given()
                 .auth()
@@ -490,4 +504,71 @@ class RilloSystemTest {
                 .get("/job-posting/" + jobPostingId);
         assertEquals(404, verifyDeleteResponse.getStatusCode(), "Deleted job posting should not be found");
     }
+
+    @Test
+    void testChatControllerEndpoints() {
+        // Step 1: Create a chat for testing
+        Chat chat = new Chat();
+        chat.setStudentId(studentId);
+        chat.setEmployerId(employerId);
+        Chat createdChat = chatService.createChat(chat);
+        assertNotNull(createdChat.getChatId(), "Created Chat should have an ID");
+
+        // Step 2: Get all chats
+        Response getAllChatsResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .get("/chat");
+        assertEquals(200, getAllChatsResponse.getStatusCode(), "GET request for all chats should succeed");
+        List<Chat> allChats = getAllChatsResponse.jsonPath().getList("$", Chat.class);
+        assertFalse(allChats.isEmpty(), "There should be at least one chat");
+
+        // Step 3: Get chats filtered by user ID (student)
+        Response getChatsByUserIdResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .queryParam("userId", studentId)
+                .get("/chat");
+        assertEquals(200, getChatsByUserIdResponse.getStatusCode(), "GET request for chats filtered by user ID should succeed");
+        List<Chat> userChats = getChatsByUserIdResponse.jsonPath().getList("$", Chat.class);
+        assertEquals(studentId, userChats.get(0).getStudentId(), "The chat should belong to the correct student");
+
+        // Step 4: Get chat by ID
+        Long chatId = createdChat.getChatId();
+        Response getChatByIdResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .get("/chat/" + chatId);
+        assertEquals(200, getChatByIdResponse.getStatusCode(), "GET request for chat by ID should succeed");
+        Chat fetchedChat = getChatByIdResponse.as(Chat.class);
+        assertEquals(chatId, fetchedChat.getChatId(), "The fetched chat ID should match the created chat");
+
+        // Step 5: Update the chat
+        fetchedChat.setJobPostingId(anotherJobPostingId);
+        Response updateChatResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .contentType("application/json")
+                .body(fetchedChat)
+                .put("/chat");
+        assertEquals(200, updateChatResponse.getStatusCode(), "PUT request for updating chat should succeed");
+        Chat updatedChat = updateChatResponse.as(Chat.class);
+        assertEquals(anotherJobPostingId, updatedChat.getJobPostingId(), "The chat jobPostingId should be updated");
+
+        // Step 6: Delete the chat
+        Response deleteChatResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .delete("/chat/" + chatId);
+        assertEquals(200, deleteChatResponse.getStatusCode(), "DELETE request for chat should succeed");
+        assertTrue(deleteChatResponse.asString().contains("successfully deleted"), "Delete confirmation message should be returned");
+
+        // Step 7: Verify the chat has been deleted
+        Response verifyDeleteResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .get("/chat/" + chatId);
+        assertEquals(404, verifyDeleteResponse.getStatusCode(), "Deleted chat should not be found");
+    }
+
 }
