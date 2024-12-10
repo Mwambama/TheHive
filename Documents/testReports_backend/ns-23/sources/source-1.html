@@ -1,0 +1,218 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ChatMessageServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.service.chat</a>
+</div>
+
+<h1>Coverage Summary for Class: ChatMessageServiceImpl (com.example.thehiveapp.service.chat)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChatMessageServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (10/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (2/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (30/36)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.service.chat;
+&nbsp;
+&nbsp;import com.example.thehiveapp.dto.chat.ChatMessageDto;
+&nbsp;import com.example.thehiveapp.entity.chat.Chat;
+&nbsp;import com.example.thehiveapp.entity.chat.ChatMessage;
+&nbsp;import com.example.thehiveapp.entity.user.User;
+&nbsp;import com.example.thehiveapp.mapper.chat.ChatMessageMapper;
+&nbsp;import com.example.thehiveapp.repository.chat.ChatMessageRepository;
+&nbsp;import com.example.thehiveapp.repository.chat.ChatRepository;
+&nbsp;import com.example.thehiveapp.repository.user.UserRepository;
+&nbsp;import com.example.thehiveapp.service.user.UserService;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class ChatMessageServiceImpl implements ChatMessageService {
+&nbsp;
+&nbsp;    @Autowired private ChatMessageRepository chatMessageRepository;
+&nbsp;    @Autowired private ChatService chatService;
+&nbsp;    @Autowired private UserService userService;
+&nbsp;    @Autowired private ChatMessageMapper chatMessageMapper;
+&nbsp;
+<b class="fc">&nbsp;    public ChatMessageServiceImpl() {}</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;ChatMessageDto&gt; getChatMessages() {
+<b class="fc">&nbsp;        return chatMessageRepository.findAll().stream()</b>
+<b class="fc">&nbsp;                .map(chatMessageMapper::toDto)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;ChatMessageDto&gt; getUnreadChatMessagesByUserId(Long userId){
+<b class="fc">&nbsp;        User user = userService.getUserById(userId);</b>
+<b class="fc">&nbsp;        List&lt;ChatMessage&gt; unreadMessages = chatMessageRepository.findByUserAndSeenFalse(user);</b>
+<b class="fc">&nbsp;        return unreadMessages.stream()</b>
+<b class="fc">&nbsp;                .map(chatMessageMapper::toDto)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void markMessagesAsSeen(Long chatId, Long userId){
+<b class="fc">&nbsp;        Chat chat = chatService.getChatById(chatId);</b>
+<b class="fc">&nbsp;        User user = userService.getUserById(userId);</b>
+<b class="fc">&nbsp;        List&lt;ChatMessage&gt; unreadMessages = chatMessageRepository.findByChatAndUserNotAndSeenFalse(chat, user);</b>
+<b class="pc">&nbsp;        for (ChatMessage message : unreadMessages) {</b>
+<b class="nc">&nbsp;            message.setSeen(true);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        chatMessageRepository.saveAll(unreadMessages);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ChatMessageDto createChatMessage(ChatMessageDto dto) {
+<b class="fc">&nbsp;        ChatMessage chatMessage = chatMessageMapper.toEntity(dto);</b>
+<b class="pc">&nbsp;        if (dto.getReplyToId() != null){</b>
+<b class="nc">&nbsp;            ChatMessage repliedMessage = chatMessageRepository.findById(dto.getReplyToId())</b>
+<b class="nc">&nbsp;                    .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Message being replied to not found&quot;));</b>
+<b class="nc">&nbsp;            chatMessage.setReplyTo(repliedMessage);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        ChatMessage savedMessage = chatMessageRepository.save(chatMessage);</b>
+<b class="fc">&nbsp;        return chatMessageMapper.toDto(savedMessage);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ChatMessageDto getChatMessageById(Long id) {
+<b class="fc">&nbsp;        return chatMessageMapper.toDto(</b>
+<b class="fc">&nbsp;                chatMessageRepository.findById(id).orElseThrow(</b>
+<b class="fc">&nbsp;                        () -&gt; new ResourceNotFoundException(&quot;Chat Message not found with id &quot; + id)</b>
+&nbsp;                )
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ChatMessageDto updateChatMessage(ChatMessageDto dto) {
+<b class="fc">&nbsp;        Long id = dto.getMessageId();</b>
+<b class="fc">&nbsp;        chatMessageRepository.findById(id).orElseThrow(</b>
+<b class="nc">&nbsp;                () -&gt; new ResourceNotFoundException(&quot;Chat Message not found with id &quot; + id)</b>
+&nbsp;        );
+<b class="fc">&nbsp;        ChatMessage ChatMessage = chatMessageMapper.toEntity(dto);</b>
+<b class="fc">&nbsp;        return chatMessageMapper.toDto(chatMessageRepository.save(ChatMessage));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deleteChatMessage(Long id) {
+<b class="fc">&nbsp;        ChatMessage ChatMessage = chatMessageRepository.findById(id).orElseThrow(</b>
+<b class="nc">&nbsp;                () -&gt; new ResourceNotFoundException(&quot;Chat Message not found with id &quot; + id)</b>
+&nbsp;        );
+<b class="fc">&nbsp;        chatMessageRepository.delete(ChatMessage);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;ChatMessageDto&gt; getChatMessagesByChatId(Long chatId) {
+<b class="fc">&nbsp;        Chat chat = chatService.getChatById(chatId);</b>
+<b class="fc">&nbsp;        return chatMessageRepository.findAllByChat(chat).stream().map(</b>
+<b class="fc">&nbsp;                chatMessageMapper::toDto).collect(Collectors.toList()</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-09 22:19</div>
+</div>
+</body>
+</html>

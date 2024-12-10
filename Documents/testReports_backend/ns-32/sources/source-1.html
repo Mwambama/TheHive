@@ -1,0 +1,117 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Application</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.entity.application</a>
+</div>
+
+<h1>Coverage Summary for Class: Application (com.example.thehiveapp.entity.application)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">Application$HibernateInstantiator$cXD9jUz4</td>
+  </tr>
+  <tr>
+    <td class="name">Application$HibernateInstantiator$rCvOR8Qj</td>
+  </tr>
+  <tr>
+    <td class="name">Application$HibernateProxy$bPq9qzKo</td>
+  </tr>
+  <tr>
+    <td class="name">Application$HibernateProxy$zzsBRl1t</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.entity.application;
+&nbsp;
+&nbsp;import com.example.thehiveapp.entity.jobPosting.JobPosting;
+&nbsp;import com.example.thehiveapp.entity.user.Student;
+&nbsp;import com.example.thehiveapp.enums.status.Status;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@NoArgsConstructor
+&nbsp;@Data
+&nbsp;@Table(name = &quot;application&quot;)
+&nbsp;public class Application {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    @Column(name = &quot;application_id&quot;)
+&nbsp;    private Long applicationId;
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;job_posting_id&quot;, nullable = false)
+&nbsp;    private JobPosting jobPosting;
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;student_id&quot;, nullable = false)
+&nbsp;    private Student student;
+&nbsp;
+&nbsp;    @Column(name = &quot;status&quot;, nullable = false)
+&nbsp;    @Enumerated(EnumType.STRING)
+&nbsp;    private Status status;
+&nbsp;
+&nbsp;    @Column(name = &quot;applied_on&quot;, nullable = false, columnDefinition = &quot;TIMESTAMP DEFAULT CURRENT_TIMESTAMP&quot;)
+&nbsp;    private LocalDateTime appliedOn = LocalDateTime.now();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-09 22:19</div>
+</div>
+</body>
+</html>
