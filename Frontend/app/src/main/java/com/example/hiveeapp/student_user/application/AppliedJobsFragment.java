@@ -1,6 +1,9 @@
 package com.example.hiveeapp.student_user.application;
 
+import static com.example.hiveeapp.student_user.swipe.JobSwipeFragment.AUTH_PREFERENCES;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -42,7 +45,7 @@ public class AppliedJobsFragment extends Fragment {
     private static final int MAX_PENDING_DAYS = 30;
 
     private RecyclerView recyclerView;
-    private AppliedJobsAdapter adapter; // Corrected adapter type
+    private AppliedJobsAdapter adapter;
     private List<Object> groupedApplications = new ArrayList<>();
     private int studentId;
 
@@ -63,7 +66,7 @@ public class AppliedJobsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_applied_jobs, container, false);
 
         recyclerView = view.findViewById(R.id.applicationsRecyclerView);
-        adapter = new AppliedJobsAdapter(getContext(), groupedApplications); // Initialize correctly
+        adapter = new AppliedJobsAdapter(getContext(), groupedApplications);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -73,22 +76,29 @@ public class AppliedJobsFragment extends Fragment {
     }
 
     private void loadApplications() {
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, GET_APPLICATIONS_URL, null,
+        // Use query parameter for studentId instead of path parameter
+        String url = GET_APPLICATIONS_URL + "?studentId=" + studentId;
+        Log.d(TAG, "Fetching applications from URL: " + url);
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
                     List<JobApplication> applications = parseApplications(response);
                     groupedApplications = groupApplications(filterApplications(applications));
-                    adapter.updateApplications(groupedApplications); // Update adapter with grouped data
+                    adapter.updateApplications(groupedApplications);
                 },
                 error -> {
-                    Log.e(TAG, "Error loading applications", error);
-                    Toast.makeText(requireContext(), "Failed to load applications.", Toast.LENGTH_SHORT).show();
+                    if (error.networkResponse != null) {
+                        int statusCode = error.networkResponse.statusCode;
+                        Log.e(TAG, "Error loading applications: " + statusCode, error);
+                        Toast.makeText(requireContext(), "Failed to load applications. Error code: " + statusCode, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e(TAG, "Network error occurred", error);
+                        Toast.makeText(requireContext(), "Network error. Check your connection.", Toast.LENGTH_SHORT).show();
+                    }
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                headers.putAll(createAuthorizationHeaders());
-                return headers;
+                return createAuthorizationHeaders();
             }
         };
 
@@ -101,7 +111,6 @@ public class AppliedJobsFragment extends Fragment {
             for (int i = 0; i < response.length(); i++) {
                 JSONObject obj = response.getJSONObject(i);
 
-                // Extract fields based on the updated response schema
                 int applicationId = obj.optInt("applicationId", -1);
                 int jobPostingId = obj.optInt("jobPostingId", -1);
                 int studentId = obj.optInt("studentId", -1);
@@ -109,7 +118,6 @@ public class AppliedJobsFragment extends Fragment {
                 String status = obj.optString("status", "Unknown");
                 String appliedOn = obj.optString("appliedOn", "");
 
-                // Validate required fields (e.g., skip if applicationId or jobTitle is missing)
                 if (applicationId != -1 && !jobTitle.isEmpty()) {
                     applications.add(new JobApplication(applicationId, jobPostingId, studentId, jobTitle, status, appliedOn));
                 } else {
@@ -128,17 +136,17 @@ public class AppliedJobsFragment extends Fragment {
 
         for (JobApplication app : applications) {
             if ("NOT_ACCEPTED".equalsIgnoreCase(app.getStatus())) {
-                continue; // Skip rejected applications
+                continue;
             }
 
             if ("PENDING".equalsIgnoreCase(app.getStatus())) {
                 long appliedTime = parseDateToMillis(app.getAppliedOn());
                 if ((now - appliedTime) > MAX_PENDING_DAYS * 24 * 60 * 60 * 1000L) {
-                    continue; // Skip old pending applications
+                    continue;
                 }
             }
 
-            filtered.add(app); // Add valid application
+            filtered.add(app);
         }
 
         return filtered;
@@ -147,7 +155,6 @@ public class AppliedJobsFragment extends Fragment {
     private List<Object> groupApplications(List<JobApplication> applications) {
         List<Object> groupedItems = new ArrayList<>();
 
-        // Add Accepted Applications
         groupedItems.add("Accepted Applications");
         for (JobApplication app : applications) {
             if ("Accepted".equalsIgnoreCase(app.getStatus())) {
@@ -155,7 +162,6 @@ public class AppliedJobsFragment extends Fragment {
             }
         }
 
-        // Add Pending Applications
         groupedItems.add("Pending Applications");
         for (JobApplication app : applications) {
             if ("Pending".equalsIgnoreCase(app.getStatus())) {
@@ -179,10 +185,18 @@ public class AppliedJobsFragment extends Fragment {
 
     private Map<String, String> createAuthorizationHeaders() {
         Map<String, String> headers = new HashMap<>();
-        String username = "teststudent1@example.com";
-        String password = "TestStudent1234@";
-        String auth = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
-        headers.put("Authorization", auth);
+        headers.put("Content-Type", "application/json");
+
+        SharedPreferences preferences = requireContext().getSharedPreferences(AUTH_PREFERENCES, Context.MODE_PRIVATE);
+        String username = preferences.getString("email", "");
+        String password = preferences.getString("password", "");
+
+        if (!username.isEmpty() && !password.isEmpty()) {
+            String credentials = username + ":" + password;
+            String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+            headers.put("Authorization", auth);
+        }
+
         return headers;
     }
 }

@@ -40,7 +40,7 @@ public class JobSwipeFragment extends Fragment {
     private static final String PREFERENCES_NAME = "JobSwipePreferences";
     private static final String APPLIED_JOBS_KEY = "AppliedJobs";
     private static final String DISMISSED_JOBS_KEY = "DismissedJobs";
-    private static final String AUTH_PREFERENCES = "UserPreferences";
+    public static final String AUTH_PREFERENCES = "UserPreferences";
     public static final String GET_RECOMMENDED_JOB_POSTINGS_URL = "http://coms-3090-063.class.las.iastate.edu:8080/job-posting/suggestions/";
 
     private SwipeFlingAdapterView swipeFlingAdapterView;
