@@ -12,6 +12,7 @@ import com.example.thehiveapp.entity.user.Company;
 import com.example.thehiveapp.entity.user.Employer;
 import com.example.thehiveapp.entity.user.Student;
 import com.example.thehiveapp.enums.jobPosting.JobType;
+import com.example.thehiveapp.enums.user.Role;
 import com.example.thehiveapp.service.address.AddressService;
 import com.example.thehiveapp.service.authentication.AuthenticationService;
 import com.example.thehiveapp.service.chat.ChatMessageService;
@@ -67,7 +68,9 @@ class RilloSystemTest {
     private final String STUDENT_PASSWORD = "Password1@";
     private final String STUDENT_UNIVERSITY = "University";
     private final String EMPLOYER_NAME = "Employer";
+    private final String ANOTHER_EMPLOYER_NAME = "AnotherEmployer";
     private final String EMPLOYER_EMAIL = "employer@test.com";
+    private final String ANOTHER_EMPLOYER_EMAIL = "anotherEmployer@test.com";
     private final String EMPLOYER_PASSWORD = "Password1@";
     private final Double STUDENT_GPA = 3.0;
 
@@ -350,6 +353,69 @@ class RilloSystemTest {
                 .get("/address/" + anotherAddress.getAddressId());
         assertEquals(404, verifyDeleteResponse.getStatusCode(), "Deleted address should not be found");
     }
+
+    @Test
+    void testEmployerCRUDL() {
+        // Test POST: Create a second employer
+        Employer anotherEmployer = new Employer();
+        anotherEmployer.setName(ANOTHER_EMPLOYER_NAME);
+        anotherEmployer.setEmail(ANOTHER_EMPLOYER_EMAIL);
+        anotherEmployer.setRole(Role.EMPLOYER);
+        anotherEmployer.setCompanyId(companyId);
+        Response postResponse = RestAssured.given()
+                .auth()
+                .basic(COMPANY_EMAIL, COMPANY_PASSWORD)
+                .header("Content-Type", "application/json")
+                .body(anotherEmployer)
+                .post("/employer");
+        assertEquals(200, postResponse.getStatusCode(), "POST request should succeed");
+        anotherEmployer = postResponse.as(Employer.class);
+        assertNotNull(anotherEmployer.getUserId(), "Second employer ID should not be null");
+
+        // Test GET by ID: Verify the initial employer
+        Response getByIdResponse = RestAssured.given()
+                .auth()
+                .basic(COMPANY_EMAIL, COMPANY_PASSWORD)
+                .get("/employer/" + anotherEmployer.getUserId());
+        assertEquals(200, getByIdResponse.getStatusCode(), "GET by ID should succeed");
+        Employer fetchedEmployer = getByIdResponse.as(Employer.class);
+        assertEquals(ANOTHER_EMPLOYER_EMAIL, fetchedEmployer.getEmail(), "Email should match the initial employer");
+
+        // Test GET all: Verify both employers are listed
+        Response getAllResponse = RestAssured.given()
+                .auth()
+                .basic(COMPANY_EMAIL, COMPANY_PASSWORD)
+                .get("/employer");
+        assertEquals(200, getAllResponse.getStatusCode(), "GET all should succeed");
+        List<Employer> employers = getAllResponse.jsonPath().getList("$", Employer.class);
+        assertEquals(2, employers.size(), "There should be two employers");
+
+        // Test PUT: Update the second employer
+        anotherEmployer.setField("Some field");
+        Response putResponse = RestAssured.given()
+                .auth()
+                .basic(COMPANY_EMAIL, COMPANY_PASSWORD)
+                .header("Content-Type", "application/json")
+                .body(anotherEmployer)
+                .put("/employer");
+        assertEquals(200, putResponse.getStatusCode(), "PUT request should succeed");
+        Employer updatedEmployer = putResponse.as(Employer.class);
+        assertEquals("Some field", updatedEmployer.getField(), "Field should be updated");
+
+        // Test DELETE: Delete the second employer
+        Response deleteResponse = RestAssured.given()
+                .auth()
+                .basic(COMPANY_EMAIL, COMPANY_PASSWORD)
+                .delete("/employer/" + anotherEmployer.getUserId());
+        assertEquals(200, deleteResponse.getStatusCode(), "DELETE request should succeed");
+        assertTrue(deleteResponse.asString().contains("Employer account successfully deleted"), "Deletion confirmation message should be returned");
+        Response verifyDeleteResponse = RestAssured.given()
+                .auth()
+                .basic(COMPANY_EMAIL, COMPANY_PASSWORD)
+                .get("/address/" + anotherEmployer.getUserId());
+        assertEquals(404, verifyDeleteResponse.getStatusCode(), "Deleted employer should not be found");
+    }
+
 
     @Test
     void testChat() {
