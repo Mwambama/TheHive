@@ -4,6 +4,7 @@ import com.example.thehiveapp.dto.application.ApplicationRequest;
 import com.example.thehiveapp.dto.authentication.CompanySignUpRequest;
 import com.example.thehiveapp.dto.authentication.EmployerSignUpRequest;
 import com.example.thehiveapp.dto.authentication.StudentSignUpRequest;
+import com.example.thehiveapp.dto.chat.ChatMessageDto;
 import com.example.thehiveapp.dto.jobPosting.JobPostingDto;
 import com.example.thehiveapp.entity.address.Address;
 import com.example.thehiveapp.entity.chat.Chat;
@@ -12,8 +13,8 @@ import com.example.thehiveapp.entity.user.Employer;
 import com.example.thehiveapp.entity.user.Student;
 import com.example.thehiveapp.enums.jobPosting.JobType;
 import com.example.thehiveapp.service.address.AddressService;
-import com.example.thehiveapp.service.application.ApplicationService;
 import com.example.thehiveapp.service.authentication.AuthenticationService;
+import com.example.thehiveapp.service.chat.ChatMessageService;
 import com.example.thehiveapp.service.chat.ChatService;
 import com.example.thehiveapp.service.jobPosting.JobPostingService;
 import com.example.thehiveapp.service.user.StudentService;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.math.BigDecimal;
@@ -47,7 +49,7 @@ class RilloSystemTest {
     @Autowired private AuthenticationService authenticationService;
     @Autowired private AddressService addressService;
     @Autowired private ChatService chatService;
-    @Autowired private ApplicationService applicationService;
+    @Autowired private ChatMessageService chatMessageService;
 
     private Long companyId;
     private Long studentId;
@@ -571,4 +573,65 @@ class RilloSystemTest {
         assertEquals(404, verifyDeleteResponse.getStatusCode(), "Deleted chat should not be found");
     }
 
+    @Test
+    void testChatMessageService() {
+        // Step 1: Create a chat for testing
+        Chat chat = new Chat();
+        chat.setStudentId(studentId);
+        chat.setEmployerId(employerId);
+        Chat createdChat = chatService.createChat(chat);
+        Long chatId = createdChat.getChatId();
+        assertNotNull(chatId, "Created Chat should have an ID");
+
+        // Step 2: Create a chat message
+        ChatMessageDto messageDto = ChatMessageDto.builder()
+                .chatId(chatId)
+                .userId(studentId)
+                .message("Hello, this is a test message!")
+                .build();
+        ChatMessageDto createdMessage = chatMessageService.createChatMessage(messageDto);
+        assertNotNull(createdMessage.getMessageId(), "Created message should have an ID");
+        assertEquals("Hello, this is a test message!", createdMessage.getMessage(), "Message content should match");
+
+        // Step 3: Retrieve chat message by ID
+        ChatMessageDto fetchedMessage = chatMessageService.getChatMessageById(createdMessage.getMessageId());
+        assertEquals(createdMessage.getMessageId(), fetchedMessage.getMessageId(), "Fetched message ID should match created message");
+
+        // Step 4: Retrieve all chat messages
+        List<ChatMessageDto> allMessages = chatMessageService.getChatMessages();
+        assertFalse(allMessages.isEmpty(), "There should be at least one chat message");
+
+        // Step 5: Retrieve chat messages by chat ID
+        List<ChatMessageDto> chatMessages = chatMessageService.getChatMessagesByChatId(chatId);
+        assertEquals(1, chatMessages.size(), "There should be exactly one message in the chat");
+        assertEquals("Hello, this is a test message!", chatMessages.get(0).getMessage(), "Message content should match");
+
+        // Step 6: Mark messages as seen
+        chatMessageService.markMessagesAsSeen(chatId, employerId);
+        List<ChatMessageDto> unreadMessages = chatMessageService.getUnreadChatMessagesByUserId(employerId);
+        assertEquals(0, unreadMessages.size(), "All messages should be marked as seen");
+
+        // Step 7: Update the chat message
+        createdMessage.setMessage("Updated content");
+        ChatMessageDto updatedMessage = chatMessageService.updateChatMessage(createdMessage);
+        assertEquals("Updated content", updatedMessage.getMessage(), "Message content should be updated");
+
+        // Step 8: Delete the chat message
+        chatMessageService.deleteChatMessage(createdMessage.getMessageId());
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> chatMessageService.getChatMessageById(createdMessage.getMessageId()),
+                "Fetching deleted message should throw ResourceNotFoundException"
+        );
+        assertTrue(exception.getMessage().contains("Chat Message not found with id"), "Exception message should indicate message not found");
+
+        // Step 9: Cleanup - Delete the chat
+        chatService.deleteChat(chatId);
+        ResourceNotFoundException chatException = assertThrows(
+                ResourceNotFoundException.class,
+                () -> chatService.getChatById(chatId),
+                "Fetching deleted chat should throw ResourceNotFoundException"
+        );
+        assertTrue(chatException.getMessage().contains("Chat not found with id"), "Exception message should indicate chat not found");
+    }
 }
