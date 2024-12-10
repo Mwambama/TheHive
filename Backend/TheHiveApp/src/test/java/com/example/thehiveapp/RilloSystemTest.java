@@ -52,7 +52,6 @@ class RilloSystemTest {
     private Long studentId;
     private Long employerId;
     private Long jobPostingId;
-    private Long anotherJobPostingId;
     private Long addressId;
 
     // Set Up Users
@@ -159,23 +158,6 @@ class RilloSystemTest {
                         .build()
         );
         jobPostingId = jobPostingDto.getJobPostingId();
-
-        // Create another test job posting (in the future)
-        JobPostingDto anotherJobPostingDto = jobPostingService.createJobPosting(
-                JobPostingDto.builder()
-                        .title(ANOTHER_JOB_POSTING_TITLE)
-                        .description(ANOTHER_JOB_POSTING_DESCRIPTION)
-                        .summary(ANOTHER_JOB_POSTING_SUMMARY)
-                        .salary(LARGE_SALARY)
-                        .jobType(JobType.INTERNSHIP)
-                        .minimumGpa(LARGE_GPA)
-                        .applicationStart(ANOTHER_JOB_POSTING_APPLICATION_START)
-                        .applicationEnd(ANOTHER_JOB_POSTING_APPLICATION_END)
-                        .jobStart(ANOTHER_JOB_POSTING_JOB_START)
-                        .employerId(employerId)
-                        .build()
-        );
-        anotherJobPostingId = anotherJobPostingDto.getJobPostingId();
     }
 
     @Test
@@ -339,6 +321,22 @@ class RilloSystemTest {
 
     @Test
     void testChat() {
+        // Create another test job posting (in the future)
+        jobPostingService.createJobPosting(
+                JobPostingDto.builder()
+                        .title(ANOTHER_JOB_POSTING_TITLE)
+                        .description(ANOTHER_JOB_POSTING_DESCRIPTION)
+                        .summary(ANOTHER_JOB_POSTING_SUMMARY)
+                        .salary(LARGE_SALARY)
+                        .jobType(JobType.INTERNSHIP)
+                        .minimumGpa(LARGE_GPA)
+                        .applicationStart(ANOTHER_JOB_POSTING_APPLICATION_START)
+                        .applicationEnd(ANOTHER_JOB_POSTING_APPLICATION_END)
+                        .jobStart(ANOTHER_JOB_POSTING_JOB_START)
+                        .employerId(employerId)
+                        .build()
+        );
+
         // Step 1: Apply for a job posting
         Response applyResponse = RestAssured.given()
                 .auth()
@@ -382,4 +380,114 @@ class RilloSystemTest {
         assertEquals(studentId, chatUserId, "Chat should belong to the correct student");
     }
 
+    @Test
+    void testSwaggerUIEndpoint() {
+        Response response = RestAssured.given()
+                .when()
+                .get("/swagger-ui.html");
+
+        assertEquals(200, response.getStatusCode(), "Swagger UI should be accessible");
+        assertTrue(response.asString().contains("Swagger UI"), "Swagger UI page should contain 'Swagger UI'");
+    }
+
+    @Test
+    void testJobPostingEndpoints() {
+        // Create another test job posting (in the future)
+        JobPostingDto anotherJobPostingDto = JobPostingDto.builder()
+                .title(ANOTHER_JOB_POSTING_TITLE)
+                .description(ANOTHER_JOB_POSTING_DESCRIPTION)
+                .summary(ANOTHER_JOB_POSTING_SUMMARY)
+                .salary(LARGE_SALARY)
+                .jobType(JobType.INTERNSHIP)
+                .minimumGpa(LARGE_GPA)
+                .applicationStart(ANOTHER_JOB_POSTING_APPLICATION_START)
+                .applicationEnd(ANOTHER_JOB_POSTING_APPLICATION_END)
+                .jobStart(ANOTHER_JOB_POSTING_JOB_START)
+                .employerId(employerId)
+        .build();
+
+        // Step 1: Create a job posting
+        Response createResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .contentType("application/json")
+                .body(anotherJobPostingDto)
+                .post("/job-posting");
+        assertEquals(200, createResponse.getStatusCode(), "Create Job Posting should succeed");
+        JobPostingDto createdJobPosting = createResponse.as(JobPostingDto.class);
+        assertNotNull(createdJobPosting.getJobPostingId(), "Created Job Posting should have an ID");
+
+        // Step 2a: Get job postings (all)
+        Response getAllResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .get("/job-posting");
+        assertEquals(200, getAllResponse.getStatusCode(), "Get all Job Postings should succeed");
+        List<JobPostingDto> allJobPostings = getAllResponse.jsonPath().getList("$", JobPostingDto.class);
+        assertTrue(allJobPostings.size() >= 2, "At least two job postings should be returned");
+
+        // Step 2b: Get job postings (filtered by employer ID)
+        Response getByEmployerResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .queryParam("employerId", employerId)
+                .get("/job-posting");
+        assertEquals(200, getByEmployerResponse.getStatusCode(), "Get Job Postings by Employer ID should succeed");
+        List<JobPostingDto> employerJobPostings = getByEmployerResponse.jsonPath().getList("$", JobPostingDto.class);
+        assertTrue(allJobPostings.size() >= 2, "At least two job postings should be returned");
+
+        // Step 2: Get the created job posting by ID
+        Long jobPostingId = createdJobPosting.getJobPostingId();
+        Response getResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .get("/job-posting/" + jobPostingId);
+        assertEquals(200, getResponse.getStatusCode(), "Get Job Posting by ID should succeed");
+        JobPostingDto fetchedJobPosting = getResponse.as(JobPostingDto.class);
+        assertEquals(ANOTHER_JOB_POSTING_TITLE, fetchedJobPosting.getTitle(), "Fetched job title should match");
+
+        // Step 3: Update the job posting
+        String updatedTitle = "Senior Software Engineer";
+        createdJobPosting.setTitle(updatedTitle);
+        Response updateResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .contentType("application/json")
+                .body(createdJobPosting)
+                .put("/job-posting");
+        assertEquals(200, updateResponse.getStatusCode(), "Update Job Posting should succeed");
+        JobPostingDto updatedJobPosting = updateResponse.as(JobPostingDto.class);
+        assertEquals(updatedTitle, updatedJobPosting.getTitle(), "Updated title should match");
+
+        // Step 4: Get job postings for a student
+        Response getForStudentResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .get("/job-posting/student/" + studentId);
+        assertEquals(200, getForStudentResponse.getStatusCode(), "Get Job Postings for Student should succeed");
+        List<JobPostingDto> studentJobPostings = getForStudentResponse.jsonPath().getList("$", JobPostingDto.class);
+        assertFalse(studentJobPostings.isEmpty(), "Student should have job postings available");
+
+        // Step 5: Get job posting suggestions for a student
+        Response suggestionsResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .get("/job-posting/suggestions/" + studentId);
+        assertEquals(200, suggestionsResponse.getStatusCode(), "Get Job Posting Suggestions should succeed");
+
+        // Step 6: Delete the job posting
+        Response deleteResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .delete("/job-posting/" + jobPostingId);
+        assertEquals(200, deleteResponse.getStatusCode(), "Delete Job Posting should succeed");
+        assertTrue(deleteResponse.asString().contains("successfully deleted"), "Delete confirmation message should be returned");
+
+        // Step 7: Verify deletion
+        Response verifyDeleteResponse = RestAssured.given()
+                .auth()
+                .basic(STUDENT_EMAIL, STUDENT_PASSWORD)
+                .get("/job-posting/" + jobPostingId);
+        assertEquals(404, verifyDeleteResponse.getStatusCode(), "Deleted job posting should not be found");
+    }
 }
