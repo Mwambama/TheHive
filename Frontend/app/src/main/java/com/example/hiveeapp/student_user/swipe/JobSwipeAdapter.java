@@ -16,17 +16,13 @@ import java.util.List;
 
 public class JobSwipeAdapter extends BaseAdapter {
     private static final String TAG = "JobSwipeAdapter";
-    private Context context;
+    private final Context context;
     private List<JobPosting> jobPostings;
-    private JobSwipeFragment jobSwipeFragment;
 
-    public JobSwipeAdapter(Context context, JobSwipeFragment fragment) {
+    public JobSwipeAdapter(Context context, List<JobPosting> initialJobPostings) {
         this.context = context;
-        this.jobSwipeFragment = fragment; // Reference to the fragment
-        this.jobPostings = new ArrayList<>();
-
-        // Use the fragment to load job postings
-        initializeJobPostingsFromFragment();
+        this.jobPostings = initialJobPostings != null ? new ArrayList<>(initialJobPostings) : new ArrayList<>();
+        Log.d(TAG, "Adapter initialized with " + this.jobPostings.size() + " job postings.");
     }
 
     @Override
@@ -36,7 +32,12 @@ public class JobSwipeAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return jobPostings.get(position);
+        if (position >= 0 && position < jobPostings.size()) {
+            return jobPostings.get(position);
+        } else {
+            Log.e(TAG, "Attempted to get item at invalid position: " + position);
+            return null;
+        }
     }
 
     @Override
@@ -46,49 +47,65 @@ public class JobSwipeAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
+
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_job_card, parent, false);
+            holder = new ViewHolder();
+            holder.jobTitle = convertView.findViewById(R.id.jobTitle);
+            holder.jobDescription = convertView.findViewById(R.id.description);
+            holder.jobSalary = convertView.findViewById(R.id.salary);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
-        JobPosting job = jobPostings.get(position);
-
-        TextView jobTitle = convertView.findViewById(R.id.jobTitle);
-        TextView jobDescription = convertView.findViewById(R.id.description);
-        TextView jobSalary = convertView.findViewById(R.id.salary);
-
-        jobTitle.setText(job.getTitle());
-        jobDescription.setText(job.getDescription());
-        jobSalary.setText("Salary: $" + job.getSalary());
+        if (position >= 0 && position < jobPostings.size()) {
+            JobPosting job = jobPostings.get(position);
+            holder.jobTitle.setText(job.getTitle());
+            holder.jobDescription.setText(job.getDescription());
+            holder.jobSalary.setText("Salary: $" + job.getSalary());
+        } else {
+            Log.e(TAG, "Invalid position in getView: " + position);
+        }
 
         return convertView;
     }
 
-    private void initializeJobPostingsFromFragment() {
-        jobSwipeFragment.loadJobPostingsFromAdapter(new JobSwipeFragment.JobPostingsCallback() {
-            @Override
-            public void onJobPostingsLoaded(List<JobPosting> postings) {
-                jobPostings = postings;
-                notifyDataSetChanged();
-                Log.d(TAG, "Job postings loaded and adapter updated.");
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.e(TAG, "Error loading job postings: " + error);
-                Toast.makeText(context, "Failed to load job postings", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     public void setJobPostings(List<JobPosting> newJobPostings) {
-        this.jobPostings = new ArrayList<>(newJobPostings);
+        if (newJobPostings == null || newJobPostings.isEmpty()) {
+            Log.w(TAG, "Received empty or null job postings. Clearing existing data.");
+            this.jobPostings.clear();
+        } else {
+            Log.d(TAG, "Updating job postings with " + newJobPostings.size() + " items.");
+            this.jobPostings = new ArrayList<>(newJobPostings);
+        }
         notifyDataSetChanged();
     }
 
+    public void addJobPostings(List<JobPosting> additionalJobPostings) {
+        if (additionalJobPostings != null && !additionalJobPostings.isEmpty()) {
+            Log.d(TAG, "Adding " + additionalJobPostings.size() + " more job postings.");
+            this.jobPostings.addAll(additionalJobPostings);
+            notifyDataSetChanged();
+        } else {
+            Log.w(TAG, "Attempted to add empty or null job postings.");
+        }
+    }
+
     public void removeJob(int position) {
-        if (position < jobPostings.size()) {
+        if (position >= 0 && position < jobPostings.size()) {
+            Log.d(TAG, "Removing job at position: " + position);
             jobPostings.remove(position);
             notifyDataSetChanged();
+        } else {
+            Log.e(TAG, "Invalid position to remove: " + position);
         }
+    }
+
+    private static class ViewHolder {
+        TextView jobTitle;
+        TextView jobDescription;
+        TextView jobSalary;
     }
 }
