@@ -5,16 +5,22 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.View;
 
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.espresso.intent.Intents;
@@ -24,7 +30,12 @@ import androidx.test.uiautomator.UiDevice;
 import com.example.hiveeapp.registration.login.LoginActivity;
 import com.example.hiveeapp.registration.signup.studentsignupActivity;
 import com.example.hiveeapp.student_user.StudentMainActivity;
+import com.example.hiveeapp.student_user.chat.ChatListActivity;
+import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
+import com.example.hiveeapp.student_user.search.JobSearchActivity;
+import com.google.android.material.tabs.TabLayout;
 
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -154,5 +165,3 @@ public class LucasSorgeSystemTest {
         }
     }
 }
-
-
