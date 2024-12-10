@@ -25,6 +25,7 @@ import com.example.hiveeapp.student_user.StudentMainActivity;
 import com.example.hiveeapp.student_user.chat.ChatListActivity;
 import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
 import com.example.hiveeapp.volley.VolleySingleton;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,6 +73,60 @@ public class JobSearchActivity extends AppCompatActivity {
 
         // Set search button click listener
         searchButton.setOnClickListener(v -> performSearch());
+
+        setupBottomNavigationView();
+    }
+
+    private void setupBottomNavigationView() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            Log.d(TAG, "Bottom navigation item selected: " + itemId);
+
+            if (itemId == R.id.navigation_profile) {
+                navigateToProfile();
+                return true;
+            } else if (itemId == R.id.navigation_chat) {
+                navigateToChat();
+                return true;
+            } else if (itemId == R.id.navigation_apply) {
+                navigateToApplications();
+                return true;
+            } else if (itemId == R.id.navigation_search) {
+                return true;
+            }
+            return false;
+        });
+
+        bottomNavigationView.setSelectedItemId(R.id.navigation_search); // Set the current page
+    }
+
+    private void navigateToProfile() {
+        Log.d(TAG, "Navigating to Profile");
+        if (studentId == -1) {
+            Log.e(TAG, "Invalid Student ID, cannot navigate to profile.");
+            Toast.makeText(this, "Invalid Student ID. Please log in again.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = new Intent(JobSearchActivity.this, StudentProfileViewActivity.class);
+        intent.putExtra("USER_ID", studentId);
+        startActivity(intent);
+        finish();
+    }
+
+    private void navigateToChat() {
+        Log.d(TAG, "Navigating to Chat");
+        Intent intent = new Intent(JobSearchActivity.this, ChatListActivity.class);
+        intent.putExtra("USER_ID", studentId);
+        startActivity(intent);
+        finish();
+    }
+
+    private void navigateToApplications() {
+        Log.d(TAG, "Navigating to Applications");
+        Intent intent = new Intent(JobSearchActivity.this, StudentMainActivity.class); // Assuming this is the applications activity
+        startActivity(intent);
+        finish();
     }
 
     private void initializeViews() {
@@ -106,13 +161,14 @@ public class JobSearchActivity extends AppCompatActivity {
             studentId = intent.getIntExtra("USER_ID", -1);
         }
 
-        // If not found, retrieve from SharedPreferences
-        if (studentId == -1) {
+        // If not found in Intent, retrieve from SharedPreferences
+        if (studentId == -1 || studentId == 0) { // Handle case where studentId is incorrectly 0
             SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
             studentId = preferences.getInt(STUDENT_ID_KEY, -1);
         }
 
-        if (studentId == -1) {
+        // Validate the retrieved studentId
+        if (studentId == -1 || studentId == 0) {
             Toast.makeText(this, "Student ID not found. Please log in.", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Student ID not found in Intent or SharedPreferences.");
             finish();
