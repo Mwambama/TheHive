@@ -79,7 +79,7 @@ public class StudentMainActivityNavigationTest {
     @Test
     public void testBottomNavigation_toProfile() throws InterruptedException {
         // Login before testing navigation
-        performLogin("teststudent1@example.com", "TestStudent1234@");
+        performLogin("test643@example.com", "Test$1234");
 
         // Navigate to Profile
         onView(withId(R.id.navigation_profile)).perform(click());
@@ -90,7 +90,7 @@ public class StudentMainActivityNavigationTest {
     @Test
     public void testBottomNavigation_toChat() throws InterruptedException {
         // Login before testing navigation
-        performLogin("teststudent1@example.com", "TestStudent1234@");
+        performLogin("test643@example.com", "Test$1234");
 
         // Navigate to Chat
         onView(withId(R.id.navigation_chat)).perform(click());
@@ -101,7 +101,7 @@ public class StudentMainActivityNavigationTest {
     @Test
     public void testBottomNavigation_toSearch() throws InterruptedException {
         // Login before testing navigation
-        performLogin("teststudent1@example.com", "TestStudent1234@");
+        performLogin("test643@example.com", "Test$1234");
 
         // Verify that the bottom navigation view is displayed
         onView(withId(R.id.bottomNavigationView))
@@ -127,7 +127,7 @@ public class StudentMainActivityNavigationTest {
     @Test
     public void testBottomNavigation_toApply() throws InterruptedException {
         // Login before testing navigation
-        performLogin("teststudent1@example.com", "TestStudent1234@");
+        performLogin("test643@example.com", "Test$1234");
 
         // Navigate to Apply
         onView(withId(R.id.navigation_apply)).perform(click());
@@ -137,7 +137,7 @@ public class StudentMainActivityNavigationTest {
     @Test
     public void testTabNavigation_withinApply() throws InterruptedException {
         // Login before testing navigation
-        performLogin("teststudent1@example.com", "TestStudent1234@");
+        performLogin("test643@example.com", "Test$1234");
 
         // Navigate to Apply
         onView(withId(R.id.navigation_apply)).perform(click());
