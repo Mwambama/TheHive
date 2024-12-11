@@ -78,6 +78,13 @@
         <activity android:name=".registration.forgotPassword.VerifyKeyActivity" />
         <activity android:name=".registration.forgotPassword.ResetPasswordActivity" />
 
+        <activity android:name=".employer_user.chat.EmployerChatListActivity" />
+        <activity
+            android:name=".employer_user.chat.EmployerChatActivity"
+            android:theme="@style/Theme.HiveeApp.NoActionBar" />
+
+
+
     </application>
 
 </manifest>
