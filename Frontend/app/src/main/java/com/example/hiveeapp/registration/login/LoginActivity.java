@@ -62,11 +62,11 @@ public class LoginActivity extends AppCompatActivity {
 //        emailField.setText("testcompany@example.com");
 //        passwordField.setText("Test1234@");
 
-//        emailField.setText("test643@example.com");
-//        passwordField.setText("Test$1234");
+        emailField.setText("test643@example.com");
+        passwordField.setText("Test$1234");
 
-//        emailField.setText("employerTest@aols.com");
-//        passwordField.setText("Test12345@");
+//        emailField.setText("myEmployerTest2@example.com");
+//        passwordField.setText("Test1234@");
     }
 
     private void initializeViews() {
@@ -99,7 +99,6 @@ public class LoginActivity extends AppCompatActivity {
         String email = emailField.getText().toString().trim();
         String password = passwordField.getText().toString();
 
-        // Debug: Log email and password inputs
         Log.d(TAG, "authenticateUser: email=" + email + ", password=" + password);
 
         if (!validateInputs(email, password)) return;
@@ -146,15 +145,23 @@ public class LoginActivity extends AppCompatActivity {
             int userId = response.getInt("userId");
             String role = extractUserRole(response);
 
-            // Debug: Log retrieved userId and role
-            Log.d(TAG, "handleLoginSuccess: userId=" + userId + ", role=" + role);
+            // Extract companyId if available
+            int companyId = -1;
+            if (response.has("companyId")) {
+                companyId = response.getInt("companyId");
+            }
 
+            // Debug: Log retrieved userId, role, and companyId
+            Log.d(TAG, "handleLoginSuccess: userId=" + userId + ", role=" + role + ", companyId=" + companyId);
+
+            // Save data in SharedPreferences
             SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putInt(STUDENT_ID_KEY, userId);
             editor.putString("email", email);
             editor.putString("password", password);
-            editor.commit();
+            editor.putInt("companyId", companyId); // Save companyId
+            editor.apply();
 
             // Debug: Log all preferences
             Map<String, ?> allEntries = preferences.getAll();

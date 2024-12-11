@@ -237,6 +237,7 @@ public class EmployerProfileActivity extends AppCompatActivity {
         // Collect updated information from EditTexts and send to backend
         JSONObject updatedProfile = new JSONObject();
         try {
+            updatedProfile.put("userId", userId); // Add userId to the JSON object
             updatedProfile.put("name", nameEditText.getText().toString());
             updatedProfile.put("email", emailEditText.getText().toString());
             updatedProfile.put("phone", phoneEditText.getText().toString());
@@ -250,11 +251,13 @@ public class EmployerProfileActivity extends AppCompatActivity {
             updatedAddress.put("zipCode", zipCodeEditText.getText().toString());
 
             updatedProfile.put("address", updatedAddress);
+            updatedProfile.put("companyId", companyId); // Ensure companyId is included
+            updatedProfile.put("role", "EMPLOYER"); // Add role if required by the API
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        employerinfoApi.updateEmployer(this, userId, updatedProfile, new Response.Listener<JSONObject>() {
+        employerinfoApi.updateEmployer(this, updatedProfile, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Toast.makeText(EmployerProfileActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
@@ -266,4 +269,5 @@ public class EmployerProfileActivity extends AppCompatActivity {
             }
         });
     }
+
 }
