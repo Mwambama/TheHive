@@ -1,5 +1,9 @@
 package com.example.hiveeapp.student_user.swipe;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.hiveeapp.student_user.StudentMainActivity.DAILY_APPLIED_COUNT_KEY;
+import static com.example.hiveeapp.student_user.swipe.JobApplicationUtils.applyForJob;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -55,31 +59,35 @@ public class JobSwipeFragment extends Fragment {
     private JobSwipeViewModel viewModel;
     private boolean isFetchingJobs = false;
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            studentId = ((StudentMainActivity) context).getUserId();
-        } catch (ClassCastException e) {
-            throw new IllegalStateException("Activity must implement StudentMainActivity to provide studentId");
-        }
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_job_swipe, container, false);
 
+        if (getContext() == null) {
+            Log.e(TAG, "Fragment not attached to context yet.");
+            return view;
+        }
+
+        // Retrieve studentId from SharedPreferences
+        SharedPreferences preferences = getContext().getSharedPreferences("UserPreferences", MODE_PRIVATE);
+        studentId = preferences.getInt("userId", -1);
+        if (studentId == -1) {
+            Toast.makeText(getContext(), "User ID not found. Cannot load jobs.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "User ID not found in SharedPreferences.");
+            return view;
+        }
+
         swipeFlingAdapterView = view.findViewById(R.id.swipe_view);
-        swipeAdapter = new JobSwipeAdapter(requireContext(), jobPostings);
+        swipeAdapter = new JobSwipeAdapter(getContext(), jobPostings);
         swipeFlingAdapterView.setAdapter(swipeAdapter);
 
         setupFlingListener();
 
         swipeFlingAdapterView.setOnItemClickListener((itemPosition, dataObject) -> {
             JobPosting job = (JobPosting) dataObject;
-            Toast.makeText(requireContext(), "Clicked on: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Clicked on: " + job.getTitle(), Toast.LENGTH_SHORT).show();
         });
 
         appliedJobs = getAppliedJobs();
@@ -120,17 +128,34 @@ public class JobSwipeFragment extends Fragment {
             public void onLeftCardExit(Object dataObject) {
                 JobPosting job = (JobPosting) dataObject;
                 saveDismissedJob(job.getJobPostingId());
-                Toast.makeText(requireContext(), "Job dismissed: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Job dismissed: " + job.getTitle(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
                 JobPosting job = (JobPosting) dataObject;
+                Context context = requireContext();
+
                 if (appliedJobs.contains(String.valueOf(job.getJobPostingId()))) {
-                    Toast.makeText(requireContext(), "You already applied to this job!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "You already applied to this job!", Toast.LENGTH_SHORT).show();
                 } else {
                     saveAppliedJob(job.getJobPostingId());
-                    Toast.makeText(requireContext(), "Successfully applied to: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+
+                    applyForJob(context, studentId, job.getJobPostingId(),
+                            () -> {
+                                // Success callback
+                                Toast.makeText(context, "Application for " + job.getTitle() + " was successful!", Toast.LENGTH_SHORT).show();
+
+                                // Call the method from the activity to increment and refresh the count
+                                if (getActivity() instanceof StudentMainActivity) {
+                                    ((StudentMainActivity) getActivity()).incrementAndDisplayDailyAppliedCount();
+                                }
+                            },
+                            () -> {
+                                // Error callback
+                                Toast.makeText(context, "Failed to apply for " + job.getTitle(), Toast.LENGTH_SHORT).show();
+                            }
+                    );
                 }
             }
 
@@ -161,7 +186,7 @@ public class JobSwipeFragment extends Fragment {
                     List<JobPosting> newJobs = parseJobPostings(response);
                     if (newJobs.isEmpty()) {
                         Log.d(TAG, "No jobs returned from the API.");
-                        Toast.makeText(requireContext(), "No jobs available to display.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "No jobs available to display.", Toast.LENGTH_SHORT).show();
                     } else {
                         List<JobPosting> filteredJobs = filterJobPostings(newJobs);
                         jobPostings.addAll(filteredJobs);
@@ -175,7 +200,7 @@ public class JobSwipeFragment extends Fragment {
                         errorMsg += " (Code: " + error.networkResponse.statusCode + ")";
                     }
                     Log.e(TAG, errorMsg);
-                    Toast.makeText(requireContext(), "Failed to fetch jobs. Try again later.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to fetch jobs. Try again later.", Toast.LENGTH_SHORT).show();
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -183,14 +208,14 @@ public class JobSwipeFragment extends Fragment {
             }
         };
 
-        VolleySingleton.getInstance(requireContext()).addToRequestQueue(request);
+        VolleySingleton.getInstance(getContext()).addToRequestQueue(request);
     }
 
     private Map<String, String> createAuthorizationHeaders() {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
-        SharedPreferences preferences = requireContext().getSharedPreferences(AUTH_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences preferences = getContext().getSharedPreferences(AUTH_PREFERENCES, MODE_PRIVATE);
         String username = preferences.getString("email", "");
         String password = preferences.getString("password", "");
 
@@ -241,12 +266,12 @@ public class JobSwipeFragment extends Fragment {
     }
 
     private Set<String> getAppliedJobs() {
-        SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         return new HashSet<>(preferences.getStringSet(APPLIED_JOBS_KEY, new HashSet<>()));
     }
 
     private Set<String> getDismissedJobs() {
-        SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         return new HashSet<>(preferences.getStringSet(DISMISSED_JOBS_KEY, new HashSet<>()));
     }
 
@@ -261,7 +286,7 @@ public class JobSwipeFragment extends Fragment {
     }
 
     private void saveJobs(Set<String> jobs, String key) {
-        SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putStringSet(key, jobs);
         editor.apply();

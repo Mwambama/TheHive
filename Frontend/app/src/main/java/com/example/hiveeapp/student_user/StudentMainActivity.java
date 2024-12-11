@@ -36,7 +36,10 @@ import com.google.android.material.tabs.TabLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -48,14 +51,14 @@ public class StudentMainActivity extends AppCompatActivity {
     private static final String TAG = "StudentMainActivity";
     private static final String GET_STUDENT_INFO_URL = "http://coms-3090-063.class.las.iastate.edu:8080/student";
     private static final String PREFERENCES_NAME = "StudentPreferences";
-    private static final String DAILY_APPLIED_COUNT_KEY = "dailyAppliedCount";
+    public static final String DAILY_APPLIED_COUNT_KEY = "dailyAppliedCount";
+    private static final String LAST_UPDATE_DATE_KEY = "lastUpdateDate";
 
     private int userId;
     private String userEmail;
     private String userPassword;
     private BottomNavigationView bottomNavigationView;
-
-    private TextView dailyAppliedCount; // TextView to display daily applied count
+    private TextView dailyAppliedCount;
 
     /**
      * Called when the activity is first created. Initializes the UI components
@@ -68,27 +71,18 @@ public class StudentMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_main);
 
-        // Initialize Daily Applied Count TextView
         dailyAppliedCount = findViewById(R.id.dailyAppliedCount);
-
-        // Initialize BottomNavigationView
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
+
         setupBottomNavigationView();
-
-        // Retrieve user details from SharedPreferences
         retrieveUserDetails();
-
-        // Initialize TabLayout and set default fragment
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         setupTabLayout(tabLayout);
 
-        // Set default fragment to JobSwipeFragment (swiping jobs)
+
         replaceFragment(new JobSwipeFragment());
-
-        // Load and display the locally saved daily applied count
+        resetDailyAppliedCountIfNewDay();
         displaySavedDailyAppliedCount();
-
-        // Fetch and display the daily applied count from the backend
         fetchDailyAppliedCount(userId);
     }
 
@@ -102,6 +96,19 @@ public class StudentMainActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
         // Refresh daily applied count on resume
         fetchDailyAppliedCount(userId);
+    }
+
+    public void incrementAndDisplayDailyAppliedCount() {
+        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
+        int currentCount = preferences.getInt(DAILY_APPLIED_COUNT_KEY, 0);
+        currentCount++; // Increment the count
+        preferences.edit().putInt(DAILY_APPLIED_COUNT_KEY, currentCount).apply(); // Save the new count
+
+        // Update the TextView dynamically
+        if (dailyAppliedCount != null) { // Ensure TextView is initialized
+            dailyAppliedCount.setText(String.valueOf(currentCount));
+        }
+        Log.d(TAG, "Daily Applied Count incremented and refreshed: " + currentCount);
     }
 
     /**
@@ -194,6 +201,20 @@ public class StudentMainActivity extends AppCompatActivity {
         intent.putExtra("USER_ID", userId);
         startActivity(intent);
     }
+    private void resetDailyAppliedCountIfNewDay() {
+        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
+        String lastUpdateDate = preferences.getString(LAST_UPDATE_DATE_KEY, "");
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        if (!currentDate.equals(lastUpdateDate)) {
+            preferences.edit()
+                    .putString(LAST_UPDATE_DATE_KEY, currentDate)
+                    .putInt(DAILY_APPLIED_COUNT_KEY, 0)
+                    .apply();
+            Log.d(TAG, "Daily applied count reset for a new day.");
+        }
+    }
+
 
     /**
      * Fetches the daily applied count for the user from the backend and updates the UI.
@@ -299,4 +320,5 @@ public class StudentMainActivity extends AppCompatActivity {
     public int getUserId() {
         return userId;
     }
+
 }
