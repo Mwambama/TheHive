@@ -100,7 +100,7 @@ public class EmployerJobCreationTest {
         onView(withId(R.id.jobStartDateField)).perform(typeText("2024-05-01"), closeSoftKeyboard());
         onView(withId(R.id.applicationStartDateField)).perform(typeText("2024-01-01"), closeSoftKeyboard());
         onView(withId(R.id.applicationEndDateField)).perform(typeText("2024-04-01"), closeSoftKeyboard());
-
+        Thread.sleep(500);
         // Step 7: Submit the job
         onView(withId(R.id.addJobButton)).perform(click());
         Thread.sleep(2000); // Wait for confirmation or navigation
@@ -110,11 +110,11 @@ public class EmployerJobCreationTest {
         //onView(withId(R.id.applicationRecyclerView)).check(matches(isDisplayed()));
 
         // Step 9: Press the back button to navigate back
-        onView(withId(R.id.backArrowIcon)).perform(click());
+      //  onView(withId(R.id.backArrowIcon)).perform(click());
        // Thread.sleep(2000); // Wait for navigation back
 
         // Step 10: Validate navigation back to EmployerMainActivity or job list
-        //intended(hasComponent(EditJobActivity.class.getName())); // Replace with the appropriate class or validation
+        intended(hasComponent(EditJobActivity.class.getName())); // Replace with the appropriate class or validation
     }
 
     @Test
