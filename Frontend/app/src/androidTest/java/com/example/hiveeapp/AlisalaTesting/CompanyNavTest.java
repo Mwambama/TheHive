@@ -65,8 +65,7 @@ public class CompanyNavTest {
 
         // Navigate to Profile
         onView(withId(R.id.navigation_invitations)).perform(click());
-        //intended(hasComponent(StudentProfileViewActivity.class.getName()));
-        //onView(withId(R.id.profileNameView)).check(matches(isDisplayed()));
+
     }
 
     @Test
@@ -76,8 +75,6 @@ public class CompanyNavTest {
 
         // Navigate to Chat
         onView(withId(R.id.navigation_employers)).perform(click());
-      //  intended(hasComponent(ChatListActivity.class.getName()));
-       // onView(withId(R.id.chatRecyclerView)).check(matches(isDisplayed()));
     }
 }
 

@@ -142,7 +142,6 @@ public class EmpApplicantionsViewTest {
         Thread.sleep(2000); // Optional delay for UI update
     }
 
-
     @Test
     public void testEmployerViewApplicationDetails() throws InterruptedException {
         // Step 1: Log in as an employer
