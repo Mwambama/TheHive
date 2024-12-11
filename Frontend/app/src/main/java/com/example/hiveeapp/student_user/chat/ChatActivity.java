@@ -210,7 +210,7 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
 
             @Override
             public void onWebSocketClose(int code, String reason, boolean remote) {
-                runOnUiThread(() -> Toast.makeText(ChatActivity.this, "Disconnected: " + reason, Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(ChatActivity.this, "Disconnected " + reason, Toast.LENGTH_SHORT).show());
                 Log.d(TAG, "WebSocket closed with reason: " + reason);
                 if (!remote && shouldReconnect) {
                     new android.os.Handler().postDelayed(() -> connectWebSocket(), 5000);
