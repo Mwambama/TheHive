@@ -7,6 +7,7 @@ import android.util.Log;
 import android.util.Patterns;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -37,24 +38,20 @@ public class StudentApi {
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/student";
     private static final String TAG = "StudentApi";
 
+    private static final String USER_EMAIL = "test643@example.com";
+    private static final String USER_PASSWORD = "Test$1234";
+
     /**
      * Generates the headers for API requests with authorization.
      *
-     * @param context The application context used to retrieve user credentials.
      * @return A map of headers including content type and authorization credentials.
      */
-    public static Map<String, String> getHeaders(Context context) {
+    private static Map<String, String> getAuthorizationHeaders() {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-
-        // Mocked username and password for testing purposes
-        String username = "test643@example.com";
-        String password = "Test$1234";
-
-        String credentials = username + ":" + password;
+        String credentials = USER_EMAIL + ":" + USER_PASSWORD;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
         headers.put("Authorization", auth);
-
         return headers;
     }
 
@@ -78,7 +75,7 @@ public class StudentApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return StudentApi.getHeaders(context);
+                return getAuthorizationHeaders();
             }
         };
 
@@ -108,7 +105,7 @@ public class StudentApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return StudentApi.getHeaders(context);
+                return getAuthorizationHeaders();
             }
         };
 
@@ -137,7 +134,7 @@ public class StudentApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return StudentApi.getHeaders(context);
+                return getAuthorizationHeaders();
             }
         };
 
@@ -171,7 +168,7 @@ public class StudentApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return StudentApi.getHeaders(context);
+                return getAuthorizationHeaders();
             }
         };
 
@@ -220,21 +217,38 @@ public class StudentApi {
         VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(
                 Request.Method.POST,
                 url,
-                response -> listener.onResponse(new String(response.data)),
-                error -> handleErrorResponse("Error uploading PDF", error, errorListener)
+                response -> {
+                    Log.d(TAG, "Upload response: " + new String(response.data));
+                    listener.onResponse(new String(response.data));
+                },
+                error -> {
+                    Log.e(TAG, "Error uploading PDF: " + error.getMessage());
+                    handleErrorResponse("Error uploading PDF", error, errorListener);
+                }
         );
 
+        // Setting the byte data for the multipart request
+        Map<String, VolleyMultipartRequest.DataPart> byteData = new HashMap<>();
         try {
             byte[] pdfData = getBytesFromUri(context, pdfUri);
-            Map<String, VolleyMultipartRequest.DataPart> byteData = new HashMap<>();
             byteData.put("file", new VolleyMultipartRequest.DataPart("resume.pdf", pdfData, "application/pdf"));
-            multipartRequest.setByteData(byteData);
         } catch (IOException e) {
             Log.e(TAG, "Error reading PDF file: " + e.getMessage());
+            errorListener.onErrorResponse(new VolleyError("Error reading PDF file"));
+            return;
         }
+        multipartRequest.setByteData(byteData);
 
+        // Setting the authorization header
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Basic " + Base64.encodeToString(("test643@example.com:Test$1234").getBytes(), Base64.NO_WRAP));
+        multipartRequest.setHeaders(headers);
+
+        // Add the request to the queue
         VolleySingleton.getInstance(context).addToRequestQueue(multipartRequest);
     }
+
+
 
 
     public static void applyForJob(Context context, int studentId, int jobPostingId,
@@ -272,7 +286,7 @@ public class StudentApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return StudentApi.getHeaders(context);
+                return getAuthorizationHeaders();
             }
         };
 
@@ -294,7 +308,7 @@ public class StudentApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return StudentApi.getHeaders(context);
+                return getAuthorizationHeaders();
             }
         };
 
@@ -343,7 +357,7 @@ public class StudentApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return StudentApi.getHeaders(context);
+                return getAuthorizationHeaders();
             }
         };
 
@@ -385,7 +399,7 @@ public class StudentApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return StudentApi.getHeaders(context);
+                return getAuthorizationHeaders();
             }
         };
 
@@ -439,7 +453,7 @@ public class StudentApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return StudentApi.getHeaders(context);
+                return getAuthorizationHeaders();
             }
         };
 
@@ -481,7 +495,7 @@ public class StudentApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return StudentApi.getHeaders(context);
+                return getAuthorizationHeaders();
             }
         };
 
@@ -607,4 +621,20 @@ public class StudentApi {
         }
         return errorMsg;
     }
+
+    private static Map<String, String> createAuthorizationHeaders() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        // Replace these with actual user credentials
+        String userEmail = "test643@example.com";  // Replace with the user's email
+        String userPassword = "Test$1234";   // Replace with the user's password
+
+        String credentials = userEmail + ":" + userPassword;
+        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        headers.put("Authorization", auth);
+
+        return headers;
+    }
 }
+
