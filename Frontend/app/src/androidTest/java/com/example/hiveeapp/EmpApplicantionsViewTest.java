@@ -3,8 +3,10 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.assertNotNull;
@@ -127,9 +129,10 @@ public class EmpApplicantionsViewTest {
             assertNotNull(recyclerView.getAdapter()); // Ensure Adapter is set
             assertTrue(recyclerView.getAdapter().getItemCount() >= 0); // Validate item count
         });
-       // onView(withId(R.id.updateButton)).perform(click());
+        onView(withId(R.id.navigation_invitations)).perform(click());
 
     }
+    //this is at item_employer_applications.xml
     @Test
     public void testEmployerRejectApplication() throws InterruptedException {
         // Step 1: Log in as an employer
@@ -151,19 +154,20 @@ public class EmpApplicantionsViewTest {
         Thread.sleep(2000); // Replace with IdlingResource if possible
 
         // Step 5: Validate that the RecyclerView in EditJobActivity is displayed
-        // onView(withId(R.id.applicationRecyclerView)).check(matches(isDisplayed()));
+         onView(withId(R.id.applicationRecyclerView)).check(matches(isDisplayed()));
 
 //
 //        // Optional: Validate RecyclerView Adapter Content (if data is populated dynamically)
 //        // Ensure the adapter is set up correctly
-        ActivityScenario<EditJobActivity> scenario = ActivityScenario.launch(EditJobActivity.class);
-        scenario.onActivity(activity -> {
-            RecyclerView recyclerView = activity.findViewById(R.id.applicationRecyclerView);
-            assertNotNull(recyclerView); // Ensure RecyclerView is initialized
-            assertNotNull(recyclerView.getAdapter()); // Ensure Adapter is set
-            assertTrue(recyclerView.getAdapter().getItemCount() >= 0); // Validate item count
-        });
-        // onView(withId(R.id.updateButton)).perform(click());
+//        ActivityScenario<EditJobActivity> scenario = ActivityScenario.launch(EditJobActivity.class);
+//        scenario.onActivity(activity -> {
+//            RecyclerView recyclerView = activity.findViewById(R.id.applicationRecyclerView);
+//            assertNotNull(recyclerView); // Ensure RecyclerView is initialized
+//            assertNotNull(recyclerView.getAdapter()); // Ensure Adapter is set
+//            assertTrue(recyclerView.getAdapter().getItemCount() >= 0); // Validate item count
+//        });
+        onView(withId(R.id.navigation_invitations)).perform(click());
+
 
     }
 
