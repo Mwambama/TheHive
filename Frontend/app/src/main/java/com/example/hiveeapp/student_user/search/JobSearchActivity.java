@@ -146,12 +146,28 @@ public class JobSearchActivity extends AppCompatActivity {
         String[] jobTypes = {"Full-Time", "Part-Time", "Internship", "Co-op"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, jobTypes);
         jobTypeDropdown.setAdapter(adapter);
+
+        // Ensure dropdown opens when focused or clicked
+        jobTypeDropdown.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                jobTypeDropdown.showDropDown();
+            }
+        });
+        jobTypeDropdown.setOnClickListener(v -> jobTypeDropdown.showDropDown());
     }
 
     private void setupJobModeDropdown() {
         String[] jobModes = {"Online", "Hybrid", "Presential"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, jobModes);
         jobModeDropdown.setAdapter(adapter);
+
+        // Ensure dropdown opens when focused or clicked
+        jobModeDropdown.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                jobModeDropdown.showDropDown();
+            }
+        });
+        jobModeDropdown.setOnClickListener(v -> jobModeDropdown.showDropDown());
     }
 
     private void retrieveStudentId() {
@@ -297,7 +313,6 @@ public class JobSearchActivity extends AppCompatActivity {
         }
         return jobPostings;
     }
-
     interface OnDateSelectedListener {
         void onDateSelected(String date);
     }
