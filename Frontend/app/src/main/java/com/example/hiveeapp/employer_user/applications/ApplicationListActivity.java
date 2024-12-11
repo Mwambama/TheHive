@@ -1,8 +1,12 @@
 package com.example.hiveeapp.employer_user.applications;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +15,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
-//import com.example.hiveeapp.employer_user.model.CreateJobsActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
@@ -20,17 +23,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * EmployerListActivity handles the display and management of a list of employers.
- * It allows users to view, add, and interact with employers, and also includes a bottom navigation for navigation to other activities.
+ * ApplicationListActivity handles the display and management of job postings for an employer.
+ * It allows users to view the jobs they've posted and includes navigation for other employer activities.
  */
 public class ApplicationListActivity extends AppCompatActivity {
 
-    private RecyclerView applicationRecyclerView;   // RecyclerView for displaying the list of employers
-//    private EmployerAdapter employerAdapter;     // Adapter for managing employer data in the RecyclerView
-
-    private applicationAdapter applicAdapter;     // Adapter for managing employer data in the RecyclerView
-
+    private RecyclerView applicationRecyclerView; // RecyclerView for displaying job postings
+    private applicationAdapter applicAdapter;    // Adapter for managing job postings
     private MaterialButton addEmployerButton;    // Button for adding a new employer
+
+    public static final String USER_PREFS = "UserPreferences"; // SharedPreferences name
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +42,12 @@ public class ApplicationListActivity extends AppCompatActivity {
         // Initialize views
         initViews();
 
-        // Set up the RecyclerView with a linear layout and the employer adapter
+        // Set up the RecyclerView with a linear layout and the job postings adapter
         applicationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        applicAdapter = new applicationAdapter(this, true);  // true indicates editable mode
+        applicAdapter = new applicationAdapter(this, true); // true indicates editable mode
         applicationRecyclerView.setAdapter(applicAdapter);
 
-        // Load the list of Jobs from the server
+        // Load the job postings from the server
         loadApplications();
 
         // Set up Bottom Navigation View
@@ -53,13 +55,12 @@ public class ApplicationListActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_invitations) {
-                //for now, this inviattion will be sent to home of user, then I will direct it later when I am working on employer application status
-                startActivity(new Intent(com.example.hiveeapp.employer_user.applications.ApplicationListActivity.this, ApplicationListActivity.class));
+                startActivity(new Intent(this, ApplicationListActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_employers) {
                 return true;
             } else if (itemId == R.id.navigation_main_user_page) {
-                startActivity(new Intent(com.example.hiveeapp.employer_user.applications.ApplicationListActivity.this, EmployerMainActivity.class));
+                startActivity(new Intent(this, EmployerMainActivity.class));
                 return true;
             }
             return false;
@@ -70,7 +71,7 @@ public class ApplicationListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh the job list when the activity is resumed
+        // Refresh the job postings list when the activity is resumed
         loadApplications();
     }
 
@@ -83,26 +84,47 @@ public class ApplicationListActivity extends AppCompatActivity {
     }
 
     /**
-     * Load the list of jobs from the server using EmployerApis and update the adapter.
-     * The jobs are reversed before being set in the adapter.
+     * Load the list of job postings from the server using the jobPostingId.
      */
     private void loadApplications() {
-        applicationsApi.getApplications(this,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        // Reverse the JSONArray before setting it in the adapter
-                        JSONArray reversedEmployers = reverseJSONArray(response);
-                        applicAdapter.setApplications(reversedEmployers);
-                    }
+        // Retrieve jobPostingId from SharedPreferences
+        SharedPreferences preferences = getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
+        int jobPostingId = preferences.getInt("jobPostingId", -1); // Ensure key matches your SharedPreferences setup
+
+        Log.d("LoadApplications", "Retrieved jobPostingId: " + jobPostingId);
+
+        // Check if the jobPostingId is valid
+        if (jobPostingId == -1) {
+            Toast.makeText(this, "Error: Job Posting ID not found. Please try again.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Construct the API URL for fetching applications by jobPostingId
+        String apiUrl = "http://coms-3090-063.class.las.iastate.edu:8080/applications?jobPostingId=" + jobPostingId + "&status=PENDING";
+        Log.d("applicationsApi", "GET Applications Request URL: " + apiUrl);
+
+        // Call the API
+        applicationsApi.getApplications(
+                this,
+                apiUrl,
+                response -> {
+                    JSONArray reversedApplications = reverseJSONArray(response);
+                    applicAdapter.setApplications(reversedApplications);
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle error when fetching employers fails
-                        Toast.makeText(com.example.hiveeapp.employer_user.applications.ApplicationListActivity.this, "Error fetching employers: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                error -> {
+                    String errorMessage = "An error occurred while fetching applications.";
+                    if (error.networkResponse != null && error.networkResponse.data != null) {
+                        try {
+                            String errorData = new String(error.networkResponse.data, "UTF-8");
+                            JSONObject jsonError = new JSONObject(errorData);
+                            errorMessage = jsonError.optString("message", errorMessage);
+                        } catch (Exception e) {
+                            Log.e("LoadApplications", "Error parsing error response", e);
+                        }
                     }
-                });
+                    Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+                }
+        );
     }
 
     /**

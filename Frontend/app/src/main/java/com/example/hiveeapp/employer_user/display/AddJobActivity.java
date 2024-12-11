@@ -17,6 +17,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * AddJobActivity allows the user to add a new job posting by filling out a form.
@@ -162,12 +164,20 @@ public class AddJobActivity extends AppCompatActivity {
         String jobTitle = jobTitleField.getText().toString().trim();
         String jobDescription = jobDescriptionField.getText().toString().trim();
         String summary = summaryField.getText().toString().trim();
-        String jobType = jobTypeField.getText().toString().trim();
+        String jobType = jobTypeField.getText().toString().trim().toUpperCase(); // Convert to uppercase to match backend enums
         String salaryRequirements = salaryRequirementsField.getText().toString().trim();
         String minimumGpa = minimumGpaField.getText().toString().trim();
         String jobStart = jobStartField.getText().toString().trim();
         String applicationStart = applicationStartField.getText().toString().trim();
         String applicationEnd = applicationEndField.getText().toString().trim();
+
+        // Validate jobType against the allowed enum values
+        List<String> validJobTypes = Arrays.asList("POST_GRADUATION_JOB", "CO_OP", "INTERNSHIP");
+        if (!validJobTypes.contains(jobType)) {
+            jobTypeField.setError("Invalid job type. Allowed values: POST_GRADUATION_JOB, CO_OP, INTERNSHIP.");
+            Toast.makeText(this, "Invalid job type. Please enter a valid job type.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Retrieve employerId dynamically from SharedPreferences
         SharedPreferences preferences = getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
@@ -185,12 +195,12 @@ public class AddJobActivity extends AppCompatActivity {
             jobData.put("description", jobDescription);
             jobData.put("summary", summary);
             jobData.put("salary", Double.parseDouble(salaryRequirements)); // Assuming salary is a double
-            jobData.put("jobType", jobType); // Ensure jobType matches your enum or backend requirement
+            jobData.put("jobType", jobType);
             jobData.put("minimumGpa", Double.parseDouble(minimumGpa)); // Assuming GPA is a double
             jobData.put("jobStart", jobStart);
             jobData.put("applicationStart", applicationStart);
             jobData.put("applicationEnd", applicationEnd);
-            jobData.put("employerId", employerId); // Use dynamic employerId
+            jobData.put("employerId", employerId);
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error creating job data", Toast.LENGTH_SHORT).show();
