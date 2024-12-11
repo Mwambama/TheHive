@@ -1,4 +1,4 @@
-package com.example.hiveeapp;
+package com.example.hiveeapp.AlisalaTesting;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -7,83 +7,35 @@ import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static org.junit.Assert.assertEquals;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.view.View;
-
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.intent.Intents;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
-import com.example.hiveeapp.employer_user.chat.EmployerChatActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
-import com.example.hiveeapp.student_user.StudentMainActivity;
-import com.example.hiveeapp.student_user.chat.ChatListActivity;
-import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
-import com.example.hiveeapp.student_user.search.JobSearchActivity;
-import com.google.android.material.tabs.TabLayout;
 
-import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
-import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static org.hamcrest.Matchers.allOf;
 
 
 //import static org.hamcrest.EasyMock2Matchers.equalTo;
 import static org.hamcrest.Matchers.allOf;
 
 import static org.junit.Assert.assertEquals;
-import static java.util.EnumSet.allOf;
-
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.view.View;
-
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.intent.Intents;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import com.example.hiveeapp.registration.login.LoginActivity;
-import com.example.hiveeapp.student_user.StudentMainActivity;
-import com.example.hiveeapp.student_user.chat.ChatListActivity;
-import com.example.hiveeapp.student_user.profile.StudentProfileViewActivity;
-import com.example.hiveeapp.student_user.search.JobSearchActivity;
-import com.google.android.material.tabs.TabLayout;
-
-import org.hamcrest.Matcher;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 public class EmployerNaviTochat {
@@ -104,7 +56,7 @@ public class EmployerNaviTochat {
 
     // Helper method to log in before running tests
     private void performLogin(String email, String password) throws InterruptedException {
-        onView(withId(R.id.emailField))
+        onView(ViewMatchers.withId(R.id.emailField))
                 .perform(typeText(email), closeSoftKeyboard());
         onView(withId(R.id.passwordField))
                 .perform(typeText(password), closeSoftKeyboard());

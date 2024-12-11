@@ -1,4 +1,4 @@
-package com.example.hiveeapp;
+package com.example.hiveeapp.AlisalaTesting;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,12 +7,12 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.PerformException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.idling.CountingIdlingResource;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.espresso.util.HumanReadables;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -20,11 +20,10 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
+import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
-import com.example.hiveeapp.employer_user.display.AddJobActivity;
 import com.example.hiveeapp.employer_user.display.EditJobActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
-import com.example.hiveeapp.student_user.StudentMainActivity;
 
 import org.hamcrest.Matcher;
 import org.junit.After;
@@ -43,9 +42,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.containsString;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -103,7 +100,7 @@ public class AlisalaMwambaSystemTest {
     @Test
     public void testEmployerlLoginAndNav() {
         // Step 1: Set the input fields
-        onView(withId(R.id.emailField)).perform(typeText("employerTest@aols.com"), closeSoftKeyboard());
+        onView(ViewMatchers.withId(R.id.emailField)).perform(typeText("employerTest@aols.com"), closeSoftKeyboard());
         onView(withId(R.id.passwordField)).perform(typeText("Test12345@"), closeSoftKeyboard());
 
         // Step 2: Click the login button
