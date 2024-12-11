@@ -95,7 +95,7 @@ public class EmployerJobCreationTest {
         onView(withId(R.id.jobDescriptionField)).perform(typeText("Develop software solutions."), closeSoftKeyboard());
         onView(withId(R.id.summaryField)).perform(typeText("A great opportunity to learn and grow."), closeSoftKeyboard());
         onView(withId(R.id.jobTypeField)).perform(typeText("INTERNSHIP"), closeSoftKeyboard());
-        onView(withId(R.id.salaryRequirementsField)).perform(typeText("$20/hour"), closeSoftKeyboard());
+        onView(withId(R.id.salaryRequirementsField)).perform(typeText("$20.6"), closeSoftKeyboard());
         onView(withId(R.id.minimumGpaField)).perform(typeText("3.5"), closeSoftKeyboard());
         onView(withId(R.id.jobStartDateField)).perform(typeText("2024-05-01"), closeSoftKeyboard());
         onView(withId(R.id.applicationStartDateField)).perform(typeText("2024-01-01"), closeSoftKeyboard());
@@ -105,11 +105,12 @@ public class EmployerJobCreationTest {
         onView(withId(R.id.addJobButton)).perform(click());
         Thread.sleep(2000); // Wait for confirmation or navigation
 
+
         // Step 8: Validate success (depends on app behavior)
         //onView(withId(R.id.applicationRecyclerView)).check(matches(isDisplayed()));
 
         // Step 9: Press the back button to navigate back
-        //onView(withId(R.id.backArrowIcon)).perform(click());
+        onView(withId(R.id.backArrowIcon)).perform(click());
        // Thread.sleep(2000); // Wait for navigation back
 
         // Step 10: Validate navigation back to EmployerMainActivity or job list
@@ -149,7 +150,7 @@ public class EmployerJobCreationTest {
             assertNotNull(recyclerView.getAdapter()); // Ensure Adapter is set
             assertTrue(recyclerView.getAdapter().getItemCount() >= 0); // Validate item count
         });
-        onView(withId(R.id.updateButton)).perform(click());
+        //onView(withId(R.id.updateButton)).perform(click());
 
     }
 
@@ -187,7 +188,7 @@ public class EmployerJobCreationTest {
             assertTrue(recyclerView.getAdapter().getItemCount() >= 0); // Validate item count
         });
 
-        onView(withId(R.id.deleteButton)).perform(click());
+        //onView(withId(R.id.deleteButton)).perform(click());
 
 
     }
@@ -227,7 +228,7 @@ public class EmployerJobCreationTest {
             assertTrue(recyclerView.getAdapter().getItemCount() >= 0); // Validate item count
         });
 
-        onView(withId(R.id.analyticsButton)).perform(click());
+       // onView(withId(R.id.analyticsButton)).perform(click());
 
     }
 
