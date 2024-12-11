@@ -18,10 +18,10 @@ android {
     }
 
     buildTypes {
-//        debug {
-//            // enableUnitTestCoverage = true
-            //enableAndroidTestCoverage = true
-//        }
+        debug {
+//            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
 
         release {
             isMinifyEnabled = false
@@ -40,34 +40,50 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    configurations.all {
+        resolutionStrategy {
+            // Ensure the correct version of Hamcrest is resolved
+            force("org.hamcrest:hamcrest:2.2")
+        }
+    }
 }
 
 dependencies {
-    // Core Libraries
+    // Core libraries
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation("androidx.fragment:fragment:1.8.5")
+    implementation("androidx.cardview:cardview:1.0.0")
 
-    // Networking and JSON
-    implementation("com.android.volley:volley:1.2.1")
+    // Additional libraries
     implementation("com.google.code.gson:gson:2.11.0")
-    implementation("org.java-websocket:Java-WebSocket:1.5.2")
+    implementation("com.android.volley:volley:1.2.1")
+    implementation("org.java-websocket:Java-WebSocket:1.5.7")
+    implementation(libs.uiautomator)
 
-    // Animation and UI
-    implementation("com.airbnb.android:lottie:5.2.0")
+    // Unit Testing
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.hamcrest:hamcrest:2.2") // Hamcrest for testing
+
+    // Instrumented Testing
+    androidTestImplementation("org.hamcrest:hamcrest:2.2")
+    androidTestImplementation("org.hamcrest:hamcrest-library:2.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
+    androidTestImplementation("androidx.test:runner:1.6.1")
+    androidTestImplementation("androidx.test:rules:1.6.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.6.1")
+
+    implementation(kotlin("script-runtime"))
+
+    // UI Libraries
+    implementation("com.maxkeppeler.sheets:core:2.3.1")
     implementation("com.tbuonomo:dotsindicator:4.2")
     implementation("com.lorentzos.swipecards:library:1.0.9")
-
-    // Testing Libraries
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
-    androidTestImplementation ("androidx.test.uiautomator:uiautomator:2.2.0")
-
-    // Kotlin Script Runtime
-    implementation(kotlin("script-runtime"))
+    implementation("com.airbnb.android:lottie:5.2.0")
 }
