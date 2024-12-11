@@ -2,6 +2,7 @@ package com.example.hiveeapp.company_user.handleEmployers;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
@@ -44,9 +45,15 @@ public class EmployerApi {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
-        // Mocked username and password for testing purposes
-        String username = "test@example.com";
-        String password = "Test@example1234";
+        // Retrieve credentials dynamically from SharedPreferences
+        SharedPreferences preferences = context.getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+        String username = preferences.getString("email", null);
+        String password = preferences.getString("password", null);
+
+        if (username == null || password == null) {
+            Log.e(TAG, "Missing user credentials. Authorization header will not be added.");
+            return headers; // Return only Content-Type if credentials are missing
+        }
 
         String credentials = username + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);

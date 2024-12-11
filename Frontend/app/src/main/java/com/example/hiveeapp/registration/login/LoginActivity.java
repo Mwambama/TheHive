@@ -59,10 +59,12 @@ public class LoginActivity extends AppCompatActivity {
         setListeners();
 
         //Test purpose
-        emailField.setText("test643@example.com");
-        passwordField.setText("Test$1234");
+//        emailField.setText("testcompany@example.com");
+//        passwordField.setText("Test1234@");
 
-        //Test purpose
+//        emailField.setText("test643@example.com");
+//        passwordField.setText("Test$1234");
+
 //        emailField.setText("employerTest@aols.com");
 //        passwordField.setText("Test12345@");
     }
@@ -186,6 +188,11 @@ public class LoginActivity extends AppCompatActivity {
 
         switch (role) {
             case "COMPANY":
+                Intent companyIntent = new Intent(LoginActivity.this, CompanyMainActivity.class);
+                startActivity(companyIntent);
+                overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+                finish();
+                break;
             case "EMPLOYER":
                 Intent employerIntent = new Intent(LoginActivity.this, EmployerMainActivity.class);
                 startActivity(employerIntent);
