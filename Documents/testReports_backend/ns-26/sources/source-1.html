@@ -1,0 +1,353 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JobPostingServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.service.jobPosting</a>
+</div>
+
+<h1>Coverage Summary for Class: JobPostingServiceImpl (com.example.thehiveapp.service.jobPosting)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JobPostingServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    69.6%
+  </span>
+  <span class="absValue">
+    (16/23)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    34.6%
+  </span>
+  <span class="absValue">
+    (9/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71.2%
+  </span>
+  <span class="absValue">
+    (79/111)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.service.jobPosting;
+&nbsp;
+&nbsp;import com.example.thehiveapp.enums.status.Status;
+&nbsp;import org.jfree.chart.ChartFactory;
+&nbsp;import org.jfree.chart.ChartUtils;
+&nbsp;import org.jfree.chart.JFreeChart;
+&nbsp;import org.jfree.chart.plot.PiePlot;
+&nbsp;import org.jfree.chart.title.TextTitle;
+&nbsp;import org.jfree.data.general.DefaultPieDataset;
+&nbsp;import com.example.thehiveapp.dto.jobPosting.JobPostingDto;
+&nbsp;import com.example.thehiveapp.dto.jobPosting.JobPostingSearchDto;
+&nbsp;import com.example.thehiveapp.entity.application.Application;
+&nbsp;import com.example.thehiveapp.entity.jobPosting.JobPosting;
+&nbsp;import com.example.thehiveapp.entity.user.Employer;
+&nbsp;import com.example.thehiveapp.entity.user.Student;
+&nbsp;import com.example.thehiveapp.mapper.jobPosting.JobPostingMapper;
+&nbsp;import com.example.thehiveapp.repository.application.ApplicationRepository;
+&nbsp;import com.example.thehiveapp.repository.jobPosting.JobPostingRepository;
+&nbsp;import com.example.thehiveapp.service.user.StudentService;
+&nbsp;import com.example.thehiveapp.service.user.UserService;
+&nbsp;import com.example.thehiveapp.specifications.jobPosting.JobPostingSpecification;
+&nbsp;import com.example.thehiveapp.service.user.EmployerService;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.io.ByteArrayOutputStream;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;import static com.example.thehiveapp.enums.status.Status.*;
+&nbsp;import static java.time.temporal.ChronoUnit.DAYS;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class JobPostingServiceImpl implements JobPostingService{
+&nbsp;
+&nbsp;    @Autowired private JobPostingRepository jobPostingRepository;
+&nbsp;    @Autowired private JobPostingMapper mapper;
+&nbsp;    @Autowired private EmployerService employerService;
+&nbsp;    @Autowired private UserService userService;
+&nbsp;    @Autowired private StudentService studentService;
+&nbsp;    @Autowired private ApplicationRepository applicationRepository;
+&nbsp;
+<b class="fc">&nbsp;    public JobPostingServiceImpl() {}</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;JobPostingDto&gt; getJobPostings() {
+<b class="fc">&nbsp;        return jobPostingRepository.findAll().stream()</b>
+<b class="fc">&nbsp;                .map(mapper::entityToDto)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;JobPostingDto&gt; getJobPostingsByEmployerId(Long employerId) {
+<b class="fc">&nbsp;        Employer employer = employerService.getEmployerById(employerId);</b>
+<b class="fc">&nbsp;        return jobPostingRepository.findByEmployer(employer).stream()</b>
+<b class="fc">&nbsp;                .map(mapper::entityToDto)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;    @Override
+&nbsp;    public List&lt;JobPostingDto&gt; getJobPostingsForStudent(Long studentId) {
+<b class="fc">&nbsp;        List&lt;JobPosting&gt; jobPostings = jobPostingRepository.findJobPostings(studentId);</b>
+<b class="fc">&nbsp;        return jobPostings.stream()</b>
+<b class="fc">&nbsp;                .map(mapper::entityToDto)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public JobPostingDto createJobPosting(JobPostingDto dto) {
+<b class="fc">&nbsp;        JobPosting jobPosting = jobPostingRepository.save(mapper.dtoToEntity(dto));</b>
+<b class="fc">&nbsp;        dto = mapper.entityToDto(jobPosting);</b>
+<b class="fc">&nbsp;        return dto;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public JobPostingDto getJobPostingById(Long id) {
+<b class="fc">&nbsp;        return mapper.entityToDto(</b>
+<b class="fc">&nbsp;                jobPostingRepository.findById(id).orElseThrow(</b>
+<b class="fc">&nbsp;                        () -&gt; new ResourceNotFoundException(&quot;Job Posting not found with id &quot; + id)</b>
+&nbsp;                )
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public byte[] getJobPostingAnalytics(Long jobPostingId) {
+<b class="fc">&nbsp;        JobPosting jobPosting = jobPostingRepository.findById(jobPostingId).orElseThrow(</b>
+<b class="fc">&nbsp;                () -&gt; new ResourceNotFoundException(&quot;Job Posting not found with id &quot; + jobPostingId)</b>
+&nbsp;        );
+<b class="fc">&nbsp;        DefaultPieDataset defaultPieDataset = new DefaultPieDataset();</b>
+<b class="fc">&nbsp;        int pendingCount = applicationRepository.findApplicationsByJobPostingAndStatus(jobPosting, PENDING).size();</b>
+<b class="fc">&nbsp;        int acceptedCount = applicationRepository.findApplicationsByJobPostingAndStatus(jobPosting, ACCEPTED).size();</b>
+<b class="fc">&nbsp;        int rejectedCount = applicationRepository.findApplicationsByJobPostingAndStatus(jobPosting, REJECTED).size();</b>
+<b class="fc">&nbsp;        double total = pendingCount + acceptedCount + rejectedCount;</b>
+<b class="fc">&nbsp;        String pendingLabel = String.format(&quot;PENDING (%.1f%%)&quot;, (pendingCount / total * 100));</b>
+<b class="fc">&nbsp;        String acceptedLabel = String.format(&quot;ACCEPTED (%.1f%%)&quot;, (acceptedCount / total * 100));</b>
+<b class="fc">&nbsp;        String rejectedLabel = String.format(&quot;REJECTED (%.1f%%)&quot;, (rejectedCount / total * 100));</b>
+<b class="fc">&nbsp;        defaultPieDataset.setValue(pendingLabel, pendingCount);</b>
+<b class="fc">&nbsp;        defaultPieDataset.setValue(acceptedLabel, acceptedCount);</b>
+<b class="fc">&nbsp;        defaultPieDataset.setValue(rejectedLabel, rejectedCount);</b>
+<b class="fc">&nbsp;        JFreeChart pieChart = ChartFactory.createPieChart(</b>
+<b class="fc">&nbsp;                &quot;Job Posting: &quot; + jobPosting.getTitle() + &quot; Status Distribution&quot;,</b>
+&nbsp;                defaultPieDataset,
+&nbsp;                true,
+&nbsp;                true,
+&nbsp;                false
+&nbsp;        );
+<b class="fc">&nbsp;        String subHeading = String.format(&quot;Total Applications: %d | Pending: %d | Accepted: %d | Rejected: %d&quot;,</b>
+<b class="fc">&nbsp;                (int) total, pendingCount, acceptedCount, rejectedCount);</b>
+<b class="fc">&nbsp;        TextTitle subtitle = new TextTitle(subHeading, new java.awt.Font(&quot;SansSerif&quot;, java.awt.Font.PLAIN, 13));</b>
+<b class="fc">&nbsp;        pieChart.addSubtitle(subtitle);</b>
+<b class="fc">&nbsp;        PiePlot plot = (PiePlot) pieChart.getPlot();</b>
+<b class="fc">&nbsp;        plot.setSectionPaint(pendingLabel, new java.awt.Color(232, 217, 109)); // Orange</b>
+<b class="fc">&nbsp;        plot.setSectionPaint(acceptedLabel, new java.awt.Color(69, 176, 69)); // Green</b>
+<b class="fc">&nbsp;        plot.setSectionPaint(rejectedLabel, new java.awt.Color(219, 43, 22));   // Red</b>
+<b class="fc">&nbsp;        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            ChartUtils.writeChartAsPNG(outputStream, pieChart, 640, 480);</b>
+<b class="fc">&nbsp;            return outputStream.toByteArray();</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Failed to generate pie chart&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public JobPostingDto updateJobPosting(JobPostingDto dto) {
+<b class="fc">&nbsp;        Long id = dto.getJobPostingId();</b>
+<b class="fc">&nbsp;        jobPostingRepository.findById(id).orElseThrow(</b>
+<b class="nc">&nbsp;                () -&gt; new ResourceNotFoundException(&quot;Job Posting not found with id &quot; + id)</b>
+&nbsp;        );
+<b class="fc">&nbsp;        JobPosting jobPosting = mapper.dtoToEntity(dto);</b>
+<b class="fc">&nbsp;        return mapper.entityToDto(jobPostingRepository.save(jobPosting));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deleteJobPosting(Long id) {
+<b class="fc">&nbsp;        JobPosting jobPosting = jobPostingRepository.findById(id).orElseThrow(</b>
+<b class="nc">&nbsp;                () -&gt; new ResourceNotFoundException(&quot;Job Posting not found with id &quot; + id)</b>
+&nbsp;        );
+<b class="fc">&nbsp;        jobPostingRepository.delete(jobPosting);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;JobPostingDto&gt; searchJobPostings(JobPostingSearchDto searchDto) {
+<b class="fc">&nbsp;        List&lt;JobPostingDto&gt; results = jobPostingRepository.findAll(</b>
+<b class="fc">&nbsp;                JobPostingSpecification.matchesOptionalFields(searchDto)</b>
+<b class="fc">&nbsp;        ).stream().map(mapper::entityToDto).collect(Collectors.toList());</b>
+&nbsp;
+<b class="fc">&nbsp;        Student student = studentService.getStudentById(userService.getCurrentUser().getUserId());</b>
+<b class="pc">&nbsp;        if (Boolean.TRUE.equals(searchDto.getIsQualified()) &amp;&amp; student.getGpa() != null) {</b>
+<b class="fc">&nbsp;            results = results.stream().filter(</b>
+<b class="pc">&nbsp;                    job -&gt; student.getGpa() &gt;= job.getMinimumGpa()</b>
+<b class="fc">&nbsp;            ).collect(Collectors.toList());</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (Boolean.TRUE.equals(searchDto.getHasNotAppliedTo())) {</b>
+<b class="nc">&nbsp;            List&lt;Long&gt; appliedJobIds =  applicationRepository.findApplicationsByStudent(student).stream().map(</b>
+<b class="nc">&nbsp;                    application -&gt; application.getJobPosting().getJobPostingId()</b>
+<b class="nc">&nbsp;            ).toList();</b>
+<b class="nc">&nbsp;            results = results.stream().filter(</b>
+<b class="nc">&nbsp;                    job -&gt; !appliedJobIds.contains(job.getJobPostingId())</b>
+<b class="nc">&nbsp;            ).collect(Collectors.toList());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return results;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;JobPostingDto&gt; getJobPostingSuggestions(Long studentId) {
+&nbsp;        // Get the last 10 applications
+<b class="fc">&nbsp;        Student student = studentService.getStudentById(studentId);</b>
+<b class="fc">&nbsp;        List&lt;JobPosting&gt; recentJobs = applicationRepository.findTop10ByStudentOrderByAppliedOnDesc(student)</b>
+<b class="fc">&nbsp;                .stream()</b>
+<b class="fc">&nbsp;                .map(Application::getJobPosting)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+&nbsp;        // Get all applications
+<b class="fc">&nbsp;        List&lt;Long&gt; appliedJobIds = applicationRepository.findApplicationsByStudent(student)</b>
+<b class="fc">&nbsp;                .stream()</b>
+<b class="fc">&nbsp;                .map(application -&gt; application.getJobPosting().getJobPostingId())</b>
+<b class="fc">&nbsp;                .toList();</b>
+&nbsp;
+&nbsp;        // Fetch all job postings
+<b class="fc">&nbsp;        List&lt;JobPosting&gt; allPostings = jobPostingRepository.findAll();</b>
+&nbsp;
+&nbsp;        // Filter and rank postings based on criteria
+<b class="fc">&nbsp;        return allPostings.stream()</b>
+<b class="pc">&nbsp;                .filter(posting -&gt; student.getGpa() == null || // Unqualified</b>
+<b class="fc">&nbsp;                        posting.getMinimumGpa() &lt;= student.getGpa())</b>
+<b class="pc">&nbsp;                .filter(posting -&gt; posting.getApplicationEnd() == null || // Application closed</b>
+<b class="fc">&nbsp;                        posting.getApplicationEnd().isAfter(LocalDate.now()))</b>
+<b class="fc">&nbsp;                .filter(posting -&gt; !appliedJobIds.contains(posting.getJobPostingId())) // Already applied</b>
+<b class="fc">&nbsp;                .sorted((p1, p2) -&gt; {</b>
+&nbsp;                    // Sort by relevance
+<b class="nc">&nbsp;                    double score1 = calculateRelevanceScore(student, p1, recentJobs);</b>
+<b class="nc">&nbsp;                    double score2 = calculateRelevanceScore(student, p2, recentJobs);</b>
+<b class="nc">&nbsp;                    return Double.compare(score2, score1); // Higher score first</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .map(mapper::entityToDto)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private double calculateRelevanceScore(Student student, JobPosting posting, List&lt;JobPosting&gt; recentJobs) {
+&nbsp;        // Closer GPAs score higher
+<b class="nc">&nbsp;        double gpaScore = student.getGpa() != null ? 1.0 / (1 + Math.abs(student.getGpa() - posting.getMinimumGpa())) : 0;</b>
+&nbsp;
+&nbsp;        // Closer dates score higher
+<b class="nc">&nbsp;        double startDateProximity = 0.0;</b>
+<b class="nc">&nbsp;        if (student.getGraduationDate() != null) {</b>
+<b class="nc">&nbsp;            LocalDate gradDate = LocalDate.parse(student.getGraduationDate());</b>
+<b class="nc">&nbsp;            if (posting.getJobStart() != null) {</b>
+<b class="nc">&nbsp;                long daysDiff = Math.abs(DAYS.between(gradDate, posting.getJobStart()));</b>
+<b class="nc">&nbsp;                startDateProximity = 1.0 / (1 + daysDiff);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // Similar titles to last 10 applications score higher
+<b class="nc">&nbsp;        double totalSimilarity = 0.0;</b>
+<b class="nc">&nbsp;        for (JobPosting recent : recentJobs) {</b>
+<b class="nc">&nbsp;            totalSimilarity += computeSimilarity(posting.getTitle(), recent.getTitle());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        double textSimilarityScore = totalSimilarity / recentJobs.size();</b>
+&nbsp;
+&nbsp;        // Return weighted relevance score
+<b class="nc">&nbsp;        return gpaScore + 1.2 * startDateProximity + 4 * textSimilarityScore;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private double computeSimilarity(String text1, String text2) {
+<b class="nc">&nbsp;        if (text1 == null || text2 == null) return 0.0;</b>
+<b class="nc">&nbsp;        String[] words1 = text1.toLowerCase().split(&quot;\\s+&quot;);</b>
+<b class="nc">&nbsp;        String[] words2 = text2.toLowerCase().split(&quot;\\s+&quot;);</b>
+<b class="nc">&nbsp;        long commonWords = Arrays.stream(words1)</b>
+<b class="nc">&nbsp;                .filter(word -&gt; Arrays.asList(words2).contains(word))</b>
+<b class="nc">&nbsp;                .count();</b>
+<b class="nc">&nbsp;        return (double) commonWords / Math.max(words1.length, words2.length); // Similarity ratio</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-09 22:19</div>
+</div>
+</body>
+</html>

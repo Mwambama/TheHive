@@ -1,0 +1,86 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ChatService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.service.chat</a>
+</div>
+
+<h1>Coverage Summary for Class: ChatService (com.example.thehiveapp.service.chat)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ChatService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.service.chat;
+&nbsp;
+&nbsp;import com.example.thehiveapp.entity.chat.Chat;
+&nbsp;import com.example.thehiveapp.entity.user.User;
+&nbsp;import org.apache.coyote.BadRequestException;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface ChatService {
+&nbsp;    List&lt;Chat&gt; getChats();
+&nbsp;    String getOtherUserEmail(Long chatId, Long userId);
+&nbsp;    Chat createChat(Chat request);
+&nbsp;    Chat getChatById(Long id);
+&nbsp;    Chat updateChat(Chat request);
+&nbsp;    void deleteChat(Long id);
+&nbsp;    List&lt;Chat&gt; getChatsByUserId(Long userId) throws BadRequestException;
+&nbsp;    List&lt;Long&gt; getChatIdsByUser(User user) throws BadRequestException;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-09 20:41</div>
+</div>
+</body>
+</html>

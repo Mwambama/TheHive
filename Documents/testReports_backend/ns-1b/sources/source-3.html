@@ -1,0 +1,184 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Student</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.entity.user</a>
+</div>
+
+<h1>Coverage Summary for Class: Student (com.example.thehiveapp.entity.user)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Student</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (3/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/50)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (4/10)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Student$HibernateInstantiator$LLbHyYj5</td>
+  </tr>
+  <tr>
+    <td class="name">Student$HibernateInstantiator$O5l5PuxN</td>
+  </tr>
+  <tr>
+    <td class="name">Student$HibernateProxy$s3XuZHCf</td>
+  </tr>
+  <tr>
+    <td class="name">Student$HibernateProxy$XxJRvvOx</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (3/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/50)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (4/10)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.entity.user;
+&nbsp;
+&nbsp;import com.example.thehiveapp.entity.application.Application;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnore;
+&nbsp;import jakarta.persistence.CascadeType;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.FetchType;
+&nbsp;import jakarta.persistence.OneToMany;
+&nbsp;import jakarta.persistence.Table;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.EqualsAndHashCode;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+<b class="nc">&nbsp;@EqualsAndHashCode(callSuper = true)</b>
+&nbsp;@Entity
+<b class="fc">&nbsp;@NoArgsConstructor</b>
+<b class="fc">&nbsp;@Data</b>
+&nbsp;@Table(name = &quot;student&quot;)
+&nbsp;public class Student extends User{
+&nbsp;    @Column(name=&quot;university&quot;, nullable = false)
+<b class="nc">&nbsp;    private String university;</b>
+&nbsp;
+&nbsp;    @Column(name=&quot;graduation_date&quot;)
+<b class="nc">&nbsp;    private String graduationDate;</b>
+&nbsp;
+&nbsp;    @Column(name=&quot;gpa&quot;)
+<b class="nc">&nbsp;    private Double gpa;</b>
+&nbsp;
+&nbsp;    @Column(name=&quot;resume_path&quot;)
+<b class="nc">&nbsp;    private String resumePath;</b>
+&nbsp;
+<b class="fc">&nbsp;    @Column(name = &quot;applications_made_today&quot;)</b>
+<b class="fc">&nbsp;    private int applicationsMadeToday = 0;</b>
+&nbsp;
+&nbsp;    @JsonIgnore
+&nbsp;    @OneToMany(mappedBy = &quot;student&quot;, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+<b class="nc">&nbsp;    private List&lt;Application&gt; applications;</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-09 20:41</div>
+</div>
+</body>
+</html>
