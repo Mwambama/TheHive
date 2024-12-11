@@ -67,6 +67,11 @@ public class LoginActivity extends AppCompatActivity {
 
 //        emailField.setText("myEmployerTest2@example.com");
 //        passwordField.setText("Test1234@");
+
+        //        //company
+////        emailField.setText("companyTester@aols.com");
+////        passwordField.setText("Test12345@");
+
     }
 
     private void initializeViews() {
