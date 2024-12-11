@@ -64,13 +64,18 @@ public class LoginActivity extends AppCompatActivity {
 
 
         //Test purpose
-//        emailField.setText(" employerTest@aols.com");
-//       passwordField.setText("Test12345@");
+        emailField.setText(" employerTest@aols.com");
+       passwordField.setText("Test12345@");
 
 
         // new user
 //        emailField.setText("employerTester@icloud.com");
 //        passwordField.setText("Test12345@");
+
+        //company
+//        emailField.setText("employerTester@icloud.com");
+//        passwordField.setText("Test12345@");
+
     }
 
     private void initializeViews() {
