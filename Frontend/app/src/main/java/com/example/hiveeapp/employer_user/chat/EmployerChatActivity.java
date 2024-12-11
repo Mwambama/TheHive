@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout; // Import for LinearLayout
 import android.widget.TextView; // Import TextView
@@ -20,6 +19,7 @@ import com.example.hiveeapp.websocket.message.Message;
 import com.example.hiveeapp.websocket.message.MessageAdapter;
 import com.example.hiveeapp.websocket.WebSocketManager;
 import com.example.hiveeapp.websocket.WebSocketListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -37,7 +37,7 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
     private static final String TAG = "EmployerChatActivity";
     private RecyclerView chatRecyclerView;
     private EditText msgEtx;
-    private Button sendBtn;
+    private FloatingActionButton sendBtn;
     private MessageAdapter messageAdapter;
     private List<Message> messageList;
     private Set<Integer> receivedMessageIds;
@@ -93,7 +93,6 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
         setupUI();
         connectWebSocket();
     }
-
 
     /**
      * Sets up the UI components and message click listeners.
@@ -194,7 +193,7 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
             @Override
             public void onWebSocketMessage(Message message) {
                 runOnUiThread(() -> {
-                    if (!receivedMessageIds.contains(message.getMessageId())) {
+                    if (!receivedMessageIds.contains(message.getMessageId()) && !message.getText().contains("has joined the chat")) {
                         messageList.add(message);
                         receivedMessageIds.add(message.getMessageId());
                         messageAdapter.notifyItemInserted(messageList.size() - 1);
@@ -205,7 +204,7 @@ public class EmployerChatActivity extends AppCompatActivity implements MessageAd
 
             @Override
             public void onWebSocketClose(int code, String reason, boolean remote) {
-                runOnUiThread(() -> Toast.makeText(EmployerChatActivity.this, "Disconnected: " + reason, Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(EmployerChatActivity.this, "Disconnected " + reason, Toast.LENGTH_SHORT).show());
                 Log.d(TAG, "WebSocket closed with reason: " + reason);
                 if (!remote && shouldReconnect) {
                     reconnectWebSocket();

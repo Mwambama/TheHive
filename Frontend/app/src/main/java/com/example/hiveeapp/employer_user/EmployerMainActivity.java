@@ -7,15 +7,12 @@ import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.chat.EmployerChatListActivity;
-import com.example.hiveeapp.employer_user.display.AddJobActivity;
 import com.example.hiveeapp.employer_user.display.EditJobActivity;
-import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
 import com.example.hiveeapp.employer_user.setting.EmployerProfileActivity;
 import com.example.hiveeapp.registration.login.LoginActivity;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -31,10 +28,6 @@ public class EmployerMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_employer_profile);
-
-        // Initialize Toolbar and set back button functionality
-//        MaterialToolbar topAppBar = findViewById(R.id.topAppBar);
-//        topAppBar.setNavigationOnClickListener(v -> onBackPressed()); // Navigate back
 
         // Initialize BottomNavigationView
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -53,11 +46,6 @@ public class EmployerMainActivity extends AppCompatActivity {
         super.onResume();
         bottomNavigationView.setSelectedItemId(R.id.navigation_apply);
     }
-//    @Override
-//    public void onBackPressed() {
-//        // Custom back navigation logic (if needed)
-//        super.onBackPressed(); // Default back behavior
-//    }
 
     private void setupBottomNavigationView() {
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -74,10 +62,6 @@ public class EmployerMainActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_add_job) {
                 Log.d(TAG, "Navigating to Add Job");
                 navigateToAddJob();
-                return true;
-            } else if (itemId == R.id.nav_tracking) {
-                Log.d(TAG, "Navigating to Tracking");
-                navigateToTracking();
                 return true;
             } else {
                 return false;
@@ -120,13 +104,6 @@ public class EmployerMainActivity extends AppCompatActivity {
     private void navigateToAddJob(){
         Log.d(TAG, "Navigating to AddJobActivity");
         Intent intent = new Intent(EmployerMainActivity.this, EditJobActivity.class);
-        intent.putExtra("USER_ID", userId);
-        startActivity(intent);
-    }
-
-    private void navigateToTracking(){
-        Log.d(TAG, "Navigating to TrackingActivity");
-        Intent intent = new Intent(EmployerMainActivity.this, TrackingApplicationActivity.class);
         intent.putExtra("USER_ID", userId);
         startActivity(intent);
     }

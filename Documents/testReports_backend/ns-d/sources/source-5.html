@@ -1,0 +1,95 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BaseSignUpRequest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.thehiveapp.dto.authentication</a>
+</div>
+
+<h1>Coverage Summary for Class: BaseSignUpRequest (com.example.thehiveapp.dto.authentication)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">BaseSignUpRequest</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.thehiveapp.dto.authentication;
+&nbsp;
+&nbsp;import com.example.thehiveapp.validators.DuplicateEmail;
+&nbsp;import jakarta.validation.constraints.Email;
+&nbsp;import jakarta.validation.constraints.NotBlank;
+&nbsp;import jakarta.validation.constraints.Pattern;
+&nbsp;import jakarta.validation.constraints.Size;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;public class BaseSignUpRequest {
+&nbsp;    @NotBlank(message = &quot;Email is required&quot;)
+&nbsp;    @Email(message = &quot;Invalid email format&quot;)
+&nbsp;    @DuplicateEmail
+&nbsp;    private String email;
+&nbsp;
+&nbsp;    @NotBlank(message = &quot;Password is required&quot;)
+&nbsp;    @Size(min = 8, message = &quot;Password must have at least 8 characters&quot;)
+&nbsp;    @Pattern(regexp = &quot;^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&amp;+=]).*$&quot;,
+&nbsp;            message = &quot;Password must have at least one digit, one uppercase letter, one lowercase letter, and one special character&quot;)
+&nbsp;    private String password;
+&nbsp;
+&nbsp;    @NotBlank(message = &quot;Name is required&quot;)
+&nbsp;    private String name;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-09 22:19</div>
+</div>
+</body>
+</html>

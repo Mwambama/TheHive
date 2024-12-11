@@ -1,6 +1,7 @@
 package com.example.hiveeapp.employer_user.setting;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 
@@ -8,21 +9,21 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.example.hiveeapp.volley.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class employerinfoApi {
 
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer";
     private static final String TAG = "EmployerApi";
+    private static final String AUTH_PREFERENCES = "UserPreferences";
 
     /**
      * Generates the headers for API requests with authorization.
@@ -34,16 +35,17 @@ public class employerinfoApi {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
-        // Mocked username and password for testing purposes
-//       String username = "iiik@gmail.com";
-//        String password = "Anondwdb##444fedo";
+        SharedPreferences preferences = context.getSharedPreferences(AUTH_PREFERENCES, Context.MODE_PRIVATE);
+        String username = preferences.getString("email", "");
+        String password = preferences.getString("password", "");
 
-        String username = "employerTest@aols.com";
-        String password = "Test12345@";
-
-        String credentials = username + ":" + password;
-        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        headers.put("Authorization", auth);
+        if (!username.isEmpty() && !password.isEmpty()) {
+            String credentials = username + ":" + password;
+            String auth = "Basic " + Base64.encodeToString(credentials.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
+            headers.put("Authorization", auth);
+        } else {
+            Log.e(TAG, "Missing username or password in SharedPreferences.");
+        }
 
         return headers;
     }
@@ -80,13 +82,27 @@ public class employerinfoApi {
      * Updates an existing employer profile.
      *
      * @param context       The application context.
-     * @param userId        The ID of the user (employer).
      * @param employerData  JSON object containing employer details.
      * @param listener      Response listener for successful employer update.
      * @param errorListener Error listener for handling errors.
      */
-    public static void updateEmployer(Context context, int userId, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL + "/" + userId;
+    public static void updateEmployer(Context context, JSONObject employerData, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        SharedPreferences preferences = context.getSharedPreferences(AUTH_PREFERENCES, Context.MODE_PRIVATE);
+        int companyId = preferences.getInt("companyId", -1); // Fetch the stored companyId, default to -1 if not found
+
+        if (companyId == -1) {
+            Log.e(TAG, "Invalid companyId. Ensure it is saved during login.");
+            listener.onResponse(new JSONObject()); // Notify listener with an empty response
+            return;
+        }
+
+        try {
+            employerData.put("companyId", companyId); // Add companyId dynamically to the payload
+        } catch (JSONException e) {
+            Log.e(TAG, "Error adding companyId to employerData", e);
+        }
+
+        String url = BASE_URL;
         Log.d(TAG, "PUT employer Request URL: " + url);
         Log.d(TAG, "Employer Data Payload: " + employerData.toString());
 
@@ -99,39 +115,17 @@ public class employerinfoApi {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                return employerinfoApi.getHeaders(context);
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                headers.put("Accept", "application/hal+json");
+                headers.putAll(employerinfoApi.getHeaders(context));
+                return headers;
             }
         };
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
-    //    public static void deleteStudent(Context context, long studentId, Response.Listener<String> listener, Response.ErrorListener errorListener) {
-//        String url = BASE_URL + "/" + studentId;
-//        Log.d(TAG, "DELETE Student Request URL: " + url);
-//
-//        // Create a StringRequest for the DELETE method
-//        StringRequest request = new StringRequest(
-//                Request.Method.DELETE,
-//                url,
-//                response -> {
-//                    Log.d(TAG, "Employer deleted successfully: " + response);
-//                    listener.onResponse(response);  // Notify the listener of success
-//                },
-//                error -> {
-//                    String errorMsg = getErrorMessage(error);
-//                    handleErrorResponse("Error deleting student: " + errorMsg, error, errorListener);
-//                }
-//        ) {
-//            @Override
-//            public Map<String, String> getHeaders() {
-//                return employerinfoApi.getHeaders(context);
-//            }
-//        };
-//
-//        // Add the request to the Volley request queue
-//        VolleySingleton.getInstance(context).addToRequestQueue(request);
-//    }
-//
+
 
     /**
      * Handles error responses from the server, logs the details, and invokes the error listener.
@@ -142,6 +136,14 @@ public class employerinfoApi {
      */
     private static void handleErrorResponse(String errorMessagePrefix, VolleyError error, Response.ErrorListener errorListener) {
         String errorMsg = getErrorMessage(error);
+        if (error.networkResponse != null && error.networkResponse.data != null) {
+            try {
+                String errorData = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                Log.e(TAG, "Server response: " + errorData);
+            } catch (Exception e) {
+                Log.e(TAG, "Error parsing server response", e);
+            }
+        }
         String fullErrorMessage = errorMessagePrefix + ": " + errorMsg;
         Log.e(TAG, fullErrorMessage);
         errorListener.onErrorResponse(new VolleyError(fullErrorMessage));
@@ -157,7 +159,7 @@ public class employerinfoApi {
         String errorMsg = "An unexpected error occurred";
         if (error.networkResponse != null && error.networkResponse.data != null) {
             try {
-                String errorData = new String(error.networkResponse.data, "UTF-8");
+                String errorData = new String(error.networkResponse.data, StandardCharsets.UTF_8);
 
                 // Attempt to parse errorData as JSON
                 try {
@@ -168,8 +170,8 @@ public class employerinfoApi {
                     errorMsg = errorData;
                 }
 
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                Log.e(TAG, "Error parsing error message", e);
                 errorMsg = "Error parsing error message";
             }
         } else if (error.getMessage() != null) {

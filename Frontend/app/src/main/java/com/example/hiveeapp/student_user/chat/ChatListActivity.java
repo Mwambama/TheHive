@@ -124,9 +124,10 @@ public class ChatListActivity extends AppCompatActivity {
                             int studentId = chatJson.getInt("studentId");
                             int jobPostingId = chatJson.optInt("jobPostingId", -1);
 
-                            // Extract lastMessage and lastMessageTime from the JSON response
+                            // Extract lastMessage, lastMessageTime, and unreadMessagesCount
                             String lastMessage = chatJson.optString("lastMessage", null);
                             String lastMessageTime = chatJson.optString("lastMessageTime", null);
+                            int unreadMessagesCount = chatJson.optInt("unreadMessagesCount", 0); // Default to 0
 
                             // Filter chats by studentId (current user's ID)
                             if (studentId == userId) {
@@ -142,6 +143,10 @@ public class ChatListActivity extends AppCompatActivity {
                                         lastMessage,
                                         lastMessageTime
                                 );
+
+                                // Set unread messages count
+                                chat.setUnreadMessagesCount(unreadMessagesCount);
+
                                 matchedChats.add(chat);
                             }
                         }
@@ -163,6 +168,7 @@ public class ChatListActivity extends AppCompatActivity {
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
+
 
     private Map<String, String> getAuthorizationHeaders() {
         Map<String, String> headers = new HashMap<>();

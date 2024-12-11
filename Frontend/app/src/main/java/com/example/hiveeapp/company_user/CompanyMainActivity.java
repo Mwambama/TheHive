@@ -1,6 +1,7 @@
 package com.example.hiveeapp.company_user;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -11,6 +12,7 @@ import com.example.hiveeapp.MainActivity;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.company_user.handleEmployers.EmployerListActivity;
 import com.example.hiveeapp.company_user.invitations.InvitationManagementActivity;
+import com.example.hiveeapp.registration.login.LoginActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -25,6 +27,10 @@ public class CompanyMainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private TabLayout tabLayout;
 
+    private int userId;
+    private String userEmail;
+    private String userPassword;
+
     /**
      * Called when the activity is first created. Sets up the UI components and navigation listeners.
      *
@@ -35,6 +41,8 @@ public class CompanyMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company);
+
+        retrieveUserDetails();
 
         // Initialize views
         topAppBar = findViewById(R.id.topAppBar);
@@ -99,6 +107,23 @@ public class CompanyMainActivity extends AppCompatActivity {
             return false;
         });
         bottomNavigationView.setSelectedItemId(R.id.navigation_main_user_page);
+    }
+
+    /**
+     * Retrieves user details from SharedPreferences and checks if they are valid.
+     * If user details are missing, prompts the user to log in again.
+     */
+    private void retrieveUserDetails() {
+        SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
+        userId = preferences.getInt("userId", -1);
+        userEmail = preferences.getString("email", "");
+        userPassword = preferences.getString("password", "");
+
+        if (userId == -1 || userEmail.isEmpty() || userPassword.isEmpty()) {
+            Toast.makeText(this, "User credentials not found. Please log in again.", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        }
     }
 
     /**

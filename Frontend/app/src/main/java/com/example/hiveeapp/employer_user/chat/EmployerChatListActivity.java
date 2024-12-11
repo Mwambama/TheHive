@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.employer_user.display.AddJobActivity;
-import com.example.hiveeapp.employer_user.model.TrackingApplicationActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -25,15 +24,11 @@ import com.example.hiveeapp.volley.VolleySingleton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * EmployerChatListActivity displays a list of chats for the employer user,
@@ -105,10 +100,6 @@ public class EmployerChatListActivity extends AppCompatActivity {
                 Log.d(TAG, "Navigating to Add Job");
                 navigateToAddJob();
                 return true;
-            } else if (itemId == R.id.nav_tracking) {
-                Log.d(TAG, "Navigating to Tracking");
-                navigateToTracking();
-                return true;
             } else {
                 return false;
             }
@@ -132,15 +123,6 @@ public class EmployerChatListActivity extends AppCompatActivity {
      */
     private void navigateToAddJob() {
         Intent intent = new Intent(this, AddJobActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    /**
-     * Navigates to the Tracking Application activity.
-     */
-    private void navigateToTracking() {
-        Intent intent = new Intent(this, TrackingApplicationActivity.class);
         startActivity(intent);
         finish();
     }
@@ -220,11 +202,6 @@ public class EmployerChatListActivity extends AppCompatActivity {
                         // Check if the "name" key exists
                         if (response.has("name")) {
                             fullName = response.getString("name");
-                        } else if (response.has("firstName") && response.has("lastName")) {
-                            // Fallback in case "firstName" and "lastName" are present
-                            String firstName = response.getString("firstName");
-                            String lastName = response.getString("lastName");
-                            fullName = firstName + " " + lastName;
                         } else {
                             fullName = "Unknown User";
                         }
@@ -239,7 +216,27 @@ public class EmployerChatListActivity extends AppCompatActivity {
                         Log.e(TAG, "Error parsing user JSON", e);
                     }
                 },
-                error -> Toast.makeText(this, "Failed to load student name", Toast.LENGTH_SHORT).show()
+                error -> {
+                    // Handle error gracefully
+                    Log.e(TAG, "Failed to load student name: " + error.getMessage());
+                    if (error.networkResponse != null) {
+                        try {
+                            String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                            Log.e(TAG, "Server Response: " + responseBody);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing error response", e);
+                        }
+                        if (error.networkResponse.statusCode == 404) {
+                            Log.e(TAG, "User not found for ID: " + studentId);
+                            chat.setStudentName("User Not Found");
+                        }
+                    } else {
+                        Toast.makeText(this, "Failed to load student name", Toast.LENGTH_SHORT).show();
+                    }
+
+                    // Notify the adapter with fallback data
+                    chatListAdapter.notifyDataSetChanged();
+                }
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -249,6 +246,7 @@ public class EmployerChatListActivity extends AppCompatActivity {
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
+
 
     /**
      * Updates the chat title with the student's name.
@@ -260,6 +258,7 @@ public class EmployerChatListActivity extends AppCompatActivity {
         for (EmployerChatDto chat : chatList) {
             if (chat.getStudentId() == studentId) {
                 chat.setJobTitle(studentName);
+                Log.d(TAG, "Chat title updated for studentId " + studentId + ": " + studentName);
             }
         }
         chatListAdapter.notifyDataSetChanged();
@@ -276,6 +275,8 @@ public class EmployerChatListActivity extends AppCompatActivity {
         intent.putExtra("userId", userId);
         intent.putExtra("studentId", chat.getStudentId());
         intent.putExtra("jobTitle", chat.getJobTitle());
+
+        Log.d(TAG, "Opening chat with chatId: " + chat.getChatId() + ", studentId: " + chat.getStudentId() + ", jobTitle: " + chat.getJobTitle());
         startActivity(intent);
     }
 }

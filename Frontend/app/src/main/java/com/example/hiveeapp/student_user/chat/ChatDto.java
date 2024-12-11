@@ -10,6 +10,7 @@ public class ChatDto {
     private int employerId;
     private int studentId;
     private int jobPostingId;
+    private int unreadMessagesCount;
     private String jobTitle;
     private String lastMessage;
     private String lastMessageTime;
@@ -47,6 +48,14 @@ public class ChatDto {
      */
     public ChatDto(int chatId, int employerId, int studentId, int jobPostingId, String jobTitle) {
         this(chatId, employerId, studentId, jobPostingId, jobTitle, null, null);
+    }
+
+    public int getUnreadMessagesCount() {
+        return unreadMessagesCount;
+    }
+
+    public void setUnreadMessagesCount(int unreadMessagesCount) {
+        this.unreadMessagesCount = unreadMessagesCount;
     }
 
     /**

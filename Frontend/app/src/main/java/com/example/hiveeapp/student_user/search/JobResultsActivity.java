@@ -83,13 +83,17 @@ public class JobResultsActivity extends AppCompatActivity implements JobListAdap
     }
 
     private void retrieveStudentId() {
-        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
-        studentId = preferences.getInt("studentId", -1);
+        // Correct SharedPreferences file name
+        SharedPreferences preferences = getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+        studentId = preferences.getInt("userId", -1); // Make sure the key matches where `userId` is stored
 
         if (studentId != -1) {
             Log.d(TAG, "Student ID retrieved from SharedPreferences: " + studentId);
         } else {
             Log.e(TAG, "Student ID not found in SharedPreferences.");
+            Toast.makeText(this, "Student ID not found. Please log in again.", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, StudentMainActivity.class)); // Redirect to main or login
+            finish(); // End current activity
         }
     }
 

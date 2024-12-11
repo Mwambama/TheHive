@@ -1,8 +1,10 @@
 package com.example.hiveeapp.company_user.invitations;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -28,7 +30,6 @@ public class InvitationApi {
 
     private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/employer-invitation";
     private static final String TAG = "InvitationApi";
-    private static final int COMPANY_ID = 1029; // Update this with the correct company ID if needed
 
     /**
      * Generates the headers required for the API requests, including authorization.
@@ -37,17 +38,33 @@ public class InvitationApi {
      * @return A map of headers with content type and authorization credentials.
      */
     private static Map<String, String> getHeaders(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+        String userEmail = preferences.getString("email", "");
+        String userPassword = preferences.getString("password", "");
+
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
-        // Replace these with actual user credentials or fetch from SharedPreferences
-        String username = "test@example.com";
-        String password = "Test@example1234";
-        String credentials = username + ":" + password;
-        String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        headers.put("Authorization", auth);
+        if (!userEmail.isEmpty() && !userPassword.isEmpty()) {
+            String credentials = userEmail + ":" + userPassword;
+            String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+            headers.put("Authorization", auth);
+        } else {
+            Log.e(TAG, "Error: Missing email or password for authorization.");
+        }
 
         return headers;
+    }
+
+    /**
+     * Fetches the company ID from SharedPreferences.
+     *
+     * @param context The application context.
+     * @return The company ID or -1 if not found.
+     */
+    private static int getCompanyId(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+        return preferences.getInt("userId", -1);
     }
 
     /**
@@ -130,11 +147,17 @@ public class InvitationApi {
                                         Response.Listener<JSONObject> listener,
                                         Response.ErrorListener errorListener) {
         JSONObject updatedInvitation = new JSONObject();
+        int companyId = getCompanyId(context);
+
+        if (companyId == -1) {
+            Log.e(TAG, "Error: Company ID not found in SharedPreferences.");
+            errorListener.onErrorResponse(new VolleyError("Invalid company ID."));
+            return;
+        }
 
         try {
-            // Set the updated invitation details
             updatedInvitation.put("employerInvitationId", invitationId);
-            updatedInvitation.put("companyId", COMPANY_ID);
+            updatedInvitation.put("companyId", companyId);
             updatedInvitation.put("email", newEmail);
             updatedInvitation.put("message", newMessage);
 
@@ -180,39 +203,54 @@ public class InvitationApi {
                                       Response.Listener<JSONObject> listener,
                                       Response.ErrorListener errorListener) {
         JSONObject newInvitation = new JSONObject();
+        int companyId = getCompanyId(context);
+
+        if (companyId == -1) {
+            Log.e(TAG, "Error: Company ID not found in SharedPreferences.");
+            errorListener.onErrorResponse(new VolleyError("Invalid company ID."));
+            return;
+        }
+
         try {
-            newInvitation.put("companyId", COMPANY_ID); // Set company ID
-            newInvitation.put("email", email);          // Set recipient email
-            newInvitation.put("message", message);      // Set message content
+            newInvitation.put("companyId", companyId);
+            newInvitation.put("email", email);
+            newInvitation.put("message", message);
+
+            String invitationUrl = BASE_URL;
+            Log.d(TAG, "POST Invitation Request URL: " + invitationUrl);
+            Log.d(TAG, "Invitation Data Payload: " + newInvitation.toString());
+
+            JsonObjectRequest request = new JsonObjectRequest(
+                    Request.Method.POST,
+                    invitationUrl,
+                    newInvitation,
+                    response -> {
+                        Log.d(TAG, "Invitation sent successfully: " + response.toString());
+
+                        // Display success message
+                        Toast.makeText(context, "Invitation sent successfully to " + email + "!", Toast.LENGTH_SHORT).show();
+
+                        // Call the original listener for further actions
+                        listener.onResponse(response);
+                    },
+                    error -> {
+                        String errorMsg = getErrorMessage(error);
+                        Log.e(TAG, "Error sending invitation: " + errorMsg);
+                        errorListener.onErrorResponse(new VolleyError(errorMsg));
+                    }
+            ) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    return InvitationApi.getHeaders(context);
+                }
+            };
+
+            VolleySingleton.getInstance(context).addToRequestQueue(request);
 
         } catch (JSONException e) {
             Log.e(TAG, "Error creating invitation: " + e.getMessage());
             errorListener.onErrorResponse(new VolleyError(e.getMessage()));
-            return;
         }
-
-        String invitationUrl = BASE_URL;
-        Log.d(TAG, "POST Invitation Request URL: " + invitationUrl);
-        Log.d(TAG, "Invitation Data Payload: " + newInvitation.toString());
-
-        JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST,
-                invitationUrl,
-                newInvitation,
-                listener,
-                error -> {
-                    String errorMsg = getErrorMessage(error);
-                    Log.e(TAG, "Error sending invitation: " + errorMsg);
-                    errorListener.onErrorResponse(new VolleyError(errorMsg));
-                }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                return InvitationApi.getHeaders(context);
-            }
-        };
-
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
     /**
@@ -229,8 +267,7 @@ public class InvitationApi {
                 JSONObject jsonError = new JSONObject(errorData);
                 errorMsg = jsonError.optString("message", errorMsg);
             } catch (Exception e) {
-                e.printStackTrace();
-                errorMsg = "Error parsing error message";
+                Log.e(TAG, "Error parsing error message: " + e.getMessage());
             }
         } else if (error.getMessage() != null) {
             errorMsg = error.getMessage();
