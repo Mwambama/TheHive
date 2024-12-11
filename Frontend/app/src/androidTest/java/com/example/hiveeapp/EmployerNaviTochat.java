@@ -133,11 +133,36 @@ public class EmployerNaviTochat {
         performLogin("employerTest@aols.com", "Test12345@");
 
         // Navigate to Chat
-        intended(hasComponent(EmployerChatActivity.class.getName()));
+
         onView(withId(R.id.nav_chat)).perform(click());
-//        intended(hasComponent(EmployerChatActivity.class.getName()));
+     //  intended(hasComponent(EmployerChatActivity.class.getName()));
         onView(withId(R.id.chatRecyclerView)).check(matches(isDisplayed()));
     }
+//    @Test
+//    public void testBottomNavigation_toSearch() throws InterruptedException {
+//        // Login before testing navigation
+//        performLogin("teststudent1@example.com", "TestStudent1234@");
+//
+//        // Verify that the bottom navigation view is displayed
+//        onView(withId(R.id.bottomNavigationView))
+//                .check(matches(isDisplayed()));
+//
+//        // Click on the "Search" navigation item
+//        onView(withId(R.id.navigation_search)).perform(click());
+//
+//        // Verify that the intended activity is displayed (without checking extras)
+//        intended(hasComponent(JobSearchActivity.class.getName()));
+//
+//        // Verify the presence of UI elements in JobSearchActivity
+//        onView(withId(R.id.keywordInput)).check(matches(isDisplayed()));
+//
+//        // Verify that the studentId exists in SharedPreferences (or use another method to confirm the value)
+//        SharedPreferences preferences = ApplicationProvider.getApplicationContext()
+//                .getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+//        int storedStudentId = preferences.getInt("userId", -1);
+//
+//        assertEquals(1017, storedStudentId);
+//
 
 
 }

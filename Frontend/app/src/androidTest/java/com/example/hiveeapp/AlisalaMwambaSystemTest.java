@@ -222,7 +222,8 @@ public class AlisalaMwambaSystemTest {
         });
    }
 
-    // this works when testing
+    // this works when testing\
+    // to change employer profile, the xml is bottom_sheet_edit_employer
     @Test
     public void testEmployerLoginAndNavigateToProfile() throws InterruptedException {
         // Step 1: Log in as an employer
