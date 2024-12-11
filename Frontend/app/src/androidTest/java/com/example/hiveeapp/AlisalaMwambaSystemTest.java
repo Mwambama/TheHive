@@ -251,7 +251,6 @@ public class AlisalaMwambaSystemTest {
     }
 
 
-
     private static ViewAction waitForActivity(final Class<?> activityClass, final long timeoutMillis) {
         return new ViewAction() {
             @Override
