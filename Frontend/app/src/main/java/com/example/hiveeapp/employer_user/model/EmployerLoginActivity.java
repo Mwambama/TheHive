@@ -1,5 +1,5 @@
 package com.example.hiveeapp.employer_user.model;
-//package com.example.hiveeapp.employer_user
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;

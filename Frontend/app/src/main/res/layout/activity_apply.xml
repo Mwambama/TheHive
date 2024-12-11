@@ -142,7 +142,7 @@
                 android:src="@drawable/ic_delete"
                 android:contentDescription="Delete Job"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:tint="@android:color/holo_red_dark"
+                app:tint="@android:color/holo_red_dark"
                 android:layout_marginEnd="16dp" />
 
             <com.google.android.material.button.MaterialButton
