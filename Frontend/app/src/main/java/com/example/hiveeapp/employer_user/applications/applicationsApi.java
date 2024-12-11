@@ -1,6 +1,9 @@
 package com.example.hiveeapp.employer_user.applications;
 
+import static com.example.hiveeapp.employer_user.applications.ApplicationListActivity.USER_PREFS;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 
@@ -52,25 +55,32 @@ public class applicationsApi {
     }
 
     /**
-     * Retrieves a list of applications from the server.
+     * Retrieves a list of job postings for a specific employer from the server.
      *
      * @param context       The application context.
      * @param listener      Response listener for successful fetch.
      * @param errorListener Error listener for handling errors.
      */
-    public static void getApplications(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL;  // The URL for fetching applications
-        Log.d(TAG, "GET Applications Request URL: " + url);
+    public static void getJobPostings(Context context, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+        // Retrieve employer ID from SharedPreferences
+        SharedPreferences preferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
+        int employerId = preferences.getInt("userId", -1);
+
+        if (employerId == -1) {
+            Log.e(TAG, "Employer ID not found in SharedPreferences.");
+            errorListener.onErrorResponse(new VolleyError("Employer ID not found. Please log in again."));
+            return;
+        }
+        // Construct the URL dynamically
+        String url = BASE_URL + employerId;
+        Log.d(TAG, "GET Job Postings Request URL: " + url);
 
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
                 null,
-                response -> {
-                    // Process each application and return the response with only application details (without student info)
-                    listener.onResponse(response);
-                },
-                error -> handleErrorResponse("Error fetching applications", error, errorListener)
+                listener,
+                error -> handleErrorResponse("Error fetching job postings", error, errorListener)
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -79,6 +89,32 @@ public class applicationsApi {
         };
 
         // Add the request to the Volley request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    /**
+     * Retrieves a list of applications from the server.
+     *
+     * @param context       The application context.
+     * @param listener      Response listener for successful fetch.
+     * @param errorListener Error listener for handling errors.
+     */
+    public static void getApplications(Context context, String apiUrl, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+        Log.d(TAG, "GET Applications Request URL: " + apiUrl);
+
+        JsonArrayRequest request = new JsonArrayRequest(
+                Request.Method.GET,
+                apiUrl,
+                null,
+                listener,
+                error -> handleErrorResponse("Error fetching applications", error, errorListener)
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                return applicationsApi.getHeaders(context);
+            }
+        };
+
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 

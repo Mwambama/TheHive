@@ -23,5 +23,6 @@
     <color name="chip_background">#E0E0E0</color>
     <color name="chip_stroke">#BDBDBD</color>
     <color name="lightGray">#D3D3D3</color>
+    <color name="cardBackgroundColor">#F3F4F6</color>
 </resources>
 

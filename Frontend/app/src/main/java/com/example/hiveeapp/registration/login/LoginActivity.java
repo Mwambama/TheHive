@@ -65,8 +65,8 @@ public class LoginActivity extends AppCompatActivity {
 //        emailField.setText("test643@example.com");
 //        passwordField.setText("Test$1234");
 
-        emailField.setText("myEmployerTest2@example.com");
-        passwordField.setText("Test1234@");
+//        emailField.setText("myEmployerTest2@example.com");
+//        passwordField.setText("Test1234@");
     }
 
     private void initializeViews() {
@@ -145,14 +145,20 @@ public class LoginActivity extends AppCompatActivity {
             int userId = response.getInt("userId");
             String role = extractUserRole(response);
 
-            // Extract companyId if available
+            // Extract companyId and jobPostingId if available
             int companyId = -1;
+            int jobPostingId = -1; // Initialize jobPostingId
+
             if (response.has("companyId")) {
                 companyId = response.getInt("companyId");
             }
 
-            // Debug: Log retrieved userId, role, and companyId
-            Log.d(TAG, "handleLoginSuccess: userId=" + userId + ", role=" + role + ", companyId=" + companyId);
+            if (response.has("jobPostingId")) {
+                jobPostingId = response.getInt("jobPostingId");
+            }
+
+            // Debug: Log retrieved userId, role, companyId, and jobPostingId
+            Log.d(TAG, "handleLoginSuccess: userId=" + userId + ", role=" + role + ", companyId=" + companyId + ", jobPostingId=" + jobPostingId);
 
             // Save data in SharedPreferences
             SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
@@ -161,6 +167,7 @@ public class LoginActivity extends AppCompatActivity {
             editor.putString("email", email);
             editor.putString("password", password);
             editor.putInt("companyId", companyId); // Save companyId
+            editor.putInt("jobPostingId", jobPostingId); // Save jobPostingId
             editor.apply();
 
             // Debug: Log all preferences
@@ -177,6 +184,7 @@ public class LoginActivity extends AppCompatActivity {
             showLoading(false);
         }
     }
+
 
     private String extractUserRole(JSONObject response) throws JSONException {
         if (response.has("role")) {

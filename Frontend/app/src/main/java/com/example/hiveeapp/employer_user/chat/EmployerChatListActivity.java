@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hiveeapp.R;
 import com.example.hiveeapp.employer_user.EmployerMainActivity;
 import com.example.hiveeapp.employer_user.display.AddJobActivity;
+import com.example.hiveeapp.employer_user.display.EditJobActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -122,9 +123,9 @@ public class EmployerChatListActivity extends AppCompatActivity {
      * Navigates to the Add Job activity.
      */
     private void navigateToAddJob() {
-        Intent intent = new Intent(this, AddJobActivity.class);
+        Intent intent = new Intent(this, EditJobActivity.class);
+        intent.putExtra("USER_ID", userId);
         startActivity(intent);
-        finish();
     }
 
     /**
