@@ -69,28 +69,28 @@ public class AlisalaMwambaSystemTest {
         IdlingRegistry.getInstance().unregister(idlingResource);
     }
 
-//    @Test
-//    public void testSuccessfulLoginAndNavigation() {
-//        // Step 1: Set the input fields
-//        onView(withId(R.id.emailField)).perform(typeText("employerTest@aol.com"), closeSoftKeyboard());
-//        onView(withId(R.id.passwordField)).perform(typeText("Test1234@"), closeSoftKeyboard());
-//
-//        // Step 2: Click the login button
-//        onView(withId(R.id.loginButton)).perform(click());
-//
-//        // Step 3: Check if the correct activity is launched based on role
-//        intended(hasComponent(EmployerMainActivity.class.getName())); // Assuming role is STUDENT
-//
-//        // Step 4: Validate shared preferences were saved
-//        SharedPreferences sharedPreferences =
-//                InstrumentationRegistry.getInstrumentation()
-//                        .getTargetContext()
-//                        .getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
-//
-//        assertEquals("employerTest@aol.com", sharedPreferences.getString("email", null));
-//        assertEquals("Test1234@", sharedPreferences.getString("password", null));
-//
-//    }
+    @Test
+    public void testSuccessfulLoginAndNavigation() {
+        // Step 1: Set the input fields
+        onView(withId(R.id.emailField)).perform(typeText("employerTest@aol.com"), closeSoftKeyboard());
+        onView(withId(R.id.passwordField)).perform(typeText("Test1234@"), closeSoftKeyboard());
+
+        // Step 2: Click the login button
+        onView(withId(R.id.loginButton)).perform(click());
+
+        // Step 3: Check if the correct activity is launched based on role
+        intended(hasComponent(EmployerMainActivity.class.getName())); // Assuming role is STUDENT
+
+        // Step 4: Validate shared preferences were saved
+        SharedPreferences sharedPreferences =
+                InstrumentationRegistry.getInstrumentation()
+                        .getTargetContext()
+                        .getSharedPreferences("UserPreferences", Context.MODE_PRIVATE);
+
+        assertEquals("employerTest@aol.com", sharedPreferences.getString("email", null));
+        assertEquals("Test1234@", sharedPreferences.getString("password", null));
+
+    }
 
 
 
@@ -245,59 +245,8 @@ public class AlisalaMwambaSystemTest {
     }
 
 
-//
-//    @Test
-//    public void testEmployerLoginAndNavigateToAddJob() throws InterruptedException {
-//        // Step 1: Log in as an employer
-//        onView(withId(R.id.emailField))
-//                .perform(typeText("employerTest@aol.com"), closeSoftKeyboard());
-//        onView(withId(R.id.passwordField))
-//                .perform(typeText("Test1234@"), closeSoftKeyboard());
-//        onView(withId(R.id.loginButton)).perform(click());
-//
-//        // Step 2: Wait for EmployerMainActivity to load
-//        Thread.sleep(2000); // Replace with IdlingResource if possible
-//
-//        // Step 3: Validate navigation to EmployerMainActivity by checking a unique element
-//        onView(withId(R.id.bottomNavigationView)).check(matches(isDisplayed()));
-//
-//        // Step 4: Navigate to "Add Job" and validate
-//        onView(withId(R.id.nav_add_job)).perform(click());
-//        Thread.sleep(1000); // Add delay if necessary
-//        onView(withId(R.id.applicationRecyclerView)).check(matches(isDisplayed()));
-//
-//        Thread.sleep(2000); // Replace with IdlingResource if possible
-////        // Step 5: Navigate to the Add Job form
-////        onView(withId(R.id.addEmployerButton)).perform(click());
-//        //onView(withId(R.id.addJobForm)).check(matches(isDisplayed())); // Replace with actual ID
-//    }
 
 
-    // this works when testing
-//    @Test
-//    public void testEmployerLoginAndNavigateToAddJob() throws InterruptedException {
-//        // Step 1: Log in as an employer
-//        onView(withId(R.id.emailField))
-//                .perform(typeText("employerTest@aol.com"), closeSoftKeyboard());
-//        onView(withId(R.id.passwordField))
-//                .perform(typeText("Test1234@"), closeSoftKeyboard());
-//        onView(withId(R.id.loginButton)).perform(click());
-//
-//        // Step 2: Wait for EmployerMainActivity to load
-//        Thread.sleep(2000); // Replace with IdlingResource if possible
-//
-//        // Step 3: Validate navigation to EmployerMainActivity by checking a unique element
-//       // onView(withId(R.id.bottomNavigationView)).check(matches(isDisplayed()));
-//        intended(hasComponent(EmployerMainActivity.class.getName()));
-//        // Step 4: Navigate to "Add Job"
-//        onView(withId(R.id.nav_add_job)).perform(click());
-//
-//        // Step 5: Wait for EditJobActivity to load
-//        Thread.sleep(2000); // Again, consider using IdlingResource
-//
-//        // Step 6: Validate that the RecyclerView in EditJobActivity is displayed
-//        //onView(withId(R.id.applicationRecyclerView)).check(matches(isDisplayed()));
-//    }
 
 
     @Test
@@ -355,7 +304,7 @@ public class AlisalaMwambaSystemTest {
 //        Thread.sleep(2000); // Replace with IdlingResource if possible
      //   onView(withId(R.id.navigation_main_user_page)).perform(click());
         // Step 5: Use the back button to navigate back to EmployerMainActivity
-        onView(withId(R.id.backArrowIcon)).perform(click());
+       onView(withId(R.id.backArrowIcon)).perform(click());
         Thread.sleep(2000);
         // Step 6: Validate navigation back to EmployerMainActivity
         //    intended(hasComponent(EmployerMainActivity.class.getName()));

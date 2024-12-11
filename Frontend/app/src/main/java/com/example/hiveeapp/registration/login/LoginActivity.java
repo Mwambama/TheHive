@@ -59,11 +59,17 @@ public class LoginActivity extends AppCompatActivity {
         setListeners();
 
         //Test purpose
-        emailField.setText("test643@example.com");
-        passwordField.setText("Test$1234");
+//        emailField.setText("test643@example.com");
+//        passwordField.setText("Test$1234");
+
 
         //Test purpose
-//        emailField.setText("employerTest@aols.com");
+        emailField.setText("employerTester@.com");
+       passwordField.setText("Test12345@");
+
+
+        // new user
+//        emailField.setText("employerTester@icloud.com");
 //        passwordField.setText("Test12345@");
     }
 
