@@ -71,7 +71,7 @@ public class StudentMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_main);
 
-        dailyAppliedCount = findViewById(R.id.dailyAppliedCount);
+        dailyAppliedCount = findViewById(R.id.appliedBoxCount);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
         setupBottomNavigationView();
