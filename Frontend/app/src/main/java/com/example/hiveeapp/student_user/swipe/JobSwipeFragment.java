@@ -177,16 +177,28 @@ public class JobSwipeFragment extends Fragment {
         if (isFetchingJobs) return; // Prevent duplicate calls
         isFetchingJobs = true;
 
+        if (!isAdded()) {
+            Log.e(TAG, "Fragment is not attached. Cannot fetch job postings.");
+            isFetchingJobs = false;
+            return;
+        }
+
         String url = GET_RECOMMENDED_JOB_POSTINGS_URL + studentId;
         Log.d(TAG, "Fetching job postings from URL: " + url);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
+                    if (!isAdded()) {
+                        Log.e(TAG, "Fragment detached. Ignoring response.");
+                        isFetchingJobs = false;
+                        return;
+                    }
+
                     isFetchingJobs = false;
                     List<JobPosting> newJobs = parseJobPostings(response);
                     if (newJobs.isEmpty()) {
                         Log.d(TAG, "No jobs returned from the API.");
-                        Toast.makeText(getContext(), "No jobs available to display.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "No jobs available to display.", Toast.LENGTH_SHORT).show();
                     } else {
                         List<JobPosting> filteredJobs = filterJobPostings(newJobs);
                         jobPostings.addAll(filteredJobs);
@@ -195,12 +207,20 @@ public class JobSwipeFragment extends Fragment {
                 },
                 error -> {
                     isFetchingJobs = false;
-                    String errorMsg = "Error fetching job postings";
-                    if (error instanceof VolleyError && error.networkResponse != null) {
-                        errorMsg += " (Code: " + error.networkResponse.statusCode + ")";
+
+                    if (isAdded()) {
+                        int statusCode = error.networkResponse != null ? error.networkResponse.statusCode : -1;
+                        String errorMsg = "Error fetching job postings";
+                        if (statusCode == 401) {
+                            errorMsg = "Unauthorized. Please log in again.";
+                            promptReLogin(); // Handle re-login or token refresh
+                        } else if (statusCode != -1) {
+                            errorMsg += " (Code: " + statusCode + ")";
+                        }
+
+                        Log.e(TAG, errorMsg);
+                        Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show();
                     }
-                    Log.e(TAG, errorMsg);
-                    Toast.makeText(getContext(), "Failed to fetch jobs. Try again later.", Toast.LENGTH_SHORT).show();
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -208,14 +228,31 @@ public class JobSwipeFragment extends Fragment {
             }
         };
 
-        VolleySingleton.getInstance(getContext()).addToRequestQueue(request);
+        if (isAdded()) {
+            VolleySingleton.getInstance(requireContext()).addToRequestQueue(request);
+        } else {
+            Log.e(TAG, "Fragment detached. Skipping request.");
+            isFetchingJobs = false;
+        }
+    }
+
+    private void promptReLogin() {
+        Log.e(TAG, "Session expired. Prompting user to re-login.");
+        // Implement logic to navigate to login screen
+        Toast.makeText(requireContext(), "Session expired. Please log in again.", Toast.LENGTH_SHORT).show();
     }
 
     private Map<String, String> createAuthorizationHeaders() {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
-        SharedPreferences preferences = getContext().getSharedPreferences(AUTH_PREFERENCES, MODE_PRIVATE);
+        if (!isAdded() || getContext() == null) {
+            Log.e("JobSwipeFragment", "Fragment is not attached. Returning empty authorization headers.");
+            return headers; // Return headers without Authorization to avoid crashing
+        }
+
+        Context context = requireContext();
+        SharedPreferences preferences = context.getSharedPreferences(AUTH_PREFERENCES, Context.MODE_PRIVATE);
         String username = preferences.getString("email", "");
         String password = preferences.getString("password", "");
 
@@ -223,6 +260,8 @@ public class JobSwipeFragment extends Fragment {
             String credentials = username + ":" + password;
             String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
             headers.put("Authorization", auth);
+        } else {
+            Log.e("JobSwipeFragment", "Missing username or password in SharedPreferences.");
         }
 
         return headers;
@@ -266,11 +305,21 @@ public class JobSwipeFragment extends Fragment {
     }
 
     private Set<String> getAppliedJobs() {
+        if (!isAdded()) {
+            Log.e(TAG, "Fragment is not attached. Returning empty applied jobs.");
+            return new HashSet<>();
+        }
+
         SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         return new HashSet<>(preferences.getStringSet(APPLIED_JOBS_KEY, new HashSet<>()));
     }
 
     private Set<String> getDismissedJobs() {
+        if (!isAdded()) {
+            Log.e(TAG, "Fragment is not attached. Returning empty dismissed jobs.");
+            return new HashSet<>();
+        }
+
         SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         return new HashSet<>(preferences.getStringSet(DISMISSED_JOBS_KEY, new HashSet<>()));
     }
@@ -286,9 +335,20 @@ public class JobSwipeFragment extends Fragment {
     }
 
     private void saveJobs(Set<String> jobs, String key) {
+        if (!isAdded()) {
+            Log.e(TAG, "Fragment is not attached. Cannot save jobs.");
+            return;
+        }
+
         SharedPreferences preferences = requireContext().getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putStringSet(key, jobs);
         editor.apply();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d(TAG, "Fragment detached from activity.");
     }
 }

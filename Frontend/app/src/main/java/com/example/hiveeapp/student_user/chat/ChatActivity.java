@@ -20,6 +20,7 @@ import com.example.hiveeapp.websocket.message.Message;
 import com.example.hiveeapp.websocket.message.MessageAdapter;
 import com.example.hiveeapp.websocket.WebSocketManager;
 import com.example.hiveeapp.websocket.WebSocketListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -37,7 +38,7 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
     private static final String TAG = "ChatActivity";
     private RecyclerView chatRecyclerView;
     private EditText msgEtx;
-    private Button sendBtn;
+    private FloatingActionButton sendBtn;
     private MessageAdapter messageAdapter;
     private List<Message> messageList;
     private Set<Integer> receivedMessageIds;
@@ -68,8 +69,15 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         }
         toolbar.setTitle("Chat");
 
-        // Retrieve and log SharedPreferences data
+        // Safely retrieve SharedPreferences
         SharedPreferences preferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
+        if (preferences == null) {
+            Log.e(TAG, "SharedPreferences is null. Exiting ChatActivity.");
+            Toast.makeText(this, "Error loading chat data. Please try again.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         userId = preferences.getInt("userId", -1);
         userEmail = preferences.getString("email", null);
         userPassword = preferences.getString("password", null);
@@ -86,7 +94,6 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
             return;
         }
 
-        receivedMessageIds = new HashSet<>();
         setupUI();
         connectWebSocket();
     }
@@ -188,6 +195,13 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
             @Override
             public void onWebSocketMessage(Message message) {
                 runOnUiThread(() -> {
+                    // Ignore join messages
+                    if (message.getText().contains("has joined the chat")) {
+                        Log.d(TAG, "Ignoring join message: " + message.getText());
+                        return; // Do not add this message to the chat
+                    }
+
+                    // Add other messages to the chat
                     messageList.add(message);
                     messageAdapter.notifyItemInserted(messageList.size() - 1);
                     chatRecyclerView.scrollToPosition(messageList.size() - 1);

@@ -47,8 +47,11 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
         if (chat.getLastMessage() != null && !chat.getLastMessage().isEmpty()) {
             holder.lastMessageTextView.setText(chat.getLastMessage());
             holder.lastMessageTextView.setVisibility(View.VISIBLE);
+        } if (chat.getUnreadMessagesCount() > 0) {
+            holder.unreadMessagesBadge.setText(String.valueOf(chat.getUnreadMessagesCount()));
+            holder.unreadMessagesBadge.setVisibility(View.VISIBLE);
         } else {
-            holder.lastMessageTextView.setVisibility(View.GONE);
+            holder.unreadMessagesBadge.setVisibility(View.GONE);
         }
 
         //Display last message time
@@ -71,14 +74,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
         TextView jobTitleTextView;
         TextView lastMessageTextView;
         TextView lastMessageTimeTextView;
-
-
+        TextView unreadMessagesBadge;
 
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
             jobTitleTextView = itemView.findViewById(R.id.jobTitleTextView);
             lastMessageTextView = itemView.findViewById(R.id.lastMessageTextView);
             lastMessageTimeTextView = itemView.findViewById(R.id.lastMessageTimeTextView);
+            unreadMessagesBadge = itemView.findViewById(R.id.unreadMessagesBadge);
         }
     }
 

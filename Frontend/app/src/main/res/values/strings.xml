@@ -62,4 +62,9 @@
     <!-- Back Arrow Description -->
     <string name="back_arrow_desc">Back Arrow</string>
 
+    <string name="reply_icon_desc">Reply Icon</string>
+
+    <string name="send_button_desc">Send Button</string>
+
+
 </resources>
