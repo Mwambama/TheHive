@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class applicationsApi {
 
-    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications?jobPostingId=1003&status=PENDING";
+    private static final String BASE_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications?jobPostingId=1008&status=PENDING";
     private static final String ACCEPT_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications/";
     private static final String REJECT_URL = "http://coms-3090-063.class.las.iastate.edu:8080/applications/";
     private static final String TAG = "applicationsApi";
