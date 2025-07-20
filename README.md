@@ -42,7 +42,7 @@ The app includes:
 ---
 
 ## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+[![Watch demo on YouTube](https://img.youtube.com/vi/_e86lyHJ-00/0.jpg)](https://www.youtube.com/watch?v=_e86lyHJ-00&list=WL&index=62&t=9s)
 
 ## Usage
 Students sign up and create their profile.
