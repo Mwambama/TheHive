@@ -177,7 +177,12 @@ cd Backend
 ./mvnw spring-boot:run
 
 # Push Existing Repo (if needed)
--cd existing_repo
--git remote add origin (repo)
--git branch -M main
--git push -uf origin main
+
+cd existing_repo
+
+git remote add origin <repo>
+
+git branch -M main
+
+git push -u origin main
+
