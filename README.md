@@ -169,11 +169,17 @@ See the image above for the full system overview.
 ### 🧾 Clone the Repository
 
 git clone https://git.las.iastate.edu/cs309/2024fall/mk_1_8.git
-cd mk_1_8
 
+cd mk_1_8
 cd Frontend
 # Open this folder in Android Studio
 # Run on emulator or connected device
 
 cd Backend
 ./mvnw spring-boot:run
+
+# Push Existing Repo (if needed)
+cd existing_repo
+git remote add origin https://git.las.iastate.edu/cs309/2024fall/mk_1_8.git
+git branch -M main
+git push -uf origin main
