@@ -42,6 +42,10 @@ The app includes:
 ---
 
 ## Visuals
+
+[Watch demo on YouTube](https://www.youtube.com/watch?v=_e86lyHJ-00&list=WL&index=62&t=9s)
+
+
 [![Watch demo on YouTube](https://img.youtube.com/vi/_e86lyHJ-00/0.jpg)](https://www.youtube.com/watch?v=_e86lyHJ-00&list=WL&index=62&t=9s)
 
 ## Usage
